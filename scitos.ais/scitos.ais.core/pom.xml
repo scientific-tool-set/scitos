@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.hmx</groupId>
+		<artifactId>scitos.ais</artifactId>
+		<version>0.9.0</version>
+	</parent>
+	<artifactId>scitos.ais.core</artifactId>
+	<name>scitos.ais.core</name>
+	<description>core project of the SciToS module AIS</description>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.ais.domain</artifactId>
+		</dependency>
+	</dependencies>
+</project>

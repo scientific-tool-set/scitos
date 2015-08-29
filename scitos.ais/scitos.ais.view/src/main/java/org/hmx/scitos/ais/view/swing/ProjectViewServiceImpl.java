@@ -1,0 +1,160 @@
+/*
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.hmx.scitos.ais.view.swing;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Arrays;
+
+import javax.inject.Inject;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+
+import org.hmx.scitos.ais.core.AisOption;
+import org.hmx.scitos.ais.core.ModelHandlerImpl;
+import org.hmx.scitos.ais.domain.model.AisProject;
+import org.hmx.scitos.ais.domain.model.Interview;
+import org.hmx.scitos.ais.view.swing.components.InterviewView;
+import org.hmx.scitos.ais.view.swing.components.ParticipantInterviewGroupView;
+import org.hmx.scitos.ais.view.swing.components.ProjectOverView;
+import org.hmx.scitos.core.i18n.Message;
+import org.hmx.scitos.domain.IModel;
+import org.hmx.scitos.view.FileType;
+import org.hmx.scitos.view.IViewProject;
+import org.hmx.scitos.view.service.IMultiModelProjectViewService;
+import org.hmx.scitos.view.service.IProjectViewService;
+import org.hmx.scitos.view.swing.MessageHandler;
+import org.hmx.scitos.view.swing.ScitosClient;
+
+/**
+ * Implementation of the {@link IProjectViewService} for the AIS module.
+ */
+public class ProjectViewServiceImpl implements IMultiModelProjectViewService<AisViewProject, Interview> {
+
+    /** The associated active client instance, to forward to created views. */
+    private final ScitosClient client;
+    /** The preferences handler, providing the default detail category model for any new project. */
+    private final AisOption options;
+
+    /**
+     * Main constructor.
+     *
+     * @param client
+     *            associated active client instance
+     * @param options
+     *            preferences handler, providing the default detail category model for any new project
+     */
+    @Inject
+    public ProjectViewServiceImpl(final ScitosClient client, final AisOption options) {
+        this.client = client;
+        this.options = options;
+    }
+
+    @Override
+    public AisViewProject createEmptyProject() {
+        final File path = this.client.getSaveDestination(FileType.AIS.getFileExtension(), Message.AIS_PROJECT_NEW.get());
+        if (path != null) {
+            final AisProject mainModel = new AisProject("", this.options.provide());
+            final AisViewProject project = new AisViewProject(this.client, new ModelHandlerImpl(mainModel), path);
+            project.setOpenTabElements(Arrays.asList(mainModel));
+            return project;
+        }
+        return null;
+    }
+
+    @Override
+    public AisViewProject createProject(final IModel<?> model, final File savePath) {
+        return new AisViewProject(this.client, new ModelHandlerImpl((AisProject) model), savePath);
+    }
+
+    @Override
+    public JPopupMenu createContextMenu(final IViewProject<?> project, final Object element) {
+        if (element == project) {
+            // no additional popup entries for the project itself
+            return null;
+        }
+        final JPopupMenu menu = new JPopupMenu(project.getLabel(element));
+        menu.add(new JMenuItem(Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID.get())).addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                ProjectViewServiceImpl.this.renameParticipant((AisViewProject) project, element);
+            }
+        });
+        menu.addSeparator();
+        if (element instanceof Interview) {
+            menu.add(new JMenuItem(Message.AIS_INTERVIEW_DELETE.get())).addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(final ActionEvent event) {
+                    if (MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(Message.AIS_INTERVIEW_DELETE_WARNING.get(),
+                            Message.AIS_INTERVIEW_DELETE.get() + " - " + project.getLabel(element))) {
+                        ((AisViewProject) project).getModelHandler().deleteInterview((Interview) element);
+                    }
+                }
+            });
+        }
+        return menu;
+    }
+
+    /**
+     * Change a participant's id, while preserving its associated interviews in the given view project.
+     * 
+     * @param project
+     *            the view project to modify the participant's id in
+     * @param element
+     *            either the targeted participant's id or an interview associated to the participant being modified
+     */
+    void renameParticipant(final AisViewProject project, final Object element) {
+        final String currentParticipantId;
+        if (element instanceof Interview) {
+            currentParticipantId = ((Interview) element).getParticipantId();
+        } else {
+            currentParticipantId = element.toString();
+        }
+        final String modifiedParticipantId =
+                MessageHandler.showInputDialog(Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID_DESCRIPTION,
+                        Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID + " - " + project.getLabel(element), currentParticipantId);
+        if (modifiedParticipantId == null || modifiedParticipantId.trim().isEmpty() || currentParticipantId.equals(modifiedParticipantId)) {
+            return;
+        }
+        if (element instanceof Interview) {
+            project.getModelHandler().setParticipantId((Interview) element, modifiedParticipantId.trim());
+        } else {
+            project.getModelHandler().renameParticipant(currentParticipantId, modifiedParticipantId.trim());
+        }
+    }
+
+    @Override
+    public ProjectOverView createProjectView(final IViewProject<?> project) {
+        return new ProjectOverView(this.client, (AisViewProject) project, this.options);
+    }
+
+    @Override
+    public ParticipantInterviewGroupView createModelGroupView(final IViewProject<?> project, final String participantId) {
+        return new ParticipantInterviewGroupView(this.client, (AisViewProject) project, participantId, this.options);
+    }
+
+    @Override
+    public InterviewView createModelView(final IViewProject<?> project, final IModel<?> model) {
+        return new InterviewView(this.client.getMainView(), (AisViewProject) project, (Interview) model, this.options);
+    }
+}

@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.hmx</groupId>
+		<artifactId>scitos.ais</artifactId>
+		<version>0.9.0</version>
+	</parent>
+	<artifactId>scitos.ais.view</artifactId>
+	<name>scitos.ais.view</name>
+	<description>view project of the SciToS module AIS</description>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.view</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.ais.core</artifactId>
+		</dependency>
+		<!-- lib: including TreeTable view component -->
+		<dependency>
+			<groupId>org.swinglabs.swingx</groupId>
+			<artifactId>swingx-core</artifactId>
+		</dependency>
+		<!-- lib: Spreadsheet Export -->
+		<dependency>
+			<groupId>org.jopendocument</groupId>
+			<artifactId>jOpenDocument</artifactId>
+		</dependency>
+	</dependencies>
+</project>

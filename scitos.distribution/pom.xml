@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.hmx</groupId>
+		<artifactId>scitos</artifactId>
+		<version>0.9.0</version>
+	</parent>
+	<artifactId>scitos.distribution</artifactId>
+
+	<packaging>pom</packaging>
+
+	<!-- NOTE: These dependency declarations are only required to sort this 
+		project to the end of the line in the multimodule build. -->
+	<dependencies>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.ais.view</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>single-jar-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>scitos</finalName>
+							<descriptor>src/main/resources/assembly/assembly-descriptor-jar.xml</descriptor>
+							<appendAssemblyId>false</appendAssemblyId>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+								<manifest>
+									<mainClass>org.hmx.scitos.view.swing.ScitosApp</mainClass>
+									<classpathPrefix>lib/</classpathPrefix>
+									<addClasspath>true</addClasspath>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>distribution-zip-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>scitos-${scitos.version}-SNAPSHOT</finalName>
+							<descriptor>src/main/resources/assembly/assembly-descriptor-zip.xml</descriptor>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

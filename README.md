@@ -16,9 +16,9 @@ Input of any kind is appreciated.
 
 ---
 
-### 1. Autobiographical Interview Scoring
+### 1. AIS – Autobiographical Interview Scoring
 #### 1.1 Background
-AI is a method to tease apart the forms of memory that contribute to a participant's description of a remembered past event.
+Autobiographical Interviews (AI) are a method to tease apart the forms of memory that contribute to a participant's description of a remembered past event.
 Discrete units of information are parsed and classified as either internal (i.e. episodic) or external (i.e. non-episodic). See for reference: [Aging and autobiographical memory; Levine et al. 2002](http://www.ncbi.nlm.nih.gov/pubmed/12507363).
 
 It is a useful instrument for quantifying personal remote memory retrieval e.g. in younger/older adults or in patients.
@@ -26,8 +26,8 @@ It is a useful instrument for quantifying personal remote memory retrieval e.g. 
 #### 1.2 Motivation
 The traditional paper-based scoring is prone to errors and requires additional effort for further processing and regarding compliance.
 
-  - *Old Example Workflow:* interview's audio recording > digal transcribed version > print outs being scored by hand > tallying by hand into spreadsheet
-  - *Target Workflow:*  interview's audio recording > digal transcribed version > copied interv into tool and scored therein > tallied automatically > saved with scoring to file and/or export results to spreadsheet
+  - *Old Example Workflow:* interview's audio recording > digital transcribed version > printed out > scored by hand > tallied by hand into spreadsheet
+  - *Target Workflow:*  interview's audio recording > digital transcribed version > interview copied into tool > scored in tool > tallied automatically > saved with scoring to file and/or results exported to spreadsheet
 
 #### 1.3 SciToS Module
 The tool avoids any unnecessary printouts, and allows the easy digital storage and exchange of produced files.

@@ -57,7 +57,7 @@ public final class OptionPanel extends AbstractOptionPanel {
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
         // since the purpose of this component is to set the default for new projects, we don't need the associated check box
         this.treeTable = new DetailCategoryTreeTable(this.options, false);
-        this.treeTable.setBorder(BorderFactory.createTitledBorder("Default for new projects"));
+        this.treeTable.setBorder(BorderFactory.createTitledBorder(Message.AIS_PREFERENCES_DETAIL_CATEGORIES.get()));
         contentBox.add(this.treeTable);
         contentBox.revalidate();
         this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);

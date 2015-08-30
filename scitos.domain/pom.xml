@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.hmx</groupId>
 		<artifactId>scitos</artifactId>
-		<version>0.9.0</version>
+		<version>0.9.1</version>
 	</parent>
 	<artifactId>scitos.domain</artifactId>
 	<name>scitos.domain</name>

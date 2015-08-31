@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ public enum FileType {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param localizableName
      *            the localizable message to be displayed for this type
      * @param extension
@@ -100,7 +100,7 @@ public enum FileType {
 
     /**
      * Getter for the localizable message to be displayed for this type.
-     * 
+     *
      * @return the representing localizable message
      */
     public Message getLocalizableName() {
@@ -118,7 +118,7 @@ public enum FileType {
 
     /**
      * Getter for the dependency injection module's class name.
-     * 
+     *
      * @return the dependency injection module's class name
      */
     public String getModuleClassName() {
@@ -127,7 +127,7 @@ public enum FileType {
 
     /**
      * Getter for the dependency injections module initializer's class name.
-     * 
+     *
      * @return the dependency injections module initializer's class name
      */
     public String getModuleInitializerClassName() {
@@ -135,7 +135,7 @@ public enum FileType {
     }
 
     /**
-     * Set the associated xml attribute, which is used for determining the expected project/model type contained, to represent this {@link FileType}.
+     * Set the associated xml attribute, which is used for determining the expected project/model type contained, to represent this {@link FileType} .
      *
      * @param xml
      *            the xml document to be marked as representing this {@link FileType}

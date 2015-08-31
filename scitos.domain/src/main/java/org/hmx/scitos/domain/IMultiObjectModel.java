@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ public interface IMultiObjectModel<M extends IMultiObjectModel<M, S>, S extends 
 
     /**
      * Getter for the grouping key used in {@link #getSubModelObjects()} for the given sub model instance.
-     * 
+     *
      * @param subModel
      *            sub model instance to get the grouping key for (assumed to be of type <code>S</code>)
      * @return grouping key

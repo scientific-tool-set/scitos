@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -164,16 +164,16 @@ public final class ScitosClient {
         this.fixedEditMenuItemCount = this.editMenu.getMenuComponentCount();
         final JPanel contentPane = new JPanel(new BorderLayout(0, 5));
         contentPane.setBorder(null);
-        this.mainView = new MainView(this, toLoadAtStart.isEmpty());
+        this.mainView = new MainView(this, ScitosClient.toLoadAtStart.isEmpty());
         contentPane.add(this.mainView);
         this.toolBar = this.createToolBar();
         this.fixedToolItemCount = this.toolBar.getComponentCount();
         contentPane.add(this.toolBar, BorderLayout.PAGE_START);
         this.frame.setContentPane(contentPane);
-        for (File singleFile : toLoadAtStart) {
+        for (final File singleFile : ScitosClient.toLoadAtStart) {
             this.openFile(singleFile);
         }
-        toLoadAtStart.clear();
+        ScitosClient.toLoadAtStart.clear();
         // set the title regarding the start view
         this.refreshTitle();
         this.manageMenuOptions();
@@ -260,7 +260,7 @@ public final class ScitosClient {
             fileMenu.addSeparator();
             final JMenuItem aboutItem = new JMenuItem(Message.MENUBAR_ABOUT.get());
             aboutItem.addActionListener(new ActionListener() {
-                
+
                 @Override
                 public void actionPerformed(final ActionEvent event) {
                     new AboutDialog(ScitosClient.this.getFrame()).setVisible(true);
@@ -325,7 +325,7 @@ public final class ScitosClient {
     /**
      * Create the main tool bar including the (default) application level items. This is used as basis to let the repectively active tab view add
      * their own items.
-     * 
+     *
      * @return create tool bar
      */
     private JToolBar createToolBar() {
@@ -343,7 +343,7 @@ public final class ScitosClient {
             newFileButton.addActionListener(newFileActions.values().iterator().next());
         } else {
             final JPopupMenu menu = new JPopupMenu();
-            for (Entry<FileType, ActionListener> singleType : newFileActions.entrySet()) {
+            for (final Entry<FileType, ActionListener> singleType : newFileActions.entrySet()) {
                 final JMenuItem newFileItem = new JMenuItem(singleType.getKey().getLocalizableName().get());
                 newFileItem.addActionListener(singleType.getValue());
                 menu.add(newFileItem);
@@ -432,7 +432,7 @@ public final class ScitosClient {
 
     /**
      * Create generic new file actions for all supported file types.
-     * 
+     *
      * @return supported file types and associated new file actions
      */
     Map<FileType, ActionListener> createNewFileActions() {
@@ -508,7 +508,7 @@ public final class ScitosClient {
 
     /**
      * Getter for the provider instance of this client, responsible for creating panels in the preferences dialog.
-     * 
+     *
      * @return the client's option panel provider
      */
     public IOptionPanelServiceProvider getOptionPanelProvider() {
@@ -517,7 +517,7 @@ public final class ScitosClient {
 
     /**
      * Getter for the window containing the graphical user interface.
-     * 
+     *
      * @return the actual {@link JFrame}
      */
     public JFrame getFrame() {
@@ -526,7 +526,7 @@ public final class ScitosClient {
 
     /**
      * Getter for the content displaying view.
-     * 
+     *
      * @return the main view
      */
     public MainView getMainView() {
@@ -535,7 +535,7 @@ public final class ScitosClient {
 
     /**
      * Set the view specific menu bar - edit menu items, after removing any potentially view specific tool bar items that are currently displayed.
-     * 
+     *
      * @param editMenuItems
      *            components (e.g. buttons) associated with this view to be added to the tool bar (contained <code>null</code> elements are
      *            interpreted as separators)
@@ -544,13 +544,13 @@ public final class ScitosClient {
         if (this.editMenu.getMenuComponentCount() > this.fixedEditMenuItemCount) {
             // remove old view specific edit menu items
             final List<Component> oldEditMenuItems = Arrays.asList(this.editMenu.getMenuComponents());
-            for (Component oldEditMenuItem : oldEditMenuItems.subList(this.fixedEditMenuItemCount, oldEditMenuItems.size())) {
+            for (final Component oldEditMenuItem : oldEditMenuItems.subList(this.fixedEditMenuItemCount, oldEditMenuItems.size())) {
                 this.editMenu.remove(oldEditMenuItem);
             }
         }
         if (!editMenuItems.isEmpty()) {
             this.editMenu.addSeparator();
-            for (JMenuItem newEditMenuItem : editMenuItems) {
+            for (final JMenuItem newEditMenuItem : editMenuItems) {
                 if (newEditMenuItem == null) {
                     this.editMenu.addSeparator();
                 } else {
@@ -562,7 +562,7 @@ public final class ScitosClient {
 
     /**
      * Set the view specific tool bar items, after removing any potentially view specific tool bar items currently displayed.
-     * 
+     *
      * @param toolBarItems
      *            components (e.g. buttons) associated with this view to be added to the tool bar (contained <code>null</code> elements are
      *            interpreted as separators)
@@ -571,13 +571,13 @@ public final class ScitosClient {
         if (this.toolBar.getComponentCount() > this.fixedToolItemCount) {
             // remove old view specific tool bar items
             final List<Component> oldToolBarItems = Arrays.asList(this.toolBar.getComponents());
-            for (Component oldToolBarItem : oldToolBarItems.subList(this.fixedToolItemCount, oldToolBarItems.size())) {
+            for (final Component oldToolBarItem : oldToolBarItems.subList(this.fixedToolItemCount, oldToolBarItems.size())) {
                 this.toolBar.remove(oldToolBarItem);
             }
         }
         if (!toolBarItems.isEmpty()) {
             this.toolBar.addSeparator();
-            for (Component newToolBarItem : toolBarItems) {
+            for (final Component newToolBarItem : toolBarItems) {
                 if (newToolBarItem == null) {
                     this.toolBar.addSeparator();
                 } else {
@@ -745,7 +745,7 @@ public final class ScitosClient {
 
     /**
      * Close the given project. Ask to save current changes before closing it, if there are any.
-     * 
+     *
      * @param project
      *            view project to close
      * @return successfully closed (no unsaved changes, or user confirmed saving-discarding of them)
@@ -806,13 +806,13 @@ public final class ScitosClient {
 
     /**
      * Add the {@link File} to load after a new {@link ScitosClient} is initialized.
-     * 
+     *
      * @param val
      *            {@link File} to add for opening at startup
      */
     public static void addFileToLoadAtStart(final File val) {
-        synchronized (toLoadAtStart) {
-            toLoadAtStart.add(val);
+        synchronized (ScitosClient.toLoadAtStart) {
+            ScitosClient.toLoadAtStart.add(val);
         }
     }
 }

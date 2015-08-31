@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -21,14 +21,14 @@ package org.hmx.scitos.view.service;
 
 /**
  * Generic interface to register option panel providers to be included in the application's preferences dialog.
- * 
+ *
  * @see IOptionPanelServiceProvider
  */
 public interface IOptionPanelServiceRegistry {
 
     /**
      * Register the given option panel provider with its associated settings class.
-     * 
+     *
      * @param settingsClass
      *            class representing the user settings that can be accessed via the provided option panel
      * @param service

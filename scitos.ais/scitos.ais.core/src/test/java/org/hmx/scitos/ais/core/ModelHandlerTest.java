@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test of the {@link DetailCategory} assignment method in the {@link ModelHandlerImpl} class.
+ * Test of the {@link ModelHandlerImpl} class.
  */
 public class ModelHandlerTest {
 
@@ -55,20 +55,20 @@ public class ModelHandlerTest {
     private TextToken paragraphStartToken;
 
     /**
-     * Initial setup: get {@link AisProject} instance, and the default category model from {@link AisOption#createDefaultCategoryModel()}.
+     * Initial setup: get the default category model from {@link AisOption#createDefaultCategoryModel()}.
      */
     @BeforeClass
     public static void setUp() {
-        CATEGORY_MODEL = AisOption.createDefaultCategoryModel();
+        ModelHandlerTest.CATEGORY_MODEL = AisOption.createDefaultCategoryModel();
     }
 
     /**
-     * Preparation for each test: create a new {@link ModelHandlerImpl}, and an {@link Interview} with 20 {@link TextToken}s and no
-     * {@link DetailCategory} assignment.
+     * Preparation for each test: create a new handled project, the actual {@link ModelHandlerImpl}, and an {@link Interview} with 20
+     * {@link TextToken}s and no {@link DetailCategory} assignment.
      */
     @Before
     public void prepareInterview() {
-        this.project = new AisProject("test", CATEGORY_MODEL.provide());
+        this.project = new AisProject("test", ModelHandlerTest.CATEGORY_MODEL.provide());
         this.modelHandler = new ModelHandlerImpl(this.project);
         this.interview = this.modelHandler.createInterview("Subj123");
         this.modelHandler.setInterviewText(this.interview, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20");
@@ -105,13 +105,13 @@ public class ModelHandlerTest {
     /**
      * Test: replace the project's category model with another one, replacing already assigned categories 1-to-0 (effectively removing the
      * assignment), 1-to-1, and 2-to-1 (combining assignments of two old categories to a single new one).
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
     @Test
     public void testReplaceCategoryModel() throws HmxException {
-        final List<DetailCategory> oldSelectableCategories = CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> oldSelectableCategories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), oldSelectableCategories.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), oldSelectableCategories.get(1));
@@ -285,13 +285,13 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: X-------------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
     @Test
     public void testAssignSingleStart() throws HmxException {
-        final DetailCategory detail = CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(this.paragraphStartToken), detail);
         this.assertTokenState(this.paragraphStartToken, true, detail, true);
         TextToken currentToken = this.paragraphStartToken.getFollowingToken();
@@ -308,7 +308,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: --X-----------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -336,13 +336,13 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: -------------------X
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
     @Test
     public void testAssignSingleEnd() throws HmxException {
-        final DetailCategory detail = CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
         TextToken paragraphEndToken = this.paragraphStartToken;
         while (paragraphEndToken.getFollowingToken() != null) {
             paragraphEndToken = paragraphEndToken.getFollowingToken();
@@ -362,13 +362,13 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: XX------------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
     @Test
     public void testAssignGroupStart() throws HmxException {
-        final DetailCategory detail = CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview,
                 Arrays.asList(this.paragraphStartToken, this.paragraphStartToken.getFollowingToken()), detail);
         this.assertTokenState(this.paragraphStartToken, true, detail, false);
@@ -388,7 +388,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: --XX----------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -418,13 +418,13 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: ------------------XX
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
     @Test
     public void testAssignGroupEnd() throws HmxException {
-        final DetailCategory detail = CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
         TextToken paragraphEndToken = this.paragraphStartToken;
         while (paragraphEndToken.getFollowingToken() != null) {
             paragraphEndToken = paragraphEndToken.getFollowingToken();
@@ -447,13 +447,13 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: X-X-----------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
     @Test
     public void testAssignTwoPartStart() throws HmxException {
-        final DetailCategory detail = CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview,
                 Arrays.asList(this.paragraphStartToken, this.paragraphStartToken.getFollowingToken().getFollowingToken()), detail);
         this.assertTokenState(this.paragraphStartToken, true, detail, false);
@@ -475,7 +475,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: --X-X---------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -508,7 +508,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: -aa-----------------<br/>
      * result: -aX-X---------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -545,7 +545,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: -aaa----------------<br/>
      * assign: --X-X--------------- (FAILING)
-     * 
+     *
      * @throws HmxException
      *             expected error when assigning category
      */
@@ -561,7 +561,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --aa----------------<br/>
      * result: --XaX---------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -598,7 +598,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --aaa---------------<br/>
      * result: --XaX---------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -635,7 +635,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: ---aa---------------<br/>
      * result: --XaX---------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -646,8 +646,8 @@ public class ModelHandlerTest {
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
         final TextToken selectionEnd = selectionStart.getFollowingToken().getFollowingToken();
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionStart.getFollowingToken(), selectionEnd),
-                detailToBeEnclosed);
+        this.modelHandler
+                .assignDetailCategory(this.interview, Arrays.asList(selectionStart.getFollowingToken(), selectionEnd), detailToBeEnclosed);
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionStart, selectionEnd), assigned);
         this.assertTokenState(this.paragraphStartToken, true, null, false);
         TextToken currentToken = this.paragraphStartToken.getFollowingToken();
@@ -672,7 +672,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: ---aaa--------------<br/>
      * assign: --X-X--------------- (FAILING)
-     * 
+     *
      * @throws HmxException
      *             expected error when assigning category
      */
@@ -688,7 +688,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: ----aa--------------<br/>
      * result: --X-Xa--------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -699,8 +699,7 @@ public class ModelHandlerTest {
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
         final TextToken selectionEnd = selectionStart.getFollowingToken().getFollowingToken();
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionEnd, selectionEnd.getFollowingToken()),
-                detailToBeShortened);
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionEnd, selectionEnd.getFollowingToken()), detailToBeShortened);
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionStart, selectionEnd), assigned);
         this.assertTokenState(this.paragraphStartToken, true, null, false);
         TextToken currentToken = this.paragraphStartToken.getFollowingToken();
@@ -727,7 +726,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: -aaaaa--------------<br/>
      * assign: --X-X--------------- (FAILING)
-     * 
+     *
      * @throws HmxException
      *             expected error when assigning category
      */
@@ -743,13 +742,13 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: --------------------<br/>
      * result: -----------------X-X
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
     @Test
     public void testAssignTwoPartEnd() throws HmxException {
-        final DetailCategory detail = CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
         TextToken paragraphEndToken = this.paragraphStartToken;
         while (paragraphEndToken.getFollowingToken() != null) {
             paragraphEndToken = paragraphEndToken.getFollowingToken();
@@ -774,7 +773,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: aaabb-cdddeefggg----<br/>
      * result: aXXXbXcdXXXefXgg----
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -851,7 +850,7 @@ public class ModelHandlerTest {
      * Test: assign category:<br/>
      * origin: -aa--bcb-ddee---fg--<br/>
      * result: XaaXXbcbXddXeX--fgX-
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning category
      */
@@ -923,20 +922,31 @@ public class ModelHandlerTest {
         this.assertTokenState(tokens.get(19), true, null, true);
     }
 
+    /**
+     * Check the given token's attributes regarding an associated detail category.
+     *
+     * @param token
+     *            the token to check
+     * @param firstOfDetail
+     *            if the given token is the first element of a token range with the same detail category
+     * @param detail
+     *            the assigned detail category (can be <code>null</code>
+     * @param lastOfDetail
+     *            if the given token is the last element of a token range with the same detail category
+     */
     private void assertTokenState(final TextToken token, final boolean firstOfDetail, final DetailCategory detail, final boolean lastOfDetail) {
-        if (firstOfDetail) {
-            Assert.assertTrue(token.isFirstTokenOfDetail());
-        } else {
-            Assert.assertFalse(token.isFirstTokenOfDetail());
-        }
+        Assert.assertSame(firstOfDetail, token.isFirstTokenOfDetail());
         Assert.assertSame(detail, token.getDetail());
-        if (lastOfDetail) {
-            Assert.assertTrue(token.isLastTokenOfDetail());
-        } else {
-            Assert.assertFalse(token.isLastTokenOfDetail());
-        }
+        Assert.assertSame(lastOfDetail, token.isLastTokenOfDetail());
     }
 
+    /**
+     * Create a list of all tokens in the specified token's paragraph by following each token's getFollowingToken method.
+     *
+     * @param startToken
+     *            first token of the targeted paragraph
+     * @return list of all following tokens (including given start token)
+     */
     private List<TextToken> getFlatTokenList(final TextToken startToken) {
         final List<TextToken> list = new ArrayList<TextToken>(20);
         TextToken currentToken = startToken;
@@ -948,14 +958,32 @@ public class ModelHandlerTest {
     }
 
     /**
+     * Test: reset Interview state.
+     *
+     * @throws HmxException
+     *             internal error when assigning category
+     */
+    @Test
+    public void testReset() throws HmxException {
+        final Interview resetState = this.interview.clone();
+        this.modelHandler.setParticipantId(this.interview, "Subj001");
+        this.modelHandler.setInterviewText(this.interview, "1 2 3");
+        this.modelHandler.assignDetailCategory(this.interview, this.interview.getText(),
+                ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0));
+        Assert.assertNotEquals(resetState, this.interview);
+        this.modelHandler.reset(this.interview, resetState);
+        Assert.assertEquals(resetState, this.interview);
+    }
+
+    /**
      * Test: count occurrences of assigned detail categories from an interview.
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
     @Test
     public void testCountDetailOccurrences() throws HmxException {
-        final List<DetailCategory> selectables = CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), selectables.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), selectables.get(1));
@@ -968,8 +996,7 @@ public class ModelHandlerTest {
         this.modelHandler.assignDetailCategory(this.interview, text.subList(15, 16), selectables.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(16, 18), selectables.get(2));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(18, 20), selectables.get(0));
-        final Map<DetailCategory, AtomicLong> result =
-                this.modelHandler.countDetailOccurrences(this.project.getInterviews()).get(this.interview);
+        final Map<DetailCategory, AtomicLong> result = this.modelHandler.countDetailOccurrences(this.project.getInterviews()).get(this.interview);
         Assert.assertEquals(5, result.get(selectables.get(0)).get());
         Assert.assertEquals(2, result.get(selectables.get(1)).get());
         Assert.assertEquals(3, result.get(selectables.get(2)).get());
@@ -978,13 +1005,13 @@ public class ModelHandlerTest {
 
     /**
      * Test: count tokens with assigned detail category from an interview.
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
     @Test
     public void testCountTokensWithAssignedDetail() throws HmxException {
-        final List<DetailCategory> selectables = CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), selectables.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), selectables.get(1));
@@ -1003,13 +1030,13 @@ public class ModelHandlerTest {
 
     /**
      * Test: extract detail category patterns with length two to three from an interview.
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
     @Test
     public void testExtractDetailPattern() throws HmxException {
-        final List<DetailCategory> selectables = CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
         final DetailCategory firstDetail = selectables.get(0);
         final DetailCategory secondDetail = selectables.get(1);
         final DetailCategory thirdDetail = selectables.get(2);
@@ -1049,13 +1076,13 @@ public class ModelHandlerTest {
 
     /**
      * Test: extract detail category sequence from interview.
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
     @Test
     public void testExtractDetailSequence() throws HmxException {
-        final List<DetailCategory> selectables = CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
         final DetailCategory firstDetail = selectables.get(0);
         final DetailCategory secondDetail = selectables.get(1);
         final DetailCategory thirdDetail = selectables.get(2);
@@ -1154,7 +1181,7 @@ public class ModelHandlerTest {
 
     /**
      * Test: clone project, change the interview's text to contain less tokens, and validate equality of the two projects, expecting an error message.
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
@@ -1171,7 +1198,7 @@ public class ModelHandlerTest {
      * Test: clone project, changing the detail category assignment, and validate equality of the two projects, expecting an error message.<br/>
      * origin: --a-----------------<br/>
      * cloned: --------------------
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
@@ -1188,7 +1215,7 @@ public class ModelHandlerTest {
      * Test: clone project, changing the detail category assignment, and validate equality of the two projects, expecting an error message.<br/>
      * origin: --a-----------------<br/>
      * cloned: --b-----------------
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
@@ -1206,7 +1233,7 @@ public class ModelHandlerTest {
      * Test: clone project, changing the detail category assignment, and validate equality of the two projects, expecting an error message.<br/>
      * origin: --aa----------------<br/>
      * cloned: --a-----------------
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */
@@ -1225,7 +1252,7 @@ public class ModelHandlerTest {
      * Test: clone project, changing the detail category assignment, and validate equality of the two projects, expecting an error message.<br/>
      * origin: --ab----------------<br/>
      * cloned: --aa----------------
-     * 
+     *
      * @throws HmxException
      *             error when setting up the interview with assigned detail categories
      */

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ public abstract class AbstractProjectView<P extends IViewProject<?>, M> extends 
 
     /**
      * Main constructor.
-     * 
+     *
      * @param project
      *            associated project instance
      * @param model
@@ -77,7 +77,7 @@ public abstract class AbstractProjectView<P extends IViewProject<?>, M> extends 
     /**
      * Getter for the represented user model (either the project itself, a string representing a multi model group, or a model instance in a multi
      * model project).
-     * 
+     *
      * @return the represented user model
      */
     public M getModel() {
@@ -92,7 +92,7 @@ public abstract class AbstractProjectView<P extends IViewProject<?>, M> extends 
     /**
      * Create menu items associated with this view to be added to the menu bar's 'Edit' menu. This will be called repeateddly - every time this view
      * is displayed (i.e. the containing tab is selected).
-     * 
+     *
      * @return 'Edit' menu items (contained <code>null</code> elements are interpreted as separators)
      */
     public abstract List<JMenuItem> createEditMenuItems();
@@ -100,7 +100,7 @@ public abstract class AbstractProjectView<P extends IViewProject<?>, M> extends 
     /**
      * Create components (e.g. buttons) associated with this view to be added to the main view's tool bar. This will be called repeatedly - every time
      * this view is displayed (i.e. the containing tab is selected).
-     * 
+     *
      * @return tool bar items (contained <code>null</code> elements are interpreted as separators)
      */
     public abstract List<Component> createToolBarItems();

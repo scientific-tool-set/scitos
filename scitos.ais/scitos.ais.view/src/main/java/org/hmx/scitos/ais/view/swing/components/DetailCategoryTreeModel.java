@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param categoryProvider
      *            initial provider of the detail categories to represent
      */
@@ -71,7 +71,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
     /**
      * Create the equivalent row object for the given detail category. Recursively add it with all its subordinated (i.e. child) categories to the
      * internal mapping. The specified model is used to find the subordinated categories in the hierarchy.
-     * 
+     *
      * @param model
      *            full detail category model containing the given category, used to determine subordinated categories
      * @param detail
@@ -93,7 +93,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
     /**
      * Add a new (blank) category row under the given path. If the path contains only the (invisible) root element, this creates a new root category
      * (without a parent).
-     * 
+     *
      * @param parent
      *            path containing all super ordinated elements (first path element is the single root element)
      * @return path to the newly created detail category row
@@ -119,7 +119,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
     /**
      * Remove the category row at the given path.
-     * 
+     *
      * @param target
      *            full path to the element that is supposed to be removed from the model
      */
@@ -174,7 +174,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
     /**
      * Determine the maximum number of hierarchy steps from the (invisible) root element to any of its descendants (i.e. detail categories).
-     * 
+     *
      * @return depth of the hierarchical structure
      */
     public int getTreeDepth() {
@@ -188,7 +188,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
     /**
      * Recursively determine the maximum number of hierarchy steps from the given detail category row to any of its descendants (i.e. subordinated
      * detail categories).
-     * 
+     *
      * @param subTreeRoot
      *            detail category row to determine the number of subordinated hierarchy levels for
      * @return depth of this part of the hierarchical structure
@@ -311,7 +311,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
     /**
      * Provide unsorted list of all detail categories currently contained in the model - regardless of any hierarchical structure.
-     * 
+     *
      * @return all detail categories in unsorted list
      */
     private List<DetailCategoryRow> getFlatCategoryList() {
@@ -325,7 +325,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
     /**
      * Create the full hierarchical path (starting at the root element) for the given detail category row (therefore setting it as the last path
      * component.
-     * 
+     *
      * @param row
      *            detail category row to build the tree path for
      * @return full tree path from root to given category row
@@ -351,7 +351,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
     /**
      * Check if the current model state is deemed valid – i.e. all categories have a unique, non-empty code assigned to them.
-     * 
+     *
      * @return all categories have unique, non-empty codes
      */
     boolean isValid() {
@@ -376,7 +376,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
     /**
      * Translate internal detail category rows to actual detail category model. Additionally provide a mapping from old detail categories (from
      * initial setup) to their new counter parts, if any rows from the initial model still exist.
-     * 
+     *
      * @return represented detail category model and mapping from old to new categories
      */
     SimpleEntry<MutableDetailCategoryModel, Map<DetailCategory, DetailCategory>> toModelWithMapping() {
@@ -390,7 +390,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
     /**
      * Recursively fill the given model and old-to-new category mapping with the specified row and its subordinated (i.e. child category) rows.
-     * 
+     *
      * @param parent
      *            super ordinated (i.e. parent) detail category row (can be <code>null</code> if directly under root without parent)
      * @param row
@@ -437,7 +437,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
         /**
          * Constructor.
-         * 
+         *
          * @param represented
          *            represented category
          */
@@ -447,7 +447,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
 
         /**
          * Constructor.
-         * 
+         *
          * @param code
          *            short name of the represented category
          * @param name

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -21,8 +21,6 @@ package org.hmx.scitos.core;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
 
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.domain.ModelChangeListener;
@@ -102,13 +100,7 @@ public abstract class AbstractModelHandler<M extends IModel<M>> {
         final ModelEvent<O> event = new ModelEvent<O>(changedElement, updated);
         // notify all currently registered ModelChangeListeners
         for (final ModelChangeListener singleListener : this.listeners) {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    singleListener.modelChanged(event);
-                }
-            });
+            singleListener.modelChanged(event);
         }
     }
 }

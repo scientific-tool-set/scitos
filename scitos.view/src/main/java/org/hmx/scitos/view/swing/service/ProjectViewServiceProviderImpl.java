@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -59,8 +59,8 @@ public class ProjectViewServiceProviderImpl implements IProjectViewServiceRegist
     }
 
     @Override
-    public final <P extends IViewProject<M>, M extends IModel<M>> void registerViewService(final Class<P> projectClass,
-            final Class<M> modelClass, final IProjectViewService<P> viewService) {
+    public final <P extends IViewProject<M>, M extends IModel<M>> void registerViewService(final Class<P> projectClass, final Class<M> modelClass,
+            final IProjectViewService<P> viewService) {
         synchronized (this.modelViewServices) {
             this.modelViewServices.put(modelClass, viewService);
         }

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -104,7 +104,7 @@ public final class OptionHandler<O extends Enum<? extends IOptionSetting> & IOpt
 
     /**
      * Construct the path, where the options file for the given class is expected to be.
-     * 
+     *
      * @param optionImplClass
      *            specific option class to get the path for
      * @return path where the associated options file is expected to be

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public interface IProjectViewService<P extends IViewProject<? extends IModel<?>>
     /**
      * Create context menu, offering additional actions associated with the given element. This will be called every time a context menu is triggered
      * for the given element in the specified project.
-     * 
+     *
      * @param project
      *            project containing the given element
      * @param element

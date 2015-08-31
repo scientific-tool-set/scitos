@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public final class MessageHandler {
 
         /**
          * Main constructor.
-         * 
+         *
          * @param type
          *            the wrapped {@link JOptionPane} constant
          * @param icon
@@ -70,7 +70,7 @@ public final class MessageHandler {
 
         /**
          * Getter for the equivalent {@link JOptionPane} constant.
-         * 
+         *
          * @return the represented {@link JOptionPane} message type
          */
         int getType() {
@@ -79,7 +79,7 @@ public final class MessageHandler {
 
         /**
          * Getter for the image to display in the message dialog.
-         * 
+         *
          * @return the message icon
          */
         public Icon getIcon() {
@@ -215,8 +215,8 @@ public final class MessageHandler {
      * @return inserted answer
      */
     public static String showInputDialog(final Message question, final String messageTitle, final String initialValue) {
-        return (String) JOptionPane.showInputDialog(ScitosApp.getClient().getFrame(), MessageHandler.prepareMessage(question.get()),
-                messageTitle, JOptionPane.QUESTION_MESSAGE, MessageType.INFO.getIcon(), null, initialValue);
+        return (String) JOptionPane.showInputDialog(ScitosApp.getClient().getFrame(), MessageHandler.prepareMessage(question.get()), messageTitle,
+                JOptionPane.QUESTION_MESSAGE, MessageType.INFO.getIcon(), null, initialValue);
     }
 
     /**
@@ -261,7 +261,7 @@ public final class MessageHandler {
 
     /**
      * Ensure there is no empty line in the given message, which might lead to unexpected results when displayed in a dialog.
-     * 
+     *
      * @param message
      *            text to display
      * @return modified text, fit for being displayed in a dialog

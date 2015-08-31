@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ package org.hmx.scitos.ais.domain.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +44,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     /**
      * Main constructor.
-     * 
+     *
      * @param label
      *            the short label representing the project's content (or name of the file it was loaded from)
      * @param categories
@@ -103,7 +102,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     /**
      * Setter for the contained detail category model.
-     * 
+     *
      * @param value
      *            contained detail category model
      * @return self reference
@@ -122,7 +121,9 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
     @Override
     public Map<String, List<Interview>> getSubModelObjects() {
         final Map<String, List<Interview>> subModelMap = new HashMap<String, List<Interview>>();
-        for (final Interview singleInterview : this.getInterviews()) {
+        final List<Interview> sortedInterviews = new ArrayList<Interview>(this.interviews);
+        Collections.sort(sortedInterviews);
+        for (final Interview singleInterview : sortedInterviews) {
             final String groupKey = this.getGroupKey(singleInterview);
             final List<Interview> groupedInterviews;
             if (subModelMap.containsKey(groupKey)) {
@@ -132,16 +133,6 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
                 subModelMap.put(groupKey, groupedInterviews);
             }
             groupedInterviews.add(singleInterview);
-        }
-        final Comparator<Interview> interviewByIndexSorter = new Comparator<Interview>() {
-
-            @Override
-            public int compare(final Interview one, final Interview other) {
-                return one.getIndex() - other.getIndex();
-            }
-        };
-        for (final List<Interview> participantInterviews : subModelMap.values()) {
-            Collections.sort(participantInterviews, interviewByIndexSorter);
         }
         return subModelMap;
     }
@@ -154,7 +145,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
     @Override
     public List<DetailCategory> provideSelectables() {
         final List<DetailCategory> selectables = new LinkedList<DetailCategory>();
-        for (DetailCategory singleCategory : this.categories) {
+        for (final DetailCategory singleCategory : this.categories) {
             if (singleCategory.isSelectable()) {
                 selectables.add(singleCategory);
             }

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
 
     /**
      * Initialize the LookAndFeel selection.
-     * 
+     *
      * @param viewParent
      *            the main client window to apply the selected LookAndFeel to
      * @return created panel containing the LookAndFeel selection

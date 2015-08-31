@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param parent
      *            super ordinated view containing this (sub) view as a tab
      * @param project
@@ -148,7 +148,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
 
     /**
      * Create a single button for the main tool bar, that is assigning the specified detail category to all selected tokens on click.
-     * 
+     *
      * @param category
      *            detail category to assign when clicked (can be <code>null</code> to remove any category assignments)
      * @return create button for the main tool bar
@@ -168,7 +168,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
 
     /**
      * Assign the given category to all currently selected tokens.
-     * 
+     *
      * @param category
      *            detail category to assign (can be <code>null</code> to remove any category assignments)
      */

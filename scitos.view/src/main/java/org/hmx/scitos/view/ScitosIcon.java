@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ public enum ScitosIcon {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param resourcePath
      *            the location of the represented icon in the classpath
      */
@@ -87,7 +87,7 @@ public enum ScitosIcon {
 
     /**
      * Load the actual image.
-     * 
+     *
      * @return created icon instance
      */
     public ImageIcon create() {
@@ -97,12 +97,12 @@ public enum ScitosIcon {
     /**
      * Load the actual image and scale it to the given size. If either width or height is a negative number, then a value is substituted to maintain
      * the aspect ratio of the original image dimensions.
-     * 
+     *
      * @param width
      *            the width to which to scale the image.
      * @param height
      *            the height to which to scale the image.
-     * 
+     *
      * @return created icon instance
      */
     public ImageIcon createScaled(final int width, final int height) {
@@ -113,7 +113,7 @@ public enum ScitosIcon {
 
     /**
      * Getter for the location of the represented icon in the classpath.
-     * 
+     *
      * @return the image resource' path
      */
     public String getResourcePath() {

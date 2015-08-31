@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ public class ModelEvent<O> implements Serializable {
 
     /**
      * Getter for the updated flag.
-     * 
+     *
      * @return if this is just an update of the already existing element
      */
     public boolean isUpdated() {

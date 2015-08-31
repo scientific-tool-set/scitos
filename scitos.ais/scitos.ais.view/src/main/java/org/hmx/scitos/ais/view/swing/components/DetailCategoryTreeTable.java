@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param categoryProvider
      *            the provider of the initial detail category model being displayed/modified
      * @param showSetAsDefaultCheckBox
@@ -137,15 +137,14 @@ public final class DetailCategoryTreeTable extends JPanel {
             }
         });
         this.treeTable.addColumn(this.createColumn(4, 40, 40, addButtonColumnRenderer, addButtonColumnRenderer));
-        final IconButtonColumn deleteButtonColumnRenderer =
-                new IconButtonColumn(this.treeTable, ScitosIcon.DELETE.create(), new AbstractAction() {
+        final IconButtonColumn deleteButtonColumnRenderer = new IconButtonColumn(this.treeTable, ScitosIcon.DELETE.create(), new AbstractAction() {
 
-                    @Override
-                    public void actionPerformed(final ActionEvent actionEvent) {
-                        final int clickedRowIndex = Integer.valueOf(actionEvent.getActionCommand()).intValue();
-                        DetailCategoryTreeTable.this.removeCategory(DetailCategoryTreeTable.this.treeTable.getPathForRow(clickedRowIndex));
-                    }
-                });
+            @Override
+            public void actionPerformed(final ActionEvent actionEvent) {
+                final int clickedRowIndex = Integer.valueOf(actionEvent.getActionCommand()).intValue();
+                DetailCategoryTreeTable.this.removeCategory(DetailCategoryTreeTable.this.treeTable.getPathForRow(clickedRowIndex));
+            }
+        });
         this.treeTable.addColumn(this.createColumn(5, 40, 40, deleteButtonColumnRenderer, deleteButtonColumnRenderer));
         final Component dummyDeleteButton = deleteButtonColumnRenderer.getTableCellRendererComponent(this.treeTable, "", false, false, 0, 5);
         this.treeTable.setRowHeight(dummyDeleteButton.getPreferredSize().height);
@@ -198,7 +197,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Create a single column for the tree jtable component with the given attributes.
-     * 
+     *
      * @param columnIndex
      *            the associated column index in the tree jtable model
      * @param minWidth
@@ -227,7 +226,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Check if the check box below the tree jtable component (to set the resulting model as default for new projects) is selected.
-     * 
+     *
      * @return if the check box is selected
      */
     public boolean isSetAsDefault() {
@@ -241,7 +240,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Add a new detail category row, subordinated under the given parent path.
-     * 
+     *
      * @param parentPath
      *            path to the category row the new one should be subordinated to
      */
@@ -260,7 +259,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Remove the detail category row at the given path.
-     * 
+     *
      * @param targetPath
      *            path to the category row that should be removed
      */
@@ -274,7 +273,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Check if the current state of the contained detail category model is valid and can be extracted. If not, a message dialog is displayed.
-     * 
+     *
      * @return if the detail category model is valid
      * @see #toModel()
      * @see #toModelWithMapping()
@@ -289,7 +288,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
     /**
      * Extract the current detail category model.
-     * 
+     *
      * @return the detail category model as it is currently displayed
      */
     public MutableDetailCategoryModel toModel() {
@@ -299,7 +298,7 @@ public final class DetailCategoryTreeTable extends JPanel {
     /**
      * Extract the current detail category model, including a mapping from old to new detail categories for all old detail category rows, that still
      * exist.
-     * 
+     *
      * @return the detail category model as it is currently displayed and the mapping which old categories should be replaced by which new ones
      */
     public SimpleEntry<MutableDetailCategoryModel, Map<DetailCategory, DetailCategory>> toModelWithMapping() {
@@ -327,7 +326,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
         /**
          * Main constructor.
-         * 
+         *
          * @param wrappedEditor
          *            the default cell editor of the hierarchical column
          */
@@ -376,7 +375,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
         /**
          * Check if the given category code is already in use, in order to avoid using the same code for multiple detail categories.
-         * 
+         *
          * @param code
          *            inserted code value to check
          * @return if the code can be applied to the currently edited row without invalidating the model
@@ -520,7 +519,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
         /**
          * Main constructor.
-         * 
+         *
          * @param referenceEditor
          *            the default jtable cell editor to determine when editing should be started
          */
@@ -543,7 +542,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
         /**
          * Validate the given combination of key code and active modifiers and apply the resulting key stroke to the currently edited row if valid.
-         * 
+         *
          * @param keyCode
          *            pressed key code value
          * @param modifiers
@@ -562,8 +561,8 @@ public final class DetailCategoryTreeTable extends JPanel {
         }
 
         @Override
-        public JLabel getTableCellRendererComponent(final JTable table, final Object keyStroke, final boolean isSelected,
-                final boolean hasFocus, final int row, final int column) {
+        public JLabel getTableCellRendererComponent(final JTable table, final Object keyStroke, final boolean isSelected, final boolean hasFocus,
+                final int row, final int column) {
             if (isSelected) {
                 this.renderLabel.setBackground(table.getSelectionBackground());
                 this.renderLabel.setForeground(table.getSelectionForeground());
@@ -600,7 +599,7 @@ public final class DetailCategoryTreeTable extends JPanel {
 
         /**
          * Create a textual representation of the given key stroke to be displayed.
-         * 
+         *
          * @param target
          *            key stroke to display
          * @return key stroke as string
@@ -623,8 +622,7 @@ public final class DetailCategoryTreeTable extends JPanel {
     }
 
     /** Custom table cell renderer and editor, displaying an icon button and executing the associated action when pressed. */
-    private static class IconButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener,
-            MouseListener {
+    private static class IconButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener {
 
         /** The table component this renderer/editor belongs to. */
         final JTable jtable;

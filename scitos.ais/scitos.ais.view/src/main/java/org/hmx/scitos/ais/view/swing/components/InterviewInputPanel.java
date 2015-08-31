@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public final class InterviewInputPanel extends JPanel implements IUndoManagedVie
 
     /**
      * Main constructor.
-     * 
+     *
      * @param parentView
      *            the interview displaying (tab) view this panel belongs to
      */
@@ -99,7 +99,7 @@ public final class InterviewInputPanel extends JPanel implements IUndoManagedVie
 
         if (!this.parentView.getModel().getText().isEmpty()) {
             final StringBuilder text = new StringBuilder();
-            for (TextToken existingParagraph : this.parentView.getModel().getText()) {
+            for (final TextToken existingParagraph : this.parentView.getModel().getText()) {
                 TextToken currentToken = existingParagraph;
                 do {
                     text.append(currentToken.getText());

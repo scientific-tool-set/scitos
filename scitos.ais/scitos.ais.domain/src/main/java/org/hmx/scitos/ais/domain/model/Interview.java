@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
 
     /**
      * Getter for the actual interview firstTextToken, including the assigned details (i.e. applied scoring).
-     * 
+     *
      * @return the (scored) interview firstTextToken
      */
     public List<TextToken> getText() {
@@ -119,7 +119,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
 
     /**
      * Preserve the current instance, but replace the contained state and values by the ones in the given other interview instance.
-     * 
+     *
      * @param replacingState
      *            other interview instance to replace this' state with
      * @return self reference
@@ -173,7 +173,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
 
     /**
      * Check the equality of the given paragraphs, represented by their respective first tokens.
-     * 
+     *
      * @param oneParagraphStart
      *            the paragraph to check against
      * @param otherParagraphStart

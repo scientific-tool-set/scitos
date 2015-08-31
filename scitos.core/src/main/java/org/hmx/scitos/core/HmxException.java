@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ public class HmxException extends Exception {
 
     /**
      * Check if the contained error message is {@link Message#ERROR_UNKNOWN}.
-     * 
+     *
      * @return check result
      */
     public boolean isUnknown() {

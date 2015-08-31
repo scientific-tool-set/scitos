@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 package org.hmx.scitos.domain.util;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Collection of simple comparator functions.
@@ -46,8 +47,7 @@ public final class ComparisonUtil {
     }
 
     /**
-     * Check if either both objects are <code>null</code> or <code>empty</code>. Otherwise check if one {@link Collection#equals(Object) equals} the
-     * other.
+     * Check if either both objects are <code>null</code> or <code>empty</code>. Otherwise check if one {@link List#equals(Object) equals} the other.
      *
      * @param targetOne
      *            one collection to check for equality
@@ -55,7 +55,7 @@ public final class ComparisonUtil {
      *            other collection to check for equality
      * @return if both are <code>null</code>/<code>empty</code> or equal to each other
      */
-    public static boolean isNullOrEmptyAwareEqual(final Collection<?> targetOne, final Collection<?> targetTwo) {
+    public static boolean isNullOrEmptyAwareEqual(final List<?> targetOne, final List<?> targetTwo) {
         final boolean checkResult;
         if (targetOne == null || targetOne.isEmpty()) {
             checkResult = targetTwo == null || targetTwo.isEmpty();
@@ -70,9 +70,9 @@ public final class ComparisonUtil {
      * than, equal to, or greater than the second object.
      *
      * <p>
-     * If both objects are null, they are deemed equal (returns zero). Is one of the objects <code>null</code>, the
-     * {@link Comparable#compareTo(Object) compareTo(Object)} method of the non-null object is invoked with a null parameter - while ensuring that
-     * <code>sgn(x.compareTo(y)) == -sgn(y.compareTo(x))</code> for all <code>x</code> and <code>y</code>.
+     * If both objects are null, they are deemed equal (returns zero). If only the first object is null, <code>-1</code> is returned. If only the
+     * second object is null, <code>1</code> is returned. This ensures that <code>sgn(x.compareTo(y)) == -sgn(y.compareTo(x))</code> for all
+     * <code>x</code> and <code>y</code>, as defined by {@link Comparable#compareTo(Object)}.
      * </p>
      *
      * @param targetOne
@@ -85,14 +85,12 @@ public final class ComparisonUtil {
      */
     public static <T extends Comparable<T>> int compareNullAware(final T targetOne, final T targetTwo) {
         final int result;
-        if (targetOne == null) {
-            if (targetTwo == null) {
-                // both null = equals
-                result = 0;
-            } else {
-                // ensure sgn(x.compareTo(y)) == -sgn(y.compareTo(x)) for all x and y
-                result = -1 * targetTwo.compareTo(null);
-            }
+        if (targetOne == targetTwo) {
+            result = 0;
+        } else if (targetOne == null) {
+            result = -1;
+        } else if (targetTwo == null) {
+            result = 1;
         } else {
             result = targetOne.compareTo(targetTwo);
         }
@@ -129,9 +127,9 @@ public final class ComparisonUtil {
     }
 
     /**
-     * Determine the index position of the given object instance in the given collection. Thereby avoiding the use of {@link Object#equals(Object)
-     * equals(Object)} and {@link Object#hashCode() hashCode()} in the {@link java.util.List#indexOf(Object) indexOf(Object)} implementation of the
-     * collection/list itself.
+     * Determine the index position of the first occurrence of the given object instance in the given collection. Thereby avoiding the use of
+     * {@link Object#equals(Object) equals(Object)} and {@link Object#hashCode() hashCode()} in the {@link java.util.List#indexOf(Object)
+     * indexOf(Object)} implementation of the collection/list itself.
      *
      * <p>
      * This check is supposed to be faster and can be used with objects, that are missing proper implementations of those methods. Additionally,

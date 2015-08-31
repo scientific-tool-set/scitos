@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ public interface IOptionSetting {
 
     /**
      * Getter for the value of this specific setting.
-     * 
+     *
      * @return option entry for the key; returns <code>0</code> if no entry was found and no default defined
      */
     int getValueAsInteger();

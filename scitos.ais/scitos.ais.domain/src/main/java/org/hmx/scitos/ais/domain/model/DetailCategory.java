@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ public final class DetailCategory implements Serializable {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param parent
      *            the detail category this is sub category of; or <code>null</code> if it is a top level category itself
      * @param code
@@ -74,7 +74,7 @@ public final class DetailCategory implements Serializable {
 
     /**
      * Getter for the detail category this is sub category of (can be <code>null</code>).
-     * 
+     *
      * @return the parent
      */
     public DetailCategory getParent() {
@@ -83,7 +83,7 @@ public final class DetailCategory implements Serializable {
 
     /**
      * Getter for the short label displayed inside an interview scoring.
-     * 
+     *
      * @return the details code (e.g. E2, I4, ...)
      */
     public String getCode() {
@@ -92,7 +92,7 @@ public final class DetailCategory implements Serializable {
 
     /**
      * Getter for the actual name or short description of what this detail category represents.
-     * 
+     *
      * @return the name or description (e.g. temporal statement, local statement, ...)
      */
     public String getName() {
@@ -102,7 +102,7 @@ public final class DetailCategory implements Serializable {
     /**
      * Getter for the flag indicating if this category is selectable directly in an interview scoring. Otherwise it is only a placeholder for its
      * subordinated detail categories.
-     * 
+     *
      * @return if this detail category can be assigned in an interview scoring
      */
     public boolean isSelectable() {
@@ -111,7 +111,7 @@ public final class DetailCategory implements Serializable {
 
     /**
      * Getter for the color used to highlight tokens with this category assigned.
-     * 
+     *
      * @return the highlighting color for tokens with this category.
      */
     public Color getColor() {
@@ -120,7 +120,7 @@ public final class DetailCategory implements Serializable {
 
     /**
      * Getter for the keyboard shortcut, to assign this detail category to all selected tokens in a scored interview.
-     * 
+     *
      * @return the associated keyboard short cut
      */
     public KeyStroke getShortCut() {

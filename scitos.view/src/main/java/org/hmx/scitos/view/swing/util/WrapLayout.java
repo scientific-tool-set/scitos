@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * FlowLayout subclass that fully supports wrapping of components.
- * 
+ *
  * @author Rob Camick (<a href="https://tips4java.wordpress.com/2008/11/06/wrap-layout/">Source</a>)
  */
 public class WrapLayout extends FlowLayout {
@@ -45,7 +45,7 @@ public class WrapLayout extends FlowLayout {
     /**
      * Constructs a new <code>WrapLayout</code> with the specified alignment and a default 5-unit horizontal and vertical gap. The value of the
      * alignment argument must be one of {@link FlowLayout#CENTER}, {@link FlowLayout#LEADING}, or {@link FlowLayout#TRAILING}.
-     * 
+     *
      * @param align
      *            the alignment value
      */
@@ -56,7 +56,7 @@ public class WrapLayout extends FlowLayout {
     /**
      * Creates a new <code>WrapLayout</code> with the indicated alignment and the indicated horizontal and vertical gaps. The value of the alignment
      * argument must be one of {@link FlowLayout#CENTER}, {@link FlowLayout#LEADING}, or {@link FlowLayout#TRAILING}.
-     * 
+     *
      * @param align
      *            the alignment value
      * @param hgap
@@ -70,7 +70,7 @@ public class WrapLayout extends FlowLayout {
 
     /**
      * Returns the preferred dimensions for this layout given the <i>visible</i> components in the specified target container.
-     * 
+     *
      * @param target
      *            the component which needs to be laid out
      * @return the preferred dimensions to lay out the subcomponents of the specified container
@@ -82,7 +82,7 @@ public class WrapLayout extends FlowLayout {
 
     /**
      * Returns the minimum dimensions needed to layout the <i>visible</i> components contained in the specified target container.
-     * 
+     *
      * @param target
      *            the component which needs to be laid out
      * @return the minimum dimensions to lay out the subcomponents of the specified container
@@ -118,8 +118,8 @@ public class WrapLayout extends FlowLayout {
             if (targetWidth == 0) {
                 targetWidth = Integer.MAX_VALUE;
             }
-            final int hgap = getHgap();
-            final int vgap = getVgap();
+            final int hgap = this.getHgap();
+            final int vgap = this.getVgap();
             final Insets insets = target.getInsets();
             final int horizontalInsetsAndGap = insets.left + insets.right + (hgap * 2);
             final int maxWidth = targetWidth - horizontalInsetsAndGap;
@@ -166,20 +166,20 @@ public class WrapLayout extends FlowLayout {
 
     /**
      * A new row has been completed. Use the dimensions of this row to update the preferred size for the container.
-     * 
+     *
      * @param dim
      *            update the width and height when appropriate
-     * 
+     *
      * @param rowWidth
      *            the width of the row to add
-     * 
+     *
      * @param rowHeight
      *            the height of the row to add
      */
     private void addRow(final Dimension dim, final int rowWidth, final int rowHeight) {
         dim.width = Math.max(dim.width, rowWidth);
         if (dim.height > 0) {
-            dim.height += getVgap();
+            dim.height += this.getVgap();
         }
         dim.height += rowHeight;
     }

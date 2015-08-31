@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -147,7 +147,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
 
     /**
      * Getter for the currently displayed interview's model element.
-     * 
+     *
      * @return displayed model element
      */
     protected final Interview getModel() {
@@ -194,7 +194,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
     /**
      * Create a single text token component. Sub classes should override this method in order to enable editing the interview (i.e. assigning detail
      * categories to tokens).
-     * 
+     *
      * @param token
      *            single text token to represent in an ui component
      * @return ui component for the given token
@@ -222,7 +222,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
     /**
      * Collect the text token ui components, that are currently in selected state. In order to expect anything else but an empty list from this
      * method, sub classes need to allow the setting of the text token ui components' selected state.
-     * 
+     *
      * @return selected text token ui components
      */
     final List<TextTokenComponent> getSelection() {
@@ -239,7 +239,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
 
     /**
      * Collect the text tokens whose ui components are currently in selected state.
-     * 
+     *
      * @return selected text token components
      * @see #getSelection()
      */

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -20,11 +20,11 @@
 package org.hmx.scitos.ais.domain.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.domain.util.ComparisonUtil;
@@ -45,7 +45,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Add the given detail category to this detail category model.
-     * 
+     *
      * @param category
      *            detail category to add
      * @return self reference
@@ -57,13 +57,13 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Add the given detail categories to this detail category model.
-     * 
+     *
      * @param categories
      *            detail categories to add
      * @return self reference
      */
-    public MutableDetailCategoryModel addAll(final Collection<DetailCategory> categories) {
-        for (DetailCategory singleCategory : categories) {
+    public MutableDetailCategoryModel addAll(final List<DetailCategory> categories) {
+        for (final DetailCategory singleCategory : categories) {
             this.add(singleCategory);
         }
         return this;
@@ -71,12 +71,12 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Replace all current detail categories with the given ones.
-     * 
+     *
      * @param categories
      *            detail categories to set
      * @return self reference
      */
-    public MutableDetailCategoryModel reset(final Collection<DetailCategory> categories) {
+    public MutableDetailCategoryModel reset(final List<DetailCategory> categories) {
         this.categoryByCode.clear();
         this.addAll(categories);
         return this;
@@ -84,7 +84,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Getter for the list of categories.
-     * 
+     *
      * @return the categories in this model
      */
     @Override
@@ -105,7 +105,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Getter for the detail categories, that have a <code>null</code> parent category.
-     * 
+     *
      * @return the root categories without any super ordinated category
      */
     public List<DetailCategory> getRootCategories() {
@@ -114,7 +114,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Getter for the detail categories, that are children of the given detail category.
-     * 
+     *
      * @param parent
      *            detail category to collect the children categories for (can be <code>null</code> to get the list of root categories)
      * @return detail category that have the given one as their parent
@@ -131,12 +131,37 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /**
      * Getter for a single detail category, that is represented by the given unique code.
-     * 
+     *
      * @param detailCode
      *            code to get the associated detail category for
      * @return the detail category represented by the given unique code
      */
     public DetailCategory getDetailByCode(final String detailCode) {
         return this.categoryByCode.get(detailCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return 29 + 13 * this.categoryByCode.size();
+    }
+
+    @Override
+    public boolean equals(final Object otherObject) {
+        if (this == otherObject) {
+            return true;
+        }
+        if (!(otherObject instanceof MutableDetailCategoryModel)) {
+            return false;
+        }
+        final MutableDetailCategoryModel otherModel = (MutableDetailCategoryModel) otherObject;
+        if (this.categoryByCode.size() != otherModel.categoryByCode.size()) {
+            return false;
+        }
+        for (final Entry<String, DetailCategory> categoryEntry : this.categoryByCode.entrySet()) {
+            if (!categoryEntry.getValue().equals(otherModel.categoryByCode.get(categoryEntry.getKey()))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

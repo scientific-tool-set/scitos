@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     /**
      * Main constructor.
-     * 
+     *
      * @param model
      *            managed (top level) model object
      */
@@ -92,13 +92,13 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     public synchronized void setInterviewText(final Interview interview, final String text) {
         final List<TextToken> paragraphs = new LinkedList<TextToken>();
         // preserve new lines in separate paragraphs
-        for (String singleParagraph : text.split(REGEX_PARAGRAPH_SEPARATOR)) {
+        for (final String singleParagraph : text.split(ModelHandlerImpl.REGEX_PARAGRAPH_SEPARATOR)) {
             final String cleanedParagraph = singleParagraph.trim();
             if (cleanedParagraph.isEmpty()) {
                 continue;
             }
             // tokenize
-            final String[] texts = cleanedParagraph.split(REGEX_TOKEN_SEPARATOR);
+            final String[] texts = cleanedParagraph.split(ModelHandlerImpl.REGEX_TOKEN_SEPARATOR);
             final TextToken firstToken = new TextToken(texts[0]).setFirstTokenOfDetail(true);
             TextToken previousToken = firstToken;
             for (final String singleTokenText : Arrays.asList(texts).subList(1, texts.length)) {
@@ -155,8 +155,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     }
 
     @Override
-    public synchronized void replaceCategoryModel(final IDetailCategoryProvider newModel,
-            final Map<DetailCategory, DetailCategory> mappedOldToNew) {
+    public synchronized void replaceCategoryModel(final IDetailCategoryProvider newModel, final Map<DetailCategory, DetailCategory> mappedOldToNew) {
         this.getModel().setCategories(newModel.provide());
         for (final Interview singleInterview : this.getModel().getInterviews()) {
             for (final TextToken paragraphStart : singleInterview.getText()) {
@@ -179,7 +178,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     /**
      * Assign the specified detail category to the given token range. The given tokens are assumed to be in the correct, uninterrupted order as they
      * are appearing in a single paragraph of an interview.
-     * 
+     *
      * @param tokens
      *            the range of tokens to assign the specified detail category to, thereby replacing any already assigned detail category
      * @param category
@@ -230,7 +229,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * Assign the specified detail category to the given token range. The given tokens are assumed to be in the correct order as they are appearing in
      * a single paragraph of an interview. But at least one other token between the first and last token of the given range is not part of the given
      * tokens – i.e. the token range is interrupted by other tokens that should maintain their currently assigned detail categories.
-     * 
+     *
      * @param tokens
      *            the tokens to assign the specified detail category to, thereby replacing any already assigned detail category
      * @param category
@@ -299,7 +298,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     /**
      * Resolve any detail category assignments from the odd numbered token list parts (i.e. first, third, fifth, ...) in order to assign another (new)
      * detail category to same
-     * 
+     *
      * @param parts
      *            the text token range parts alternating selected (i.e. going to be changed) and unselected (i.e. should maintain their current
      *            assigned detail categories)
@@ -316,10 +315,12 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                     this.moveCategorySectionStartToTheRight(leadingSelection.get(leadingSelection.size() - 1).getFollowingToken(),
                             conflict.getKey(), conflict.getValue().get());
                 } else if (leadPartIndex == 0) {
-                    // less sections of this category are being opened than closed in the selected tokens: move section ends to the left (only apply
-                    // for first selection part)
-                    this.moveCategorySectionEndToTheLeft(leadingSelection.get(0).getPreviousToken(), conflict.getKey(), conflict.getValue()
-                            .get() * -1);
+                    /*
+                     * less sections of this category are being opened than closed in the selected tokens: move section ends to the left (only apply
+                     * for first selection part)
+                     */
+                    this.moveCategorySectionEndToTheLeft(leadingSelection.get(0).getPreviousToken(), conflict.getKey(), -1
+                            * conflict.getValue().get());
                 }
             }
             // resolve conflicts in last selected section
@@ -327,8 +328,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
             for (final Entry<DetailCategory, AtomicInteger> conflict : this.collectIntersectedCategories(trailingSelection).entrySet()) {
                 if (conflict.getValue().get() < 0) {
                     // less sections of this category are being opened than closed in the selected tokens: move section ends to the left
-                    this.moveCategorySectionEndToTheLeft(trailingSelection.get(0).getPreviousToken(), conflict.getKey(), conflict.getValue()
-                            .get() * -1);
+                    this.moveCategorySectionEndToTheLeft(trailingSelection.get(0).getPreviousToken(), conflict.getKey(), -1
+                            * conflict.getValue().get());
                 } else if (leadPartIndex + 1 == maxEnclosedPartIndex) {
                     // more sections of this category are being opened than closed in the selected tokens (only apply for last selection part)
                     this.moveCategorySectionStartToTheRight(trailingSelection.get(trailingSelection.size() - 1).getFollowingToken(),
@@ -341,7 +342,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     /**
      * Assemble a list of consecutive tokens from the given list of selected one, producing a result list of alternating selected and enclosed,
      * unselected tokens. The result is always an odd number of parts (one, three, five, ...).
-     * 
+     *
      * @param selectedTokens
      *            the tokens to be deemed as selected, and to determine any enclosed tokens from
      * @return list of consecutive tokens with the the selected ones in every odd part (first, third, fifth, ...) and the enclosed tokens in every
@@ -369,7 +370,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     /**
      * Check if the given two selection parts (each with 1..n tokens) with enclosed unselected tokens (1..n tokens) is valid to be part of a category
      * assignment. The given tokens are assumed to be in the correct order (leadingSelection, enclosedUnselectedSection, trailingSection).
-     * 
+     *
      * @param leadingSelection
      *            the selected tokens – supposedly receiving a new detail category assignment – in front of the enclosed tokens
      * @param enclosedUnselectedSection
@@ -426,7 +427,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * Collect the intersected detail category assignments, that are not fully contained in the given token range. Each category contained in the
      * resulting map either starts in the given range and ends outside of (i.e. after) the given range (+1 for each opened detail without a close), or
      * starts outside of (i.e. before) the given range and ends in the given range (-1 for each closed detail without a start).
-     * 
+     *
      * @param tokenRange
      *            range of tokens to check for not-self-contained detail categories
      * @return not-self-contained detail categories: <code>+1</code> for each opened detail without a close, and <code>-1</code> for each closed
@@ -463,7 +464,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * Collect the intersected detail category assignments, that are not fully contained in the given token range. Each category contained in the
      * resulting map either starts in the given range and ends outside of (i.e. after) the given range (+1 for each opened detail without a close), or
      * starts outside of (i.e. before) the given range and ends in the given range (-1 for each closed detail without a start).
-     * 
+     *
      * @param tokenRange
      *            range of tokens to check for not-self-contained detail categories
      * @return not-self-contained detail category that has neither start nor end in the given range
@@ -501,7 +502,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     /**
      * Move the start of a detail category section (of multiple tokens) to the right, in order to remove the leading token(s) from the section, while
      * maintaining the overall model's validity.
-     * 
+     *
      * @param firstPossibleTarget
      *            token directly behind the section part being removed
      * @param sectionCategory
@@ -530,7 +531,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     /**
      * Move the end of a detail category section (of multiple tokens) to the left, in order to remove the trailing token(s) from the section, while
      * maintaining the overall model's validity.
-     * 
+     *
      * @param firstPossibleTarget
      *            token directly in front of the section part being removed
      * @param sectionCategory
@@ -573,15 +574,14 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     @Override
     public void renameParticipant(final String oldParticipantId, final String newParticipantId) {
         final Map<String, List<Interview>> groupedInterviews = this.getModel().getSubModelObjects();
-        this.setInterviewsParticipantIdAndIndex(groupedInterviews.get(newParticipantId), groupedInterviews.get(oldParticipantId),
-                newParticipantId);
+        this.setInterviewsParticipantIdAndIndex(groupedInterviews.get(newParticipantId), groupedInterviews.get(oldParticipantId), newParticipantId);
         this.notifyListeners(this.getModel(), false);
     }
 
     /**
      * Assign the <code>interviewsToAdd</code> to the given participant id, while ensuring that the <code>index</code> attribute of the added
      * interviews is consistent with already assigned interviews.
-     * 
+     *
      * @param previousInterviews
      *            the interviews already assigned to the given participant id
      * @param interviewsToAdd
@@ -623,6 +623,12 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         }
         interview.setIndex(newIndex);
         this.notifyListeners(this.getModel(), false);
+    }
+
+    @Override
+    public void reset(final Interview interview, final Interview resetState) {
+        interview.reset(resetState);
+        this.notifyListeners(interview, false);
     }
 
     @Override
@@ -670,8 +676,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     @Override
     public Map<Interview, Map<List<DetailCategory>, AtomicLong>> extractDetailPattern(final List<Interview> interviews, final int minLength,
             final int maxLength) {
-        final Map<Interview, Map<List<DetailCategory>, AtomicLong>> result =
-                new LinkedHashMap<Interview, Map<List<DetailCategory>, AtomicLong>>();
+        final Map<Interview, Map<List<DetailCategory>, AtomicLong>> result = new LinkedHashMap<Interview, Map<List<DetailCategory>, AtomicLong>>();
         for (final Interview singleInterview : interviews) {
             final Map<List<DetailCategory>, AtomicLong> patternOccurences = new HashMap<List<DetailCategory>, AtomicLong>();
             final List<List<DetailCategory>> currentPattern = new LinkedList<List<DetailCategory>>();
@@ -742,7 +747,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     /**
      * Check if the given interviews are equal.
-     * 
+     *
      * @param oneInterview
      *            the interview to check against
      * @param otherInterview
@@ -774,7 +779,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     /**
      * Check if the given paragraphs are equal.
-     * 
+     *
      * @param oneParagraphStart
      *            the paragraph (represented by its first token) to check against
      * @param otherParagraphStart
@@ -812,7 +817,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     /**
      * Append a textual representation of the given token's detail category assignment to the specified string builder.
-     * 
+     *
      * @param builder
      *            the string builder to append the category assignment text to
      * @param token

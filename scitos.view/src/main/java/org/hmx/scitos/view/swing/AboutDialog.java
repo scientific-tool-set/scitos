@@ -24,7 +24,7 @@ public final class AboutDialog extends JDialog {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param parent
      *            parent frame
      */

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param text
      *            the text this token is comprised of (usually a single word)
      */
@@ -53,7 +53,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Getter for the preceding token.
-     * 
+     *
      * @return the previous token (is <code>null</code> if this is the first token in the paragraph)
      */
     public TextToken getPreviousToken() {
@@ -74,7 +74,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Getter for the next token.
-     * 
+     *
      * @return the following token (is <code>null</code> if this is the last token in the paragraph)
      */
     public TextToken getFollowingToken() {
@@ -95,7 +95,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Getter for the text this token is comprised of (usually a single word).
-     * 
+     *
      * @return the token's text
      */
     public String getText() {
@@ -104,7 +104,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Getter for the assigned detail category.
-     * 
+     *
      * @return the assigned detail (can be <code>null</code>)
      */
     public DetailCategory getDetail() {
@@ -125,7 +125,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Getter for the flag indicating if this token is the first of the section marked with the assigned detail category.
-     * 
+     *
      * @return if this is the first element in the token group with the assigned detail
      * @see #getDetail()
      */
@@ -147,7 +147,7 @@ public final class TextToken implements Cloneable, Serializable {
 
     /**
      * Getter for the flag indicating if this token is the last of the section marked with the assigned detail category.
-     * 
+     *
      * @return if this is the last element in the token section with the assigned detail
      * @see #getDetail()
      */
@@ -196,8 +196,7 @@ public final class TextToken implements Cloneable, Serializable {
         if (!this.getText().equals(otherToken.getText()) || !ComparisonUtil.isNullAwareEqual(this.getDetail(), otherToken.getDetail())) {
             return false;
         }
-        return this.isFirstTokenOfDetail() == otherToken.isFirstTokenOfDetail()
-                && this.isLastTokenOfDetail() == otherToken.isLastTokenOfDetail();
+        return this.isFirstTokenOfDetail() == otherToken.isFirstTokenOfDetail() && this.isLastTokenOfDetail() == otherToken.isLastTokenOfDetail();
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ public final class OptionPanel extends AbstractOptionPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param options
      *            the actual AIS module's option handler, being represented by this panel
      */

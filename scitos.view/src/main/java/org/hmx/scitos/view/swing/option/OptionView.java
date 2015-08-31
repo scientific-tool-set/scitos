@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ public final class OptionView {
         this.dialog.setModal(true);
         this.optionNodes = new LinkedList<DefaultMutableTreeNode>();
         DefaultMutableTreeNode firstNode = null;
-        for (IOptionPanelService singleService : optionPanelProvider.getServices()) {
+        for (final IOptionPanelService singleService : optionPanelProvider.getServices()) {
             // adding node to the category tree
             final DefaultMutableTreeNode node = new DefaultMutableTreeNode();
             final AbstractOptionPanel panel = singleService.createOptionPanel(parent, this);
@@ -124,7 +124,7 @@ public final class OptionView {
 
     /**
      * Getter for the actual dialog window.
-     * 
+     *
      * @return the option selection containing frame
      */
     public JDialog getDialog() {
@@ -133,7 +133,7 @@ public final class OptionView {
 
     /**
      * Store the chosen preferences in the options file(s).
-     * 
+     *
      * @return if all chosen settings are valid and were successfully saved
      */
     boolean saveOptions() {

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ import org.hmx.scitos.view.swing.util.SplitFrame;
 
 /**
  * Abstract panel in the application's preferences dialog, that handles a number of simple settings, represented in an Enum.
- * 
+ *
  * @param <S>
  *            the managed enumerated settings
  */
@@ -42,7 +42,7 @@ public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOption
 
     /**
      * Main constructor.
-     * 
+     *
      * @param layout
      *            layout manager to apply
      * @param title

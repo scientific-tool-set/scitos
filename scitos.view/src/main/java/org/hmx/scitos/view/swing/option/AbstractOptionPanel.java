@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ public abstract class AbstractOptionPanel extends JPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param layout
      *            layout manager to apply
      * @param title
@@ -66,7 +66,7 @@ public abstract class AbstractOptionPanel extends JPanel {
 
     /**
      * Check if the chosen settings are fit to be submitted. Display a fitting message dialog, if not.
-     * 
+     *
      * @return if the chosen settings are valid
      */
     public abstract boolean areChosenSettingsValid();

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -72,8 +72,7 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
     }
 
     @Override
-    public <M extends IModel<M>> void registerModelParseService(final FileType type, final Class<M> modelClass,
-            final IModelParseService<M> service) {
+    public <M extends IModel<M>> void registerModelParseService(final FileType type, final Class<M> modelClass, final IModelParseService<M> service) {
         synchronized (this.modelTypes) {
             synchronized (this.modelParseServices) {
                 this.modelTypes.put(modelClass, type);

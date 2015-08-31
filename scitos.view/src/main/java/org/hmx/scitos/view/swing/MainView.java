@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ public class MainView extends JPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param client
      *            {@link ScitosClient} instance containing this view
      * @param createWelcomeTab
@@ -148,7 +148,7 @@ public class MainView extends JPanel {
 
     /**
      * Initialize the project tree's view attributes and behavior.
-     * 
+     *
      * @param tree
      *            actual tree component to initialize
      */
@@ -170,7 +170,7 @@ public class MainView extends JPanel {
 
             @Override
             public void mousePressed(final MouseEvent event) {
-                mouseReleased(event);
+                this.mouseReleased(event);
             }
 
             @Override
@@ -179,8 +179,7 @@ public class MainView extends JPanel {
                 if (event.isPopupTrigger() && path != null && path.getPathCount() > 1) {
                     final ScitosTreeNode clickedNode = (ScitosTreeNode) path.getLastPathComponent();
                     final JPopupMenu contextMenu =
-                            MainView.this.client.getProjectViewProvider().createContextMenu(clickedNode.getProject(),
-                                    clickedNode.getUserObject());
+                            MainView.this.client.getProjectViewProvider().createContextMenu(clickedNode.getProject(), clickedNode.getUserObject());
                     if (contextMenu != null) {
                         contextMenu.show(tree, event.getX(), event.getY());
                     }
@@ -191,7 +190,7 @@ public class MainView extends JPanel {
 
     /**
      * Initialize the tab area holding the views for the open projects and their model elements.
-     * 
+     *
      * @param tabPane
      *            actual tab pane to initialize
      * @param createWelcomeTab
@@ -216,7 +215,7 @@ public class MainView extends JPanel {
 
     /**
      * Refresh the view state: i.e. the frame title, displayed contents of the current view, availability of general menu bar and tool bar items.
-     * 
+     *
      * @param refreshToolBarItems
      *            if the view specific tool bar items should be replaced as well
      */
@@ -236,7 +235,7 @@ public class MainView extends JPanel {
 
     /**
      * Getter for the currently active (selected) project/group/model tab.
-     * 
+     *
      * @return currently active (selected) project/group/model tab; returns <code>null</code> if none or another kind of tab is active
      */
     public AbstractProjectView<?, ?> getActiveTab() {
@@ -299,7 +298,7 @@ public class MainView extends JPanel {
     /**
      * Determine which view projects, and respective model elements are currently in expanded state in the project tree – in order to be able to
      * restore this state after resetting the project tree's contents.
-     * 
+     *
      * @param expandedProjectNodes
      *            editable list of view projects, to be filled with expanded view projects
      * @param expandedModelGroupNodes
@@ -336,7 +335,7 @@ public class MainView extends JPanel {
 
     /**
      * Expand the nodes in the project tree associated with the given view projects, model groups, and model elements – if (still) existent.
-     * 
+     *
      * @param projects
      *            view projects to be expanded/viewable
      * @param modelGroups
@@ -348,18 +347,18 @@ public class MainView extends JPanel {
     private void expandObjectNodes(final List<IViewProject<?>> projects, final Map<IViewProject<?>, Set<String>> modelGroups,
             final List<IModel<?>> subModels) {
         final List<ScitosTreeNode> nodes = new LinkedList<ScitosTreeNode>();
-        for (IViewProject<?> singleProject : projects) {
+        for (final IViewProject<?> singleProject : projects) {
             nodes.add(this.getProjectNode(singleProject));
         }
-        for (Entry<IViewProject<?>, Set<String>> singleProject : modelGroups.entrySet()) {
-            for (String singleModelGroup : singleProject.getValue()) {
+        for (final Entry<IViewProject<?>, Set<String>> singleProject : modelGroups.entrySet()) {
+            for (final String singleModelGroup : singleProject.getValue()) {
                 nodes.add(this.getModelGroupTreeNode(singleProject.getKey(), singleModelGroup));
             }
         }
-        for (IModel<?> singleModel : subModels) {
+        for (final IModel<?> singleModel : subModels) {
             nodes.add(this.getModelTreeNode(singleModel));
         }
-        for (ScitosTreeNode singleNode : nodes) {
+        for (final ScitosTreeNode singleNode : nodes) {
             if (singleNode != null) {
                 this.projectTree.expandPath(new TreePath(singleNode.getPath()));
             }
@@ -409,7 +408,7 @@ public class MainView extends JPanel {
 
     /**
      * Discard the current selection in the project tree and select the given project's node.
-     * 
+     *
      * @param project
      *            project to select
      */
@@ -419,7 +418,7 @@ public class MainView extends JPanel {
 
     /**
      * Getter for the node in the project tree representing the given view project.
-     * 
+     *
      * @param project
      *            view project to find the associated project tree node for
      * @return associated project tree node
@@ -439,7 +438,7 @@ public class MainView extends JPanel {
 
     /**
      * Discard the current selection in the project tree and select the given project's model group's node.
-     * 
+     *
      * @param project
      *            project containing the targeted model group
      * @param modelGroup
@@ -451,7 +450,7 @@ public class MainView extends JPanel {
 
     /**
      * Getter for the node in the project tree representing the specified model group in the given view project.
-     * 
+     *
      * @param project
      *            view project the specified model group belongs to
      * @param modelGroup
@@ -475,7 +474,7 @@ public class MainView extends JPanel {
 
     /**
      * Discard the current selection in the project tree and select the given model's node.
-     * 
+     *
      * @param model
      *            represented model element to select the tree node for
      */
@@ -485,7 +484,7 @@ public class MainView extends JPanel {
 
     /**
      * Getter for the project tree node representing the given model element.
-     * 
+     *
      * @param model
      *            model element to find the associated project tree node for
      * @return associated project tree node
@@ -505,7 +504,7 @@ public class MainView extends JPanel {
 
     /**
      * Discard any current selection in the project tree, select the given node and ensure that the associated tab view is displayed.
-     * 
+     *
      * @param node
      *            project tree node to select (can be <code>null</code> if the selection should only be cleared)
      */
@@ -546,7 +545,7 @@ public class MainView extends JPanel {
 
     /**
      * Getter for tab view associated with the given project tree node.
-     * 
+     *
      * @param node
      *            project tree node to find the associated tab view for
      * @return associated tab view (is <code>null</code> if no such tab view exists at the moment)
@@ -580,7 +579,7 @@ public class MainView extends JPanel {
 
     /**
      * Create a tab view associated with the given node.
-     * 
+     *
      * @param node
      *            project tree node to create the tab view for
      * @return created tab view
@@ -672,7 +671,7 @@ public class MainView extends JPanel {
      *            project to add
      */
     public void addProject(final IViewProject<?> project) {
-        for (IViewProject<?> singleProject : this.openProjects) {
+        for (final IViewProject<?> singleProject : this.openProjects) {
             if (ComparisonUtil.isNullAwareEqual(singleProject.getSavePath(), project.getSavePath())) {
                 MessageHandler.showMessage(Message.MENUBAR_FILE_OPEN_ALREADY.get(), "", MessageHandler.MessageType.WARN);
                 return;
@@ -683,7 +682,7 @@ public class MainView extends JPanel {
         if (project.getOpenTabElements().isEmpty() || !(project.getModelObject() instanceof IMultiObjectModel<?, ?>)) {
             this.selectProjectTreeNode(project);
         } else {
-            for (Object singleOpenTab : project.getOpenTabElements()) {
+            for (final Object singleOpenTab : project.getOpenTabElements()) {
                 if (singleOpenTab instanceof IMultiObjectModel<?, ?>) {
                     this.selectProjectTreeNode(project);
                 } else if (singleOpenTab instanceof IModel<?>) {
@@ -697,7 +696,7 @@ public class MainView extends JPanel {
 
     /**
      * Getter for the currently active view project – i.e. the view project the currently active tab belongs to.
-     * 
+     *
      * @return current active {@link IViewProject}
      */
     public IViewProject<?> getActiveProject() {
@@ -750,7 +749,7 @@ public class MainView extends JPanel {
 
     /**
      * Ensure any open tab associated with the given project is still valid - closing any invalid tabs and refreshing the labels of the valid ones.
-     * 
+     *
      * @param project
      *            the project in need of validation
      */
@@ -788,7 +787,7 @@ public class MainView extends JPanel {
             return false;
         }
         // close all tabs associated with this project
-        for (AbstractProjectView<?, ?> singleTab : this.getOpenTabsForProject(project)) {
+        for (final AbstractProjectView<?, ?> singleTab : this.getOpenTabsForProject(project)) {
             this.tabStack.remove(singleTab);
         }
         // remove from tree
@@ -800,7 +799,7 @@ public class MainView extends JPanel {
 
     /**
      * Collect all open tab views that belong to the given view project.
-     * 
+     *
      * @param project
      *            view project to find the tab views for
      * @return open tab views belonging to the given project
@@ -824,14 +823,14 @@ public class MainView extends JPanel {
     /**
      * Update the project's internal list of open tabs, that are associated with it, in order to allow it to possibly save it as part of its project
      * file. Thereby allowing the reopening of all previously opened tabs in the next session.
-     * 
+     *
      * @param project
      *            project to update the internal tab element list in
      */
     public void updateOpenTabElementsForProject(final IViewProject<?> project) {
         if (project != null) {
             final List<Object> tabElements = new LinkedList<Object>();
-            for (AbstractProjectView<?, ?> singleTab : this.getOpenTabsForProject(project)) {
+            for (final AbstractProjectView<?, ?> singleTab : this.getOpenTabsForProject(project)) {
                 singleTab.submitChangesToModel();
                 tabElements.add(singleTab.getModel());
             }
@@ -841,7 +840,7 @@ public class MainView extends JPanel {
 
     /**
      * Close all open projects. Ask the user to confirm saving or discarding pending changes.
-     * 
+     *
      * @return all projects successfully closed
      */
     public boolean closeAllProjects() {
@@ -906,7 +905,7 @@ public class MainView extends JPanel {
 
         /**
          * Getter for the view project associated with this node.
-         * 
+         *
          * @return associated view project
          */
         public IViewProject<?> getProject() {

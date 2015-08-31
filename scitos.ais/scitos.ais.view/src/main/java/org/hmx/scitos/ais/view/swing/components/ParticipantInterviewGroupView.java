@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -115,8 +115,7 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         constraints.weightx = 1;
-        final List<Interview> interviews =
-                new ArrayList<Interview>(this.getProject().getModelObject().getSubModelObjects().get(this.getModel()));
+        final List<Interview> interviews = new ArrayList<Interview>(this.getProject().getModelObject().getSubModelObjects().get(this.getModel()));
         final int interviewCount = interviews.size();
         for (int listIndex = 0; listIndex < interviewCount; listIndex++) {
             constraints.gridy = listIndex;
@@ -131,7 +130,7 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
 
     /**
      * Create a panel representing the given interview and offering the option to adjust its index up and/or down.
-     * 
+     *
      * @param interview
      *            the interview to represent in the created panel
      * @param interviewCount
@@ -143,9 +142,9 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
         final JPanel interviewWrapper = new JPanel(new GridBagLayout());
         // interviewPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         if (interviewIndex == this.lastClickedIndex) {
-            interviewWrapper.setBorder(BORDER_CLICKED);
+            interviewWrapper.setBorder(ParticipantInterviewGroupView.BORDER_CLICKED);
         } else {
-            interviewWrapper.setBorder(BORDER_DEFAULT);
+            interviewWrapper.setBorder(ParticipantInterviewGroupView.BORDER_DEFAULT);
         }
         final GridLayout buttonLayout = new GridLayout(2, 1);
         buttonLayout.setVgap(5);
@@ -199,7 +198,7 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
     /**
      * Adjust the given interview's index by one – either up or down, effectively swapping the index with previous or following interview of the same
      * participant.
-     * 
+     *
      * @param interview
      *            targeted interview to move up or down
      * @param swapWithFollowingInterview

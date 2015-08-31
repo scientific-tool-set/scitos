@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ public interface IProvider<O> {
 
     /**
      * Getter for the provided object.
-     * 
+     *
      * @return the provided instance
      */
     O provide();

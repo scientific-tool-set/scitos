@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
     /** The dedicated model handler for the represented model project instance. */
     private final IModelHandler modelHandler;
     /** The flag indicating whether the current state contains no unsaved changes. */
-    private boolean saved = true;
+    boolean saved = true;
     /** The path this project has been loaded from and/or last saved to. It is used as the default path for the next requested save operation. */
     File savePath;
     /** The elements displayed in open tabs when this view project was last loaded/saved. */
@@ -68,7 +68,13 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
         this.client = client;
         this.modelHandler = modelHandler;
         this.setSavePath(savePath);
-        modelHandler.addModelChangeListener(this);
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                modelHandler.addModelChangeListener(AisViewProject.this);
+            }
+        });
     }
 
     @Override
@@ -78,7 +84,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
 
     /**
      * Getter for the model handler, responsible for all actual model changes and manager of any model change events.
-     * 
+     *
      * @return the associated model handler instance
      */
     public IModelHandler getModelHandler() {
@@ -140,7 +146,14 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
             }
             this.client.getMainView().validateTabsForProject(this);
         }
-        this.client.revalidate();
+        this.saved = false;
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                AisViewProject.this.client.revalidate();
+            }
+        });
     }
 
     @Override
@@ -236,12 +249,14 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
      *            if this project should be marked as saved
      */
     public void setSaved(final boolean flag) {
-        this.saved = flag;
-        SwingUtilities.invokeLater(new Thread("Refresh Title") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                AisViewProject.this.client.refreshTitle();
+                if (AisViewProject.this.saved != flag) {
+                    AisViewProject.this.saved = flag;
+                    AisViewProject.this.client.refreshTitle();
+                }
             }
         });
     }

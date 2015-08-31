@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -117,7 +117,7 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
 
     /**
      * Change a participant's id, while preserving its associated interviews in the given view project.
-     * 
+     *
      * @param project
      *            the view project to modify the participant's id in
      * @param element
@@ -131,8 +131,8 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
             currentParticipantId = element.toString();
         }
         final String modifiedParticipantId =
-                MessageHandler.showInputDialog(Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID_DESCRIPTION,
-                        Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID + " - " + project.getLabel(element), currentParticipantId);
+                MessageHandler.showInputDialog(Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID_DESCRIPTION, Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID
+                        + " - " + project.getLabel(element), currentParticipantId);
         if (modifiedParticipantId == null || modifiedParticipantId.trim().isEmpty() || currentParticipantId.equals(modifiedParticipantId)) {
             return;
         }

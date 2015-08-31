@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -235,7 +235,7 @@ public final class SplitFrame extends JDialog {
 
     /**
      * Swap the displayed content panel, if the selected node contains a {@link JPanel} as user object.
-     * 
+     *
      * @param selection
      *            selected node (in its hierarchical path form)
      */
@@ -254,7 +254,7 @@ public final class SplitFrame extends JDialog {
 
     /**
      * Getter for the currently active/displayed panel in the content area.
-     * 
+     *
      * @return active content panel of the last selected tree node with a {@link JPanel} as user object
      */
     public JPanel getActiveContent() {

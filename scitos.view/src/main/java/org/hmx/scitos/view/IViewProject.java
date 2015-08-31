@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -36,21 +36,21 @@ public interface IViewProject<M extends IModel<M>> {
 
     /**
      * Getter for the (short) textual representation of this project.
-     * 
+     *
      * @return the project title
      */
     String getTitle();
 
     /**
      * Getter for the actual model object this view project represents.
-     * 
+     *
      * @return represented model object
      */
     M getModelObject();
 
     /**
      * Create textual representation for the given element in this project.
-     * 
+     *
      * @param element
      *            element in this project to represent as a string
      * @return string representation of the given element
@@ -60,7 +60,7 @@ public interface IViewProject<M extends IModel<M>> {
     /**
      * Check if a tab representing the given element is (still) valid and should be left open - otherwise the associated main view's tab will be
      * closed.
-     * 
+     *
      * @param element
      *            model object to check validity for
      * @return if the given element is (still) a valid part of this project
@@ -76,14 +76,14 @@ public interface IViewProject<M extends IModel<M>> {
 
     /**
      * Getter for the currently open elements of this project (displayed in the {@link MainView}'s tabs).
-     * 
+     *
      * @return open elements
      */
     List<?> getOpenTabElements();
 
     /**
      * Setter for the currently open elements of this project (displayed in the {@link MainView}'s tabs).
-     * 
+     *
      * @param tabElements
      *            open elements
      */

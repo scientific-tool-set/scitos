@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -59,10 +59,12 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
     private final UndoManager<Interview> undoManager;
     /** The MouseListener/MouseMotionListener implementation handling all mouse related selections. */
     private final MouseDragListener dragHandler;
+    /** Flag indicating that an un-do or re-do operation is currently in progress. */
+    private boolean undoInProgress = false;
 
     /**
      * Main constructor.
-     * 
+     *
      * @param parentView
      *            the InterviewView (tab) containing this panel
      */
@@ -99,11 +101,14 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
     @Override
     public void modelChanged(final ModelEvent<?> event) {
-        final Interview model = this.getModel();
-        if (event.getTarget() == model) {
-            this.undoManager.undoableEditHappened(model);
-        } else if (event.getTarget() instanceof AisProject) {
-            this.undoManager.reset(model);
+        // ignore events triggered by own undo/redo method
+        if (!this.undoInProgress) {
+            final Interview model = this.getModel();
+            if (event.getTarget() == model) {
+                this.undoManager.undoableEditHappened(model);
+            } else if (event.getTarget() instanceof AisProject) {
+                this.undoManager.reset(model);
+            }
         }
         super.modelChanged(event);
     }
@@ -130,7 +135,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
     /**
      * Trigger the assignment (i.e. scoring) of the given detail category to all currently selected text tokens.
-     * 
+     *
      * @param category
      *            detail category to assign (can be <code>null</code> to remove any current category assignments)
      */
@@ -140,13 +145,14 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
         } catch (final HmxException expected) {
             MessageHandler.showException(expected);
         }
-        // ensure the scoring panel (still) holds the focus for consecutive keyboard events, that might contain a short cut for assigning a category
+        // ensure the scoring panel (still) holds the focus for consecutive keyboard events, that might contain a short cut for assigning a
+        // category
         this.getViewPortView().requestFocusInWindow();
     }
 
     /**
      * Move/extend the currently selected token range by one step.
-     * 
+     *
      * @param moveLeft
      *            move/extend to the left, otherwise to the right
      * @param replaceCurrentSelection
@@ -199,14 +205,22 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
     @Override
     public void undo() {
-        this.getModel().reset(this.undoManager.undo());
-        this.refresh();
+        this.undoInProgress = true;
+        try {
+            this.parentView.getProject().getModelHandler().reset(this.getModel(), this.undoManager.undo());
+        } finally {
+            this.undoInProgress = false;
+        }
     }
 
     @Override
     public void redo() {
-        this.getModel().reset(this.undoManager.redo());
-        this.refresh();
+        this.undoInProgress = true;
+        try {
+            this.parentView.getProject().getModelHandler().reset(this.getModel(), this.undoManager.redo());
+        } finally {
+            this.undoInProgress = false;
+        }
     }
 
     /** MouseListener/MouseMotionListener implementation handling all mouse related selections. */
@@ -269,7 +283,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
         /**
          * Handle the mouse being dragged to a higher token index (to the right or down).
-         * 
+         *
          * @param currentPositionIndex
          *            new position of the dragged mouse cursor, as the token's index
          */
@@ -290,7 +304,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
         /**
          * Handle the mouse being dragged to a lower token index (to the left or up).
-         * 
+         *
          * @param currentPositionIndex
          *            new position of the dragged mouse cursor, as the token's index
          */
@@ -379,7 +393,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
         /**
          * Set the text tokens in the currently focused paragraph between the given fromIndex (inclusive) and the given toIndex (exclusive).
-         * 
+         *
          * @param fromIndex
          *            low index endpoint of the tokens in the currently focused paragraph to be affected (inclusive)
          * @param toIndex
@@ -390,7 +404,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
          */
         private void setTextTokenRangeSelected(final int fromIndex, final int toIndex, final boolean selected) {
             if (fromIndex < toIndex) {
-                for (Component singleToken : this.textTokenComponents.subList(fromIndex, toIndex)) {
+                for (final Component singleToken : this.textTokenComponents.subList(fromIndex, toIndex)) {
                     ((TextTokenComponent) singleToken).setSelected(selected
                             || ComparisonUtil.containsInstance(this.previousSelection, singleToken));
                 }
@@ -399,7 +413,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
 
         /**
          * Determine the index of text token ui component in the currently focused paragraph, that the given mouse event location refers to.
-         * 
+         *
          * @param event
          *            occurred event to extract the associated text token ui component for
          * @return (can be <code>-1</code> if the event's location does not relate to any token.

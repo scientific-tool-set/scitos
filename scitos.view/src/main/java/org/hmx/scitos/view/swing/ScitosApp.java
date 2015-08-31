@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public final class ScitosApp {
      *            arguments that are currently ignored
      */
     public static void main(final String[] args) {
-        if (IS_MAC) {
+        if (ScitosApp.IS_MAC) {
             // set the application name in screen menu bar
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SciToS");
             // transfer the frame menu bar to screen menu bar
@@ -68,9 +68,9 @@ public final class ScitosApp {
                 MacAppEventAdapter.setPreferencesHandler(null, ScitosApp.class.getDeclaredMethod("showPreferences"));
                 MacAppEventAdapter.setQuitHandler(null, ScitosApp.class.getDeclaredMethod("quit"));
                 MacAppEventAdapter.setDockIconImage(ScitosIcon.APPLICATION.getResourcePath());
-            } catch (SecurityException sec) {
+            } catch (final SecurityException sec) {
                 // ignore reflection error
-            } catch (NoSuchMethodException nsm) {
+            } catch (final NoSuchMethodException nsm) {
                 // ignore reflection error
             }
         }
@@ -92,7 +92,7 @@ public final class ScitosApp {
                     // ignore
                 }
                 try {
-                    loadModulesAndShowClient();
+                    ScitosApp.loadModulesAndShowClient();
                 } catch (final Exception ex) {
                     MessageHandler.showException(ex);
                 }
@@ -102,7 +102,7 @@ public final class ScitosApp {
 
     /**
      * Invoke the dependency injected module loading and initialize the main client afterwards.
-     * 
+     *
      * @throws ClassNotFoundException
      *             invalid file type / module definition
      * @throws InstantiationException
@@ -117,7 +117,7 @@ public final class ScitosApp {
         // add main module
         modules.add(new ScitosModule());
         // add all sub modules
-        for (FileType singleType : FileType.values()) {
+        for (final FileType singleType : FileType.values()) {
             final Class<?> moduleClass = Class.forName(singleType.getModuleClassName());
             final Class<?> moduleInitializerClass = Class.forName(singleType.getModuleInitializerClassName());
             modules.add(moduleClass.newInstance());
@@ -126,7 +126,7 @@ public final class ScitosApp {
         // create dependency injection graph from combined modules
         final ObjectGraph objectGraph = ObjectGraph.create(modules.toArray());
         // invoke initializers
-        for (Class<?> singleInitializer : initializerClasses) {
+        for (final Class<?> singleInitializer : initializerClasses) {
             objectGraph.get(singleInitializer);
         }
         // create actual view client instance
@@ -144,13 +144,13 @@ public final class ScitosApp {
 
     /**
      * Execute open file request either in the already initialized client or storing the given file to be opened after the client's initialization.
-     * 
+     *
      * @param target
      *            file to open
      */
     public static void openFile(final File target) {
-        if (client != null) {
-            client.openFile(target);
+        if (ScitosApp.client != null) {
+            ScitosApp.client.openFile(target);
         } else {
             ScitosClient.addFileToLoadAtStart(target);
         }
@@ -158,24 +158,24 @@ public final class ScitosApp {
 
     /** Display the application's name, version, and license title. */
     public static void showAbout() {
-        if (client != null) {
-            new AboutDialog(client.getFrame()).setVisible(true);
+        if (ScitosApp.client != null) {
+            new AboutDialog(ScitosApp.client.getFrame()).setVisible(true);
         }
     }
 
     /** Display application's preferences dialog. */
     public static void showPreferences() {
-        if (client != null) {
-            OptionView.showPreferenceDialog(client, client.getOptionPanelProvider());
+        if (ScitosApp.client != null) {
+            OptionView.showPreferenceDialog(ScitosApp.client, ScitosApp.client.getOptionPanelProvider());
         }
     }
 
     /**
      * Execute application quit request.
-     * 
+     *
      * @return if the quit request was successfully executed
      */
     public static boolean quit() {
-        return client == null || client.quit();
+        return ScitosApp.client == null || ScitosApp.client.quit();
     }
 }

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ public final class AisModuleInitializer {
 
     /**
      * Main constructor: populates each injected service implementation to its respective registry.
-     * 
+     *
      * @param modelServiceRegistry
      *            registry for services handling conversions between xml and java model
      * @param modelService

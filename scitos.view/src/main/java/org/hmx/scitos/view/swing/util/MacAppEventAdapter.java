@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ public class MacAppEventAdapter implements InvocationHandler {
     /**
      * Pass this method an Object and Method equipped to perform application shutdown logic. The method passed should return a boolean stating whether
      * or not the quit should occur.
-     * 
+     *
      * @param target
      *            instance to invoke the quitHandler method on, for a handleQuit request (can be <code>null</code> if the quitHandler method is
      *            <code>static</code>)
@@ -57,7 +57,7 @@ public class MacAppEventAdapter implements InvocationHandler {
     /**
      * Pass this method an Object and Method equipped to display application info. They will be called when the About menu item is selected from the
      * application menu.
-     * 
+     *
      * @param target
      *            instance to invoke the aboutHandler method on, for a handleAbout request (can be <code>null</code> if the aboutHandler method is
      *            <code>static</code>)
@@ -79,7 +79,7 @@ public class MacAppEventAdapter implements InvocationHandler {
     /**
      * Pass this method an Object and a Method equipped to display application options. They will be called when the Preferences menu item is selected
      * from the application menu
-     * 
+     *
      * @param target
      *            instance to invoke the prefsHandler method on, for a handlePreferences request (can be <code>null</code> if the prefsHandler method
      *            is <code>static</code>)
@@ -90,8 +90,7 @@ public class MacAppEventAdapter implements InvocationHandler {
         MacAppEventAdapter.setHandler(new MacAppEventAdapter("handlePreferences", target, prefsHandler));
         try {
             final Method enablePrefsMethod =
-                    MacAppEventAdapter.macOSXApplication.getClass()
-                            .getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });
+                    MacAppEventAdapter.macOSXApplication.getClass().getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });
             enablePrefsMethod.invoke(MacAppEventAdapter.macOSXApplication, new Object[] { Boolean.valueOf(true) });
         } catch (final Exception ex) {
             System.err.println("MacAppEventAdapter could not access the About Menu");
@@ -102,7 +101,7 @@ public class MacAppEventAdapter implements InvocationHandler {
     /**
      * Pass this method an Object and a Method equipped to handle document events from the Finder. Documents are registered with the Finder via the
      * CFBundleDocumentTypes dictionary in the application bundle's Info.plist.
-     * 
+     *
      * @param target
      *            instance to invoke the fileHandler method on, for a handleOpenFile request (can be <code>null</code> if the fileHandler method is
      *            <code>static</code>)
@@ -131,7 +130,7 @@ public class MacAppEventAdapter implements InvocationHandler {
 
     /**
      * Pass this method the classpath URL for the image to use the application's icon in the Dock.
-     * 
+     *
      * @param imageLocationInClassPath
      *            path to the targeted image on the classpath
      */
@@ -153,7 +152,7 @@ public class MacAppEventAdapter implements InvocationHandler {
 
     /**
      * Create a Proxy object from the passed MacAppEventAdapter and add it as an ApplicationListener.
-     * 
+     *
      * @param adapter
      *            instance to register
      */
@@ -182,7 +181,7 @@ public class MacAppEventAdapter implements InvocationHandler {
     /**
      * Each MacAppEventAdapter has the name of the EAWT method it intends to listen for (handleAbout, for example), the Object that will ultimately
      * perform the task, and the Method to be called on that Object Main constructor.
-     * 
+     *
      * @param proxySignature
      *            name of the handled application event method (i.e. handleXXX)
      * @param target
@@ -199,7 +198,7 @@ public class MacAppEventAdapter implements InvocationHandler {
 
     /**
      * Override this method to perform any operations on the event that comes with the various callbacks. See setFileHandler above for an example.
-     * 
+     *
      * @param appleEvent
      *            application event to handle
      * @return if the declared handler method returned <code>null</code> (incl. it being <code>void</code>) or not empty/<code>false</code>

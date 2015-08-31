@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ public final class PatternAnalysisPanel extends JPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param client
      *            active client instance, to request a save destination for the spreadsheet export from
      * @param project

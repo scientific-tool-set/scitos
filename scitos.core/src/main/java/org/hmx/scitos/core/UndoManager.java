@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -59,14 +59,14 @@ public final class UndoManager<M extends IModel<M>> {
 
     /**
      * Discard all undo-/redo-able model states and start from the (new) given initial state.
-     * 
+     *
      * @param initialState
      *            (new) initial state of the managed model object
      */
     public void reset(final M initialState) {
         this.availableRedos.clear();
         this.availableUndos.clear();
-        this.undoableEditHappened(initialState);
+        this.availableUndos.add(initialState.clone());
     }
 
     /**
@@ -77,7 +77,7 @@ public final class UndoManager<M extends IModel<M>> {
      */
     public void setLimit(final int limit) {
         // the first entry in the availableUndos collection is always the current state
-        this.limit = limit + 1;
+        this.limit = Math.max(1, limit + 1);
         this.dropExcessiveUndoableStates();
     }
 
@@ -88,12 +88,10 @@ public final class UndoManager<M extends IModel<M>> {
      *            new state to remember
      */
     public void undoableEditHappened(final M changedState) {
-        if (this.limit > 0) {
-            this.availableUndos.addFirst(changedState.clone());
-            this.dropExcessiveUndoableStates();
-            // drop redos
-            this.availableRedos.clear();
-        }
+        this.availableUndos.addFirst(changedState.clone());
+        this.dropExcessiveUndoableStates();
+        // drop redos
+        this.availableRedos.clear();
     }
 
     /**

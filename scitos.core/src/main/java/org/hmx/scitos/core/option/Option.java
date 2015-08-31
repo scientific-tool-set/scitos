@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -86,14 +86,14 @@ public enum Option implements IOptionSetting {
         if (value != null) {
             try {
                 return Integer.parseInt(value);
-            } catch (NumberFormatException nfe) {
+            } catch (final NumberFormatException nfe) {
                 // use default value instead
             }
         }
         if (this.defaultValue != null) {
             try {
                 return Integer.parseInt(this.defaultValue);
-            } catch (NumberFormatException nfe) {
+            } catch (final NumberFormatException nfe) {
                 // send fall back value
             }
         }

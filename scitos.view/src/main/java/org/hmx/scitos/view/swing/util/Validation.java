@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import javax.swing.text.PlainDocument;
 
 /**
  * This class is a document for text fields to limit the maximum count of inserted characters with the additional ability to ignore a subset of them.
- * 
+ *
  * <p>
  * to use: <code>JTextfield.setDocument(new Validation(int limit))</code> or
  * <code>JTextfield.setDocument(new Validation(int limit, String regEx))</code>
@@ -42,7 +42,7 @@ public class Validation extends PlainDocument {
 
     /**
      * Constructor for the validation document.
-     * 
+     *
      * @param maximum
      *            maximum count of characters insertable
      */
@@ -52,7 +52,7 @@ public class Validation extends PlainDocument {
 
     /**
      * Constructor for the validation document.
-     * 
+     *
      * @param maximum
      *            maximum count of characters insertable
      * @param regEx
@@ -72,7 +72,7 @@ public class Validation extends PlainDocument {
 
     /**
      * Overrides insertString() method of PlainDocument regarding the maximum limit and ignoring all parts matching the stored regular expression.
-     * 
+     *
      * @param offset
      *            position to start the insertion
      * @param str

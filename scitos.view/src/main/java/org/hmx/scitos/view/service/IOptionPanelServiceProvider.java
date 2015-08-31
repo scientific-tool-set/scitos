@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ public interface IOptionPanelServiceProvider {
 
     /**
      * Getter for the actual option panel providers.
-     * 
+     *
      * @return option panel provides that should be included in the application's preferences dialog
      */
     Collection<IOptionPanelService> getServices();

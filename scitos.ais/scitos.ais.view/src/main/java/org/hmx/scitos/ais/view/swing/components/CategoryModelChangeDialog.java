@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ public final class CategoryModelChangeDialog extends JDialog {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param modelHandler
      *            the model handler for the targeted project
      * @param options
@@ -150,7 +150,7 @@ public final class CategoryModelChangeDialog extends JDialog {
         final Entry<MutableDetailCategoryModel, Map<DetailCategory, DetailCategory>> result = this.treeTable.toModelWithMapping();
         final Map<DetailCategory, DetailCategory> mapping = result.getValue();
         boolean manualMatchingRequired = false;
-        for (DetailCategory usedOldCategory : oldDetailOccurences.keySet()) {
+        for (final DetailCategory usedOldCategory : oldDetailOccurences.keySet()) {
             if (!mapping.containsKey(usedOldCategory)) {
                 manualMatchingRequired = true;
                 break;
@@ -168,7 +168,7 @@ public final class CategoryModelChangeDialog extends JDialog {
     /**
      * Replace the associated project's detail category model with the given state, while replacing existing scorings according to the specified
      * mapping.
-     * 
+     *
      * @param newModel
      *            new detail category model to apply to the associated project
      * @param mapping
@@ -197,7 +197,7 @@ public final class CategoryModelChangeDialog extends JDialog {
 
         /**
          * Main constructor.
-         * 
+         *
          * @param oldDetailOccurences
          *            number of assignments of old detail categories that need replacement
          * @param newModel
@@ -334,7 +334,7 @@ public final class CategoryModelChangeDialog extends JDialog {
 
         /**
          * Apply the selected mapping from the user interface to the internal member variable.
-         * 
+         *
          * @param oldCategory
          *            old detail category that needs to be replaced
          * @param replacementComboBox
@@ -350,7 +350,7 @@ public final class CategoryModelChangeDialog extends JDialog {
                 this.mapping.remove(oldCategory);
             } else {
                 // valid selection - update internal mapping
-                for (DetailCategory singleNewCategory : newSelectableCategories) {
+                for (final DetailCategory singleNewCategory : newSelectableCategories) {
                     if (newCategoryCode.equals(singleNewCategory.getCode())) {
                         this.mapping.put(oldCategory, singleNewCategory);
                         break;

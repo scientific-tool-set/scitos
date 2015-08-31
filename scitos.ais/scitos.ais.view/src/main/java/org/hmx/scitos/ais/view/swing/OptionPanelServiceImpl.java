@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ import org.hmx.scitos.view.swing.option.OptionView;
 
 /**
  * The AIS module's implementation of the {@link IOptionPanelService}, allowing the modification of any setting in the {@link AisOption} class.
- * 
+ *
  * @see IOptionPanelServiceRegistry
  * @see IOptionPanelServiceProvider
  */
@@ -42,7 +42,7 @@ public class OptionPanelServiceImpl implements IOptionPanelService {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param options
      *            AIS module's preferences handler to represent in an option panel
      */

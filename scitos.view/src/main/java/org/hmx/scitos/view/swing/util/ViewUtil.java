@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ public final class ViewUtil {
 
     /**
      * Modify the location of the given window to be centered on its parent window. If the window has no parent, this does nothing.
-     * 
+     *
      * @param target
      *            the window to be centered on its parent
      */
@@ -48,14 +48,14 @@ public final class ViewUtil {
 
     /**
      * Modify the location of the given window to ensure it is inside the screen bounds.
-     * 
+     *
      * @param target
      *            the window to move (if necessary)
      */
     public static void moveInsideScreen(final Window target) {
         final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final Point targetCenter = new Point(target.getX() + target.getWidth() / 2, target.getY() + target.getHeight() / 2);
-        for (GraphicsDevice singleScreen : environment.getScreenDevices()) {
+        for (final GraphicsDevice singleScreen : environment.getScreenDevices()) {
             final Rectangle screenBounds = singleScreen.getDefaultConfiguration().getBounds();
             if (screenBounds.contains(targetCenter)) {
                 ViewUtil.moveInsideBounds(target, screenBounds);
@@ -67,7 +67,7 @@ public final class ViewUtil {
 
     /**
      * Modify the location of the given window to ensure it is inside the specified bounds.
-     * 
+     *
      * @param target
      *            the window to move (if necessary)
      * @param screenBounds

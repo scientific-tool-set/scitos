@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ public interface IDetailCategoryProvider extends IProvider<List<DetailCategory>>
 
     /**
      * Provide only those categories, that can be directly assigned to a token in an interview.
-     * 
+     *
      * @return user selectable detail categories
      */
     List<DetailCategory> provideSelectables();

@@ -73,7 +73,7 @@ public class ButtonTabComponent extends JPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param pane
      *            tab stack containing the associated tab
      */
@@ -130,7 +130,7 @@ public class ButtonTabComponent extends JPanel {
 
     /**
      * Create a popup menu, offering the three close options: close this tab, close all other tabs, close all tabs.
-     * 
+     *
      * @return the created popup menu
      */
     JPopupMenu createPopupMenu() {
@@ -166,7 +166,7 @@ public class ButtonTabComponent extends JPanel {
 
     /**
      * Close all tab in the associated tab pane – with the option to leave the tab at the specified index open.
-     * 
+     *
      * @param tabIndexToLeaveOpen
      *            index of the single tab to leave open; if the index is invalid (e.g. <code>-1</code>), all tabs are being closed
      */
@@ -265,16 +265,16 @@ public class ButtonTabComponent extends JPanel {
             super.paintComponent(graphics);
             final Graphics2D graphics2D = (Graphics2D) graphics.create();
             // shift the image for pressed buttons
-            if (getModel().isPressed()) {
+            if (this.getModel().isPressed()) {
                 graphics2D.translate(1, 1);
             }
             graphics2D.setStroke(new BasicStroke(2));
-            if (getModel().isRollover()) {
+            if (this.getModel().isRollover()) {
                 graphics2D.setColor(Color.RED);
             }
             final int delta = 6;
-            graphics2D.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-            graphics2D.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+            graphics2D.drawLine(delta, delta, this.getWidth() - delta - 1, this.getHeight() - delta - 1);
+            graphics2D.drawLine(this.getWidth() - delta - 1, delta, delta, this.getHeight() - delta - 1);
             graphics2D.dispose();
         }
     }

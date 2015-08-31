@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -26,8 +26,7 @@ import java.util.Locale;
  * Utility class for internationalization of the components on the graphical user interface.
  */
 public enum Message implements ILocalizableMessage {
-    CLIENT_TITLE_SCITOS("Client.Title.SciToS"),
-    TOOLBAR_TITLE("Client.ToolBar.Title"),
+    CLIENT_TITLE_SCITOS("Client.Title.SciToS"), TOOLBAR_TITLE("Client.ToolBar.Title"),
     // basic messages
     OK("Ok"),
     CANCEL("Cancel"),

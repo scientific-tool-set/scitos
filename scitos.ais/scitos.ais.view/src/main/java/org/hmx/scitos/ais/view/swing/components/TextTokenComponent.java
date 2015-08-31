@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ public final class TextTokenComponent extends JPanel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param model
      *            represented model object
      */
@@ -151,7 +151,7 @@ public final class TextTokenComponent extends JPanel {
 
     /**
      * Getter for the represented model object.
-     * 
+     *
      * @return the represented model
      */
     public TextToken getModel() {
@@ -160,7 +160,7 @@ public final class TextTokenComponent extends JPanel {
 
     /**
      * Getter for the selected flag, indicating if the represented token is currently selected and can therefore get a detail category assigned.
-     * 
+     *
      * @return if the represented token is currently selected
      */
     public boolean isSelected() {
@@ -169,7 +169,7 @@ public final class TextTokenComponent extends JPanel {
 
     /**
      * Make this component look like a selected/selected text part in a TextPane (or not).
-     * 
+     *
      * @param selected
      *            if it should be displayed like a selected text
      */

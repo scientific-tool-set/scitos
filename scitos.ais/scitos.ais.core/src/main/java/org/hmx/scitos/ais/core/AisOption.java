@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ public final class AisOption implements IDetailCategoryProvider {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param modelParseService
      *            the general ModelParseService implementation, being used to convert between XML and Java objects of the default detail categories.
      */
@@ -106,7 +106,7 @@ public final class AisOption implements IDetailCategoryProvider {
 
     /**
      * Create the hard coded detail category model structure, as it is used if no default can be loaded from the persistent options file.
-     * 
+     *
      * @return default detail categories
      */
     static MutableDetailCategoryModel createDefaultCategoryModel() {
@@ -132,7 +132,7 @@ public final class AisOption implements IDetailCategoryProvider {
 
     /**
      * Create a selectable detail category with the given properties, converting the virtualKeyCode value into an actual KeyStroke.
-     * 
+     *
      * @param parent
      *            not-selectable parent detail category (can be <code>null</code> if the create category should have now parent)
      * @param code
@@ -152,7 +152,7 @@ public final class AisOption implements IDetailCategoryProvider {
 
     /**
      * Set the currently active default detail categories, to be applied to new projects.
-     * 
+     *
      * @param model
      *            detail categories to set
      */
@@ -181,7 +181,7 @@ public final class AisOption implements IDetailCategoryProvider {
             try {
                 output = new FileOutputStream(targetFile);
                 final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-                doc.appendChild(doc.createElement(TAG_ROOT));
+                doc.appendChild(doc.createElement(AisOption.TAG_ROOT));
                 // default categories
                 doc.getDocumentElement().appendChild(this.modelParseService.parseXmlFromDetailCategories(doc, this.defaultDetailCategoryModel));
                 // write the xml structure to the output stream

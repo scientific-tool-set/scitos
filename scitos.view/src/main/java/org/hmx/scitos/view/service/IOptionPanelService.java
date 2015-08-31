@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ public interface IOptionPanelService {
 
     /**
      * Create the option panel to be displayed in the application's preferences dialog that is currently being assembled.
-     * 
+     *
      * @param client
      *            the main client for which the preferences dialog has been requested
      * @param parentDialog

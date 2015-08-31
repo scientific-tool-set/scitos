@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ public interface IModelHandler {
 
     /**
      * Create a blank interview for the participant with the given id. Ensure the interview index stays unique for the participant id.
-     * 
+     *
      * @param participantId
      *            id of the participant associated with the interview to create
      * @return created interview instance
@@ -47,7 +47,7 @@ public interface IModelHandler {
 
     /**
      * Replace the current text tokens in the specified interview object with the tokens extracted from the given text.
-     * 
+     *
      * @param target
      *            the interview object receiving the parsed tokens
      * @param text
@@ -57,7 +57,7 @@ public interface IModelHandler {
 
     /**
      * Delete the given interview from the handled project.
-     * 
+     *
      * @param interview
      *            the interview to delete
      */
@@ -80,7 +80,7 @@ public interface IModelHandler {
     /**
      * Reset the applicable detail category model to the given new model. The specified mapping is used to preserve previously assigned detail
      * categories by replacing old categories with new ones. If no mapping for an old category is specified, the category assignment is discarded.
-     * 
+     *
      * @param newModel
      *            provider of the new detail category model to set
      * @param mappedOldToNew
@@ -90,7 +90,7 @@ public interface IModelHandler {
 
     /**
      * Set the specified interview's assigned participant id.
-     * 
+     *
      * @param interview
      *            interview to assign to other participant
      * @param newParticipantId
@@ -100,7 +100,7 @@ public interface IModelHandler {
 
     /**
      * Replaces the specified participant id with the given new one.
-     * 
+     *
      * @param oldParticipantId
      *            current ID of the participant to rename
      * @param newParticipantId
@@ -110,7 +110,7 @@ public interface IModelHandler {
 
     /**
      * Set the specified interview's assigned index and change other indices accordingly.
-     * 
+     *
      * @param interview
      *            interview to set another index for
      * @param newIndex
@@ -119,9 +119,19 @@ public interface IModelHandler {
     void setIndex(Interview interview, int newIndex);
 
     /**
+     * Reset the specified interview to the given state – i.e. replace its contained data/state while preserving the actual reference.
+     *
+     * @param interview
+     *            the instance to reset
+     * @param resetState
+     *            the interview state to reset to
+     */
+    void reset(Interview interview, Interview resetState);
+
+    /**
      * Collect the number of occurrences each detail category was assigned per interview. The result includes parent detail categories, that are not
      * selectable by the user. Their respective count is the sum of the occurrences of the selectable child categories.
-     * 
+     *
      * @param interviews
      *            list of interviews to count the assigned detail categories for
      * @return for each given interview: detail category and number of assignments
@@ -130,7 +140,7 @@ public interface IModelHandler {
 
     /**
      * Collect the number of tokens (words) per interview, that are part of detail category assignments.
-     * 
+     *
      * @param interviews
      *            list of interviews to count the tokens with assigned detail categories for
      * @return for each given interview: number of tokens with assigned detail category
@@ -139,7 +149,7 @@ public interface IModelHandler {
 
     /**
      * Collect the number of occurrences of detail category patterns per interview.
-     * 
+     *
      * @param interviews
      *            list of interviews to count the contained detail category patterns for
      * @param minLength
@@ -154,7 +164,7 @@ public interface IModelHandler {
     /**
      * Collect the full sequence of assigned detail categories in the given interview. The order is determined by the first token of the detail
      * category. Causing enclosed categories to be treated equally as following categories.
-     * 
+     *
      * @param interview
      *            the interview to collect the detail category sequence in
      * @return all assigned detail categories in the present order
@@ -163,7 +173,7 @@ public interface IModelHandler {
 
     /**
      * Check if the handled project is equal to the given one.
-     * 
+     *
      * @param otherProject
      *            other project to compare with
      * @return message describing an occurred difference, or <code>null</code> if both projects are equal

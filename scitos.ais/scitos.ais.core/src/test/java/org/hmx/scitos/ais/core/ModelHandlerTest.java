@@ -770,6 +770,29 @@ public class ModelHandlerTest {
     }
 
     /**
+     * Test: remove assigned categories via interrupted selection:<br/>
+     * origin: --a-a---------------<br/>
+     * result: --------------------
+     * 
+     * @throws HmxException
+     *             internal error when assigning/unassigning category
+     */
+    @Test
+    public void testUnassignTwoPart() throws HmxException {
+        final TextToken thirdToken = this.paragraphStartToken.getFollowingToken().getFollowingToken();
+        final List<TextToken> selection = Arrays.asList(thirdToken, thirdToken.getFollowingToken().getFollowingToken());
+        this.modelHandler.assignDetailCategory(this.interview, selection, ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0));
+        this.modelHandler.assignDetailCategory(this.interview, selection, null);
+        this.assertTokenState(this.paragraphStartToken, true, null, false);
+        TextToken currentToken = this.paragraphStartToken.getFollowingToken();
+        do {
+            this.assertTokenState(currentToken, false, null, false);
+            currentToken = currentToken.getFollowingToken();
+        } while (currentToken.getFollowingToken() != null);
+        this.assertTokenState(currentToken, false, null, true);
+    }
+
+    /**
      * Test: assign category:<br/>
      * origin: aaabb-cdddeefggg----<br/>
      * result: aXXXbXcdXXXefXgg----

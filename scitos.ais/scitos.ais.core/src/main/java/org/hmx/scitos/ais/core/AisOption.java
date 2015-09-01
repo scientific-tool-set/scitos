@@ -51,34 +51,29 @@ import org.xml.sax.SAXException;
 @Singleton
 public final class AisOption implements IDetailCategoryProvider {
 
-    /**
-     * The XML tag name for the root element in the persisted options file.
-     */
+    /** The root XML tag in the persisted options file. */
     private static final String TAG_ROOT = "Options";
 
-    /**
-     * Path (determined by convention), where the options file is persisted/saved to.
-     */
+    /** The path (determined by convention), where the options file is persisted/saved to. */
     private final String filePath;
     /**
-     * The general ModelParseService implementation, being used to convert between XML and Java objects of the default detail categories.
+     * The AIS module's ModelParseService implementation, for conversions between XML and the {@link MutableDetailCategoryModel}.
      */
     private final ModelParseServiceImpl modelParseService;
-    /**
-     * The currently active detail categories, to be applied to new projects.
-     */
+    /** The default detail categories for new projects. */
     private MutableDetailCategoryModel defaultDetailCategoryModel;
 
     /**
      * Main constructor.
      *
      * @param modelParseService
-     *            the general ModelParseService implementation, being used to convert between XML and Java objects of the default detail categories.
+     *            the ModelParseService implementation, being used to convert between the XML structure and {@link MutableDetailCategoryModel}.
      */
     @Inject
     public AisOption(final ModelParseServiceImpl modelParseService) {
         this.modelParseService = modelParseService;
-        this.filePath = OptionHandler.buildOptionFilePath(this.getClass());
+        // apply general option file naming convention
+        this.filePath = OptionHandler.buildOptionFilePath(AisOption.class);
         // initialize default detail category model tree
         MutableDetailCategoryModel model = null;
         // retrieve settings from persistent storage (i.e. file)
@@ -87,30 +82,36 @@ public final class AisOption implements IDetailCategoryProvider {
             try {
                 final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(targetFile);
                 model = this.modelParseService.parseDetailCategoriesFromXml(doc);
-            } catch (final SAXException saxe) {
-                // ignore errors regarding missing/not-accessible options file, fall back on default values
-            } catch (final IOException ioex) {
-                // ignore errors regarding missing/not-accessible options file, fall back on default values
             } catch (final ParserConfigurationException pcex) {
-                // ignore errors regarding missing/not-accessible options file, fall back on default values
+                // could not create a newDocumentBuilder()
+                pcex.printStackTrace();
+            } catch (final IOException ioex) {
+                // could not read the contents of the given file
+                ioex.printStackTrace();
+            } catch (final SAXException saxe) {
+                // could not parse the XML structure from the given file
+                saxe.printStackTrace();
             } catch (final HmxException ex) {
-                // ignore errors regarding missing/not-accessible options file, fall back on default values
+                // the parsed XML structure did not yield a valid detail category model
+                ex.printStackTrace();
             }
         }
         if (model == null) {
             // could not retrieve valid model from file, use default values instead
             model = AisOption.createDefaultCategoryModel();
         }
+        // remember parsed or generated default detail category model to apply it to new project
         this.setDefaultDetailCategoryModel(model);
     }
 
     /**
-     * Create the hard coded detail category model structure, as it is used if no default can be loaded from the persistent options file.
+     * Create the application's default detail category model, in case no model can be loaded from an options file.
      *
      * @return default detail categories
      */
     static MutableDetailCategoryModel createDefaultCategoryModel() {
         final MutableDetailCategoryModel model = new MutableDetailCategoryModel();
+        // five internal categories, with red color and assigned numeric keys 1 to 5 without modifiers
         final Color internalColor = new Color(255, 51, 0);
         final DetailCategory internal = new DetailCategory(null, "Int", "Internal", false, internalColor, null);
         model.add(internal);
@@ -119,6 +120,7 @@ public final class AisOption implements IDetailCategoryProvider {
         model.add(AisOption.createSelectableCategory(internal, "Int3", "Internal: Time details", internalColor, KeyEvent.VK_3));
         model.add(AisOption.createSelectableCategory(internal, "Int4", "Internal: Perceptual details", internalColor, KeyEvent.VK_4));
         model.add(AisOption.createSelectableCategory(internal, "Int5", "Internal: Emotion/Thought details", internalColor, KeyEvent.VK_5));
+        // five external categories, with blue color and assigned alphabetic keys Q, W, E, R, T without modifiers
         final Color externalColor = Color.BLUE;
         final DetailCategory external = new DetailCategory(null, "Ext", "External", false, externalColor, null);
         model.add(external);
@@ -144,6 +146,7 @@ public final class AisOption implements IDetailCategoryProvider {
      * @param virtualKeyCode
      *            the virtual key (as found as KeyEvent constant <code>VK_xxx</code>) to use as short cut
      * @return the created detail category
+     * @see #createDefaultCategoryModel()
      */
     private static DetailCategory createSelectableCategory(final DetailCategory parent, final String code, final String description,
             final Color color, final int virtualKeyCode) {
@@ -151,28 +154,30 @@ public final class AisOption implements IDetailCategoryProvider {
     }
 
     /**
-     * Set the currently active default detail categories, to be applied to new projects.
+     * Set the default detail categories, to be applied to new projects.
      *
      * @param model
      *            detail categories to set
+     * @see #provide()
+     * @see #provideSelectables()
      */
     public void setDefaultDetailCategoryModel(final MutableDetailCategoryModel model) {
         this.defaultDetailCategoryModel = model;
     }
 
+    /** Get the default detail categories (for new projects). */
     @Override
     public List<DetailCategory> provide() {
         return this.defaultDetailCategoryModel.provide();
     }
 
+    /** Get the selectable (i.e. assignable to tokens as part of an interview scoring) default detail categories (for new projects). */
     @Override
     public List<DetailCategory> provideSelectables() {
         return this.defaultDetailCategoryModel.provideSelectables();
     }
 
-    /**
-     * Saves the current option entries and their values in the associated options file, to be available at the next application start.
-     */
+    /** Save the default detail categories (for new projects) in the associated options file, in order to load them at the next application start. */
     public void persistChanges() {
         final File targetFile = new File(this.filePath);
         if (!targetFile.exists() || targetFile.canWrite()) {
@@ -187,19 +192,25 @@ public final class AisOption implements IDetailCategoryProvider {
                 // write the xml structure to the output stream
                 TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(output));
             } catch (final IOException ioex) {
-                // could not save
-            } catch (final TransformerFactoryConfigurationError tfcer) {
-                // could not save
-            } catch (final TransformerException tex) {
-                // could not save
+                // could not create/open the FileOutPutStream
+                ioex.printStackTrace();
             } catch (final ParserConfigurationException pcex) {
-                // could not save
+                // could not create a newDocumentBuilder() for the xml structure
+                pcex.printStackTrace();
+            } catch (final TransformerFactoryConfigurationError tfcer) {
+                // could not get a newInstance() from the TransformerFactory
+                tfcer.printStackTrace();
+            } catch (final TransformerException tex) {
+                // could not create a newTransformer() or execute the actual transformation (i.e. file saving)
+                tex.printStackTrace();
             } finally {
+                // try to properly close the FileOutputStream anyway
                 if (output != null) {
                     try {
                         output.close();
                     } catch (final IOException ioex) {
                         // at least we tried
+                        ioex.printStackTrace();
                     }
                 }
             }

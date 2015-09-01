@@ -39,7 +39,7 @@ import java.util.Properties;
 public final class OptionHandler<O extends Enum<? extends IOptionSetting> & IOptionSetting> {
 
     /** The path to the represented settings file relative to the jar's directory containing this class. */
-    private static final String PATH = "/.{0}.properties";
+    private static final String PATH = "/{0}-settings.xml";
     /**
      * The singleton instances for each {@link IOptionSetting} implementation in use.
      */

@@ -115,15 +115,7 @@ public final class ComparisonUtil {
      * @return if the given collection contains the given instance (not just an equal object)
      */
     public static <T> boolean containsInstance(final Collection<? extends T> collection, final T instance) {
-        if (collection == null || collection.isEmpty()) {
-            return false;
-        }
-        for (final T collectionElement : collection) {
-            if (collectionElement == instance) {
-                return true;
-            }
-        }
-        return false;
+        return -1 != ComparisonUtil.indexOfInstance(collection, instance);
     }
 
     /**
@@ -145,15 +137,14 @@ public final class ComparisonUtil {
      * @return position of the given instance in the collection (not just of an equal object)
      */
     public static <T> int indexOfInstance(final Collection<? extends T> collection, final T instance) {
-        if (collection == null || collection.isEmpty()) {
-            return -1;
-        }
-        int index = 0;
-        for (final T collectionElement : collection) {
-            if (collectionElement == instance) {
-                return index;
+        if (collection != null && !collection.isEmpty()) {
+            int index = 0;
+            for (final T collectionElement : collection) {
+                if (collectionElement == instance) {
+                    return index;
+                }
+                index++;
             }
-            index++;
         }
         return -1;
     }

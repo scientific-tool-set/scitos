@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.hermeneutix.org/schema/ais/1.0"
+	targetNamespace="http://www.hermeneutix.org/schema/ais/1.0"
+	attributeFormDefault="unqualified" elementFormDefault="qualified">
+	<xs:element name="AisProject">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Categories">
+					<xs:complexType>
+						<xs:choice>
+							<xs:element name="Category" type="detail-category"
+								minOccurs="1" maxOccurs="unbounded" />
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Interviews">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Interview" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Paragraph" minOccurs="0"
+											maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:choice minOccurs="0" maxOccurs="unbounded">
+													<xs:element name="Detail" type="assigned-detail"
+														minOccurs="0" maxOccurs="unbounded" />
+													<xs:element name="Token" type="xs:string"
+														minOccurs="0" maxOccurs="unbounded" />
+												</xs:choice>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="index" use="required">
+										<xs:simpleType>
+											<xs:restriction base="xs:int">
+												<xs:minInclusive value="1" />
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="participant" type="xs:string"
+										use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Views" minOccurs="0">
+					<xs:complexType>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="AisProject" minOccurs="0" />
+							<xs:element name="Group" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="participant" type="xs:string"
+										use="required" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Interview" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="index" use="required">
+										<xs:simpleType>
+											<xs:restriction base="xs:int">
+												<xs:minInclusive value="1" />
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="participant" type="xs:string"
+										use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:any namespace="http://www.w3.org/1999/XSL/Transform" minOccurs="0" processContents="skip" />
+			</xs:sequence>
+			<xs:attribute name="FileType" use="required" fixed="AI-Scoring/1.0" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="detail-category">
+		<xs:choice minOccurs="0">
+			<xs:element name="Category" type="detail-category"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+					<xs:maxLength value="5" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="color" type="xs:string" />
+		<xs:attribute name="name" type="xs:string" />
+		<xs:attribute name="shortcut" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="assigned-detail" mixed="true">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="Detail" type="assigned-detail"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="Token" type="xs:string" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:choice>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+					<xs:maxLength value="5" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

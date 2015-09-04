@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="AisProject">
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ais="http://www.hermeneutix.org/schema/ais/1.0">
+	<xsl:template match="ais:AisProject">
 		<html>
 			<head>
 				<title>Autobiographical Interview Scoring (presented by SciToS)</title>
@@ -113,7 +113,7 @@ span.detail-end { float: right; }
 .accordion section:not(:target) .section-content { display:none; }
 .accordion section:target .section-content { padding-top: 0; }
 .paragraph { padding: 0.25em 1em; }</xsl:text>
-					<xsl:apply-templates select="//Category" />
+					<xsl:apply-templates select="//ais:Category" />
 				</style>
 				<style media="print" type="text/css">
 					<xsl:text>.accordion { width: 100%; }
@@ -135,11 +135,11 @@ span.detail-end { float: right; }
 				</style>
 			</head>
 			<body>
-				<xsl:apply-templates select="Interviews" />
+				<xsl:apply-templates select="ais:Interviews" />
 			</body>
 		</html>
 	</xsl:template>
-	<xsl:template match="Category">
+	<xsl:template match="ais:Category">
 		<xsl:text>
 .token.detail-</xsl:text>
 		<xsl:value-of select="position()" />
@@ -173,7 +173,7 @@ span.detail-end { float: right; }
 		<xsl:value-of select="substring($hex-literals,1+floor($decimal div 16),1)" />
 		<xsl:value-of select="substring($hex-literals,1+($decimal mod 16),1)" />
 	</xsl:template>
-	<xsl:template match="Interviews">
+	<xsl:template match="ais:Interviews">
 		<div class="accordion">
 			<section id="results">
 				<h2>
@@ -184,28 +184,28 @@ span.detail-end { float: right; }
 						<tr>
 							<th>Interview</th>
 							<th title="Number of Tokens with assigned Detail Category">Token Count</th>
-							<xsl:for-each select="//Categories/Category">
+							<xsl:for-each select="//ais:Categories/ais:Category">
 								<xsl:call-template name="insert-result-headers">
 									<xsl:with-param name="category" select="." />
 								</xsl:call-template>
 							</xsl:for-each>
 						</tr>
-						<xsl:for-each select="Interview">
+						<xsl:for-each select="ais:Interview">
 							<tr>
 								<td>
 									<xsl:value-of select="@participant" />
 									<xsl:if
-										test="1 &lt; count(../Interview[@participant=current()/@participant])">
+										test="1 &lt; count(../ais:Interview[@participant=current()/@participant])">
 										<xsl:value-of select="' ('" />
 										<xsl:value-of select="@index" />
 										<xsl:value-of select="')'" />
 									</xsl:if>
 								</td>
 								<td>
-									<xsl:value-of select="count(.//Detail//Token)" />
+									<xsl:value-of select="count(.//ais:Detail//ais:Token)" />
 								</td>
 								<xsl:variable name="interview" select="." />
-								<xsl:for-each select="//Categories/Category">
+								<xsl:for-each select="//ais:Categories/ais:Category">
 									<xsl:call-template name="insert-result-values">
 										<xsl:with-param name="interview" select="$interview" />
 										<xsl:with-param name="category" select="." />
@@ -216,7 +216,7 @@ span.detail-end { float: right; }
 					</table>
 				</div>
 			</section>
-			<xsl:apply-templates select="Interview" />
+			<xsl:apply-templates select="ais:Interview" />
 		</div>
 	</xsl:template>
 	<xsl:template name="insert-result-headers">
@@ -229,7 +229,7 @@ span.detail-end { float: right; }
 			</xsl:if>
 			<xsl:value-of select="$category/@code" />
 		</th>
-		<xsl:for-each select="$category/Category">
+		<xsl:for-each select="$category/ais:Category">
 			<xsl:call-template name="insert-result-headers">
 				<xsl:with-param name="category" select="." />
 			</xsl:call-template>
@@ -240,29 +240,29 @@ span.detail-end { float: right; }
 		<xsl:param name="category" />
 		<td>
 			<xsl:choose>
-				<xsl:when test="$category/Category">
+				<xsl:when test="$category/ais:Category">
 					<xsl:variable name="childCodes">
-						<xsl:for-each select="$category/Category[not(Category)]">
+						<xsl:for-each select="$category/ais:Category[not(Category)]">
 							<xsl:value-of select="concat(' ',@code,' ')" />
 						</xsl:for-each>
 					</xsl:variable>
 					<xsl:value-of
-						select="count($interview//Detail[contains($childCodes,concat(' ',@code,' '))])" />
+						select="count($interview//ais:Detail[contains($childCodes,concat(' ',@code,' '))])" />
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of
-						select="count($interview//Detail[@code=$category/@code])" />
+						select="count($interview//ais:Detail[@code=$category/@code])" />
 				</xsl:otherwise>
 			</xsl:choose>
 		</td>
-		<xsl:for-each select="$category/Category">
+		<xsl:for-each select="$category/ais:Category">
 			<xsl:call-template name="insert-result-values">
 				<xsl:with-param name="interview" select="$interview" />
 				<xsl:with-param name="category" select="." />
 			</xsl:call-template>
 		</xsl:for-each>
 	</xsl:template>
-	<xsl:template match="Interview">
+	<xsl:template match="ais:Interview">
 		<xsl:variable name="id">
 			<xsl:value-of select="'interview-'" />
 			<xsl:value-of select="position()" />
@@ -279,7 +279,7 @@ span.detail-end { float: right; }
 					</xsl:attribute>
 					<xsl:value-of select="@participant" />
 					<xsl:if
-						test="1 &lt; count(../Interview[@participant=current()/@participant])">
+						test="1 &lt; count(../ais:Interview[@participant=current()/@participant])">
 						<xsl:value-of select="' ('" />
 						<xsl:value-of select="@index" />
 						<xsl:value-of select="')'" />
@@ -287,42 +287,42 @@ span.detail-end { float: right; }
 				</a>
 			</h2>
 			<div class="section-content">
-				<xsl:apply-templates select="Paragraph" />
+				<xsl:apply-templates select="ais:Paragraph" />
 			</div>
 		</section>
 	</xsl:template>
-	<xsl:template match="Paragraph">
+	<xsl:template match="ais:Paragraph">
 		<p class="paragraph">
-			<xsl:apply-templates select=".//Token" />
+			<xsl:apply-templates select=".//ais:Token" />
 		</p>
 	</xsl:template>
-	<xsl:template match="Token">
+	<xsl:template match="ais:Token">
 		<div>
 			<xsl:attribute name="class">
-				<xsl:if test="name(..) = 'Detail'">
+				<xsl:if test="local-name(..) = 'Detail'">
 					<xsl:value-of select="'detail-assigned detail-'" />
 					<xsl:value-of
-				select="1 + count(//Category[@code = current()/../@code]/preceding::Category)" />
+				select="1 + count(//ais:Category[@code = current()/../@code]/preceding::ais:Category)" />
 					<xsl:value-of select="' '" />
 				</xsl:if>
 				<xsl:value-of select="'token'" />
 			</xsl:attribute>
 			<xsl:variable name="showDetailStart"
-				select="count(preceding-sibling::Token) = 0 and position() &gt; 1" />
+				select="local-name(preceding-sibling::*[1]) = 'Detail' or (count(preceding-sibling::ais:Token) = 0 and position() &gt; 1)" />
 			<xsl:variable name="showDetailEnd"
-				select="count(following-sibling::Token) = 0 and position() &lt; last()" />
-			<xsl:if test="$showDetailStart and name(../..) = 'Detail'">
+				select="local-name(following-sibling::*[1]) = 'Detail' or (count(following-sibling::ais:Token) = 0 and position() &lt; last())" />
+			<xsl:if test="$showDetailStart and local-name(../..) = 'Detail'">
 				<span class="detail-start">
 					<xsl:value-of select="'('" />
 				</span>
 			</xsl:if>
 			<span class="detail-category">
 				<xsl:if
-					test="name(..) = 'Detail' and count(preceding-sibling::Token) = 0">
+					test="local-name(..) = 'Detail' and count(preceding-sibling::ais:Token) = 0">
 					<xsl:value-of select="../@code" />
 				</xsl:if>
 			</span>
-			<xsl:if test="$showDetailEnd and name(../..) = 'Detail'">
+			<xsl:if test="$showDetailEnd and local-name(../..) = 'Detail'">
 				<span class="detail-end">
 					<xsl:value-of select="')'" />
 				</span>

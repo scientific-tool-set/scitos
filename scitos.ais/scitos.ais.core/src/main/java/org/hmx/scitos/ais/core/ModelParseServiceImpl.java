@@ -60,6 +60,11 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
     /*
      * Collection of the XML tags and attributes for representing an AIS module's project in its persisted form.
      */
+    private static final String NAMESPACE = "http://www.hermeneutix.org/schema/ais/1.0";
+    private static final String SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+    private static final String SCHEMA_REF_ATTRIBUTE = "xsi:schemaLocation";
+    private static final String SCHEMA_LOCATION =
+            "https://raw.githubusercontent.com/scientific-tool-set/scitos/master/scitos.ais/schema/ais-v1.0.xsd";
     private static final String TAG_ROOT = "AisProject";
     private static final String TAG_CATEGORY_ROOT = "Categories";
     private static final String TAG_CATEGORY = "Category";
@@ -97,11 +102,14 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
         final AisProject project = (AisProject) model;
         try {
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            doc.appendChild(doc.createElement(ModelParseServiceImpl.TAG_ROOT));
+            doc.appendChild(doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_ROOT));
+            // add schema reference
+            doc.getDocumentElement().setAttributeNS(ModelParseServiceImpl.SCHEMA_NAMESPACE, ModelParseServiceImpl.SCHEMA_REF_ATTRIBUTE,
+                    ModelParseServiceImpl.NAMESPACE + ' ' + ModelParseServiceImpl.SCHEMA_LOCATION);
             // include categories used
             doc.getDocumentElement().appendChild(this.parseXmlFromDetailCategories(doc, project));
             // include scored interviews
-            final Element interviewRoot = doc.createElement(ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
+            final Element interviewRoot = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
             final List<Interview> interviews = new ArrayList<Interview>(project.getInterviews());
             // add interviews in sorted order - just for a user who opens the file in a text editor
             Collections.sort(interviews);
@@ -193,7 +201,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
         final MutableDetailCategoryModel categoryFamily = new MutableDetailCategoryModel();
         categoryFamily.addAll(categoryProvider.provide());
         // create single element to hold all categories
-        final Element categoryRootElement = doc.createElement(ModelParseServiceImpl.TAG_CATEGORY_ROOT);
+        final Element categoryRootElement = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_CATEGORY_ROOT);
         // add only the root categories, which in turn add their own children recursively
         for (final DetailCategory singleCategoryRoot : categoryFamily.getRootCategories()) {
             categoryRootElement.appendChild(this.parseXmlFromDetailCategoryTree(doc, singleCategoryRoot, categoryFamily));
@@ -216,7 +224,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private Element parseXmlFromDetailCategoryTree(final Document doc, final DetailCategory target, final MutableDetailCategoryModel categoryFamily) {
         // create category element and set its attributes
-        final Element categoryElement = doc.createElement(ModelParseServiceImpl.TAG_CATEGORY);
+        final Element categoryElement = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_CATEGORY);
         categoryElement.setAttribute(ModelParseServiceImpl.ATTR_CATEGORY_CODE, target.getCode());
         categoryElement.setAttribute(ModelParseServiceImpl.ATTR_CATEGORY_NAME, target.getName());
         final Color color = target.getColor();
@@ -328,7 +336,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private Element parseXmlFromInterview(final Document doc, final Interview target) {
         // create interview element and set its attributes
-        final Element interviewElement = doc.createElement(ModelParseServiceImpl.TAG_INTERVIEW);
+        final Element interviewElement = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_INTERVIEW);
         interviewElement.setAttribute(ModelParseServiceImpl.ATTR_INTERVIEW_PARTICIPANT, target.getParticipantId());
         interviewElement.setAttribute(ModelParseServiceImpl.ATTR_INTERVIEW_INDEX, String.valueOf(target.getIndex()));
         // include the scored text
@@ -349,7 +357,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private Element parseXmlFromInterviewParagraph(final Document doc, final TextToken paragraphStart) {
         // create paragraph wrapping element
-        final Element paragraphElement = doc.createElement(ModelParseServiceImpl.TAG_INTERVIEW_PARAGRAPH);
+        final Element paragraphElement = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_INTERVIEW_PARAGRAPH);
         // iterate through tokens
         TextToken currentToken = paragraphStart;
         do {
@@ -379,7 +387,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private Entry<Element, TextToken> parseXmlFromTokenRange(final Document doc, final TextToken rangeStart) {
         // create range wrapping element and set assigned category by its code
-        final Element detailElement = doc.createElement(ModelParseServiceImpl.TAG_INTERVIEW_DETAIL);
+        final Element detailElement = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_INTERVIEW_DETAIL);
         final DetailCategory category = rangeStart.getDetail();
         // ranges inside ranges can have no category assigned
         if (category != null) {
@@ -422,7 +430,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private Element parseXmlFromTokenText(final Document doc, final TextToken target) {
         // after converting all the category info into wrapping xml structure, the node for the token contains only its text
-        final Element tokenElement = doc.createElement(ModelParseServiceImpl.TAG_INTERVIEW_TOKEN);
+        final Element tokenElement = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_INTERVIEW_TOKEN);
         tokenElement.appendChild(doc.createTextNode(target.getText()));
         return tokenElement;
     }
@@ -528,18 +536,18 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      * @return created {@value #TAG_VIEWS} node
      */
     private Element parseXmlFromOpenViewElements(final Document doc, final List<?> openViewElements) {
-        final Element viewElementWrapper = doc.createElement(ModelParseServiceImpl.TAG_VIEWS);
+        final Element viewElementWrapper = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_VIEWS);
         for (final Object viewElement : openViewElements) {
             final Element view;
             if (viewElement instanceof Interview) {
-                view = doc.createElement(ModelParseServiceImpl.TAG_VIEWS_INTERVIEW);
+                view = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_VIEWS_INTERVIEW);
                 view.setAttribute(ModelParseServiceImpl.ATTR_VIEWS_INTERVIEW_PARTICIPANT, ((Interview) viewElement).getParticipantId());
                 view.setAttribute(ModelParseServiceImpl.ATTR_VIEWS_INTERVIEW_INDEX, String.valueOf(((Interview) viewElement).getIndex()));
             } else if (viewElement instanceof String) {
-                view = doc.createElement(ModelParseServiceImpl.TAG_VIEWS_GROUP);
+                view = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_VIEWS_GROUP);
                 view.setAttribute(ModelParseServiceImpl.ATTR_VIEWS_GROUP_NAME, (String) viewElement);
             } else {
-                view = doc.createElement(ModelParseServiceImpl.TAG_VIEWS_PROJECT);
+                view = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_VIEWS_PROJECT);
             }
             viewElementWrapper.appendChild(view);
         }

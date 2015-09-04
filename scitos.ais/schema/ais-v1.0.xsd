@@ -86,7 +86,7 @@
     <xs:attribute name="shortcut" type="xs:string" />
   </xs:complexType>
   <xs:complexType name="assigned-detail" mixed="true">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
       <xs:element name="Detail" type="assigned-detail" minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="Token" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
     </xs:choice>

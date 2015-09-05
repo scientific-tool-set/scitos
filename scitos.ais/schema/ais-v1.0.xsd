@@ -90,7 +90,7 @@
       <xs:element name="Detail" type="assigned-detail" minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="Token" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
     </xs:choice>
-    <xs:attribute name="code" use="required">
+    <xs:attribute name="code">
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:minLength value="1" />

@@ -60,4 +60,11 @@ public interface IModelParseService<M extends IModel<M>> {
      *             wrapped error that occured while generating the document
      */
     Document parseXmlFromModel(IModel<?> model, List<?> openViewElements) throws HmxException;
+
+    /**
+     * Getter for all export options generally available for this module.
+     *
+     * @return supported export options
+     */
+    List<ExportOption> getSupportedExports();
 }

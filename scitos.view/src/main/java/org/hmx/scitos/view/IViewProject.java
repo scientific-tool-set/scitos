@@ -22,6 +22,7 @@ package org.hmx.scitos.view;
 import java.io.File;
 import java.util.List;
 
+import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.view.swing.MainView;
@@ -121,6 +122,18 @@ public interface IViewProject<M extends IModel<M>> {
      * @return path to last saved state of this project
      */
     String getSavePath();
+
+    /**
+     * Export the current project to the specified path.
+     *
+     * @param type
+     *            the kind of export to perform
+     * @param path
+     *            designated export location
+     * @throws HmxException
+     *             export failed due to missing permissions or unsuccessful validation
+     */
+    void export(ExportOption type, File path) throws HmxException;
 
     /**
      * Attempt to close this project. Ask the user for saving the final state if it is not already saved.

@@ -40,7 +40,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
+import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.IModelParseService;
 import org.hmx.scitos.core.i18n.Message;
@@ -125,20 +127,7 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
 
     @Override
     public void save(final IModel<?> model, final List<?> openViewElements, final File target) throws HmxException {
-        // determine representing file type for model implementation
-        final FileType type;
-        synchronized (this.modelTypes) {
-            type = this.modelTypes.get(model.getClass());
-        }
-        // get registered model provider for file type
-        final IModelParseService<?> provider;
-        synchronized (this.modelParseServices) {
-            provider = this.modelParseServices.get(type);
-        }
-        // get xml structure for model instance from provider
-        final Document xml = provider.parseXmlFromModel(model, openViewElements);
-        // ensure the current file type is recognizably contained in xml structure
-        type.applyToXml(xml);
+        final Document xml = this.createXmlFromModel(model, openViewElements);
         // create target file output stream
         FileOutputStream output = null;
         try {
@@ -171,5 +160,84 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
                 }
             }
         }
+    }
+
+    @Override
+    public void export(final IModel<?> model, final String stylesheetPath, final File target) throws HmxException {
+        final Document xml = this.createXmlFromModel(model, Collections.emptyList());
+        // create target file output stream
+        FileOutputStream output = null;
+        try {
+            output = new FileOutputStream(target);
+            final StreamSource stylesheet = new StreamSource(model.getClass().getResourceAsStream(stylesheetPath));
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);
+            // write the xml structure to the output stream
+            transformer.transform(new DOMSource(xml), new StreamResult(output));
+            output.flush();
+        } catch (final IOException ioe) {
+            // error while initializing the FileOutputStream
+            throw new HmxException(Message.ERROR_UNKNOWN, ioe);
+        } catch (final TransformerFactoryConfigurationError tfce) {
+            // error while instantiating the transformer factory
+            throw new HmxException(Message.ERROR_UNKNOWN, tfce);
+        } catch (final TransformerConfigurationException tce) {
+            // error while initializing the transformer instance
+            throw new HmxException(Message.ERROR_UNKNOWN, tce);
+        } catch (final TransformerException te) {
+            // error while transferring the xml document through the output stream
+            throw new HmxException(Message.ERROR_UNKNOWN, te);
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (final IOException ioex) {
+                    // at least we tried
+                }
+            }
+        }
+    }
+
+    /**
+     * Create the xml structure to represent the given model object, including the specified list of open model elements.
+     *
+     * @param model
+     *            the model object to represent as xml
+     * @param openViewElements
+     *            currently open elements from the given model object
+     * @return created xml structure
+     * @throws HmxException
+     *             error while generating the xml structure
+     */
+    private Document createXmlFromModel(final IModel<?> model, final List<?> openViewElements) throws HmxException {
+        // determine representing file type for model implementation
+        final FileType type;
+        synchronized (this.modelTypes) {
+            type = this.modelTypes.get(model.getClass());
+        }
+        // get registered model provider for file type
+        final IModelParseService<?> provider;
+        synchronized (this.modelParseServices) {
+            provider = this.modelParseServices.get(type);
+        }
+        // get xml structure for model instance from provider
+        final Document xml = provider.parseXmlFromModel(model, openViewElements);
+        // ensure the current file type is recognizably contained in xml structure
+        type.applyToXml(xml);
+        return xml;
+    }
+
+    @Override
+    public List<ExportOption> getSupportedExports(final IModel<?> model) {
+        // determine representing file type for model implementation
+        final FileType type;
+        synchronized (this.modelTypes) {
+            type = this.modelTypes.get(model.getClass());
+        }
+        // get registered model provider for file type
+        final IModelParseService<?> provider;
+        synchronized (this.modelParseServices) {
+            provider = this.modelParseServices.get(type);
+        }
+        return provider.getSupportedExports();
     }
 }

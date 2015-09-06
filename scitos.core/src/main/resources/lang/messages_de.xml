@@ -72,20 +72,21 @@ Zugeordnete Kategorien ohne Entsprechung im neuen Modell werden verworfen!</entr
 	<entry key="Ais.Project.ChangeDetailCategories.OldCategory">Alte Kategorie</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.AffectedTokens">Anzahl zugeordneter Token</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Ersetzt durch neue Kategorie</entry>
+	<entry key="Ais.Project.Export.Html">HTML-Datei</entry>
 	<entry key="Cancel">Abbruch</entry>
 	<entry key="Client.MenuBar.About">Info</entry>
 	<entry key="Client.MenuBar.Edit">Bearbeiten</entry>
 	<entry key="Client.MenuBar.Edit.Redo">Wiederherstellen</entry>
 	<entry key="Client.MenuBar.Edit.Undo">Rückgängig</entry>
 	<entry key="Client.MenuBar.File">Datei</entry>
+	<entry key="Client.MenuBar.File.Export">Exportieren als...</entry>
 	<entry key="Client.MenuBar.File.New">Neu</entry>
 	<entry key="Client.MenuBar.File.Open">Öffnen</entry>
 	<entry key="Client.MenuBar.File.Open.InvalidXmlDocument">Die ausgewählte Datei enthält kein gültiges SciToS Projekt.</entry>
 	<entry key="Client.MenuBar.File.Open.FileTypeNotRecognized">Die ausgewählte Datei ist einem Typ zugeordnet,
 der in deiner Version von SciToS nicht unterstützt wird.
 
-Vielleicht gehört er zu einer neueren Version?
-Please check if there is a newer version available.</entry>
+Lade gegebenenfalls die aktuelle Version von SciToS herunter.</entry>
 	<entry key="Client.MenuBar.File.Save">Speichern</entry>
 	<entry key="Client.MenuBar.File.Save.Failed">Die gespeicherte Datei konnte nicht vollständig validiert werden.
 Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder

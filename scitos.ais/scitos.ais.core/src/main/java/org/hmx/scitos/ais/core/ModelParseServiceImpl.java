@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
 import org.hmx.scitos.ais.domain.model.TextToken;
+import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.IModelParseService;
 import org.hmx.scitos.core.i18n.Message;
@@ -57,6 +59,9 @@ import org.xml.sax.SAXException;
  */
 public class ModelParseServiceImpl implements IModelParseService<AisProject> {
 
+    /** The embedded/export stylesheet for the conversion to a html page. */
+    private static final ExportOption HTML_EXPORT = new ExportOption(Message.AIS_PROJECT_EXPORT_HTML, ExportOption.TargetFileType.HTML,
+            "/org/hmx/scitos/ais/stylesheet.xsl");
     /*
      * Collection of the XML tags and attributes for representing an AIS module's project in its persisted form.
      */
@@ -95,6 +100,11 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
     @Inject
     public ModelParseServiceImpl() {
         // constructor for dependency injection
+    }
+
+    @Override
+    public List<ExportOption> getSupportedExports() {
+        return Arrays.asList(ModelParseServiceImpl.HTML_EXPORT);
     }
 
     @Override
@@ -140,7 +150,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         InputStream stylesheet = null;
         try {
-            stylesheet = ModelParseServiceImpl.class.getResourceAsStream("/org/hmx/scitos/ais/stylesheet.xsl");
+            stylesheet = ModelParseServiceImpl.class.getResourceAsStream(ModelParseServiceImpl.HTML_EXPORT.getStylesheetPath());
             // parse stylesheet into xml structure
             final Element stylesheetRoot = factory.newDocumentBuilder().parse(stylesheet).getDocumentElement();
             stylesheetRoot.setAttribute("id", "embedded_stylesheet");

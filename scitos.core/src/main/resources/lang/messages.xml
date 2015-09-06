@@ -69,12 +69,14 @@ Category assignments without a selected replacement are being discarded.</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.OldCategory">Old Detail Category</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.AffectedTokens">Number of Affected Tokens</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Replaced With New Category</entry>
+	<entry key="Ais.Project.Export.Html">HTML file</entry>
 	<entry key="Cancel">Cancel</entry>
 	<entry key="Client.MenuBar.About">About</entry>
 	<entry key="Client.MenuBar.Edit">Edit</entry>
 	<entry key="Client.MenuBar.Edit.Redo">Redo</entry>
 	<entry key="Client.MenuBar.Edit.Undo">Undo</entry>
 	<entry key="Client.MenuBar.File">File</entry>
+	<entry key="Client.MenuBar.File.Export">Export To...</entry>
 	<entry key="Client.MenuBar.File.New">New</entry>
 	<entry key="Client.MenuBar.File.Open">Open</entry>
 	<entry key="Client.MenuBar.File.Open.InvalidXmlDocument">The selected File does not contain a valid SciToS Project.</entry>

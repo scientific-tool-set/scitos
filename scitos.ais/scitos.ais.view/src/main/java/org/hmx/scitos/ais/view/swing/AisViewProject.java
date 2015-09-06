@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import org.hmx.scitos.ais.core.IModelHandler;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
+import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IModel;
@@ -202,6 +203,11 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
         this.setSavePath(path);
         this.setSaved(true);
         this.client.invokeRepresentationRefresh(this);
+    }
+
+    @Override
+    public void export(final ExportOption type, final File path) throws HmxException {
+        this.client.getModelParseProvider().export(this.getModelObject(), type.getStylesheetPath(), path);
     }
 
     @Override

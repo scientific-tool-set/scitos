@@ -54,6 +54,7 @@ import javax.swing.table.TableModel;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
+import org.hmx.scitos.core.ExportOption.TargetFileType;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
@@ -66,8 +67,6 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 /** Component displaying the summed up scoring results of a whole project. */
 public final class PatternAnalysisPanel extends JPanel {
 
-    /** The file name extension to apply when exporting the results to a spreadsheet file. */
-    private static final String EXPORT_FILE_EXTENSION = ".ods";
     /** The alternate row color, for easier readability in the result tables. */
     static final Color ALTERNATE_ROW_COLOR = new Color(239, 239, 239);
 
@@ -118,12 +117,12 @@ public final class PatternAnalysisPanel extends JPanel {
             }
         });
 
-        final JButton exportButton = new JButton(Message.AIS_ANALYSIS_EXPORT.get(), ScitosIcon.SPREADSHEET.create());
+        final JButton exportButton = new JButton(Message.AIS_ANALYSIS_EXPORT.get(), ScitosIcon.FILE_ODS.create());
         exportButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final File target = client.getSaveDestination(PatternAnalysisPanel.EXPORT_FILE_EXTENSION, Message.AIS_ANALYSIS_EXPORT.get());
+                final File target = client.getSaveDestination(TargetFileType.ODS.getExtension(), Message.AIS_ANALYSIS_EXPORT.get());
                 if (target == null) {
                     // user aborted selection of save target
                     return;

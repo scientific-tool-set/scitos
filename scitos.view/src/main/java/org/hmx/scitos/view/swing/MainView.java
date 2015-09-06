@@ -222,6 +222,7 @@ public class MainView extends JPanel {
     public void revalidateClient(final boolean refreshToolBarItems) {
         this.client.revalidate();
         if (refreshToolBarItems) {
+            this.client.validateProjectMenuEntries();
             final AbstractProjectView<?, ?> currentTab = this.getActiveTab();
             if (currentTab == null) {
                 this.client.setEditMenuItems(Collections.<JMenuItem>emptyList());

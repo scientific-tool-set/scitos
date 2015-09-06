@@ -135,10 +135,10 @@ public enum FileType {
     }
 
     /**
-     * Set the associated xml attribute, which is used for determining the expected project/model type contained, to represent this {@link FileType} .
+     * Set the associated xml attribute, which is used for determining the expected project/model type contained, to represent this file type.
      *
      * @param xml
-     *            the xml document to be marked as representing this {@link FileType}
+     *            the xml document to be marked as representing this file type
      */
     public void applyToXml(final Document xml) {
         xml.getDocumentElement().setAttribute(FileType.XML_ROOT_TYPE_ATTRIBUTE, this.internalTypeAttribute);

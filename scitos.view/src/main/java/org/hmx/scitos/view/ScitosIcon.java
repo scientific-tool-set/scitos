@@ -53,6 +53,12 @@ public enum ScitosIcon {
     SAVE_FILE("/icons/fatcow/save.png"),
     /** Icon: save-as file entry in menu bar / tool bar. */
     SAVEAS_FILE("/icons/fatcow/save_as.png"),
+    /** Icon: export-to file menu in menu bar. */
+    EXPORT_FILE("/icons/fatcow/document_export.png"),
+    /** Icon: html file export. */
+    FILE_HTML("/icons/fatcow/file_extension_html.png"),
+    /** Icon: spreadsheet file export. **/
+    FILE_ODS("/icons/misc/ods.png"),
     /** Icon: undo entry in menu bar / tool bar. */
     UNDO_EDIT("/icons/eclipse/undo_edit.png"),
     /** Icon: redo entry in menu bar / tool bar. */
@@ -63,8 +69,6 @@ public enum ScitosIcon {
     ARROW_DOWN("/icons/eclipse/arrow_down.png"),
     /** Icon: config/preferences entry in menu bar. */
     CONFIG("/icons/fatcow/cog.png"),
-    /** Icon: spreadsheet file export. **/
-    SPREADSHEET("/icons/misc/ods.png"),
     /** Icon: add entry e.g. in category tree table **/
     ADD("/icons/fatcow/add.png"),
     /** Icon: remove entry e.g. in category tree table **/

@@ -37,6 +37,7 @@ public enum Message implements ILocalizableMessage {
     ERROR_UNKNOWN("Error.Unknown"),
     // file menu and its menu items
     MENUBAR_FILE("Client.MenuBar.File"),
+    MENUBAR_FILE_EXPORT("Client.MenuBar.File.Export"),
     MENUBAR_FILE_NEW("Client.MenuBar.File.New"),
     ERROR_FILE_NEW_PROJECTNAME_INVALID("Client.MenuBar.File.New.ProjectNameInvalid"),
     MENUBAR_FILE_OPEN("Client.MenuBar.File.Open"),
@@ -73,6 +74,7 @@ public enum Message implements ILocalizableMessage {
     AIS_PROJECT_CHANGE_CATEGORIES_AFFECTED_TOKENS("Ais.Project.ChangeDetailCategories.AffectedTokens"),
     AIS_PROJECT_CHANGE_CATEGORIES_OLD("Ais.Project.ChangeDetailCategories.OldCategory"),
     AIS_PROJECT_CHANGE_CATEGORIES_NEW("Ais.Project.ChangeDetailCategories.ReplacingCategory"),
+    AIS_PROJECT_EXPORT_HTML("Ais.Project.Export.Html"),
     AIS_INTERVIEW_NEW("Ais.Interview.New"),
     AIS_INTERVIEW_NEW_PARTICIPANTID("Ais.Interview.New.ParticipantId"),
     AIS_INTERVIEW_CHANGE_PARTICIPANTID("Ais.Interview.Modify.ParticipantId"),

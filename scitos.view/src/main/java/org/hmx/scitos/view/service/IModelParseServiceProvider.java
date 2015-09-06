@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.view.FileType;
@@ -65,4 +66,27 @@ public interface IModelParseServiceProvider {
      *             the targeted file could not be created/replaced
      */
     void save(IModel<?> model, List<?> openViewElements, File target) throws HmxException;
+
+    /**
+     * Export the given model object to the targeted file.
+     *
+     * @param model
+     *            model object to export
+     * @param stylesheetPath
+     *            path to the XSLT stylesheet on the classpath to apply
+     * @param target
+     *            file export the model object to
+     * @throws HmxException
+     *             the targeted file could not be created/replaced
+     */
+    void export(IModel<?> model, String stylesheetPath, File target) throws HmxException;
+
+    /**
+     * Getter for all export options generally available for the given model object.
+     *
+     * @param model
+     *            model object to (potentially) export
+     * @return supported export options
+     */
+    List<ExportOption> getSupportedExports(IModel<?> model);
 }

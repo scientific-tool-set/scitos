@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -59,6 +60,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;
@@ -115,6 +117,8 @@ public final class ScitosClient {
     private JMenuItem saveMenuItem;
     /** Main Menu Bar - File Menu - Item: Save As. */
     private JMenuItem saveAsMenuItem;
+    /** Main Menu Bar - File Menu - Sub-Menu: Export. */
+    private JMenu exportMenu;
     /** Main Menu Bar - Edit Menu. */
     private JMenu editMenu;
     /** Main Menu Bar - Edit Menu - Item: Un-Do. */
@@ -254,6 +258,9 @@ public final class ScitosClient {
             }
         });
         fileMenu.add(this.saveAsMenuItem);
+        this.exportMenu = new JMenu(Message.MENUBAR_FILE_EXPORT.get());
+        this.exportMenu.setIcon(ScitosIcon.EXPORT_FILE.create());
+        fileMenu.add(this.exportMenu);
 
         // if we are NOT on Mac OS X, we have to add the preferences and quit entries here as well
         if (!ScitosApp.IS_MAC) {
@@ -741,6 +748,48 @@ public final class ScitosClient {
         this.saveMenuItem.setEnabled(activeState);
         this.saveToolItem.setEnabled(activeState);
         this.saveAsMenuItem.setEnabled(activeState);
+        this.exportMenu.setEnabled(activeState);
+    }
+
+    /**
+     * Initialize any project dependent menu entries. In the current state, this regards the available export options.
+     */
+    public void validateProjectMenuEntries() {
+        this.exportMenu.removeAll();
+        final IViewProject<?> project = this.getMainView().getActiveProject();
+        if (project != null) {
+            final List<ExportOption> options = this.getModelParseProvider().getSupportedExports(project.getModelObject());
+            for (final ExportOption exportOption : options) {
+                final ImageIcon icon;
+                switch (exportOption.getTargetFileType()) {
+                case HTML:
+                    icon = ScitosIcon.FILE_HTML.create();
+                    break;
+                case ODS:
+                    icon = ScitosIcon.FILE_ODS.create();
+                    break;
+                default:
+                    icon = null;
+                }
+                final JMenuItem singleOptionItem = new JMenuItem(exportOption.getMenuEntry().get(), icon);
+                singleOptionItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(final ActionEvent event) {
+                        final File target =
+                                ScitosClient.this.getSaveDestination(exportOption.getTargetFileType().getExtension(),
+                                        Message.MENUBAR_FILE_EXPORT.get());
+                        try {
+                            ScitosClient.this.getModelParseProvider().export(ScitosClient.this.getMainView().getActiveProject().getModelObject(),
+                                    exportOption.getStylesheetPath(), target);
+                        } catch (final HmxException ex) {
+                            MessageHandler.showException(ex);
+                        }
+                    }
+                });
+                this.exportMenu.add(singleOptionItem);
+            }
+        }
     }
 
     /**

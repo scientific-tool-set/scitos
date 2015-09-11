@@ -189,10 +189,10 @@ public class ButtonTabComponent extends JPanel {
             colorKey = "TabbedPane.nonSelectedTabTitleNormalColor";
         }
         if (!colorKey.equals(this.lastColorKey)) {
-            final Color color = UIManager.getLookAndFeelDefaults().getColor(colorKey);
+            final Color color = UIManager.getColor(colorKey);
             if (color != null) {
-                this.label.setForeground(color);
-                this.button.setForeground(color);
+                this.label.setForeground(new Color(color.getRGB()));
+                this.button.setForeground(new Color(color.getRGB()));
             }
             this.lastColorKey = colorKey;
         }

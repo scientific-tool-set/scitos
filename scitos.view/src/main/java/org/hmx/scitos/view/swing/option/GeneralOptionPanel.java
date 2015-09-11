@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -57,7 +59,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
     final JTextField undoCountField = new JTextField();
 
     /** The installed LookAndFeels to choose from. */
-    String[] lookAndFeels;
+    List<String> lookAndFeels;
 
     /**
      * Main constructor: create the general options panel.
@@ -122,12 +124,14 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
         this.lookAndFeelBox.setEditable(false);
         // get all available look and feels
         final LookAndFeelInfo[] installedUIs = UIManager.getInstalledLookAndFeels();
-        this.lookAndFeels = new String[installedUIs.length];
-        for (int i = 0; i < installedUIs.length; i++) {
-            // adding the short name of the look and feel in the combo box
-            this.lookAndFeelBox.addItem(installedUIs[i].getName());
-            // storing the long class name of the look and feel in array
-            this.lookAndFeels[i] = installedUIs[i].getClassName();
+        this.lookAndFeels = new ArrayList<String>(installedUIs.length);
+        for (final LookAndFeelInfo singleLaF : installedUIs) {
+            if (!"Nimbus".equals(singleLaF.getName())) {
+                // adding the short name of the look and feel in the combo box
+                this.lookAndFeelBox.addItem(singleLaF.getName());
+                // storing the long class name of the look and feel in array
+                this.lookAndFeels.add(singleLaF.getClassName());
+            }
         }
         String selected;
         if (this.containsChosenSettingKey(Option.LOOK_AND_FEEL)) {
@@ -139,18 +143,13 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
                 selected = UIManager.getLookAndFeel().getClass().getName();
             }
         }
-        for (int i = 0; i < GeneralOptionPanel.this.lookAndFeels.length; i++) {
-            if (this.lookAndFeels[i].equals(selected)) {
-                this.lookAndFeelBox.setSelectedIndex(i);
-                break;
-            }
-        }
+        this.lookAndFeelBox.setSelectedIndex(Math.max(0, this.lookAndFeels.indexOf(selected)));
         this.lookAndFeelBox.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent event) {
                 try {
-                    UIManager.setLookAndFeel(GeneralOptionPanel.this.lookAndFeels[GeneralOptionPanel.this.lookAndFeelBox.getSelectedIndex()]);
+                    UIManager.setLookAndFeel(GeneralOptionPanel.this.lookAndFeels.get(GeneralOptionPanel.this.lookAndFeelBox.getSelectedIndex()));
                     SwingUtilities.updateComponentTreeUI(GeneralOptionPanel.this.dialog);
                     SwingUtilities.updateComponentTreeUI(viewParent);
                     viewParent.validate();
@@ -174,7 +173,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
     @Override
     protected void validateInput() {
         // transfer settings in the chosenSettingsMap
-        this.addChosenSetting(Option.LOOK_AND_FEEL, this.lookAndFeels[this.lookAndFeelBox.getSelectedIndex()]);
+        this.addChosenSetting(Option.LOOK_AND_FEEL, this.lookAndFeels.get(this.lookAndFeelBox.getSelectedIndex()));
         this.addChosenSetting(Option.UNDO_LIMIT, this.undoCountField.getText());
     }
 

@@ -690,7 +690,6 @@ public final class DetailCategoryTreeTable extends JPanel {
                 } else {
                     this.renderButton.setForeground(table.getForeground());
                     this.renderButton.setBackground(table.getSelectionBackground());
-                    // this.renderButton.setBackground(UIManager.getLookAndFeelDefaults().getColor("Button.background"));
                 }
                 return this.renderButton;
             }

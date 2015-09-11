@@ -26,10 +26,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.MutableAttributeSet;
@@ -40,6 +38,8 @@ import javax.swing.undo.UndoManager;
 import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.swing.IUndoManagedView;
+import org.hmx.scitos.view.swing.components.ScaledLabel;
+import org.hmx.scitos.view.swing.components.ScaledTextPane;
 
 /**
  * Part of the {@link InterviewView}, that is allowing to insert/modify the interview's text while no scoring (i.e. detail category assignments) has
@@ -52,7 +52,7 @@ public final class InterviewInputPanel extends JPanel implements IUndoManagedVie
     /** The interview view this is a part of. */
     private final InterviewView parentView;
     /** The actual text pane to insert/modify the interview's text in. */
-    final JTextPane inputPane = new JTextPane();
+    final ScaledTextPane inputPane = new ScaledTextPane();
 
     /**
      * Main constructor.
@@ -64,10 +64,12 @@ public final class InterviewInputPanel extends JPanel implements IUndoManagedVie
         super(new GridBagLayout());
         this.parentView = parentView;
         // insert a hint label on the top of the input view
-        final JLabel hintLabel = new JLabel(Message.AIS_INTERVIEW_TEXTINPUT_HINT.get());
+        final ScaledLabel hintLabel = new ScaledLabel(Message.AIS_INTERVIEW_TEXTINPUT_HINT.get());
+        hintLabel.setToolTipText(Message.AIS_INTERVIEW_TEXTINPUT_HINT.get());
         hintLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.BASELINE_LEADING;
+        constraints.weightx = 1;
         this.add(hintLabel, constraints);
         // insert the button for starting the actual scoring (i.e. replacing this input panel with the scoring panel)
         final JButton button = new JButton(Message.AIS_INTERVIEW_START_SCORING.get());
@@ -82,6 +84,7 @@ public final class InterviewInputPanel extends JPanel implements IUndoManagedVie
             }
         });
         constraints.anchor = GridBagConstraints.BASELINE_TRAILING;
+        constraints.weightx = 0;
         constraints.gridx = 1;
         this.add(button, constraints);
         // make sure the input text pane is scrollable

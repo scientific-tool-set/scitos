@@ -66,7 +66,7 @@ public final class ProjectOverView extends AbstractAisProjectView<AisViewProject
         this.add(addInterviewButton, BorderLayout.SOUTH);
         this.refresh();
     }
-
+    
     @Override
     public void refresh() {
         this.analysisPanel.refresh();

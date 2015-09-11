@@ -41,6 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -140,6 +141,8 @@ public final class ScitosClient {
 
     /** The actual frame content besides the Menu Bar and Tool Bar. */
     final MainView mainView;
+    /** The content (font) size factor being applied, on the basis of the respective default values/fonts in the tabs. */
+    private float contentScaleFactor = 1;
 
     /**
      * Main constructor.
@@ -197,6 +200,8 @@ public final class ScitosClient {
         menuBar.add(this.createFileMenu());
         // create the "edit" menu
         menuBar.add(this.createEditMenu());
+        // create the "view" menu
+        menuBar.add(this.createViewMenu());
         return menuBar;
     }
 
@@ -330,7 +335,48 @@ public final class ScitosClient {
     }
 
     /**
-     * Create the main tool bar including the (default) application level items. This is used as basis to let the repectively active tab view add
+     * Create the View menu in the menu bar offering the scaling of the content (font) size in the tabs and toggling the project tree's visibility.
+     * 
+     * @return created View menu
+     */
+    private JMenu createViewMenu() {
+        final JMenu viewMenu = new JMenu(Message.MENUBAR_VIEW.get());
+        final JMenuItem scaleUpFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_UP.get()));
+        scaleUpFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
+        final JMenuItem scaleDownFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_DOWN.get()));
+        scaleDownFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
+        // allow the scaling only in the given range, with 10% change per step: 1.1^(-2 to +8)
+        final AtomicInteger range = new AtomicInteger(0);
+        scaleUpFontItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                scaleUpFontItem.setEnabled(range.incrementAndGet() < 8);
+                scaleDownFontItem.setEnabled(true);
+                ScitosClient.this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
+            }
+        });
+        scaleDownFontItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                scaleUpFontItem.setEnabled(true);
+                scaleDownFontItem.setEnabled(range.decrementAndGet() > -2);
+                ScitosClient.this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
+            }
+        });
+        viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_TOGGLE_PROJECT_TREE.get())).addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                ScitosClient.this.mainView.toggleProjectTreeVisibility();
+            }
+        });
+        return viewMenu;
+    }
+
+    /**
+     * Create the main tool bar including the (default) application level items. This is used as basis to let the respectively active tab view add
      * their own items.
      *
      * @return create tool bar
@@ -458,6 +504,26 @@ public final class ScitosClient {
             });
         }
         return result;
+    }
+
+    /**
+     * Getter for the global font size scaling factor.
+     * 
+     * @return the font size scaling factor
+     */
+    public float getContentScaleFactor() {
+        return this.contentScaleFactor;
+    }
+
+    /**
+     * Scale the global font size factor (that is being applied in tab contents).
+     * 
+     * @param modificationFactor
+     *            amount by which the global font size factor should be altered (1 = 100% = no changes)
+     */
+    void setContentScaleFactor(final float modificationFactor) {
+        this.contentScaleFactor = modificationFactor;
+        SwingUtilities.updateComponentTreeUI(this.frame);
     }
 
     /**

@@ -95,6 +95,10 @@ Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder
 	<entry key="Client.MenuBar.File.Types.AIS">AIS Projekt</entry>
 	<entry key="Client.MenuBar.Preferences">Einstellungen</entry>
 	<entry key="Client.MenuBar.Quit">Beenden</entry>
+	<entry key="Client.MenuBar.View">Ansicht</entry>
+	<entry key="Client.MenuBar.View.Font.ScaleUp">Schrift: Vergrößern</entry>
+	<entry key="Client.MenuBar.View.Font.ScaleDown">Schrift: Verkleinern</entry>
+	<entry key="Client.MenuBar.View.ProjectTreeVisibility">Projektbaum: Aus-/Einblenden</entry>
 	<entry key="Client.ToolBar.Title">SciToS - ToolBar</entry>
 	<entry key="Client.Preferences.General">Allgemein</entry>
 	<entry key="Client.Preferences.General.LookAndFeel">Java Swing Look and Feel</entry>

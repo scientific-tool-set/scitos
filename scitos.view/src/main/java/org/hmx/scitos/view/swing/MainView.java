@@ -20,6 +20,7 @@
 package org.hmx.scitos.view.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -74,6 +75,7 @@ import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.ScitosIcon;
+import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.util.ButtonTabComponent;
 
 /**
@@ -86,6 +88,8 @@ public class MainView extends JPanel {
     /** The currently open view projects. */
     private final List<IViewProject<?>> openProjects = new LinkedList<IViewProject<?>>();
 
+    /** The divided pane containing the project tree on the left and the tab stack on the right. */
+    private final JSplitPane splitPane;
     /** The (invisible) root of the project tree on the left side. */
     private final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(null, true);
     /** The project tree on the left side, offering the selection of the open projects and their respective model elements. */
@@ -109,22 +113,19 @@ public class MainView extends JPanel {
         this.setBorder(null);
         this.initProjectTree(this.projectTree);
         // set the initial size (height can be ignored)
-        this.scrollableTree.setPreferredSize(new Dimension(200, 300));
+        this.scrollableTree.setPreferredSize(new Dimension(200, 1));
+        this.scrollableTree.setMinimumSize(new Dimension(120, 1));
 
         this.initTabStack(this.tabStack, createWelcomeTab);
-        final JPanel wrappedTabStack = new JPanel(new GridBagLayout());
-        final GridBagConstraints doubleSpan = new GridBagConstraints();
-        doubleSpan.fill = GridBagConstraints.BOTH;
-        doubleSpan.weightx = 1;
-        doubleSpan.weighty = 1;
-        wrappedTabStack.add(this.tabStack, doubleSpan);
+        final JPanel wrappedTabStack = new JPanel(new BorderLayout());
+        wrappedTabStack.add(this.tabStack);
         // initialize the content area
-        final JSplitPane splitArea = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitArea.setLeftComponent(this.scrollableTree);
-        splitArea.setRightComponent(wrappedTabStack);
-        splitArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        splitArea.setDividerSize(5);
-        this.add(splitArea);
+        this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        this.splitPane.setLeftComponent(this.scrollableTree);
+        this.splitPane.setRightComponent(wrappedTabStack);
+        this.splitPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.splitPane.setDividerSize(5);
+        this.add(this.splitPane);
         this.applyLookAndFeelDependentProjectTreeStyling();
     }
 
@@ -140,8 +141,9 @@ public class MainView extends JPanel {
      * Ensure the correct rendering regarding the currently applied look and feel, where look and feel colors have been re-used manually.
      */
     private void applyLookAndFeelDependentProjectTreeStyling() {
+        final Color color = UIManager.getColor("Panel.background");
         this.scrollableTree.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(5, 5, 5, 0, UIManager.getLookAndFeelDefaults().getColor("Panel.background")),
+                BorderFactory.createMatteBorder(5, 5, 5, 0, color == null ? null : new Color(color.getRGB())),
                 BorderFactory.createLoweredBevelBorder()));
         this.projectTree.setCellRenderer(new ScitosTreeNodeRenderer());
     }
@@ -211,6 +213,26 @@ public class MainView extends JPanel {
                 MainView.this.revalidateClient(true);
             }
         });
+    }
+
+    /** Hide/show the project tree to allow the maximum space to be available for the actual open project/file. */
+    public void toggleProjectTreeVisibility() {
+        if (this.getComponent(0) == this.splitPane) {
+            this.removeAll();
+            this.add(this.tabStack);
+            this.revalidate();
+        } else {
+            this.removeAll();
+            final JPanel rightWrapper = (JPanel) this.splitPane.getRightComponent();
+            // avoid inconsistencies
+            rightWrapper.removeAll();
+            // make sure the tabbed pane is contained in the right component
+            rightWrapper.add(this.tabStack);
+            this.add(this.splitPane);
+            this.revalidate();
+            this.scrollableTree.repaint();
+            this.splitPane.repaint();
+        }
     }
 
     /**
@@ -625,7 +647,7 @@ public class MainView extends JPanel {
         constraints.gridwidth = 2;
         constraints.gridx = 0;
         constraints.gridy = 0;
-        welcomeTab.add(new JLabel(Message.TAB_WELCOME_TEXT.get()), constraints);
+        welcomeTab.add(new ScaledLabel(Message.TAB_WELCOME_TEXT.get()), constraints);
         constraints.weighty = 1;
         constraints.gridy++;
         welcomeTab.add(new JPanel(), constraints);
@@ -942,10 +964,14 @@ public class MainView extends JPanel {
 
         /** Main constructor, initializes look and feel coloring associated with text panes (instead of trees). */
         ScitosTreeNodeRenderer() {
-            this.setBackgroundSelectionColor(UIManager.getLookAndFeelDefaults().getColor("TextPane.selectionBackground"));
-            this.setTextSelectionColor(UIManager.getLookAndFeelDefaults().getColor("TextPane.selectionForeground"));
-            this.setBackgroundNonSelectionColor(UIManager.getLookAndFeelDefaults().getColor("TextPane.background"));
-            this.setTextNonSelectionColor(UIManager.getLookAndFeelDefaults().getColor("TextPane.foreground"));
+            final Color selectionBackground = UIManager.getColor("TextPane.selectionBackground");
+            this.setBackgroundSelectionColor(selectionBackground == null ? Color.BLUE : new Color(selectionBackground.getRGB()));
+            final Color selectionForeground = UIManager.getColor("TextPane.selectionForeground");
+            this.setTextSelectionColor(selectionForeground == null ? Color.WHITE : new Color(selectionForeground.getRGB()));
+            final Color background = UIManager.getColor("TextPane.background");
+            this.setBackgroundNonSelectionColor(background == null ? Color.WHITE : new Color(background.getRGB()));
+            final Color foreground = UIManager.getColor("TextPane.foreground");
+            this.setTextNonSelectionColor(foreground == null ? Color.BLACK : new Color(foreground.getRGB()));
         }
 
         @Override

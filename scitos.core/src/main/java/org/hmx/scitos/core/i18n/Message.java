@@ -48,14 +48,19 @@ public enum Message implements ILocalizableMessage {
     ERROR_SAVE_FAILED("Client.MenuBar.File.Save.Failed"),
     MENUBAR_FILE_SAVEAS("Client.MenuBar.File.SaveAs"),
     MENUBAR_FILE_TYPE_AIS("Client.MenuBar.File.Types.AIS"),
+    // the about menu entry
+    MENUBAR_ABOUT("Client.MenuBar.About"),
     MENUBAR_PREFERENCES("Client.MenuBar.Preferences"),
     MENUBAR_QUIT("Client.MenuBar.Quit"),
     // edit menu and its menu items
     MENUBAR_EDIT("Client.MenuBar.Edit"),
     MENUBAR_EDIT_UNDO("Client.MenuBar.Edit.Undo"),
     MENUBAR_EDIT_REDO("Client.MenuBar.Edit.Redo"),
-    // the about menu entry
-    MENUBAR_ABOUT("Client.MenuBar.About"),
+    // view menu and its menu items
+    MENUBAR_VIEW("Client.MenuBar.View"),
+    MENUBAR_VIEW_FONT_SCALE_UP("Client.MenuBar.View.Font.ScaleUp"),
+    MENUBAR_VIEW_FONT_SCALE_DOWN("Client.MenuBar.View.Font.ScaleDown"),
+    MENUBAR_VIEW_TOGGLE_PROJECT_TREE("Client.MenuBar.View.ProjectTreeVisibility"),
     // the preferences dialog
     PREFERENCES_GENERAL("Client.Preferences.General"),
     PREFERENCES_GENERAL_LOOK_AND_FEEL("Client.Preferences.General.LookAndFeel"),

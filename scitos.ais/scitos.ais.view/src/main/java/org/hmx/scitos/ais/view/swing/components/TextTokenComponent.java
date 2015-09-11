@@ -25,13 +25,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.TextToken;
+import org.hmx.scitos.view.swing.ScitosApp;
+import org.hmx.scitos.view.swing.components.ScaledLabel;
 
 /**
  * Component representing a single token (usually a word), in an interview. The top half is dedicated to the display of the assigned detail category.
@@ -41,12 +43,12 @@ public final class TextTokenComponent extends JPanel {
 
     /** The represented model object. */
     private final TextToken model;
-    /** The parts this component is comprised of. This array is used to forward registered listeners to these parts. */
-    private final JLabel[] labels;
+    /** The (center) top part of the component, showing the assigned detail category. */
+    private final ScaledLabel detailLabel;
     /**
      * The bottom half of the component, displaying the token's text. It also shows the changeable {@link #selected} state.
      */
-    final JLabel textLabel;
+    final ScaledLabel textLabel;
     /** If the token should be displayed as selected, in order to assign a detail category to (i.e. score) it. */
     private boolean selected;
 
@@ -57,10 +59,10 @@ public final class TextTokenComponent extends JPanel {
      *            represented model object
      */
     public TextTokenComponent(final TextToken model) {
-        super(new BorderLayout(1, 1));
+        super(new BorderLayout());
         this.model = model;
         this.setBorder(null);
-        final JLabel openBracketLabel = new JLabel("(");
+        final ScaledLabel openBracketLabel = new ScaledLabel("(");
         openBracketLabel.setOpaque(false);
         openBracketLabel.setVisible(model.isFirstTokenOfDetail() && model.getPreviousToken() != null
                 && !model.getPreviousToken().isLastTokenOfDetail());
@@ -71,63 +73,75 @@ public final class TextTokenComponent extends JPanel {
         } else {
             detailCode = model.getDetail().getCode();
         }
-        final JLabel detailLabel = new JLabel(detailCode);
-        detailLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
-        detailLabel.setOpaque(false);
-        this.add(detailLabel, BorderLayout.CENTER);
-        final JLabel closingBracketLabel = new JLabel(")");
-        closingBracketLabel.setOpaque(false);
-        closingBracketLabel.setVisible(model.isLastTokenOfDetail() && model.getFollowingToken() != null
+        this.detailLabel = new ScaledLabel(detailCode);
+        this.detailLabel.setOpaque(false);
+        this.add(this.detailLabel, BorderLayout.CENTER);
+        final ScaledLabel closeBracketLabel = new ScaledLabel(")");
+        closeBracketLabel.setOpaque(false);
+        closeBracketLabel.setVisible(model.isLastTokenOfDetail() && model.getFollowingToken() != null
                 && !model.getFollowingToken().isFirstTokenOfDetail());
-        this.add(closingBracketLabel, BorderLayout.LINE_END);
-        this.textLabel = new JLabel(model.getText(), SwingConstants.CENTER) {
-
-            @Override
-            public void updateUI() {
-                super.updateUI();
-                if (TextTokenComponent.this.textLabel != null) {
-                    TextTokenComponent.this.applyTextLabelBorder();
-                    TextTokenComponent.this.applyTextLabelColor();
-                }
-            }
-        };
+        this.add(closeBracketLabel, BorderLayout.LINE_END);
+        this.textLabel = new ScaledLabel(model.getText(), "TextPane.font", SwingConstants.CENTER);
         this.textLabel.setOpaque(true);
         this.textLabel.setDoubleBuffered(true);
-        this.applyTextLabelBorder();
+        this.applyScaledSpacing();
         this.applyTextLabelColor();
         this.add(this.textLabel, BorderLayout.PAGE_END);
-        this.labels = new JLabel[] { openBracketLabel, detailLabel, closingBracketLabel, this.textLabel };
+        final DetailCategory assigned = model.getDetail();
+        if (assigned != null) {
+            this.detailLabel.setToolTipText(assigned.getName());
+            this.textLabel.setToolTipText(assigned.getName());
+        }
     }
 
     @Override
     public void updateUI() {
         super.updateUI();
-        this.setBackground(UIManager.getLookAndFeelDefaults().getColor("TextPane.background"));
+        final Color background = UIManager.getColor("TextPane.background");
+        this.setBackground(background == null ? Color.WHITE : new Color(background.getRGB()));
+        if (TextTokenComponent.this.textLabel != null) {
+            TextTokenComponent.this.applyScaledSpacing();
+            TextTokenComponent.this.applyTextLabelColor();
+        }
     }
 
     /**
      * Set the text label's border. This includes the colored top border, depending on the user's preferences for the assigned detail category, and
      * the separators between detail sections (i.e. the first and last token with the same assigned detail category).
      */
-    void applyTextLabelBorder() {
+    void applyScaledSpacing() {
+        final float scaleFactor;
+        if (ScitosApp.getClient() == null) {
+            scaleFactor = 1f;
+        } else {
+            scaleFactor = ScitosApp.getClient().getContentScaleFactor();
+        }
+        final int halfGap = Math.round(scaleFactor);
+        final int fullGap = Math.round(2 * scaleFactor);
+        final BorderLayout mainLayout = (BorderLayout) this.getLayout();
+        mainLayout.setHgap(halfGap);
+        mainLayout.setVgap(halfGap);
+        this.detailLabel.setBorder(BorderFactory.createEmptyBorder(halfGap, fullGap, halfGap, fullGap));
         final Border topBorder;
         if (this.model.getDetail() == null) {
-            topBorder = BorderFactory.createEmptyBorder(2, 0, 0, 0);
+            topBorder = BorderFactory.createEmptyBorder(fullGap, 0, 0, 0);
         } else {
-            topBorder = BorderFactory.createMatteBorder(2, 0, 0, 0, this.model.getDetail().getColor());
+            topBorder = BorderFactory.createMatteBorder(fullGap, 0, 0, 0, this.model.getDetail().getColor());
         }
         final Border sideBorder;
+        final int doubleGap = Math.round(4 * scaleFactor);
         final boolean showSectionStart = this.model.isFirstTokenOfDetail() && this.model.getPreviousToken() != null;
         final boolean showSectionEnd = this.model.isLastTokenOfDetail() && this.model.getFollowingToken() != null;
         if (showSectionStart || showSectionEnd) {
-            final int leadingSeparator = showSectionStart ? 2 : 0;
-            final int trailingSeparator = showSectionEnd ? 2 : 0;
-            final Color color = UIManager.getLookAndFeelDefaults().getColor("TextPane.caretForeground");
-            sideBorder =
-                    BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, leadingSeparator, 0, trailingSeparator, color),
-                            BorderFactory.createEmptyBorder(2, 4 - leadingSeparator, 2, 4 - trailingSeparator));
+            final int leading = showSectionStart ? fullGap : 0;
+            final int trailing = showSectionEnd ? fullGap : 0;
+            Color color = UIManager.getColor("TextPane.caretForeground");
+            color = color == null ? Color.BLACK : new Color(color.getRGB());
+            final Border coloredTopBorder = BorderFactory.createMatteBorder(0, leading, 0, trailing, color);
+            final Border emptySpacing = BorderFactory.createEmptyBorder(fullGap, doubleGap - leading, fullGap, doubleGap - trailing);
+            sideBorder = BorderFactory.createCompoundBorder(coloredTopBorder, emptySpacing);
         } else {
-            sideBorder = BorderFactory.createEmptyBorder(2, 4, 2, 4);
+            sideBorder = BorderFactory.createEmptyBorder(fullGap, doubleGap, fullGap, doubleGap);
         }
         this.textLabel.setBorder(BorderFactory.createCompoundBorder(topBorder, sideBorder));
     }
@@ -145,8 +159,10 @@ public final class TextTokenComponent extends JPanel {
             foregroundKey = "TextPane.foreground";
             backgroundKey = "TextPane.background";
         }
-        this.textLabel.setForeground(UIManager.getLookAndFeelDefaults().getColor(foregroundKey));
-        this.textLabel.setBackground(UIManager.getLookAndFeelDefaults().getColor(backgroundKey));
+        final Color foreground = UIManager.getColor(foregroundKey);
+        final Color background = UIManager.getColor(backgroundKey);
+        this.textLabel.setForeground(foreground == null ? null : new Color(foreground.getRGB()));
+        this.textLabel.setBackground(background == null ? null : new Color(background.getRGB()));
     }
 
     /**
@@ -184,16 +200,14 @@ public final class TextTokenComponent extends JPanel {
     @Override
     public synchronized void addMouseListener(final MouseListener listener) {
         super.addMouseListener(listener);
-        for (final JLabel singleLabel : this.labels) {
-            singleLabel.addMouseListener(listener);
-        }
+        this.detailLabel.addMouseListener(listener);
+        this.textLabel.addMouseListener(listener);
     }
 
     @Override
     public synchronized void addMouseMotionListener(final MouseMotionListener listener) {
         super.addMouseMotionListener(listener);
-        for (final JLabel singleLabel : this.labels) {
-            singleLabel.addMouseMotionListener(listener);
-        }
+        this.detailLabel.addMouseMotionListener(listener);
+        this.textLabel.addMouseMotionListener(listener);
     }
 }

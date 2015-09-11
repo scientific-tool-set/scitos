@@ -19,6 +19,7 @@
 
 package org.hmx.scitos.ais.view.swing.components;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -75,10 +76,10 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
             @Override
             public void updateUI() {
                 super.updateUI();
-                this.setBackground(UIManager.getLookAndFeelDefaults().getColor("TextPane.background"));
+                final Color background = UIManager.getColor("TextPane.background");
+                this.setBackground(background == null ? Color.WHITE : new Color(background.getRGB()));
             }
         };
-        this.viewPortView.setBackground(UIManager.getLookAndFeelDefaults().getColor("TextPane.background"));
         this.addAncestorListener(new AncestorListener() {
 
             @Override

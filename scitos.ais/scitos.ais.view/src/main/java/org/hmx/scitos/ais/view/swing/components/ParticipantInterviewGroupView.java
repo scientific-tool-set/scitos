@@ -33,7 +33,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -49,6 +48,7 @@ import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IProvider;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.ScitosClient;
+import org.hmx.scitos.view.swing.components.ScaledLabel;
 
 /**
  * Tab view: representing a single participant, that has multiple interviews assigned.
@@ -84,7 +84,7 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
     public ParticipantInterviewGroupView(final ScitosClient client, final AisViewProject project, final String participantId,
             final AisOption options) {
         super(project, participantId, options, new BorderLayout());
-        final JLabel topicLabel = new JLabel(Message.AIS_INTERVIEW_CHANGE_ORDER.get());
+        final ScaledLabel topicLabel = new ScaledLabel(Message.AIS_INTERVIEW_CHANGE_ORDER.get());
         topicLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         this.add(topicLabel, BorderLayout.NORTH);
         this.contentArea = new JPanel(new GridBagLayout());

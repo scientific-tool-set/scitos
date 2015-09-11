@@ -22,6 +22,7 @@ package org.hmx.scitos.ais.view.swing.components;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -47,6 +48,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
@@ -59,6 +61,7 @@ import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.MessageHandler;
+import org.hmx.scitos.view.swing.ScitosApp;
 import org.hmx.scitos.view.swing.ScitosClient;
 import org.jopendocument.dom.OOXML;
 import org.jopendocument.dom.XMLVersion;
@@ -158,7 +161,28 @@ public final class PatternAnalysisPanel extends JPanel {
      * @return scrollable table taking up the whole view
      */
     private JScrollPane createTableFromModel(final TableModel tableModel) {
-        final JTable tableView = new JTable(tableModel);
+        final JTable tableView = new JTable(tableModel) {
+
+            @Override
+            public void updateUI() {
+                super.updateUI();
+                final float scaleFactor;
+                if (ScitosApp.getClient() == null) {
+                    scaleFactor = 1f;
+                } else {
+                    scaleFactor = ScitosApp.getClient().getContentScaleFactor();
+                }
+                final Font headerFont = UIManager.getFont("TableHeader.font");
+                if (headerFont != null) {
+                    this.getTableHeader().setFont(new Font(headerFont.getAttributes()).deriveFont(headerFont.getSize2D() * scaleFactor));
+                }
+                final Font contentFont = UIManager.getFont("Table.font");
+                if (contentFont != null) {
+                    this.setFont(new Font(contentFont.getAttributes()).deriveFont(contentFont.getSize2D() * scaleFactor));
+                    this.setRowHeight(2 + Math.round(this.getFont().getSize2D() * scaleFactor));
+                }
+            }
+        };
         tableView.setBorder(null);
         tableView.setAutoCreateColumnsFromModel(true);
         tableView.setAutoCreateRowSorter(true);

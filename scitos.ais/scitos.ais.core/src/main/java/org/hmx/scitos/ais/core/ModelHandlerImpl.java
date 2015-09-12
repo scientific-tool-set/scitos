@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
@@ -43,7 +44,6 @@ import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.core.AbstractModelHandler;
 import org.hmx.scitos.core.HmxException;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 
 /**
@@ -444,14 +444,14 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                             && (!trailingConflicts.containsKey(conflictingDetail) || trailingConflicts.get(conflictingDetail).get() > conflictCount);
             if (requiredDetailStartNotMet || requiredDetailEndNotMet) {
                 // the intersected detail category cannot be resolved
-                throw new HmxException(Message.ERROR_AIS_SELECTION_INVALID);
+                throw new HmxException(AisMessage.ERROR_AIS_SELECTION_INVALID);
             }
         }
         if (enclosedOrphan != null
                 && (!leadingConflicts.containsKey(enclosedOrphan) || !trailingConflicts.containsKey(enclosedOrphan)
                         || leadingConflicts.get(enclosedOrphan).get() < 1 || trailingConflicts.get(enclosedOrphan).get() > -1)) {
             // the enclosed detail category could not be resolved
-            throw new HmxException(Message.ERROR_AIS_SELECTION_INVALID);
+            throw new HmxException(AisMessage.ERROR_AIS_SELECTION_INVALID);
         }
     }
 

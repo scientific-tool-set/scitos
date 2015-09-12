@@ -28,8 +28,8 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import org.hmx.scitos.ais.core.AisOption;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.ScitosClient;
 
@@ -55,7 +55,7 @@ public final class ProjectOverView extends AbstractAisProjectView<AisViewProject
         super(project, project, options, new BorderLayout());
         this.analysisPanel = new PatternAnalysisPanel(client, project);
         this.add(this.analysisPanel);
-        final JButton addInterviewButton = new JButton(Message.AIS_INTERVIEW_NEW.get(), ScitosIcon.MODEL_ELEMENT_ADD.create());
+        final JButton addInterviewButton = new JButton(AisMessage.INTERVIEW_NEW.get(), ScitosIcon.MODEL_ELEMENT_ADD.create());
         addInterviewButton.addActionListener(new ActionListener() {
 
             @Override
@@ -66,7 +66,7 @@ public final class ProjectOverView extends AbstractAisProjectView<AisViewProject
         this.add(addInterviewButton, BorderLayout.SOUTH);
         this.refresh();
     }
-    
+
     @Override
     public void refresh() {
         this.analysisPanel.refresh();

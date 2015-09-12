@@ -29,11 +29,11 @@ import java.util.List;
 import javax.swing.JButton;
 
 import org.hmx.scitos.ais.core.AisOption;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.swing.IUndoManagedView;
 import org.hmx.scitos.view.swing.MainView;
 
@@ -154,8 +154,8 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
      * @return create button for the main tool bar
      */
     private JButton createCategoryToolBarItem(final DetailCategory category) {
-        final JButton button = new JButton(category == null ? Message.AIS_SCORE_REMOVE.get() : category.getCode());
-        button.setToolTipText(category == null ? Message.AIS_SCORE_REMOVE_TOOLTIP.get() : category.getName());
+        final JButton button = new JButton(category == null ? AisMessage.SCORE_REMOVE.get() : category.getCode());
+        button.setToolTipText(category == null ? AisMessage.SCORE_REMOVE_TOOLTIP.get() : category.getName());
         button.addActionListener(new ActionListener() {
 
             @Override

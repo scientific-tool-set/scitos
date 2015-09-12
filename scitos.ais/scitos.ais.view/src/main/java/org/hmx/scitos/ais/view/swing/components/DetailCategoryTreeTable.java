@@ -62,10 +62,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.MessageHandler.MessageType;
@@ -168,7 +168,7 @@ public final class DetailCategoryTreeTable extends JPanel {
         this.add(scrollableTreeTable);
         final JPanel buttonWrapper = new JPanel(new GridBagLayout());
         buttonWrapper.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
-        this.setAsDefaultCheckBox = new JCheckBox(Message.AIS_PREFERENCES_DETAIL_CATEGORIES_AS_DEFAULT.get());
+        this.setAsDefaultCheckBox = new JCheckBox(AisMessage.DETAIL_CATEGORIES_AS_DEFAULT.get());
         this.setAsDefaultCheckBox.setSelected(!showSetAsDefaultCheckBox);
         this.setAsDefaultCheckBox.setVisible(showSetAsDefaultCheckBox);
         final GridBagConstraints constraints = new GridBagConstraints();
@@ -180,7 +180,7 @@ public final class DetailCategoryTreeTable extends JPanel {
         constraints.weightx = 1;
         constraints.gridx = 1;
         buttonWrapper.add(spacing, constraints);
-        final JButton addRootCategoryButton = new JButton(Message.AIS_PREFERENCES_DETAIL_CATEGORY_ADD_ROOT.get(), ScitosIcon.ADD.create());
+        final JButton addRootCategoryButton = new JButton(AisMessage.DETAIL_CATEGORY_ADD_ROOT.get(), ScitosIcon.ADD.create());
         addRootCategoryButton.addActionListener(new ActionListener() {
 
             @Override
@@ -282,7 +282,7 @@ public final class DetailCategoryTreeTable extends JPanel {
         if (this.treeModel.isValid()) {
             return true;
         }
-        MessageHandler.showMessage(Message.AIS_PREFERENCES_DETAIL_CATEGORIES_INVALID.get(), "", MessageType.WARN);
+        MessageHandler.showMessage(AisMessage.DETAIL_CATEGORIES_INVALID.get(), "", MessageType.WARN);
         return false;
     }
 
@@ -365,7 +365,7 @@ public final class DetailCategoryTreeTable extends JPanel {
             if ((this.wasCancelled == null || !this.wasCancelled) && (editingValue.isEmpty() || this.isCodeAlreadyDefined(editingValue))) {
                 this.input.setBorder(BorderFactory.createLineBorder(Color.RED));
                 this.input.selectAll();
-                MessageHandler.showMessage(Message.AIS_PREFERENCES_DETAIL_CATEGORIES_CODE_DUPLICATE.get(), "", MessageType.ERROR);
+                MessageHandler.showMessage(AisMessage.DETAIL_CATEGORY_CODE_DUPLICATE.get(), "", MessageType.ERROR);
                 this.input.requestFocusInWindow();
                 return false;
             }

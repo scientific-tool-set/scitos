@@ -46,6 +46,7 @@ import javax.swing.border.Border;
 
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.IModelHandler;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
@@ -72,7 +73,7 @@ public final class CategoryModelChangeDialog extends JDialog {
      *            the handler instance to set the default for new projects on
      */
     public CategoryModelChangeDialog(final IModelHandler modelHandler, final AisOption options) {
-        super(ScitosApp.getClient().getFrame(), Message.AIS_PROJECT_CHANGE_CATEGORIES.get(), true);
+        super(ScitosApp.getClient().getFrame(), AisMessage.PROJECT_CHANGE_CATEGORIES.get(), true);
         this.modelHandler = modelHandler;
         this.options = options;
         final JPanel contentPane = new JPanel(new BorderLayout());
@@ -207,10 +208,10 @@ public final class CategoryModelChangeDialog extends JDialog {
          */
         CategoryModelMatchSubDialog(final Map<DetailCategory, AtomicLong> oldDetailOccurences, final MutableDetailCategoryModel newModel,
                 final Map<DetailCategory, DetailCategory> preset) {
-            super(CategoryModelChangeDialog.this, Message.AIS_PROJECT_CHANGE_CATEGORIES_MATCHING.get(), true);
+            super(CategoryModelChangeDialog.this, AisMessage.PROJECT_CHANGE_CATEGORIES_MATCHING.get(), true);
             final JPanel contentPane = new JPanel(new GridBagLayout());
             final JLabel descriptionLabel =
-                    new JLabel("<html>" + Message.AIS_PROJECT_CHANGE_CATEGORIES_MATCHING_DESCRIPTION.get().replaceAll("[\n]", "<br/>"));
+                    new JLabel("<html>" + AisMessage.PROJECT_CHANGE_CATEGORIES_MATCHING_DESCRIPTION.get().replaceAll("[\n]", "<br/>"));
             descriptionLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             final GridBagConstraints constraints = new GridBagConstraints();
             constraints.fill = GridBagConstraints.BOTH;
@@ -221,7 +222,7 @@ public final class CategoryModelChangeDialog extends JDialog {
             final Border headerBorder =
                     BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 10, 1, 10),
                             BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-            final JLabel leftColumnHeader = new JLabel(Message.AIS_PROJECT_CHANGE_CATEGORIES_OLD.get(), SwingConstants.CENTER);
+            final JLabel leftColumnHeader = new JLabel(AisMessage.PROJECT_CHANGE_CATEGORIES_OLD.get(), SwingConstants.CENTER);
             leftColumnHeader.setOpaque(true);
             leftColumnHeader.setBackground(Color.WHITE);
             leftColumnHeader.setBorder(headerBorder);
@@ -229,13 +230,13 @@ public final class CategoryModelChangeDialog extends JDialog {
             constraints.gridwidth = 1;
             constraints.weightx = 1;
             contentPane.add(leftColumnHeader, constraints);
-            final JLabel midColumnHeader = new JLabel(Message.AIS_PROJECT_CHANGE_CATEGORIES_AFFECTED_TOKENS.get(), SwingConstants.CENTER);
+            final JLabel midColumnHeader = new JLabel(AisMessage.PROJECT_CHANGE_CATEGORIES_AFFECTED_TOKENS.get(), SwingConstants.CENTER);
             midColumnHeader.setOpaque(true);
             midColumnHeader.setBackground(Color.WHITE);
             midColumnHeader.setBorder(headerBorder);
             constraints.gridx = 1;
             contentPane.add(midColumnHeader, constraints);
-            final JLabel rightColumnHeader = new JLabel(Message.AIS_PROJECT_CHANGE_CATEGORIES_NEW.get(), SwingConstants.CENTER);
+            final JLabel rightColumnHeader = new JLabel(AisMessage.PROJECT_CHANGE_CATEGORIES_NEW.get(), SwingConstants.CENTER);
             rightColumnHeader.setOpaque(true);
             rightColumnHeader.setBackground(Color.WHITE);
             rightColumnHeader.setBorder(headerBorder);

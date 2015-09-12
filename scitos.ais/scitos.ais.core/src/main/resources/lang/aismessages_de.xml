@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+-->
+<properties>
+	<entry key="Ais.Analysis.ExportToSpreadsheet">Tabellen Exportieren</entry>
+	<entry key="Ais.Analysis.Summary">Ergebnisse</entry>
+	<entry key="Ais.Analysis.Sequence">Sequenzen</entry>
+	<entry key="Ais.Analysis.Pattern">Muster</entry>
+	<entry key="Ais.Analysis.TableHeader.Interview">Interview</entry>
+	<entry key="Ais.Analysis.TableHeader.TokenCount">Tokenanzahl</entry>
+	<entry key="Ais.Analysis.TableContent.NoDetailsScored">noch keine analysierten Interviews</entry>
+	<entry key="Ais.Client.Preferences.DetailCategories.Default">Standard Kategorien für neue Projekte/Dateien</entry>
+	<entry key="Ais.Client.Preferences.NodeLabel">AIS</entry>
+	<entry key="Ais.DetailCategories.Invalid">Das definierte Kategorie-Modell ist ungültig.
+
+Jeder Kategorie muss ein eindeutiger Name, 
+mit einer Länge von ein bis fünf Zeichen, 
+zugeordnet sein.</entry>
+	<entry key="Ais.DetailCategories.SetAsDefault">Als Standard für neue Projekte/Dateien verwenden</entry>
+	<entry key="Ais.DetailCategory.AddChildCategory">Unterkategorie hinzufügen</entry>
+	<entry key="Ais.DetailCategory.AddRootCategory">Oberkategorie hinzufügen</entry>
+	<entry key="Ais.DetailCategory.Code">Name</entry>
+	<entry key="Ais.DetailCategory.Code.NotUnique">Der eingegebene Name ist ungültig.
+
+Bitte wähle einen eindeutigen Namen,
+mit einer Länge von ein bis fünf Zeichen.</entry>
+	<entry key="Ais.DetailCategory.Color">Farbe</entry>
+	<entry key="Ais.DetailCategory.Delete">Kategorie entfernen</entry>
+	<entry key="Ais.DetailCategory.Name">Beschreibung</entry>
+	<entry key="Ais.DetailCategory.ShortCut">Tastenkombination</entry>
+	<entry key="Ais.Interview.Delete">Interview löschen</entry>
+	<entry key="Ais.Interview.Delete.Warning">Das ausgewählte Interview wird gelöscht.
+
+Dieser Schritt kann nicht rückgängig gemacht werden.</entry>
+	<entry key="Ais.Interview.Modify.Order">Reihenfolge der Interviews eines Studienteilnehmers bearbeiten</entry>
+	<entry key="Ais.Interview.Modify.ParticipantId">Studienteilnehmer umbenennen</entry>
+	<entry key="Ais.Interview.Modify.ParticipantId.Description">Neuen Bezeichner für Studienteilnehmer eingeben:</entry>
+	<entry key="Ais.Interview.New">Neues Interview anlegen</entry>
+	<entry key="Ais.Interview.New.ParticipantId">Bezeichner für Studienteilnehmer:</entry>
+	<entry key="Ais.Interview.InputHint">Transkribierten Text des Interviews eingeben oder hineinkopieren.</entry>
+	<entry key="Ais.Interview.StartScoring">Beginne Scoring</entry>
+	<entry key="Ais.Interview.Score.SelectionInvalid">Ungültige unterbrochene Auswahl:
+
+Eingeschlossene Kategorien müssen abgeschlossen sein.
+Sie müssen im ausgewählten/eingeschlossenen Bereich beginnen und enden.</entry>
+	<entry key="Ais.Interview.Score.Remove">Entfernen</entry>
+	<entry key="Ais.Interview.Score.RemoveToolTip">Zugewiesene Kategorien von ausgewählten Token entfernen.</entry>
+	<entry key="Ais.Project.ChangeDetailCategories">Kategoriemodell bearbeiten</entry>
+	<entry key="Ais.Project.ChangeDetailCategories.AffectedTokens">Anzahl zugeordneter Token</entry>
+	<entry key="Ais.Project.ChangeDetailCategories.MatchOldToNew">Alte Kategorien durch neue ersetzen</entry>
+	<entry key="Ais.Project.ChangeDetailCategories.MatchOldToNew.Description">
+Du bist dabei strukturelle Veränderungen vorzunehmen, die sich auf bereits zugewiesene Kategorien auswirken.
+
+Bitte wähle aus, welche (neue) Kategorie an Stelle welcher (alten) Kategorie zugewiesen werden soll.
+Zugeordnete Kategorien ohne Entsprechung im neuen Modell werden verworfen!</entry>
+	<entry key="Ais.Project.ChangeDetailCategories.OldCategory">Alte Kategorie</entry>
+	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Ersetzt durch neue Kategorie</entry>
+	<entry key="Ais.Project.Export.Html">HTML-Datei</entry>
+	<entry key="Ais.Project.New">Wo soll das neue AIS Projekt gespeichert werden?</entry>
+</properties>

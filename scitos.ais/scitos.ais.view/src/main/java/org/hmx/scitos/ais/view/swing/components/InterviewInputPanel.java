@@ -35,8 +35,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.undo.UndoManager;
 
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.TextToken;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.swing.IUndoManagedView;
 import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.components.ScaledTextPane;
@@ -64,15 +64,15 @@ public final class InterviewInputPanel extends JPanel implements IUndoManagedVie
         super(new GridBagLayout());
         this.parentView = parentView;
         // insert a hint label on the top of the input view
-        final ScaledLabel hintLabel = new ScaledLabel(Message.AIS_INTERVIEW_TEXTINPUT_HINT.get());
-        hintLabel.setToolTipText(Message.AIS_INTERVIEW_TEXTINPUT_HINT.get());
+        final ScaledLabel hintLabel = new ScaledLabel(AisMessage.INTERVIEW_TEXTINPUT_HINT.get());
+        hintLabel.setToolTipText(AisMessage.INTERVIEW_TEXTINPUT_HINT.get());
         hintLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.BASELINE_LEADING;
         constraints.weightx = 1;
         this.add(hintLabel, constraints);
         // insert the button for starting the actual scoring (i.e. replacing this input panel with the scoring panel)
-        final JButton button = new JButton(Message.AIS_INTERVIEW_START_SCORING.get());
+        final JButton button = new JButton(AisMessage.INTERVIEW_START_SCORING.get());
         button.addActionListener(new ActionListener() {
 
             @Override

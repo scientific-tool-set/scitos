@@ -30,12 +30,12 @@ import javax.swing.JPopupMenu;
 
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.ModelHandlerImpl;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.view.swing.components.InterviewView;
 import org.hmx.scitos.ais.view.swing.components.ParticipantInterviewGroupView;
 import org.hmx.scitos.ais.view.swing.components.ProjectOverView;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
@@ -70,7 +70,7 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
 
     @Override
     public AisViewProject createEmptyProject() {
-        final File path = this.client.getSaveDestination(FileType.AIS.getFileExtension(), Message.AIS_PROJECT_NEW.get());
+        final File path = this.client.getSaveDestination(FileType.AIS.getFileExtension(), AisMessage.PROJECT_NEW.get());
         if (path != null) {
             final AisProject mainModel = new AisProject("", this.options.provide());
             final AisViewProject project = new AisViewProject(this.client, new ModelHandlerImpl(mainModel), path);
@@ -92,21 +92,21 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
             return null;
         }
         final JPopupMenu menu = new JPopupMenu(project.getLabel(element));
-        menu.add(new JMenuItem(Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID.get())).addActionListener(new ActionListener() {
+        menu.add(new JMenuItem(AisMessage.INTERVIEW_CHANGE_PARTICIPANTID.get())).addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent event) {
                 ProjectViewServiceImpl.this.renameParticipant((AisViewProject) project, element);
             }
         });
-        menu.addSeparator();
         if (element instanceof Interview) {
-            menu.add(new JMenuItem(Message.AIS_INTERVIEW_DELETE.get())).addActionListener(new ActionListener() {
+            menu.addSeparator();
+            menu.add(new JMenuItem(AisMessage.INTERVIEW_DELETE.get())).addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(final ActionEvent event) {
-                    if (MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(Message.AIS_INTERVIEW_DELETE_WARNING.get(),
-                            Message.AIS_INTERVIEW_DELETE.get() + " - " + project.getLabel(element))) {
+                    if (MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(AisMessage.INTERVIEW_DELETE_WARNING.get(),
+                            AisMessage.INTERVIEW_DELETE.get() + " - " + project.getLabel(element))) {
                         ((AisViewProject) project).getModelHandler().deleteInterview((Interview) element);
                     }
                 }
@@ -131,8 +131,8 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
             currentParticipantId = element.toString();
         }
         final String modifiedParticipantId =
-                MessageHandler.showInputDialog(Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID_DESCRIPTION, Message.AIS_INTERVIEW_CHANGE_PARTICIPANTID
-                        + " - " + project.getLabel(element), currentParticipantId);
+                MessageHandler.showInputDialog(AisMessage.INTERVIEW_CHANGE_PARTICIPANTID_DESCRIPTION.get(),
+                        AisMessage.INTERVIEW_CHANGE_PARTICIPANTID.get() + " - " + project.getLabel(element), currentParticipantId);
         if (modifiedParticipantId == null || modifiedParticipantId.trim().isEmpty() || currentParticipantId.equals(modifiedParticipantId)) {
             return;
         }

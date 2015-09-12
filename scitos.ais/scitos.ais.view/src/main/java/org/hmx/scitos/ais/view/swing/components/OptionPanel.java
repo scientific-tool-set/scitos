@@ -28,7 +28,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.hmx.scitos.ais.core.AisOption;
-import org.hmx.scitos.core.i18n.Message;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.view.service.IOptionPanelService;
 import org.hmx.scitos.view.swing.option.AbstractOptionPanel;
 
@@ -52,12 +52,12 @@ public final class OptionPanel extends AbstractOptionPanel {
      *            the actual AIS module's option handler, being represented by this panel
      */
     public OptionPanel(final AisOption options) {
-        super(new GridBagLayout(), Message.AIS_PREFERENCES);
+        super(new GridBagLayout(), AisMessage.PREFERENCES);
         this.options = options;
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
         // since the purpose of this component is to set the default for new projects, we don't need the associated check box
         this.treeTable = new DetailCategoryTreeTable(this.options, false);
-        this.treeTable.setBorder(BorderFactory.createTitledBorder(Message.AIS_PREFERENCES_DETAIL_CATEGORIES.get()));
+        this.treeTable.setBorder(BorderFactory.createTitledBorder(AisMessage.PREFERENCES_DETAIL_CATEGORIES.get()));
         contentBox.add(this.treeTable);
         contentBox.revalidate();
         this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);

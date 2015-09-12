@@ -42,9 +42,9 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import org.hmx.scitos.ais.core.AisOption;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IProvider;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.ScitosClient;
@@ -84,7 +84,7 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
     public ParticipantInterviewGroupView(final ScitosClient client, final AisViewProject project, final String participantId,
             final AisOption options) {
         super(project, participantId, options, new BorderLayout());
-        final ScaledLabel topicLabel = new ScaledLabel(Message.AIS_INTERVIEW_CHANGE_ORDER.get());
+        final ScaledLabel topicLabel = new ScaledLabel(AisMessage.INTERVIEW_CHANGE_ORDER.get());
         topicLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         this.add(topicLabel, BorderLayout.NORTH);
         this.contentArea = new JPanel(new GridBagLayout());

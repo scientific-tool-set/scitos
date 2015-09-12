@@ -214,8 +214,8 @@ public final class MessageHandler {
      *            value to preset when displaying the dialog
      * @return inserted answer
      */
-    public static String showInputDialog(final Message question, final String messageTitle, final String initialValue) {
-        return (String) JOptionPane.showInputDialog(ScitosApp.getClient().getFrame(), MessageHandler.prepareMessage(question.get()), messageTitle,
+    public static String showInputDialog(final String question, final String messageTitle, final String initialValue) {
+        return (String) JOptionPane.showInputDialog(ScitosApp.getClient().getFrame(), MessageHandler.prepareMessage(question), messageTitle,
                 JOptionPane.QUESTION_MESSAGE, MessageType.INFO.getIcon(), null, initialValue);
     }
 

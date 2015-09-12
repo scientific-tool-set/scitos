@@ -24,7 +24,7 @@ import java.util.Locale;
 /**
  * Identifier interface for a type of message that can be handled by a {@link Translator}.
  */
-interface ILocalizableMessage {
+public interface ILocalizableMessage {
 
     /**
      * Getter for the actual language file key.

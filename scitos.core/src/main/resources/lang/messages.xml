@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <!-- 
    Copyright (C) 2015 HermeneutiX.org
    
@@ -18,58 +19,6 @@
    along with SciToS. If not, see <http://www.gnu.org/licenses/>.
 -->
 <properties>
-	<entry key="Ais.Analysis.ExportToSpreadsheet">Export to Spreadsheet</entry>
-	<entry key="Ais.Analysis.Summary">Scoring Summary</entry>
-	<entry key="Ais.Analysis.Sequence">Detail Sequence</entry>
-	<entry key="Ais.Analysis.Pattern">Detail Pattern</entry>
-	<entry key="Ais.Analysis.TableHeader.Interview">Interview</entry>
-	<entry key="Ais.Analysis.TableHeader.TokenCount">Token Count</entry>
-	<entry key="Ais.Analysis.TableContent.NoDetailsScored">no scored interviews yet</entry>
-	<entry key="Ais.Client.Preferences.NodeLabel">AIS</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.Code">Code</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.Color">Color</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.Code.NotUnique">The Code for the inserted Detail Category is invalid.
-
-Please insert an unique Code label,
-with at least one and up to five characters/symbols.</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.Default">Default Detail Categories for new Projects/Files</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.Invalid">The defined Detail Category structure is invalid.
-
-Each Category needs to have a unique Code label,
-with at least one and up to five characters/symbols.</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.Name">Name</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.SetAsDefault">Use as Default for new Projects/Files</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.ShortCut">Short Cut</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.AddChildCategory">Add Child Category</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.AddRootCategory">Add Root Category</entry>
-	<entry key="Ais.Client.Preferences.DetailCategories.DeleteCategory">Delete Category</entry>
-	<entry key="Ais.Interview.Delete">Delete Interview</entry>
-	<entry key="Ais.Interview.Delete.Warning">The selected Interview is going to be deleted.
-
-This is irreversible and cannot be undone.</entry>
-	<entry key="Ais.Interview.Modify.Order">Change order of Participant's Interviews</entry>
-	<entry key="Ais.Interview.Modify.ParticipantId">Change assigned Participant ID</entry>
-	<entry key="Ais.Interview.Modify.ParticipantId.Description">Insert Participant ID to assign:</entry>
-	<entry key="Ais.Interview.New">Add new Interview</entry>
-	<entry key="Ais.Interview.New.ParticipantId">Participant ID:</entry>
-	<entry key="Ais.Interview.InputHint">Type or paste in the transcribed autobiographical Interview...</entry>
-	<entry key="Ais.Interview.StartScoring">Start Scoring</entry>
-	<entry key="Ais.Interview.Score.SelectionInvalid">Invalid interrupted selection:
-
-All intersected Detail Categories need to be fully contained between the first and last selected Token.</entry>
-	<entry key="Ais.Interview.Score.Remove">Remove</entry>
-	<entry key="Ais.Interview.Score.RemoveToolTip">Clear assigned Detail Categories from selection.</entry>
-	<entry key="Ais.Project.New">Where to save the new AIS Project?</entry>
-	<entry key="Ais.Project.ChangeDetailCategories">Modify Detail Categories</entry>
-	<entry key="Ais.Project.ChangeDetailCategories.MatchOldToNew">Replace old Detail Category with new one</entry>
-	<entry key="Ais.Project.ChangeDetailCategories.MatchOldToNew.Description">You are making structural changes that are affecting already used Detail Categories. 
-
-Please select which (new) Category should replace which (old) Category. 
-Category assignments without a selected replacement are being discarded.</entry>
-	<entry key="Ais.Project.ChangeDetailCategories.OldCategory">Old Detail Category</entry>
-	<entry key="Ais.Project.ChangeDetailCategories.AffectedTokens">Number of Affected Tokens</entry>
-	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Replaced With New Category</entry>
-	<entry key="Ais.Project.Export.Html">HTML file</entry>
 	<entry key="Cancel">Cancel</entry>
 	<entry key="Client.MenuBar.About">About</entry>
 	<entry key="Client.MenuBar.Edit">Edit</entry>
@@ -79,6 +28,7 @@ Category assignments without a selected replacement are being discarded.</entry>
 	<entry key="Client.MenuBar.File.Export">Export To...</entry>
 	<entry key="Client.MenuBar.File.New">New</entry>
 	<entry key="Client.MenuBar.File.Open">Open</entry>
+	<entry key="Client.MenuBar.File.Open.ProjectAlreadyOpen">The selected File is already open.</entry>
 	<entry key="Client.MenuBar.File.Open.InvalidXmlDocument">The selected File does not contain a valid SciToS Project.</entry>
 	<entry key="Client.MenuBar.File.Open.FileTypeNotRecognized">The selected File is of a type not recognized in this version of SciToS.
 

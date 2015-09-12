@@ -31,10 +31,10 @@ import javax.swing.JMenuItem;
 
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.IModelHandler;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.AbstractProjectView;
 import org.hmx.scitos.view.swing.MessageHandler;
@@ -72,7 +72,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
     @Override
     public List<JMenuItem> createEditMenuItems() {
         final List<JMenuItem> editMenuItems = new LinkedList<JMenuItem>();
-        final JMenuItem changeCategoryModelItem = new JMenuItem(Message.AIS_PROJECT_CHANGE_CATEGORIES.get(), ScitosIcon.CONFIG.create());
+        final JMenuItem changeCategoryModelItem = new JMenuItem(AisMessage.PROJECT_CHANGE_CATEGORIES.get(), ScitosIcon.CONFIG.create());
         changeCategoryModelItem.addActionListener(new ActionListener() {
 
             @Override
@@ -90,7 +90,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
     public List<Component> createToolBarItems() {
         final List<Component> toolBarItems = new LinkedList<Component>();
         final JButton addInterviewButton = new JButton(ScitosIcon.MODEL_ELEMENT_ADD.create());
-        addInterviewButton.setToolTipText(Message.AIS_INTERVIEW_NEW.get());
+        addInterviewButton.setToolTipText(AisMessage.INTERVIEW_NEW.get());
         addInterviewButton.addActionListener(new ActionListener() {
 
             @Override
@@ -114,7 +114,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
             preset = "";
         }
         final String participantId =
-                MessageHandler.showInputDialog(Message.AIS_INTERVIEW_NEW_PARTICIPANTID, Message.AIS_INTERVIEW_NEW.get(), preset);
+                MessageHandler.showInputDialog(AisMessage.INTERVIEW_NEW_PARTICIPANTID.get(), AisMessage.INTERVIEW_NEW.get(), preset);
         if (participantId != null && !participantId.trim().isEmpty()) {
             this.getProject().getModelHandler().createInterview(participantId.trim());
         }

@@ -37,6 +37,7 @@ import javax.swing.KeyStroke;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
@@ -60,7 +61,7 @@ import org.xml.sax.SAXException;
 public class ModelParseServiceImpl implements IModelParseService<AisProject> {
 
     /** The embedded/export stylesheet for the conversion to a html page. */
-    private static final ExportOption HTML_EXPORT = new ExportOption(Message.AIS_PROJECT_EXPORT_HTML, ExportOption.TargetFileType.HTML,
+    private static final ExportOption HTML_EXPORT = new ExportOption(AisMessage.PROJECT_EXPORT_HTML, ExportOption.TargetFileType.HTML,
             "/org/hmx/scitos/ais/stylesheet.xsl");
     /*
      * Collection of the XML tags and attributes for representing an AIS module's project in its persisted form.

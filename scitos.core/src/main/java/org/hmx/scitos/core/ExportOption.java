@@ -1,6 +1,6 @@
 package org.hmx.scitos.core;
 
-import org.hmx.scitos.core.i18n.Message;
+import org.hmx.scitos.core.i18n.ILocalizableMessage;
 
 /** Descriptor for an available export option. */
 public class ExportOption {
@@ -36,7 +36,7 @@ public class ExportOption {
     }
 
     /** The text of the export menu entry. */
-    private final Message menuEntry;
+    private final ILocalizableMessage menuEntry;
     /** The exported file's type. */
     private final TargetFileType targetFileType;
     /** The location of the XSLT stylesheet on the classpath. */
@@ -52,7 +52,7 @@ public class ExportOption {
      * @param stylesheetPath
      *            the location of the XSLT stylesheet on the classpath
      */
-    public ExportOption(final Message menuEntry, final TargetFileType targetFileType, final String stylesheetPath) {
+    public ExportOption(final ILocalizableMessage menuEntry, final TargetFileType targetFileType, final String stylesheetPath) {
         super();
         this.menuEntry = menuEntry;
         this.targetFileType = targetFileType;
@@ -64,7 +64,7 @@ public class ExportOption {
      *
      * @return the text of the export menu entry
      */
-    public Message getMenuEntry() {
+    public ILocalizableMessage getMenuEntry() {
         return this.menuEntry;
     }
 

@@ -25,7 +25,7 @@ import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
-import org.hmx.scitos.core.i18n.Message;
+import org.hmx.scitos.core.i18n.ILocalizableMessage;
 
 /** Abstract panel in the application's preferences dialog. */
 public abstract class AbstractOptionPanel extends JPanel {
@@ -42,7 +42,7 @@ public abstract class AbstractOptionPanel extends JPanel {
     }
 
     /** The node label in the tree of the application's preferences dialog. */
-    private final Message title;
+    private final ILocalizableMessage title;
 
     /**
      * Main constructor.
@@ -52,7 +52,7 @@ public abstract class AbstractOptionPanel extends JPanel {
      * @param title
      *            the node label in the tree of the application's preferences dialog
      */
-    protected AbstractOptionPanel(final LayoutManager layout, final Message title) {
+    protected AbstractOptionPanel(final LayoutManager layout, final ILocalizableMessage title) {
         super(layout);
         this.title = title;
         this.setBorder(null);

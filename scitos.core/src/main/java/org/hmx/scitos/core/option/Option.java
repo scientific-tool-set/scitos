@@ -19,10 +19,13 @@
 
 package org.hmx.scitos.core.option;
 
+import java.util.Locale;
+
 /**
  * Collection of user preferences.
  */
 public enum Option implements IOptionSetting {
+    LANGUAGE("Language", Locale.getDefault().getLanguage()),
     /** User setting: the gui (swing) look-and-feel. */
     LOOK_AND_FEEL("SwingLookAndFeel", null),
     /** User setting: the number of undo-able steps per open project. */

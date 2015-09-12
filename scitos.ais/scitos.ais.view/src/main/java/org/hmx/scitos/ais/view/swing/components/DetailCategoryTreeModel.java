@@ -33,10 +33,10 @@ import java.util.Set;
 import javax.swing.KeyStroke;
 import javax.swing.tree.TreePath;
 
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
@@ -212,15 +212,13 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
     public String getColumnName(final int columnIndex) {
         switch (columnIndex) {
         case 0:
-            return Message.AIS_PREFERENCES_DETAIL_CATEGORIES_CODE.get();
+            return AisMessage.DETAIL_CATEGORY_CODE.get();
         case 1:
-            return Message.AIS_PREFERENCES_DETAIL_CATEGORIES_NAME.get();
+            return AisMessage.DETAIL_CATEGORY_NAME.get();
         case 2:
-            return Message.AIS_PREFERENCES_DETAIL_CATEGORIES_COLOR.get();
+            return AisMessage.DETAIL_CATEGORY_COLOR.get();
         case 3:
-            return Message.AIS_PREFERENCES_DETAIL_CATEGORIES_SHORTCUT.get();
-        case 6:
-            return Message.AIS_PREFERENCES_DETAIL_CATEGORIES_MATCH.get();
+            return AisMessage.DETAIL_CATEGORY_SHORTCUT.get();
         default:
             // no column header for the buttons
             return "";
@@ -265,11 +263,11 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
             case 3:
                 return row.shortCut;
             case 4:
-                return Message.AIS_PREFERENCES_DETAIL_CATEGORY_ADD_CHILD.get();
+                return AisMessage.DETAIL_CATEGORY_ADD_CHILD.get();
             case 5:
-                return Message.AIS_PREFERENCES_DETAIL_CATEGORY_DELETE.get();
+                return AisMessage.DETAIL_CATEGORY_DELETE.get();
             default:
-                return row.oldCategory;
+                throw new IllegalArgumentException();
             }
         }
         return null;

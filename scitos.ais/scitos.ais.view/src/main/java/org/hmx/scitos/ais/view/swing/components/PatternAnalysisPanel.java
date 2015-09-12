@@ -53,12 +53,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
 import org.hmx.scitos.core.ExportOption.TargetFileType;
 import org.hmx.scitos.core.HmxException;
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.ScitosApp;
@@ -97,11 +97,11 @@ public final class PatternAnalysisPanel extends JPanel {
         this.setBorder(null);
         final JTabbedPane tabStack = new JTabbedPane(SwingConstants.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
         this.summaryTableModel = new SummaryTableModel();
-        tabStack.add(Message.AIS_ANALYSIS_SUMMARY.get(), this.createTableFromModel(this.summaryTableModel));
+        tabStack.add(AisMessage.ANALYSIS_SUMMARY.get(), this.createTableFromModel(this.summaryTableModel));
         this.sequenceTableModel = new SequenceTableModel();
-        tabStack.add(Message.AIS_ANALYSIS_SEQUENCE.get(), this.createTableFromModel(this.sequenceTableModel));
+        tabStack.add(AisMessage.ANALYSIS_SEQUENCE.get(), this.createTableFromModel(this.sequenceTableModel));
         this.patternTableModel = new PatternTableModel();
-        tabStack.add(Message.AIS_ANALYSIS_PATTERN.get(), this.createTableFromModel(this.patternTableModel));
+        tabStack.add(AisMessage.ANALYSIS_PATTERN.get(), this.createTableFromModel(this.patternTableModel));
         this.add(tabStack);
         this.addHierarchyListener(new HierarchyListener() {
 
@@ -120,25 +120,25 @@ public final class PatternAnalysisPanel extends JPanel {
             }
         });
 
-        final JButton exportButton = new JButton(Message.AIS_ANALYSIS_EXPORT.get(), ScitosIcon.FILE_ODS.create());
+        final JButton exportButton = new JButton(AisMessage.ANALYSIS_EXPORT.get(), ScitosIcon.FILE_ODS.create());
         exportButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final File target = client.getSaveDestination(TargetFileType.ODS.getExtension(), Message.AIS_ANALYSIS_EXPORT.get());
+                final File target = client.getSaveDestination(TargetFileType.ODS.getExtension(), AisMessage.ANALYSIS_EXPORT.get());
                 if (target == null) {
                     // user aborted selection of save target
                     return;
                 }
                 final SpreadSheet document =
                         SpreadSheet.createEmpty(PatternAnalysisPanel.this.summaryTableModel, OOXML.getLast(XMLVersion.OD).getFormatVersion());
-                document.getFirstSheet().setName(Message.AIS_ANALYSIS_SUMMARY.get());
-                document.addSheet(Message.AIS_ANALYSIS_SEQUENCE.get()).merge(PatternAnalysisPanel.this.sequenceTableModel, 0, 0, true);
-                document.addSheet(Message.AIS_ANALYSIS_PATTERN.get()).merge(PatternAnalysisPanel.this.patternTableModel, 0, 0, true);
+                document.getFirstSheet().setName(AisMessage.ANALYSIS_SUMMARY.get());
+                document.addSheet(AisMessage.ANALYSIS_SEQUENCE.get()).merge(PatternAnalysisPanel.this.sequenceTableModel, 0, 0, true);
+                document.addSheet(AisMessage.ANALYSIS_PATTERN.get()).merge(PatternAnalysisPanel.this.patternTableModel, 0, 0, true);
                 try {
                     document.saveAs(target);
                 } catch (final IOException ioex) {
-                    MessageHandler.showException(new HmxException(Message.ERROR_EXPORT_FAILED, ioex));
+                    MessageHandler.showException(new HmxException(AisMessage.ERROR_EXPORT_FAILED, ioex));
                 }
             }
         });
@@ -259,9 +259,9 @@ public final class PatternAnalysisPanel extends JPanel {
         public String getColumnName(final int columnIndex) {
             final String columnName;
             if (columnIndex == 0) {
-                columnName = Message.AIS_ANALYSIS_TABLE_HEADER_INTERVIEW.get();
+                columnName = AisMessage.ANALYSIS_TABLE_HEADER_INTERVIEW.get();
             } else if (columnIndex == 1) {
-                columnName = Message.AIS_ANALYSIS_TABLE_HEADER_TOKENCOUNT.get();
+                columnName = AisMessage.ANALYSIS_TABLE_HEADER_TOKENCOUNT.get();
             } else {
                 columnName = this.columns.get(columnIndex - 2).getCode();
             }
@@ -323,7 +323,7 @@ public final class PatternAnalysisPanel extends JPanel {
                     cellValue = "";
                 }
             } else if (columnIndex == 0) {
-                cellValue = Message.AIS_ANALYSIS_NOT_SCORED.get();
+                cellValue = AisMessage.ANALYSIS_NOT_SCORED.get();
             } else {
                 cellValue = "";
             }
@@ -417,7 +417,7 @@ public final class PatternAnalysisPanel extends JPanel {
                     }
                 }
             } else if (columnIndex == 0) {
-                cellValue = Message.AIS_ANALYSIS_NOT_SCORED.get();
+                cellValue = AisMessage.ANALYSIS_NOT_SCORED.get();
             } else {
                 cellValue = "";
             }
@@ -440,7 +440,7 @@ public final class PatternAnalysisPanel extends JPanel {
             if (this.rows.isEmpty()) {
                 header = "";
             } else if (columnIndex == 0) {
-                header = Message.AIS_ANALYSIS_PATTERN.get();
+                header = AisMessage.ANALYSIS_PATTERN.get();
             } else {
                 header = PatternAnalysisPanel.this.project.getLabel(this.columns.get(columnIndex - 1));
             }

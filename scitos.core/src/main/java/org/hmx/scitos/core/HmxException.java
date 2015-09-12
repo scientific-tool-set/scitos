@@ -21,6 +21,7 @@ package org.hmx.scitos.core;
 
 import java.util.Locale;
 
+import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Message;
 
 /**
@@ -33,7 +34,7 @@ import org.hmx.scitos.core.i18n.Message;
 public class HmxException extends Exception {
 
     /** The associated error message. */
-    private final Message message;
+    private final ILocalizableMessage message;
 
     /**
      * Constructor: setting its contained error message by referring to an entry in the language file.
@@ -41,7 +42,7 @@ public class HmxException extends Exception {
      * @param message
      *            message file entry to set
      */
-    public HmxException(final Message message) {
+    public HmxException(final ILocalizableMessage message) {
         this.message = message;
     }
 
@@ -54,7 +55,7 @@ public class HmxException extends Exception {
      * @param cause
      *            wrapped reason for this exception
      */
-    public HmxException(final Message message, final Throwable cause) {
+    public HmxException(final ILocalizableMessage message, final Throwable cause) {
         super(cause);
         this.message = message;
     }

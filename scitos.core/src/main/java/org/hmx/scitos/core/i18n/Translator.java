@@ -19,11 +19,21 @@
 
 package org.hmx.scitos.core.i18n;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
+
+import org.hmx.scitos.core.option.Option;
+import org.hmx.scitos.core.util.ClassPathUtil;
 
 /**
  * Central handler of the language files.
@@ -33,10 +43,8 @@ import java.util.ResourceBundle;
  */
 public final class Translator<M extends ILocalizableMessage> {
 
-    /** The resource bundle's (qualified) base name for the individual language files. */
-    private final String baseName;
     /** Resource bundles containing localized values. */
-    private final Map<Locale, ResourceBundle> localizedTranslations = Collections.synchronizedMap(new HashMap<Locale, ResourceBundle>(1));
+    private final ResourceBundle bundle;
 
     /**
      * Main constructor.
@@ -45,7 +53,7 @@ public final class Translator<M extends ILocalizableMessage> {
      *            message type (to deduce the resource bundle's base name from)
      */
     public Translator(final Class<M> messageType) {
-        this.baseName = "lang." + messageType.getSimpleName().toLowerCase(Locale.ENGLISH) + 's';
+        this.bundle = ResourceBundle.getBundle(messageType.getName(), Option.TRANSLATION.getValueAsLocale(), new XmlResourceBundleControl());
     }
 
     /**
@@ -53,18 +61,136 @@ public final class Translator<M extends ILocalizableMessage> {
      *
      * @param message
      *            single message to get the translation for
-     * @param locale
-     *            specific {@link Locale} to find the translation for
      * @return message translation
      */
-    public String getLocalizedMessage(final M message, final Locale locale) {
-        final ResourceBundle bundle;
-        if (!this.localizedTranslations.containsKey(locale)) {
-            bundle = ResourceBundle.getBundle(this.baseName, locale, new XMLResourceBundleControl());
-            this.localizedTranslations.put(locale, bundle);
-        } else {
-            bundle = this.localizedTranslations.get(locale);
+    public String getLocalizedMessage(final M message) {
+        return this.bundle.getString(message.getKey());
+    }
+
+    /**
+     * Determine the Locales for which message files are provided. This excludes the default translation.
+     * 
+     * @param messageType
+     *            the type of messages to check available languages/countries for
+     * @return Locales with explicit translations for the given message type
+     */
+    public static List<Locale> getAvailableLocales(final Class<? extends ILocalizableMessage> messageType) {
+        final List<String> messageFiles = ClassPathUtil.getFileResourcePaths(messageType, messageType.getSimpleName() + "_.+[.]xml");
+        final List<Locale> availableLocales = new ArrayList<Locale>(messageFiles.size());
+        // the full file path starts like the full class name, plus a leading slash '/' and the trailing underscore '_'
+        final int prefixLength = messageType.getName().length() + 2;
+        for (final String messageFilePath : messageFiles) {
+            // get rid of the parent path and the '.xml' suffix
+            final String identifier = messageFilePath.substring(prefixLength, messageFilePath.length() - 4);
+            // construct the Locale from the identifier String
+            final String language;
+            final String country;
+            final String variant;
+            final int countryIndex = identifier.indexOf('_');
+            if (countryIndex == -1) {
+                language = identifier;
+                country = "";
+                variant = "";
+            } else {
+                language = identifier.substring(0, countryIndex);
+                final int variantIndex = identifier.indexOf('_', countryIndex + 1);
+                if (variantIndex == -1) {
+                    country = identifier.substring(countryIndex + 1);
+                    variant = "";
+                } else {
+                    country = identifier.substring(countryIndex + 1, variantIndex);
+                    variant = identifier.substring(variantIndex + 1);
+                }
+            }
+            availableLocales.add(new Locale(language, country, variant));
         }
-        return bundle.getString(message.getKey());
+        return availableLocales;
+    }
+
+    /** Resource bundle handler, that only handles property files in XML form. */
+    private static final class XmlResourceBundleControl extends ResourceBundle.Control {
+
+        /** Default constructor. */
+        XmlResourceBundleControl() {
+            super();
+        }
+
+        @Override
+        public List<String> getFormats(final String baseName) {
+            return Collections.singletonList("xml");
+        }
+
+        @Override
+        public Locale getFallbackLocale(final String baseName, final Locale locale) {
+            if (baseName == null || locale == null) {
+                throw new NullPointerException();
+            }
+            // avoid falling back on the default locale
+            return null;
+        }
+
+        @Override
+        public ResourceBundle newBundle(final String baseName, final Locale locale, final String format, final ClassLoader loader,
+                final boolean reload) throws IllegalAccessException, InstantiationException, IOException {
+            if (baseName == null || locale == null || format == null || loader == null) {
+                throw new NullPointerException();
+            }
+            final String bundleName = this.toBundleName(baseName, locale);
+            final String resourceName = this.toResourceName(bundleName, format);
+            final ResourceBundle bundle;
+            final URL url = loader.getResource(resourceName);
+            if (url == null) {
+                bundle = null;
+            } else {
+                final URLConnection connection = url.openConnection();
+                if (connection == null) {
+                    bundle = null;
+                } else {
+                    connection.setUseCaches(!reload);
+                    final InputStream stream = connection.getInputStream();
+                    if (stream == null) {
+                        bundle = null;
+                    } else {
+                        final BufferedInputStream bis = new BufferedInputStream(stream);
+                        try {
+                            bundle = new XmlResourceBundle(bis);
+                        } finally {
+                            bis.close();
+                        }
+                    }
+                }
+            }
+            return bundle;
+        }
+    }
+
+    /** Resource bundle backed by a properties file in XML form. */
+    private static final class XmlResourceBundle extends ResourceBundle {
+
+        /** The properties file capable of reading the XML form. */
+        private final Properties xmlProperties;
+
+        /**
+         * Constructor: assuming an XML structured properties file in the given stream.
+         * 
+         * @param stream
+         *            input to load the resource bundle from
+         * @throws IOException
+         *             error while reading the given stream
+         */
+        XmlResourceBundle(final InputStream stream) throws IOException {
+            this.xmlProperties = new Properties();
+            this.xmlProperties.loadFromXML(stream);
+        }
+
+        @Override
+        protected Object handleGetObject(final String key) {
+            return this.xmlProperties.getProperty(key);
+        }
+
+        @Override
+        public Enumeration<String> getKeys() {
+            return Collections.enumeration(this.xmlProperties.stringPropertyNames());
+        }
     }
 }

@@ -19,8 +19,6 @@
 
 package org.hmx.scitos.ais.core.i18n;
 
-import java.util.Locale;
-
 import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Translator;
 
@@ -31,6 +29,7 @@ public enum AisMessage implements ILocalizableMessage {
     // general project actions
     PROJECT_NEW("Ais.Project.New"),
     PROJECT_EXPORT_HTML("Ais.Project.Export.Html"),
+    PROJECT_EXPORT_ODS("Ais.Project.Export.Ods"),
     PROJECT_CHANGE_CATEGORIES("Ais.Project.ChangeDetailCategories"),
     // the matching dialog for detail category changes on an active project
     PROJECT_CHANGE_CATEGORIES_MATCHING("Ais.Project.ChangeDetailCategories.MatchOldToNew"),
@@ -100,12 +99,7 @@ public enum AisMessage implements ILocalizableMessage {
 
     @Override
     public String get() {
-        return this.get(Locale.getDefault());
-    }
-
-    @Override
-    public String get(final Locale locale) {
-        return AisMessage.TRANSLATOR.getLocalizedMessage(this, locale);
+        return AisMessage.TRANSLATOR.getLocalizedMessage(this);
     }
 
     @Override

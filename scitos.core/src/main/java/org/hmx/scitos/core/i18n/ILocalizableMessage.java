@@ -34,18 +34,9 @@ public interface ILocalizableMessage {
     String getKey();
 
     /**
-     * Getter for the message's translation in the default {@link Locale}.
+     * Getter for the message's translation in the {@link Locale} selected in the application settings.
      *
      * @return translation of this message
      */
     String get();
-
-    /**
-     * Getter for the message's translation in the given {@link Locale}.
-     *
-     * @param specificLocale
-     *            {@link Locale} to get the translation for
-     * @return translation of this message
-     */
-    String get(Locale specificLocale);
 }

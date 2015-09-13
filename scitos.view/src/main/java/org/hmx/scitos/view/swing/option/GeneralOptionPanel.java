@@ -24,8 +24,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -33,6 +36,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -51,15 +55,19 @@ import org.hmx.scitos.view.swing.util.Validation;
  */
 public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> {
 
-    /** The actual dialog this is displayed in (in order to apply selected LookAndFeel). */
+    /** The actual dialog this is displayed in (in order to apply a selected LookAndFeel). */
     final JDialog dialog;
-    /** The combo box to select on the installed LookAndFeels in. */
+    /** The combo box to select the installed LookAndFeels. */
     final JComboBox lookAndFeelBox = new JComboBox();
-    /** The input field to configure the maximum of model states (per tab view) are stored and available for undo/redo. */
+    /** The input field to configure the maximum of model states (per tab view) that are stored and available for undo/redo. */
     final JTextField undoCountField = new JTextField();
+    /** The combo box to select the Locale applied for the translation of the user interface. */
+    final JComboBox localeBox = new JComboBox();
 
     /** The installed LookAndFeels to choose from. */
-    List<String> lookAndFeels;
+    Map<String, String> lookAndFeels;
+    /** The available Locales (i.e. languages/countries) to choose from. */
+    Map<String, Locale> locales;
 
     /**
      * Main constructor: create the general options panel.
@@ -85,7 +93,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
         // SwingLookAndFeel
         contentBox.add(this.initLookAndFeelPanel(viewParent));
-        // Undo.Limit
+        // Undo Limit
         final JPanel undoCountPanel = new JPanel(new GridBagLayout());
         undoCountPanel.setBorder(BorderFactory.createTitledBorder(Message.PREFERENCES_GENERAL_UNDO.get()));
         this.undoCountField.setDocument(new Validation(3, "[^0-9]"));
@@ -102,6 +110,9 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
         }
         this.undoCountField.setText(undoCountValue);
         contentBox.add(undoCountPanel);
+        // Translation
+        contentBox.add(this.initTranslationPanel());
+
         this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);
         final GridBagConstraints spacing = new GridBagConstraints();
         spacing.fill = GridBagConstraints.VERTICAL;
@@ -124,14 +135,17 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
         this.lookAndFeelBox.setEditable(false);
         // get all available look and feels
         final LookAndFeelInfo[] installedUIs = UIManager.getInstalledLookAndFeels();
-        this.lookAndFeels = new ArrayList<String>(installedUIs.length);
+        this.lookAndFeels = new TreeMap<String, String>();
         for (final LookAndFeelInfo singleLaF : installedUIs) {
-            if (!"Nimbus".equals(singleLaF.getName())) {
-                // adding the short name of the look and feel in the combo box
-                this.lookAndFeelBox.addItem(singleLaF.getName());
-                // storing the long class name of the look and feel in array
-                this.lookAndFeels.add(singleLaF.getClassName());
+            final String shortName = singleLaF.getName();
+            if (!"Nimbus".equals(shortName)) {
+                // mapping the display name to the full class name of the look and feel
+                this.lookAndFeels.put(shortName, singleLaF.getClassName());
             }
+        }
+        for (final String shortName : this.lookAndFeels.keySet()) {
+            // adding the short name of the look and feel in the combo box
+            this.lookAndFeelBox.addItem(shortName);
         }
         String selected;
         if (this.containsChosenSettingKey(Option.LOOK_AND_FEEL)) {
@@ -143,7 +157,12 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
                 selected = UIManager.getLookAndFeel().getClass().getName();
             }
         }
-        this.lookAndFeelBox.setSelectedIndex(Math.max(0, this.lookAndFeels.indexOf(selected)));
+        for (final Entry<String, String> singleLookAndFeel : this.lookAndFeels.entrySet()) {
+            if (singleLookAndFeel.getValue().equals(selected)) {
+                this.lookAndFeelBox.setSelectedItem(singleLookAndFeel.getKey());
+                break;
+            }
+        }
         this.lookAndFeelBox.addActionListener(new ActionListener() {
 
             @Override
@@ -169,12 +188,62 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
         return lookAndFeelPanel;
     }
 
+    /**
+     * Initialize the Translation selection.
+     *
+     * @return created panel containing the Translation selection
+     */
+    private JPanel initTranslationPanel() {
+        final JPanel translationPanel = new JPanel(new GridBagLayout());
+        translationPanel.setBorder(BorderFactory.createTitledBorder(Message.PREFERENCES_GENERAL_TRANSLATION.get()));
+        this.localeBox.setEditable(false);
+        // get all available look and feels
+        final List<Locale> availableLocales = Message.getAvailableLocales();
+        // include default translation: English language
+        availableLocales.add(new Locale("en"));
+        this.locales = new TreeMap<String, Locale>();
+        for (final Locale singleLocale : availableLocales) {
+            // mapping the display name to the actual Locale
+            this.locales.put(singleLocale.getDisplayName(Option.TRANSLATION.getValueAsLocale()), singleLocale);
+        }
+        this.localeBox.addItem(Message.PREFERENCES_GENERAL_TRANSLATION_SYSTEM_DEFAULT.get());
+        for (final String displayName : this.locales.keySet()) {
+            // adding the display name of the Locale in the combo box
+            this.localeBox.addItem(displayName);
+        }
+        String selected;
+        if (this.containsChosenSettingKey(Option.TRANSLATION)) {
+            selected = this.getChosenSetting(Option.TRANSLATION);
+        } else {
+            selected = Option.TRANSLATION.getValue();
+        }
+        // select System Default by default
+        this.localeBox.setSelectedIndex(0);
+        for (final Entry<String, Locale> singleLocale : this.locales.entrySet()) {
+            if (singleLocale.getValue().toString().equals(selected)) {
+                // selection value is a valid Locale, select it
+                this.localeBox.setSelectedItem(singleLocale.getKey());
+                break;
+            }
+        }
+        translationPanel.add(this.localeBox, AbstractOptionPanel.DEFAULT_INSETS);
+        final GridBagConstraints constraints = (GridBagConstraints) AbstractOptionPanel.DEFAULT_INSETS.clone();
+        constraints.gridx = 1;
+        translationPanel.add(new JLabel(Message.PREFERENCES_RESTART_REQUIRED.get()), constraints);
+        final GridBagConstraints spacingConstraints = (GridBagConstraints) AbstractOptionPanel.HORIZONTAL_SPAN.clone();
+        spacingConstraints.gridx = 2;
+        translationPanel.add(new JPanel(), spacingConstraints);
+        return translationPanel;
+    }
+
     /** Store the chosen settings in the associated map. */
     @Override
     protected void validateInput() {
         // transfer settings in the chosenSettingsMap
-        this.addChosenSetting(Option.LOOK_AND_FEEL, this.lookAndFeels.get(this.lookAndFeelBox.getSelectedIndex()));
+        this.addChosenSetting(Option.LOOK_AND_FEEL, this.lookAndFeels.get(this.lookAndFeelBox.getSelectedItem()));
         this.addChosenSetting(Option.UNDO_LIMIT, this.undoCountField.getText());
+        final Locale translation = this.locales.get(this.localeBox.getSelectedItem());
+        this.addChosenSetting(Option.TRANSLATION, translation == null ? null : translation.toString());
     }
 
     @Override

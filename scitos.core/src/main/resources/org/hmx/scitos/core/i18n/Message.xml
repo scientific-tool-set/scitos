@@ -46,7 +46,10 @@ It might belong to a newer version. Please check if there is a newer version ava
 	<entry key="Client.ToolBar.Title">SciToS - ToolBar</entry>
 	<entry key="Client.Preferences.General">General</entry>
 	<entry key="Client.Preferences.General.LookAndFeel">Java Swing Look and Feel</entry>
+	<entry key="Client.Preferences.General.Translation">Translation of the User Interface</entry>
+	<entry key="Client.Preferences.General.Translation.SystemDefault">System Language</entry>
 	<entry key="Client.Preferences.General.UndoLimit">Maximum number of undo operations</entry>
+	<entry key="Client.Preferences.RestartRequired">This settings requires an application restart.</entry>
 	<entry key="Client.Project.Close">Close Project</entry>
 	<entry key="Client.Project.Close.SaveChangesBeforeClosingQuestion">Do you want to save?
 

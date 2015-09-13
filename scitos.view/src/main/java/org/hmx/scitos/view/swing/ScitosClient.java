@@ -846,8 +846,7 @@ public final class ScitosClient {
                                 ScitosClient.this.getSaveDestination(exportOption.getTargetFileType().getExtension(),
                                         Message.MENUBAR_FILE_EXPORT.get());
                         try {
-                            ScitosClient.this.getModelParseProvider().export(ScitosClient.this.getMainView().getActiveProject().getModelObject(),
-                                    exportOption.getStylesheetPath(), target);
+                            project.export(exportOption, target);
                         } catch (final HmxException ex) {
                             MessageHandler.showException(ex);
                         }

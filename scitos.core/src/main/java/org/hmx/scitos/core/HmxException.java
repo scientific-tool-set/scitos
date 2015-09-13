@@ -19,8 +19,6 @@
 
 package org.hmx.scitos.core;
 
-import java.util.Locale;
-
 import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Message;
 
@@ -81,25 +79,13 @@ public class HmxException extends Exception {
     }
 
     /**
-     * Getter for the localized error message according to the contained message file entry and appends the (optional) causing error's message. The
-     * same as calling {@link #getLocalizedMessage(Locale)} with {@link Locale#getDefault()} as parameter.
+     * Getter for the localized error message according to the contained message file entry, and appends the (optional) causing error's message.
      *
      * @return the translated error message according to the contained message file entry and the (optional) causing error
      */
     @Override
     public String getLocalizedMessage() {
-        return this.getLocalizedMessage(Locale.getDefault());
-    }
-
-    /**
-     * Getter for the localized error message according to the contained message file entry and appends the (optional) causing error's message.
-     *
-     * @param locale
-     *            specific language to get the localized error message for
-     * @return the translated error message according to the contained message file key and the (optional) causing error
-     */
-    public String getLocalizedMessage(final Locale locale) {
-        String localizedMessage = this.message.get(locale);
+        String localizedMessage = this.message.get();
         if (this.getCause() != null) {
             final String causeMessage = this.getCause().getLocalizedMessage();
             if (causeMessage != null && !causeMessage.isEmpty()) {

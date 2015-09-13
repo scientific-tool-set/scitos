@@ -19,14 +19,15 @@
 
 package org.hmx.scitos.core.i18n;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Utility class for internationalization of the components on the graphical user interface.
  */
 public enum Message implements ILocalizableMessage {
-    CLIENT_TITLE_SCITOS("Client.Title.SciToS"), TOOLBAR_TITLE("Client.ToolBar.Title"),
-    // basic messages
+    CLIENT_TITLE_SCITOS("Client.Title.SciToS"),
+    TOOLBAR_TITLE("Client.ToolBar.Title"),
     OK("Ok"),
     CANCEL("Cancel"),
     TAB_CLOSE("Tab.Close"),
@@ -62,7 +63,10 @@ public enum Message implements ILocalizableMessage {
     // the preferences dialog
     PREFERENCES_GENERAL("Client.Preferences.General"),
     PREFERENCES_GENERAL_LOOK_AND_FEEL("Client.Preferences.General.LookAndFeel"),
+    PREFERENCES_GENERAL_TRANSLATION("Client.Preferences.General.Translation"),
+    PREFERENCES_GENERAL_TRANSLATION_SYSTEM_DEFAULT("Client.Preferences.General.Translation.SystemDefault"),
     PREFERENCES_GENERAL_UNDO("Client.Preferences.General.UndoLimit"),
+    PREFERENCES_RESTART_REQUIRED("Client.Preferences.RestartRequired"),
     // the default welcome tab displayed in an empty opened client
     TAB_WELCOME_TITLE("Client.Tab.Welcome.Title"),
     TAB_WELCOME_TEXT("Client.Tab.Welcome.Text"),
@@ -93,12 +97,16 @@ public enum Message implements ILocalizableMessage {
 
     @Override
     public String get() {
-        return this.get(Locale.getDefault());
+        return Message.TRANSLATOR.getLocalizedMessage(this);
     }
 
-    @Override
-    public String get(final Locale locale) {
-        return Message.TRANSLATOR.getLocalizedMessage(this, locale);
+    /**
+     * Determine the Locales for which message files are provided. This excludes the default translation.
+     * 
+     * @return Locales with explicit translations
+     */
+    public static List<Locale> getAvailableLocales() {
+        return Translator.getAvailableLocales(Message.class);
     }
 
     @Override

@@ -207,7 +207,16 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
 
     @Override
     public void export(final ExportOption type, final File path) throws HmxException {
-        this.client.getModelParseProvider().export(this.getModelObject(), type.getStylesheetPath(), path);
+        switch (type.getTargetFileType()) {
+        case HTML:
+            this.client.getModelParseProvider().export(this.getModelObject(), type.getStylesheetPath(), path);
+            break;
+        case ODS:
+            new PatternAnalysisModel(this).exportToSpreadSheet(path);
+            break;
+        default:
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override

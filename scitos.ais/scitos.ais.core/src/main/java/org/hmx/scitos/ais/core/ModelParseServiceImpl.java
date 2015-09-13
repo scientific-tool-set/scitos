@@ -63,6 +63,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
     /** The embedded/export stylesheet for the conversion to a html page. */
     private static final ExportOption HTML_EXPORT = new ExportOption(AisMessage.PROJECT_EXPORT_HTML, ExportOption.TargetFileType.HTML,
             "/org/hmx/scitos/ais/stylesheet.xsl");
+    private static final ExportOption ODS_RESULT_EXPORT = new ExportOption(AisMessage.PROJECT_EXPORT_ODS, ExportOption.TargetFileType.ODS, null);
     /*
      * Collection of the XML tags and attributes for representing an AIS module's project in its persisted form.
      */
@@ -105,7 +106,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
 
     @Override
     public List<ExportOption> getSupportedExports() {
-        return Arrays.asList(ModelParseServiceImpl.HTML_EXPORT);
+        return Arrays.asList(ModelParseServiceImpl.HTML_EXPORT, ModelParseServiceImpl.ODS_RESULT_EXPORT);
     }
 
     @Override

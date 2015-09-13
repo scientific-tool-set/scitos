@@ -141,7 +141,11 @@ public final class OptionHandler<O extends Enum<? extends IOptionSetting> & IOpt
      *            value to set
      */
     public void setProperty(final O key, final String value) {
-        this.chosenOptions.setProperty(key.getKey(), value);
+        if (value == null) {
+            this.chosenOptions.remove(key.getKey());
+        } else {
+            this.chosenOptions.setProperty(key.getKey(), value);
+        }
     }
 
     /**

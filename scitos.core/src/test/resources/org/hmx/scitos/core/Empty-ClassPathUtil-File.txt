@@ -1,0 +1,1 @@
+This file is being used as target in the ClassPathUtilTest.

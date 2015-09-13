@@ -69,6 +69,7 @@ Category assignments without a selected replacement are being discarded.</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.OldCategory">Old Detail Category</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.AffectedTokens">Number of Affected Tokens</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Replaced With New Category</entry>
-	<entry key="Ais.Project.Export.Html">HTML file</entry>
+	<entry key="Ais.Project.Export.Html">HTML File</entry>
+	<entry key="Ais.Project.Export.Ods">Spreadsheet (only Results)</entry>
 	<entry key="Ais.Project.New">Where to save the new AIS Project?</entry>
 </properties>

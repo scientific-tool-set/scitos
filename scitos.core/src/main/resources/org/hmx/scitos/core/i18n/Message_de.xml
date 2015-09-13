@@ -49,7 +49,10 @@ Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder
 	<entry key="Client.ToolBar.Title">SciToS - ToolBar</entry>
 	<entry key="Client.Preferences.General">Allgemein</entry>
 	<entry key="Client.Preferences.General.LookAndFeel">Java Swing Look and Feel</entry>
+	<entry key="Client.Preferences.General.Translation">Übersetzung der Nutzeroberfläche</entry>
+	<entry key="Client.Preferences.General.Translation.SystemDefault">System-Sprache</entry>
 	<entry key="Client.Preferences.General.UndoLimit">Maximale Anzahl von 'Rückgängig' Schritten</entry>
+	<entry key="Client.Preferences.RestartRequired">Diese Einstellung erfordert einen Anwendungsneustart.</entry>
 	<entry key="Client.Project.Close">Projekt Schließen</entry>
 	<entry key="Client.Project.Close.SaveChangesBeforeClosingQuestion">Soll noch einmal gespeichert werden?
 

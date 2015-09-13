@@ -25,7 +25,8 @@ import java.util.Locale;
  * Collection of user preferences.
  */
 public enum Option implements IOptionSetting {
-    LANGUAGE("Language", Locale.getDefault().getLanguage()),
+    /** User setting: the display language. */
+    TRANSLATION("Translation", null),
     /** User setting: the gui (swing) look-and-feel. */
     LOOK_AND_FEEL("SwingLookAndFeel", null),
     /** User setting: the number of undo-able steps per open project. */
@@ -40,8 +41,6 @@ public enum Option implements IOptionSetting {
     WINDOW_X_LOCATION("Window.PosX", "0"),
     /** For usability: top border of the window in the last session. */
     WINDOW_Y_LOCATION("Window.PosY", "0");
-
-    // TODO add system option for storing the last open files when the program Quit method was executed and restore it at startup
 
     /** The handler for this specific settings collection. */
     private static final OptionHandler<Option> HANDLER = OptionHandler.getInstance(Option.class);
@@ -101,5 +100,28 @@ public enum Option implements IOptionSetting {
             }
         }
         return 0;
+    }
+
+    /**
+     * Getter for the value of this specific setting, interpreted as a {@link Locale}.
+     * 
+     * @return the currently set value (or the default if none is specified)
+     */
+    public Locale getValueAsLocale() {
+        final String stringValue = this.getValue();
+        if (stringValue == null || stringValue.isEmpty()) {
+            return Locale.getDefault();
+        }
+        final String language;
+        final String country;
+        final int separatorIndex = stringValue.indexOf('_');
+        if (separatorIndex == -1) {
+            language = stringValue;
+            country = "";
+        } else {
+            language = stringValue.substring(0, separatorIndex);
+            country = stringValue.substring(separatorIndex + 1);
+        }
+        return new Locale(language, country);
     }
 }

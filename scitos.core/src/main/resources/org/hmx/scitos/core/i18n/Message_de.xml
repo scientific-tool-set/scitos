@@ -37,7 +37,7 @@ Lade gegebenenfalls die aktuelle Version von SciToS herunter.</entry>
 	<entry key="Client.MenuBar.File.Save">Speichern</entry>
 	<entry key="Client.MenuBar.File.Save.Failed">Die gespeicherte Datei konnte nicht vollständig validiert werden.
 Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder
-öffne die Datei in einem (modernen) Web Browser und kontrolliere es selbst.</entry>
+öffne die Datei in einem Web Browser (z.B. Firefox) und vergleiche es selbst.</entry>
 	<entry key="Client.MenuBar.File.SaveAs">Speichern unter...</entry>
 	<entry key="Client.MenuBar.File.Types.AIS">AIS Projekt</entry>
 	<entry key="Client.MenuBar.Preferences">Einstellungen</entry>

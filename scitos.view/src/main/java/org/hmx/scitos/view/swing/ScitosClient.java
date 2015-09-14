@@ -341,9 +341,9 @@ public final class ScitosClient {
      */
     private JMenu createViewMenu() {
         final JMenu viewMenu = new JMenu(Message.MENUBAR_VIEW.get());
-        final JMenuItem scaleUpFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_UP.get()));
+        final JMenuItem scaleUpFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_UP.get(), ScitosIcon.ZOOM_IN.create()));
         scaleUpFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
-        final JMenuItem scaleDownFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_DOWN.get()));
+        final JMenuItem scaleDownFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_DOWN.get(), ScitosIcon.ZOOM_OUT.create()));
         scaleDownFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
         // allow the scaling only in the given range, with 10% change per step: 1.1^(-2 to +8)
         final AtomicInteger range = new AtomicInteger(0);
@@ -365,7 +365,8 @@ public final class ScitosClient {
                 ScitosClient.this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
             }
         });
-        viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_TOGGLE_PROJECT_TREE.get())).addActionListener(new ActionListener() {
+        final JMenuItem toggleTreeItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_TOGGLE_PROJECT_TREE.get(), ScitosIcon.SIDEBAR.create()));
+        toggleTreeItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent event) {

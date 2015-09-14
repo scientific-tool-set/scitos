@@ -63,17 +63,23 @@ public enum ScitosIcon {
     UNDO_EDIT("/icons/eclipse/undo_edit.png"),
     /** Icon: redo entry in menu bar / tool bar. */
     REDO_EDIT("/icons/eclipse/redo_edit.png"),
+    /** Icon: increase content (font) size entry in menu bar. */
+    ZOOM_IN("/icons/fatcow/magnifier_zoom_in.png"),
+    /** Icon: reduce content (font) size entry in menu bar. */
+    ZOOM_OUT("/icons/fatcow/magnifier_zoom_out.png"),
+    /** Icon: toggle icon for the main view's sidebar. */
+    SIDEBAR("/icons/fatcow/layouts_select_sidebar.png"),
     /** Icon: vertical arrow pointing upwards for moving something up. */
     ARROW_UP("/icons/eclipse/arrow_up.png"),
     /** Icon: vertical arrow pointing downwards for moving something down. */
     ARROW_DOWN("/icons/eclipse/arrow_down.png"),
     /** Icon: config/preferences entry in menu bar. */
     CONFIG("/icons/fatcow/cog.png"),
-    /** Icon: add entry e.g. in category tree table **/
+    /** Icon: add entry e.g. in category tree table. **/
     ADD("/icons/fatcow/add.png"),
-    /** Icon: remove entry e.g. in category tree table **/
+    /** Icon: remove entry e.g. in category tree table. **/
     DELETE("/icons/fatcow/cross.png"),
-    /** Icon: add entry e.g. in category tree table **/
+    /** Icon: model entry e.g. in category tree table. **/
     CATEGORY("/icons/fatcow/clipboard_invoice.png");
 
     /** Location of the represented icon in the classpath. */

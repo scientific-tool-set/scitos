@@ -177,7 +177,7 @@ public final class PatternAnalysisModel {
 
         @Override
         public Class<?> getColumnClass(final int columnIndex) {
-            if (columnIndex < 2) {
+            if (columnIndex == 0) {
                 return String.class;
             }
             return Long.class;

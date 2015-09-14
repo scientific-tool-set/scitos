@@ -34,7 +34,9 @@
 
 It might belong to a newer version. Please check if there is a newer version available.</entry>
 	<entry key="Client.MenuBar.File.Save">Save</entry>
-	<entry key="Client.MenuBar.File.Save.Failed">The produced File could not be validated and might be corrupted.</entry>
+	<entry key="Client.MenuBar.File.Save.Failed">The produced File could not be validated.
+Please try to save it again (possibly at another Location?) or
+Open the File in a Web Browser (e.g. Firefox) and compare it yourself.</entry>
 	<entry key="Client.MenuBar.File.SaveAs">Save As...</entry>
 	<entry key="Client.MenuBar.File.Types.AIS">AIS Project</entry>
 	<entry key="Client.MenuBar.Preferences">Preferences</entry>

@@ -29,6 +29,7 @@ import javax.swing.undo.CannotUndoException;
 
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
+import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.view.swing.AisViewProject;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.ScitosClient;
@@ -36,7 +37,7 @@ import org.hmx.scitos.view.swing.ScitosClient;
 /**
  * Tab view: overview of the {@link AisViewProject project} and buttons for creating new contained interviews and generating summaries/exports.
  */
-public final class ProjectOverView extends AbstractAisProjectView<AisViewProject> {
+public final class ProjectOverView extends AbstractAisProjectView<AisProject> {
 
     /** Contained result panel displaying the summed up detail category assignments (i.e. scorings). */
     private final PatternAnalysisPanel analysisPanel;
@@ -52,7 +53,7 @@ public final class ProjectOverView extends AbstractAisProjectView<AisViewProject
      *            preferences handler, providing the default detail category model for any new project
      */
     public ProjectOverView(final ScitosClient client, final AisViewProject project, final AisOption options) {
-        super(project, project, options, new BorderLayout());
+        super(project, project.getModelObject(), options, new BorderLayout());
         this.analysisPanel = new PatternAnalysisPanel(client, project);
         this.add(this.analysisPanel);
         final JButton addInterviewButton = new JButton(AisMessage.INTERVIEW_NEW.get(), ScitosIcon.MODEL_ELEMENT_ADD.create());

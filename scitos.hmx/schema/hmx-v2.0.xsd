@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://www.hermeneutix.org/schema/hmx/2.0" targetNamespace="http://www.hermeneutix.org/schema/hmx/2.0"
+  attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:element name="Pericope">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="LanguageModel">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Group" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element ref="Function" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element ref="FunctionGroup" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element ref="Proposition" maxOccurs="unbounded" />
+        <xs:element name="Connectables">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="Connectable" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="FileType" use="required" fixed="HermeneutiX/2.0" />
+      <xs:attribute type="xs:string" name="Language" use="required" />
+      <xs:attribute name="text-orientation" use="required">
+      	<xs:simpleType>
+      		<xs:restriction base="xs:string">
+      			<xs:enumeration value="left-to-right" />
+      			<xs:enumeration value="right-to-left" />
+      		</xs:restriction>
+      	</xs:simpleType>
+      </xs:attribute>
+      <xs:attribute type="xs:string" name="Font" use="required" />
+      <xs:attribute name="FontSize" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="8" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute type="xs:string" name="Author" />
+      <xs:attribute type="xs:string" name="Title" />
+      <xs:attribute type="xs:string" name="Comment" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FunctionGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Function" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="FunctionGroup" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="name" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Function">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="code" use="required" />
+          <xs:attribute type="xs:string" name="name" use="required" />
+          <xs:attribute type="xs:string" name="description" />
+          <xs:attribute type="xs:string" name="style" fixed="underline" />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Proposition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="PriorPropositions" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="Proposition" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ClauseItems">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Item" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="OriginText" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:token">
+                        <xs:minLength value="1" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute type="xs:string" name="Function" />
+                  <xs:attribute type="xs:string" name="Comment" />
+                  <xs:attribute name="FontStyle">
+      	            <xs:simpleType>
+      		          <xs:restriction base="xs:string">
+      			        <xs:enumeration value="Bold" />
+      			        <xs:enumeration value="Italic" />
+      			        <xs:enumeration value="BoldAndItalic" />
+      		          </xs:restriction>
+      	            </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="LaterPropositions" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="Proposition" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="PartAfterArrow" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="Proposition" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="Label">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="5" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute type="xs:string" name="Function" />
+      <xs:attribute type="xs:string" name="SemTranslation" />
+      <xs:attribute type="xs:string" name="SynTranslation" />
+      <xs:attribute type="xs:string" name="Comment" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Connectable">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Connectable" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="Role" />
+      <xs:attribute type="xs:string" name="Weight" />
+      <xs:attribute type="xs:string" name="Comment" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

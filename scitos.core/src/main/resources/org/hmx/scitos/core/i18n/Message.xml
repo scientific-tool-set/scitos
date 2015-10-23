@@ -39,6 +39,7 @@ Please try to save it again (possibly at another Location?) or
 Open the File in a Web Browser (e.g. Firefox) and compare it yourself.</entry>
 	<entry key="Client.MenuBar.File.SaveAs">Save As...</entry>
 	<entry key="Client.MenuBar.File.Types.AIS">AIS Project</entry>
+	<entry key="Client.MenuBar.File.Types.HmX">HermeneutiX Project</entry>
 	<entry key="Client.MenuBar.Preferences">Preferences</entry>
 	<entry key="Client.MenuBar.Quit">Quit</entry>
 	<entry key="Client.MenuBar.View">View</entry>
@@ -46,6 +47,8 @@ Open the File in a Web Browser (e.g. Firefox) and compare it yourself.</entry>
 	<entry key="Client.MenuBar.View.Font.ScaleDown">Reduce Font Size</entry>
 	<entry key="Client.MenuBar.View.ProjectTreeVisibility">Hide/Show Project Tree</entry>
 	<entry key="Client.ToolBar.Title">SciToS - ToolBar</entry>
+	<entry key="Client.Preferences.Color.Change">Change</entry>
+	<entry key="Client.Preferences.Color.Transparent">Transparent</entry>
 	<entry key="Client.Preferences.General">General</entry>
 	<entry key="Client.Preferences.General.LookAndFeel">Java Swing Look and Feel</entry>
 	<entry key="Client.Preferences.General.Translation">Translation of the User Interface</entry>
@@ -58,7 +61,7 @@ Open the File in a Web Browser (e.g. Firefox) and compare it yourself.</entry>
 Otherwise, unsaved changes will be lost.</entry>
 	<entry key="Client.Tab.Welcome.Text">Welcome to SciToS - the Scientific Tool Set.</entry>
 	<entry key="Client.Tab.Welcome.Title">Welcome</entry>
-	<entry key="Client.Title.SciToS">SciToS - Autobiographical Interview Scoring</entry>
+	<entry key="Client.Title.SciToS">SciToS</entry>
 	<entry key="Error">Error</entry>
 	<entry key="Error.Unknown">An unexpected error occured.</entry>
 	<entry key="Ok">OK</entry>

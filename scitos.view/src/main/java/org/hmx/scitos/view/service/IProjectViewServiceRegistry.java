@@ -38,6 +38,6 @@ public interface IProjectViewServiceRegistry {
      *            service instance to register
      */
     <P extends IViewProject<M>, M extends IModel<M>> void registerViewService(Class<P> projectClass, Class<M> modelClass,
-            IProjectViewService<P> viewService);
+            IProjectViewService<P, M> viewService);
 
 }

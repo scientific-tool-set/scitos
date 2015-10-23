@@ -42,7 +42,6 @@ public enum AisMessage implements ILocalizableMessage {
     INTERVIEW_NEW_PARTICIPANTID("Ais.Interview.New.ParticipantId"),
     INTERVIEW_CHANGE_PARTICIPANTID("Ais.Interview.Modify.ParticipantId"),
     INTERVIEW_CHANGE_PARTICIPANTID_DESCRIPTION("Ais.Interview.Modify.ParticipantId.Description"),
-    INTERVIEW_CHANGE_PARTICIPANTID_ALREADY_EXISTS("Ais.Interview.Modify.ParticipantId.AlreadyExists"),
     INTERVIEW_CHANGE_ORDER("Ais.Interview.Modify.Order"),
     INTERVIEW_DELETE("Ais.Interview.Delete"),
     INTERVIEW_DELETE_WARNING("Ais.Interview.Delete.Warning"),
@@ -80,7 +79,7 @@ public enum AisMessage implements ILocalizableMessage {
     private static final Translator<AisMessage> TRANSLATOR = new Translator<AisMessage>(AisMessage.class);
 
     /** The attribute's key as it can be found in the actual language files. */
-    final String key;
+    private final String key;
 
     /**
      * Main constructor.

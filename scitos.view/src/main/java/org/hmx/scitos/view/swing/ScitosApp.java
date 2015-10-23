@@ -21,9 +21,10 @@ package org.hmx.scitos.view.swing;
 
 import java.awt.EventQueue;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import org.hmx.scitos.core.option.Option;
@@ -31,6 +32,7 @@ import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.option.OptionView;
 import org.hmx.scitos.view.swing.util.MacAppEventAdapter;
+import org.hmx.scitos.view.swing.util.MultiLineToolTipUI;
 
 import dagger.ObjectGraph;
 
@@ -91,6 +93,9 @@ public final class ScitosApp {
                 } catch (final Exception expected) {
                     // ignore
                 }
+                MultiLineToolTipUI.setMaximumWidth(400);
+                MultiLineToolTipUI.initialize();
+                ToolTipManager.sharedInstance().setDismissDelay(20000);
                 try {
                     ScitosApp.loadModulesAndShowClient();
                 } catch (final Exception ex) {
@@ -112,8 +117,8 @@ public final class ScitosApp {
      */
     static void loadModulesAndShowClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         // collect dependency injection modules
-        final List<Object> modules = new LinkedList<Object>();
-        final List<Class<?>> initializerClasses = new LinkedList<Class<?>>();
+        final Set<Object> modules = new LinkedHashSet<Object>();
+        final Set<Class<?>> initializerClasses = new LinkedHashSet<Class<?>>();
         // add main module
         modules.add(new ScitosModule());
         // add all sub modules

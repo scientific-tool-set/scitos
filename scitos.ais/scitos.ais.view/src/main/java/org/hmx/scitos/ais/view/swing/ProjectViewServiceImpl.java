@@ -19,14 +19,10 @@
 
 package org.hmx.scitos.ais.view.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
 
 import javax.inject.Inject;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.ModelHandlerImpl;
@@ -37,17 +33,20 @@ import org.hmx.scitos.ais.view.swing.components.InterviewView;
 import org.hmx.scitos.ais.view.swing.components.ParticipantInterviewGroupView;
 import org.hmx.scitos.ais.view.swing.components.ProjectOverView;
 import org.hmx.scitos.domain.IModel;
+import org.hmx.scitos.view.ContextMenuBuilder;
+import org.hmx.scitos.view.ContextMenuBuilder.CMenuItemAction;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.service.IMultiModelProjectViewService;
 import org.hmx.scitos.view.service.IProjectViewService;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.ScitosClient;
+import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
  * Implementation of the {@link IProjectViewService} for the AIS module.
  */
-public class ProjectViewServiceImpl implements IMultiModelProjectViewService<AisViewProject, Interview> {
+public class ProjectViewServiceImpl implements IMultiModelProjectViewService<AisViewProject, AisProject, Interview> {
 
     /** The associated active client instance, to forward to created views. */
     private final ScitosClient client;
@@ -70,7 +69,7 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
 
     @Override
     public AisViewProject createEmptyProject() {
-        final File path = this.client.getSaveDestination(FileType.AIS.getFileExtension(), AisMessage.PROJECT_NEW.get());
+        final File path = ViewUtil.getSaveDestination(this.client.getFrame(), FileType.AIS.getFileExtension(), AisMessage.PROJECT_NEW.get(), true);
         if (path != null) {
             final AisProject mainModel = new AisProject("", this.options.provide());
             final AisViewProject project = new AisViewProject(this.client, new ModelHandlerImpl(mainModel), path);
@@ -86,25 +85,25 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
     }
 
     @Override
-    public JPopupMenu createContextMenu(final IViewProject<?> project, final Object element) {
+    public ContextMenuBuilder createContextMenu(final IViewProject<?> project, final Object element) {
         if (element == project) {
             // no additional popup entries for the project itself
             return null;
         }
-        final JPopupMenu menu = new JPopupMenu(project.getLabel(element));
-        menu.add(new JMenuItem(AisMessage.INTERVIEW_CHANGE_PARTICIPANTID.get())).addActionListener(new ActionListener() {
+        final ContextMenuBuilder menu = new ContextMenuBuilder(project.getLabel(element));
+        menu.addItem(AisMessage.INTERVIEW_CHANGE_PARTICIPANTID.get(), new CMenuItemAction() {
 
             @Override
-            public void actionPerformed(final ActionEvent event) {
+            public void processSelectEvent() {
                 ProjectViewServiceImpl.this.renameParticipant((AisViewProject) project, element);
             }
         });
         if (element instanceof Interview) {
             menu.addSeparator();
-            menu.add(new JMenuItem(AisMessage.INTERVIEW_DELETE.get())).addActionListener(new ActionListener() {
+            menu.addItem(AisMessage.INTERVIEW_DELETE.get(), new CMenuItemAction() {
 
                 @Override
-                public void actionPerformed(final ActionEvent event) {
+                public void processSelectEvent() {
                     if (MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(AisMessage.INTERVIEW_DELETE_WARNING.get(),
                             AisMessage.INTERVIEW_DELETE.get() + " - " + project.getLabel(element))) {
                         ((AisViewProject) project).getModelHandler().deleteInterview((Interview) element);

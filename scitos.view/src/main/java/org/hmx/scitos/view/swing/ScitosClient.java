@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -33,7 +32,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -128,6 +126,10 @@ public final class ScitosClient {
     private JMenuItem redoMenuItem;
     /** Number of generic application entries of the Main Menu Bar - Edit Menu. */
     private final int fixedEditMenuItemCount;
+    /** Main Menu Bar - View Menu. */
+    private JMenu viewMenu;
+    /** Number of generic application entries of the Main Menu Bar - View Menu. */
+    private final int fixedViewMenuItemCount;
     /** Main Tool Bar. */
     private final JToolBar toolBar;
     /** Main Tool Bar - Item: Save. */
@@ -169,6 +171,7 @@ public final class ScitosClient {
         }
         this.frame.setJMenuBar(this.createMenuBar());
         this.fixedEditMenuItemCount = this.editMenu.getMenuComponentCount();
+        this.fixedViewMenuItemCount = this.viewMenu.getMenuComponentCount();
         final JPanel contentPane = new JPanel(new BorderLayout(0, 5));
         contentPane.setBorder(null);
         this.mainView = new MainView(this, ScitosClient.toLoadAtStart.isEmpty());
@@ -196,11 +199,8 @@ public final class ScitosClient {
      */
     private JMenuBar createMenuBar() {
         final JMenuBar menuBar = new JMenuBar();
-        // create the "file" menu
         menuBar.add(this.createFileMenu());
-        // create the "edit" menu
         menuBar.add(this.createEditMenu());
-        // create the "view" menu
         menuBar.add(this.createViewMenu());
         return menuBar;
     }
@@ -336,14 +336,15 @@ public final class ScitosClient {
 
     /**
      * Create the View menu in the menu bar offering the scaling of the content (font) size in the tabs and toggling the project tree's visibility.
-     * 
+     *
      * @return created View menu
      */
     private JMenu createViewMenu() {
-        final JMenu viewMenu = new JMenu(Message.MENUBAR_VIEW.get());
-        final JMenuItem scaleUpFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_UP.get(), ScitosIcon.ZOOM_IN.create()));
+        this.viewMenu = new JMenu(Message.MENUBAR_VIEW.get());
+        final JMenuItem scaleUpFontItem = this.viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_UP.get(), ScitosIcon.ZOOM_IN.create()));
         scaleUpFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
-        final JMenuItem scaleDownFontItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_DOWN.get(), ScitosIcon.ZOOM_OUT.create()));
+        final JMenuItem scaleDownFontItem =
+                this.viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_FONT_SCALE_DOWN.get(), ScitosIcon.ZOOM_OUT.create()));
         scaleDownFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
         // allow the scaling only in the given range, with 10% change per step: 1.1^(-2 to +8)
         final AtomicInteger range = new AtomicInteger(0);
@@ -365,7 +366,8 @@ public final class ScitosClient {
                 ScitosClient.this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
             }
         });
-        final JMenuItem toggleTreeItem = viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_TOGGLE_PROJECT_TREE.get(), ScitosIcon.SIDEBAR.create()));
+        final JMenuItem toggleTreeItem =
+                this.viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_TOGGLE_PROJECT_TREE.get(), ScitosIcon.SIDEBAR.create()));
         toggleTreeItem.addActionListener(new ActionListener() {
 
             @Override
@@ -373,7 +375,7 @@ public final class ScitosClient {
                 ScitosClient.this.mainView.toggleProjectTreeVisibility();
             }
         });
-        return viewMenu;
+        return this.viewMenu;
     }
 
     /**
@@ -492,6 +494,9 @@ public final class ScitosClient {
     Map<FileType, ActionListener> createNewFileActions() {
         final Map<FileType, ActionListener> result = new LinkedHashMap<FileType, ActionListener>();
         for (final FileType singleType : FileType.values()) {
+            if (singleType.getLocalizableName() == null) {
+                continue;
+            }
             result.put(singleType, new ActionListener() {
 
                 @Override
@@ -509,7 +514,7 @@ public final class ScitosClient {
 
     /**
      * Getter for the global font size scaling factor.
-     * 
+     *
      * @return the font size scaling factor
      */
     public float getContentScaleFactor() {
@@ -518,7 +523,7 @@ public final class ScitosClient {
 
     /**
      * Scale the global font size factor (that is being applied in tab contents).
-     * 
+     *
      * @param modificationFactor
      *            amount by which the global font size factor should be altered (1 = 100% = no changes)
      */
@@ -608,27 +613,54 @@ public final class ScitosClient {
     }
 
     /**
-     * Set the view specific menu bar - edit menu items, after removing any potentially view specific tool bar items that are currently displayed.
+     * Set the view specific menu items in the menu bar's Edit menu.
      *
-     * @param editMenuItems
-     *            components (e.g. buttons) associated with this view to be added to the tool bar (contained <code>null</code> elements are
-     *            interpreted as separators)
+     * @param menuItems
+     *            menu items associated with the current view to be added to the menu bar's Edit menu (contained {@code null} elements are interpreted
+     *            as separators)
      */
-    public void setEditMenuItems(final Collection<JMenuItem> editMenuItems) {
-        if (this.editMenu.getMenuComponentCount() > this.fixedEditMenuItemCount) {
+    public void setEditMenuItems(final Collection<JMenuItem> menuItems) {
+        this.setViewSpecificMenuItems(this.editMenu, this.fixedEditMenuItemCount, menuItems);
+    }
+
+    /**
+     * Set the view specific menu items in the menu bar's View menu.
+     *
+     * @param menuItems
+     *            menu items associated with the current view to be added to the menu bar's View menu (contained {@code null} elements are interpreted
+     *            as separators)
+     */
+    public void setViewMenuItems(final Collection<JMenuItem> menuItems) {
+        this.setViewSpecificMenuItems(this.viewMenu, this.fixedViewMenuItemCount, menuItems);
+    }
+
+    /**
+     * Set the view specific menu items on the given {@code targetMenu}, preserving the specified number of leading items, and adding the given
+     * {@code menuItems}.
+     *
+     * @param targetMenu
+     *            the (sub) menu to ensure the view specific menu items on
+     * @param fixedLeadingItemCount
+     *            number of generic application entries in the {@code targetMenu} that are to be preserved
+     * @param menuItems
+     *            the view specific menu items to be added below the generic application items (contained {@code null} elements are interpreted as
+     *            separators)
+     */
+    private void setViewSpecificMenuItems(final JMenu targetMenu, final int fixedLeadingItemCount, final Collection<JMenuItem> menuItems) {
+        if (targetMenu.getMenuComponentCount() > fixedLeadingItemCount) {
             // remove old view specific edit menu items
-            final List<Component> oldEditMenuItems = Arrays.asList(this.editMenu.getMenuComponents());
-            for (final Component oldEditMenuItem : oldEditMenuItems.subList(this.fixedEditMenuItemCount, oldEditMenuItems.size())) {
-                this.editMenu.remove(oldEditMenuItem);
+            final List<Component> oldEditMenuItems = Arrays.asList(targetMenu.getMenuComponents());
+            for (final Component oldEditMenuItem : oldEditMenuItems.subList(fixedLeadingItemCount, oldEditMenuItems.size())) {
+                targetMenu.remove(oldEditMenuItem);
             }
         }
-        if (!editMenuItems.isEmpty()) {
-            this.editMenu.addSeparator();
-            for (final JMenuItem newEditMenuItem : editMenuItems) {
+        if (!menuItems.isEmpty()) {
+            targetMenu.addSeparator();
+            for (final JMenuItem newEditMenuItem : menuItems) {
                 if (newEditMenuItem == null) {
-                    this.editMenu.addSeparator();
+                    targetMenu.addSeparator();
                 } else {
-                    this.editMenu.add(newEditMenuItem);
+                    targetMenu.add(newEditMenuItem);
                 }
             }
         }
@@ -661,39 +693,11 @@ public final class ScitosClient {
         }
     }
 
-    /**
-     * Display a file dialog in order to open the selected files.
-     *
-     * @param rememberDirectory
-     *            if the directory of the chosen file should be remembered for the next occasion
-     * @return selected files (empty if user aborted the dialog)
-     */
-    File[] getFilesForOpening(final boolean rememberDirectory) {
-        // use FileDialog instead of JFileChooser because it looks more native
-        final FileDialog dialog = new FileDialog(this.getFrame());
-        dialog.setMode(FileDialog.LOAD);
-        dialog.setDirectory(Option.WORKDIR.getValue());
-        ViewUtil.centerOnParent(dialog);
-        dialog.setVisible(true);
-        final String selection = dialog.getFile();
-        if (selection == null) {
-            // user aborted the file choosing dialog
-            return new File[0];
-        }
-        final File result = new File(dialog.getDirectory(), selection);
-        if (rememberDirectory) {
-            // store the default work directory
-            Option.WORKDIR.setValue(result.getParentFile().getAbsolutePath());
-        }
-        // open the selected file
-        return new File[] { result };
-    }
-
     /** Opening files the user selects in the displayed file dialog. */
     void open() {
-        final File[] selection = this.getFilesForOpening(true);
-        for (final File singleFile : selection) {
-            this.openFile(singleFile);
+        final File selection = ViewUtil.openFile(this.getFrame(), Message.MENUBAR_FILE_OPEN.get(), true);
+        if (selection != null) {
+            this.openFile(selection);
         }
     }
 
@@ -706,59 +710,13 @@ public final class ScitosClient {
     public void openFile(final File selected) {
         IViewProject<?> project = null;
         try {
-            final Entry<? extends IModel<?>, List<Object>> model = ScitosClient.this.getModelParseProvider().open(selected);
+            final Entry<? extends IModel<?>, List<?>> model = ScitosClient.this.getModelParseProvider().open(selected);
             project = ScitosClient.this.getProjectViewProvider().createProject(model.getKey(), selected);
             project.setOpenTabElements(model.getValue());
             ScitosClient.this.mainView.addProject(project);
         } catch (final HmxException ex) {
             MessageHandler.showException(ex);
         }
-    }
-
-    /**
-     * Open a save dialog and asks the user for the path, where to save.
-     *
-     * @param fileExtension
-     *            associated file type extension
-     * @param title
-     *            title of the file dialog
-     * @return save path
-     */
-    public File getSaveDestination(final String fileExtension, final String title) {
-        // use FileDialog instead of JFileChooser because it looks more native
-        final FileDialog dialog = new FileDialog(this.getFrame());
-        dialog.setMode(FileDialog.SAVE);
-        dialog.setTitle(title);
-        dialog.setDirectory(Option.WORKDIR.getValue());
-        dialog.setFilenameFilter(new FilenameFilter() {
-
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return new File(dir, name).isDirectory() || name.endsWith(fileExtension);
-            }
-        });
-        ViewUtil.centerOnParent(dialog);
-        dialog.setVisible(true);
-        if (dialog.getFile() != null) {
-            // store the default work directory
-            Option.WORKDIR.setValue(dialog.getDirectory());
-            // make sure the target has the given extension
-            final String path = dialog.getDirectory() + dialog.getFile();
-            if (path.matches(".*\\" + fileExtension)) {
-                // the FileDialog already asked to replace an existing file with the same name
-                return new File(path);
-            }
-            // we have to append the file extension
-            File targetFile = new File(path + fileExtension);
-            // avoid replacing an existing file - since the dialog is already closed, we cannot ask the user again
-            for (int i = 1; targetFile.exists(); i++) {
-                // add a counter to the end of the file name
-                final StringBuilder pathBuilder = new StringBuilder(path).append('(').append(i).append(')').append(fileExtension);
-                targetFile = new File(pathBuilder.toString());
-            }
-            return targetFile;
-        }
-        return null;
     }
 
     /** Save the currently active project to its last used save path. */
@@ -780,7 +738,8 @@ public final class ScitosClient {
         final IViewProject<?> activeProject = this.mainView.getActiveProject();
         // hand over currently open tabs to allow them to be saved as well
         this.mainView.updateOpenTabElementsForProject(activeProject);
-        final File path = this.getSaveDestination(activeProject.getFileType().getFileExtension(), Message.MENUBAR_FILE_SAVE.get());
+        final File path =
+                ViewUtil.getSaveDestination(this.getFrame(), activeProject.getFileType().getFileExtension(), Message.MENUBAR_FILE_SAVE.get(), true);
         if (path != null) {
             this.frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             try {
@@ -835,6 +794,9 @@ public final class ScitosClient {
                 case ODS:
                     icon = ScitosIcon.FILE_ODS.create();
                     break;
+                case SVG:
+                    icon = ScitosIcon.FILE_SVG.create();
+                    break;
                 default:
                     icon = null;
                 }
@@ -843,11 +805,8 @@ public final class ScitosClient {
 
                     @Override
                     public void actionPerformed(final ActionEvent event) {
-                        final File target =
-                                ScitosClient.this.getSaveDestination(exportOption.getTargetFileType().getExtension(),
-                                        Message.MENUBAR_FILE_EXPORT.get());
                         try {
-                            project.export(exportOption, target);
+                            project.export(exportOption);
                         } catch (final HmxException ex) {
                             MessageHandler.showException(ex);
                         }

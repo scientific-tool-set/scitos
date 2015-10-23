@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+-->
+<properties>
+  <entry key="Adversative">Adversativ</entry>
+  <entry key="Amplification">Amplifikation</entry>
+  <entry key="Circumstance">Umstandshinweis</entry>
+  <entry key="Comment">Kommentar</entry>
+  <entry key="Comparsion">Vergleich</entry>
+  <entry key="Comparison">Vergleich</entry>
+  <entry key="Concession">Einräumung</entry>
+  <entry key="Conclusion">Folgerung</entry>
+  <entry key="Condition">Bedingung</entry>
+  <entry key="Congruence">Übereinstimmung</entry>
+  <entry key="Consequence">Folge</entry>
+  <entry key="Content">Inhalt</entry>
+  <entry key="Contraction">Kurzform</entry>
+  <entry key="Contraexpectation">Nichterwartetes</entry>
+  <entry key="Contrast">Kontrast</entry>
+  <entry key="Description">Beschreibung</entry>
+  <entry key="Equivalent">Entsprechung</entry>
+  <entry key="Exhortation">Aufforderung</entry>
+  <entry key="Generic">Genus</entry>
+  <entry key="Goal">Ziel</entry>
+  <entry key="Grounds">Grund</entry>
+  <entry key="Identification">Identifizierung</entry>
+  <entry key="Illustration">Illustration</entry>
+  <entry key="Manner">Art und Weise</entry>
+  <entry key="Means">Mittel</entry>
+  <entry key="Move">Hinbewegung</entry>
+  <entry key="Negative">Negativum</entry>
+  <entry key="Nucleus">Kern</entry>
+  <entry key="Object">Sache</entry>
+  <entry key="Ocassion">Geschehen</entry>
+  <entry key="Orienter">Einleitung</entry>
+  <entry key="Outcome">Resultat</entry>
+  <entry key="Parenthesis">Parenthese</entry>
+  <entry key="Positive">Positivum</entry>
+  <entry key="Purpose">Zweck</entry>
+  <entry key="Reason">Grund</entry>
+  <entry key="Result">Ergebnis</entry>
+  <entry key="SequentialNucleus">Sequenz-Kern</entry>
+  <entry key="SimultaneousNucleus">Simultan-Kern</entry>
+  <entry key="Specific">Specificum</entry>
+  <entry key="Standard">Standard</entry>
+  <entry key="Time">Zeit</entry>
+</properties>
+

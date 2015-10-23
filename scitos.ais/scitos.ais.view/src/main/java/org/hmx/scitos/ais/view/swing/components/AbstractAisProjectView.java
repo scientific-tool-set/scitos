@@ -29,8 +29,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 
+import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.core.AisOption;
-import org.hmx.scitos.ais.core.IModelHandler;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
@@ -77,7 +77,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
 
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final IModelHandler modelHandler = AbstractAisProjectView.this.getProject().getModelHandler();
+                final AisModelHandler modelHandler = AbstractAisProjectView.this.getProject().getModelHandler();
                 final CategoryModelChangeDialog dialog = new CategoryModelChangeDialog(modelHandler, AbstractAisProjectView.this.options);
                 dialog.setVisible(true);
             }

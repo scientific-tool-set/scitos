@@ -3,6 +3,7 @@ package org.hmx.scitos.domain.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,65 +44,127 @@ public class ComparisonUtilTest {
         Assert.assertFalse(ComparisonUtil.isNullAwareEqual("ab", "cd"));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (null, null). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (null, null). */
     @Test
     public void testIsNullOrEmptyAwareEqual_1() {
-        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(null, null));
+        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual((List<?>) null, null));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (null, empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (null, empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_2() {
         Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(null, Collections.emptyList()));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (empty, null). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (empty, null). */
     @Test
     public void testIsNullOrEmptyAwareEqual_3() {
         Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(new ArrayList<String>(1), null));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (empty, empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (empty, empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_4() {
         Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(Collections.emptyList(), new ArrayList<String>(2)));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (null, non-empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (null, non-empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_5() {
         Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual(null, Arrays.asList("")));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (non-empty, null). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (non-empty, null). */
     @Test
     public void testIsNullOrEmptyAwareEqual_6() {
         Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual(Arrays.asList(""), null));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (empty, non-empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (empty, non-empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_7() {
         Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual(Collections.emptyList(), Arrays.asList("")));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method (non-empty, empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method (non-empty, empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_8() {
         Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual(Arrays.asList(""), Collections.emptyList()));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method for equal lists (non-empty, non-empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method for equal lists (non-empty, non-empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_9() {
         final String instance = "ab";
         Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(Arrays.asList(instance), Arrays.asList(new String(instance))));
     }
 
-    /** Test: for isNullOrEmptyAwareEqual method for unequal lists (non-empty, non-empty). */
+    /** Test: for isNullOrEmptyAwareEqual(List, List) method for unequal lists (non-empty, non-empty). */
     @Test
     public void testIsNullOrEmptyAwareEqual_10() {
         Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual(Arrays.asList("ab"), Arrays.asList("cd")));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (null, null). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_1() {
+        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual((String) null, null));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (null, empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_2() {
+        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(null, ""));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (empty, null). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_3() {
+        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual("", null));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (empty, empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_4() {
+        final String emptyString = "";
+        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(emptyString, new String(emptyString)));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (null, non-empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_5() {
+        Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual(null, "a"));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (non-empty, null). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_6() {
+        Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual("b", null));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (empty, non-empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_7() {
+        Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual("", "c"));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method (non-empty, empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_8() {
+        Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual("d", ""));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method for equal texts (non-empty, non-empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_9() {
+        final String instance = "ab";
+        Assert.assertTrue(ComparisonUtil.isNullOrEmptyAwareEqual(instance, new String(instance)));
+    }
+
+    /** Test: for isNullOrEmptyAwareEqual(String, String) method for unequal texts (non-empty, non-empty). */
+    @Test
+    public void testIsNullOrEmptyAwareEqualString_10() {
+        Assert.assertFalse(ComparisonUtil.isNullOrEmptyAwareEqual("ab", "cd"));
     }
 
     /** Test: for compareNullAware method (null, null). */

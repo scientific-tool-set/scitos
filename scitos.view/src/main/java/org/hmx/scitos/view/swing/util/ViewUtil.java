@@ -20,11 +20,18 @@
 package org.hmx.scitos.view.swing.util;
 
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.io.File;
+import java.io.FilenameFilter;
+
+import javax.swing.JFrame;
+
+import org.hmx.scitos.core.option.Option;
 
 /** Helper class to handle recurring requirements in the user interface. */
 public final class ViewUtil {
@@ -76,22 +83,104 @@ public final class ViewUtil {
     private static void moveInsideBounds(final Window target, final Rectangle screenBounds) {
         final int positionX = target.getX();
         final int destX;
-        if (screenBounds.x + screenBounds.width < positionX + 50) {
-            destX = screenBounds.x + screenBounds.width - 50;
-        } else if (positionX < screenBounds.x) {
+        if (positionX < screenBounds.x) {
             destX = screenBounds.x;
+        } else if (screenBounds.x + screenBounds.width < positionX + 50) {
+            destX = screenBounds.x + screenBounds.width - 50;
         } else {
             destX = positionX;
         }
-        final int positionY = target.getX();
+        final int positionY = target.getY();
+        final int height = target.getHeight();
         final int destY;
-        if (screenBounds.y + screenBounds.height < positionY + 50) {
-            destY = screenBounds.y + screenBounds.height - 50;
-        } else if (positionY < screenBounds.y) {
+        if (positionY < screenBounds.y) {
             destY = screenBounds.y;
+        } else if (screenBounds.y + screenBounds.height < positionY + height + 50) {
+            destY = screenBounds.y + screenBounds.height - height - 50;
         } else {
             destY = positionY;
         }
         target.setLocation(destX, destY);
+    }
+
+    /**
+     * Show a file dialog to allow the user to select a single file to be opened.
+     *
+     * @param parent
+     *            the application window the displayed file dialog belongs to
+     * @param title
+     *            the dialog title
+     * @param rememberDirectory
+     *            if the containing directory of a successful selection should be remembered as {@link Option#WORKDIR}
+     * @return the selected file to be opened (is {@code null} if the user aborted the dialog)
+     */
+    public static File openFile(final JFrame parent, final String title, final boolean rememberDirectory) {
+        // use FileDialog instead of JFileChooser because it looks more native
+        final FileDialog dialog = new FileDialog(parent, title, FileDialog.LOAD);
+        dialog.setDirectory(Option.WORKDIR.getValue());
+        ViewUtil.centerOnParent(dialog);
+        dialog.setVisible(true);
+        final String selection = dialog.getFile();
+        if (selection == null) {
+            // user aborted the file choosing dialog
+            return null;
+        }
+        final File result = new File(dialog.getDirectory(), selection);
+        if (rememberDirectory) {
+            // store the default work directory
+            Option.WORKDIR.setValue(result.getParentFile().getAbsolutePath());
+        }
+        // open the selected file
+        return result;
+    }
+
+    /**
+     * Show a file dialog to allow the user to insert a file destination to save to.
+     *
+     * @param parent
+     *            the application window the displayed file dialog belongs to
+     * @param fileExtension
+     *            associated file type extension
+     * @param title
+     *            title of the file dialog
+     * @param rememberDirectory
+     *            if the containing directory of a successful selection should be remembered as {@link Option#WORKDIR}
+     * @return the selected save destination (is {@code null} if the user aborted the dialog)
+     */
+    public static File getSaveDestination(final JFrame parent, final String fileExtension, final String title, final boolean rememberDirectory) {
+        // use FileDialog instead of JFileChooser because it looks more native
+        final FileDialog dialog = new FileDialog(parent, title, FileDialog.SAVE);
+        dialog.setDirectory(Option.WORKDIR.getValue());
+        dialog.setFilenameFilter(new FilenameFilter() {
+
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return new File(dir, name).isDirectory() || name.endsWith(fileExtension);
+            }
+        });
+        ViewUtil.centerOnParent(dialog);
+        dialog.setVisible(true);
+        if (dialog.getFile() != null) {
+            if (rememberDirectory) {
+                // store the default work directory
+                Option.WORKDIR.setValue(dialog.getDirectory());
+            }
+            // make sure the target has the given extension
+            final String path = dialog.getDirectory() + dialog.getFile();
+            if (path.matches(".*\\" + fileExtension)) {
+                // the FileDialog already asked to replace an existing file with the same name
+                return new File(path);
+            }
+            // we have to append the file extension
+            File targetFile = new File(path + fileExtension);
+            // avoid replacing an existing file - since the dialog is already closed, we cannot ask the user again
+            for (int i = 1; targetFile.exists(); i++) {
+                // add a counter to the end of the file name
+                final StringBuilder pathBuilder = new StringBuilder(path).append('(').append(i).append(')').append(fileExtension);
+                targetFile = new File(pathBuilder.toString());
+            }
+            return targetFile;
+        }
+        return null;
     }
 }

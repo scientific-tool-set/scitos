@@ -16,7 +16,7 @@ public final class ClassPathUtil {
 
     /**
      * Collect the full resource paths of files, matching the given regular expression, in the package of the specified class.
-     * 
+     *
      * @param clazz
      *            the class to look up neighboring files for (determines the package in which to search)
      * @param fileNameRegex

@@ -46,7 +46,7 @@ public interface IModelParseService<M extends IModel<M>> {
      * @throws HmxException
      *             wrapped error that occured while parsing the document
      */
-    Entry<M, List<Object>> parseModelFromXml(Document xml, File originPath) throws HmxException;
+    Entry<M, List<?>> parseModelFromXml(Document xml, File originPath) throws HmxException;
 
     /**
      * Create the xml structure for the given model instance.

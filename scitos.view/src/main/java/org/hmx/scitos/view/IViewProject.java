@@ -124,16 +124,14 @@ public interface IViewProject<M extends IModel<M>> {
     String getSavePath();
 
     /**
-     * Export the current project to the specified path.
+     * Export the current project.
      *
      * @param type
      *            the kind of export to perform
-     * @param path
-     *            designated export location
      * @throws HmxException
      *             export failed due to missing permissions or unsuccessful validation
      */
-    void export(ExportOption type, File path) throws HmxException;
+    void export(ExportOption type) throws HmxException;
 
     /**
      * Attempt to close this project. Ask the user for saving the final state if it is not already saved.

@@ -1,0 +1,276 @@
+package org.hmx.scitos.hmx.view.swing.elements;
+
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
+import org.hmx.scitos.hmx.domain.model.ClauseItem;
+import org.hmx.scitos.hmx.domain.model.ClauseItem.Style;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.view.ContextMenuFactory;
+import org.hmx.scitos.hmx.view.IPericopeView;
+import org.hmx.scitos.view.ContextMenuBuilder;
+import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
+import org.hmx.scitos.view.swing.components.ScaledLabel;
+import org.hmx.scitos.view.swing.components.ScaledTextPane;
+
+/**
+ * view representation of a {@link ClauseItem} in the syntactical analysis view consisting of a non-editable {@link JTextPane} for the origin text on
+ * the top and a label displaying the current selected function on the bottom
+ */
+public final class SynItem extends AbstractCommentable<ClauseItem> {
+
+    /** etched border, when not selected */
+    private static final Border DEFAULT_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+            BorderFactory.createEmptyBorder(2, 0, 2, 0));
+    /** lowered bevel border, when selected */
+    private static final Border COMMENT_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(),
+            BorderFactory.createEmptyBorder(2, 0, 2, 0));
+
+    /** etched border with color, when not selected and with comment set */
+    private final Border defaultBorderCommented = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+            BorderFactory.createMatteBorder(2, 0, 2, 0, HmxGeneralOption.COMMENTED_BORDER_COLOR.getValueAsColor()));
+    IPericopeView viewReference;
+    /** represented model {@link ClauseItem} */
+    private final ClauseItem represented;
+    /** text field to display the origin text in */
+    private final JTextPane originTextPane;
+    /** label for showing the syntactical function */
+    private final JLabel functionLabel;
+
+    /** mouse listener creating the popup containing all available functions */
+    private MouseAdapter popupListener;
+
+    /**
+     * creates a new {@link SynItem} in the specified syntactical analysis view representing the specified {@link ClauseItem} and regarding the chosen
+     * language and {@link Font} of the origin text to display
+     *
+     * @param viewReference
+     *            containing view, enabling further interactions
+     * @param represented
+     *            {@link ClauseItem} to display
+     */
+    protected SynItem(final IPericopeView viewReference, final ClauseItem represented) {
+        super(new GridBagLayout());
+        this.viewReference = viewReference;
+        this.represented = represented;
+        this.originTextPane = new ScaledTextPane();
+        this.functionLabel = new ScaledLabel(represented.getFunction() == null ? null : represented.getFunction().getCode());
+        this.setDefaultBorder();
+        this.initOriginTextPane();
+        this.initFunctionLabel();
+        this.refreshFontStyle();
+
+        // initialize the comment showing listener for the item
+        this.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(final MouseEvent event) {
+                viewReference.handleSelectedCommentable(SynItem.this);
+            }
+        });
+        // initialize the popup menu and its listener for the item
+        this.refreshPopup();
+        this.refreshComment();
+    }
+
+    /** initializes the origin text pane on the top */
+    private void initOriginTextPane() {
+        this.originTextPane.setFont(this.viewReference.getModelHandler().getModel().getFont());
+        this.originTextPane.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
+        this.originTextPane.setEditable(false);
+        this.refreshOriginText();
+        final GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        this.add(this.originTextPane, constraints);
+    }
+
+    /** initializes the label for displaying the function on the bottom */
+    private void initFunctionLabel() {
+        this.functionLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        this.functionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.refreshFunction();
+        final GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        this.add(this.functionLabel, constraints);
+    }
+
+    /** create and enable the {@link JPopupMenu} */
+    private void refreshPopup() {
+        if (this.popupListener != null) {
+            // remove the old popup listener
+            this.removeMouseListener(this.popupListener);
+        }
+        // create new popup menu and its referring listener
+        this.popupListener = new MouseAdapter() {
+
+            @Override
+            public void mousePressed(final MouseEvent event) {
+                if (event.isPopupTrigger()) {
+                    final ClauseItem item = SynItem.this.getRepresented();
+                    final ContextMenuBuilder contextMenu;
+                    if (item.getParent().getPartBeforeArrow() == null) {
+                        contextMenu = ContextMenuFactory.createSynItemPopup(SynItem.this.viewReference, item);
+                    } else {
+                        contextMenu = ContextMenuFactory.createSynItemAfterArrowPopup(SynItem.this.viewReference, item);
+                    }
+                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
+                }
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent event) {
+                this.mousePressed(event);
+            }
+        };
+        // add the popup menu and its listener
+        this.addMouseListener(this.popupListener);
+    }
+
+    @Override
+    public ClauseItem getRepresented() {
+        return this.represented;
+    }
+
+    /**
+     * sets the displayed function regarding to the current saved value in the represented {@link ClauseItem}
+     */
+    public void refreshFunction() {
+        final SyntacticalFunction function = this.represented.getFunction();
+        final String functionName;
+        final boolean underline;
+        if (function == null) {
+            functionName = " ";
+            underline = false;
+        } else {
+            functionName = function.getCode();
+            underline = function.isUnderlined();
+        }
+        this.functionLabel.setText(functionName);
+        SynItem.setTextPaneUnderlined(this.originTextPane, underline);
+        this.functionLabel.setSize(this.functionLabel.getPreferredSize());
+    }
+
+    /**
+     * sets the displayed origin text regarding to the current saved value in the represented {@link ClauseItem}
+     */
+    public void refreshOriginText() {
+        this.originTextPane.setText(this.represented.getOriginText());
+        this.refreshPopup();
+    }
+
+    /**
+     * sets the displayed {@link Font} style regarding to the current saved value in the represented {@link ClauseItem}
+     */
+    public void refreshFontStyle() {
+        final Style style = this.represented.getFontStyle();
+        SynItem.setTextPaneFontStyle(this.originTextPane, style);
+        this.functionLabel.setFont(this.functionLabel.getFont().deriveFont(ContextMenuFactory.getFontStyleValue(style)));
+    }
+
+    /**
+     * resets the tool tip info containing the comment text regarding its value in the represented Proposition
+     */
+    public void refreshComment() {
+        final String comment = this.getRepresented().getComment();
+        if (comment == null || comment.isEmpty()) {
+            this.setToolTipText(null);
+        } else {
+            this.setToolTipText(comment);
+        }
+    }
+
+    @Override
+    public void setDefaultBorder() {
+        final boolean containsComment = this.represented.getComment() != null && !this.represented.getComment().trim().isEmpty();
+        this.setBorder(containsComment ? this.defaultBorderCommented : SynItem.DEFAULT_BORDER);
+        if (this.getParent() != null) {
+            ((JComponent) this.getParent()).revalidate();
+        }
+    }
+
+    @Override
+    public void setCommentBorder() {
+        this.setBorder(SynItem.COMMENT_BORDER);
+    }
+
+    @Override
+    public void setToolTipText(final String toolTip) {
+        this.originTextPane.setToolTipText(toolTip);
+        this.functionLabel.setToolTipText(toolTip);
+        super.setToolTipText(toolTip);
+    }
+
+    @Override
+    public void setComponentPopupMenu(final JPopupMenu popup) {
+        super.setComponentPopupMenu(popup);
+        this.originTextPane.setComponentPopupMenu(popup);
+        this.functionLabel.setComponentPopupMenu(popup);
+    }
+
+    @Override
+    public synchronized void addMouseListener(final MouseListener listener) {
+        this.originTextPane.addMouseListener(listener);
+        this.functionLabel.addMouseListener(listener);
+        super.addMouseListener(listener);
+    }
+
+    @Override
+    public synchronized void removeMouseListener(final MouseListener listener) {
+        this.originTextPane.removeMouseListener(listener);
+        this.functionLabel.removeMouseListener(listener);
+        super.removeMouseListener(listener);
+    }
+
+    /**
+     * sets the {@link Font} style of the designated {@link JTextPane} to the specified value
+     *
+     * @param target
+     *            {@link JTextPane} to set the {@link Font} style
+     * @param style
+     *            {@link Font} style to set
+     */
+    private static void setTextPaneFontStyle(final JTextPane target, final Style style) {
+        final MutableAttributeSet attributes = target.getInputAttributes();
+        StyleConstants.setBold(attributes, style == Style.BOLD || style == Style.BOLD_ITALIC);
+        StyleConstants.setItalic(attributes, style == Style.ITALIC || style == Style.BOLD_ITALIC);
+        final StyledDocument document = target.getStyledDocument();
+        document.setCharacterAttributes(0, document.getLength() + 1, attributes, true);
+    }
+
+    /**
+     * underlines the text in the designated {@link JTextPane} regarding to the flag
+     *
+     * @param target
+     *            {@link JTextPane} to underline
+     * @param underline
+     *            flag to enable/disable underlining
+     */
+    private static void setTextPaneUnderlined(final JTextPane target, final boolean underline) {
+        final MutableAttributeSet attributes = target.getInputAttributes();
+        StyleConstants.setUnderline(attributes, underline);
+        final StyledDocument document = target.getStyledDocument();
+        document.setCharacterAttributes(0, document.getLength() + 1, attributes, true);
+    }
+}

@@ -27,6 +27,7 @@ import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.view.FileType;
+import org.w3c.dom.Document;
 
 /**
  * Service provider handling conversions between xml and java structures for the registered file types.
@@ -51,10 +52,10 @@ public interface IModelParseServiceProvider {
      * @throws HmxException
      *             the targeted file did not contain a valid/recognized model
      */
-    Entry<? extends IModel<?>, List<Object>> open(File target) throws HmxException;
+    Entry<? extends IModel<?>, List<?>> open(File target) throws HmxException;
 
     /**
-     * Save the given model object to the targeted file.
+     * Save the given model object to the targeted {@link File}.
      *
      * @param model
      *            model object to save
@@ -66,6 +67,18 @@ public interface IModelParseServiceProvider {
      *             the targeted file could not be created/replaced
      */
     void save(IModel<?> model, List<?> openViewElements, File target) throws HmxException;
+
+    /**
+     * Save the given {@code xml} {@link Document} to the targeted {@link File}.
+     *
+     * @param xml
+     *            xml document to save
+     * @param target
+     *            file to save the document into (old version is replaced, if one already exists)
+     * @throws HmxException
+     *             the targeted file could not be created/replaced
+     */
+    void save(Document xml, File target) throws HmxException;
 
     /**
      * Export the given model object to the targeted file.

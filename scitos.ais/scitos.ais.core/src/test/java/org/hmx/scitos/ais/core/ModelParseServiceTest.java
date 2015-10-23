@@ -59,7 +59,7 @@ public class ModelParseServiceTest {
     @Test
     public void testParseModelToAndFromXml_1() throws HmxException {
         final AisProject model = new AisProject("test.aisp", ModelParseServiceTest.DEFAULT_CATEGORY_MODEL.provide());
-        final IModelHandler modelHandler = new ModelHandlerImpl(model);
+        final AisModelHandler modelHandler = new ModelHandlerImpl(model);
         final Interview firstInterview = modelHandler.createInterview("a");
         modelHandler.setInterviewText(firstInterview, "1 2 3");
         modelHandler.assignDetailCategory(firstInterview, firstInterview.getText(), ModelParseServiceTest.DEFAULT_CATEGORY_MODEL
@@ -70,7 +70,7 @@ public class ModelParseServiceTest {
         final List<Object> openViewElements = new LinkedList<Object>(model.getInterviews());
         openViewElements.add("a");
         final Document xml = this.service.parseXmlFromModel(model, openViewElements);
-        final Entry<AisProject, List<Object>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));
+        final Entry<AisProject, List<?>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));
         Assert.assertEquals(model, parsed.getKey());
         Assert.assertEquals(openViewElements, parsed.getValue());
     }
@@ -86,7 +86,7 @@ public class ModelParseServiceTest {
     @Test
     public void testParseModelToAndFromXml_2() throws HmxException {
         final AisProject model = new AisProject("test.aisp", ModelParseServiceTest.DEFAULT_CATEGORY_MODEL.provide());
-        final IModelHandler modelHandler = new ModelHandlerImpl(model);
+        final AisModelHandler modelHandler = new ModelHandlerImpl(model);
         final Interview interview = modelHandler.createInterview("123");
         modelHandler.setInterviewText(interview, "1a 2b 3a 4-\n1a 2b 3c 4b 5a 6d 7d 8a");
         // first paragraph, simple enclosed case with differing categories
@@ -108,7 +108,7 @@ public class ModelParseServiceTest {
         // no open views
         final List<?> openViewElements = Collections.emptyList();
         final Document xml = this.service.parseXmlFromModel(model, openViewElements);
-        final Entry<AisProject, List<Object>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));
+        final Entry<AisProject, List<?>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));
         Assert.assertEquals(model, parsed.getKey());
         Assert.assertEquals(openViewElements, parsed.getValue());
     }
@@ -124,7 +124,7 @@ public class ModelParseServiceTest {
         final AisProject model = new AisProject("test.aisp", ModelParseServiceTest.DEFAULT_CATEGORY_MODEL.provide());
         // all interview views open, and a sub model group
         final Document xml = this.service.parseXmlFromModel(model, Arrays.asList(model));
-        final Entry<AisProject, List<Object>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));
+        final Entry<AisProject, List<?>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));
         Assert.assertEquals(model, parsed.getKey());
         Assert.assertSame(parsed.getKey(), parsed.getValue().get(0));
     }

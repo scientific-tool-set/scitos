@@ -10,7 +10,9 @@ public class ExportOption {
         /** Export file type: Web Page (*.html). */
         HTML(".html"),
         /** Export file type: Spreadsheet (Open Document Standard - *.ods) */
-        ODS(".ods");
+        ODS(".ods"),
+        /** Export file type: Scalable Vector Graphic (*.svg) */
+        SVG(".svg");
 
         /** The file extension of an exported file. */
         private final String extension;
@@ -53,7 +55,6 @@ public class ExportOption {
      *            the location of the XSLT stylesheet on the classpath
      */
     public ExportOption(final ILocalizableMessage menuEntry, final TargetFileType targetFileType, final String stylesheetPath) {
-        super();
         this.menuEntry = menuEntry;
         this.targetFileType = targetFileType;
         this.stylesheetPath = stylesheetPath;

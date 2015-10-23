@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+-->
+<properties>
+  <entry key="Analysis.CommentTopic">Geben Sie hier den Kommentar für das eingedrückte Element ein</entry>
+  <entry key="Analysis.Semantical">Wechsel auf Semantische</entry>
+  <entry key="Analysis.Semantical.AlterRelationType">Ändere Beziehungsart</entry>
+  <entry key="Analysis.Semantical.CreateRelation">Setze ausgewählte Elemente in Beziehung</entry>
+  <entry key="Analysis.Semantical.RelationFolding.FoldAll">Alle Rollen ausblenden</entry>
+  <entry key="Analysis.Semantical.RelationFolding.FoldLevel">Rollen dieser Ebene ausblenden</entry>
+  <entry key="Analysis.Semantical.RelationFolding.UnfoldAll">Alle Rollen einblenden</entry>
+  <entry key="Analysis.Semantical.RelationFolding.UnfoldLevel">Rollen dieser Ebene einblenden</entry>
+  <entry key="Analysis.Semantical.RemoveRelation">Entferne Beziehung</entry>
+  <entry key="Analysis.Semantical.RotateAssociateRoles">Wechsle Rollen aus</entry>
+  <entry key="Analysis.Syntactical">Wechsel auf Syntaktische</entry>
+  <entry key="Analysis.Syntactical.ChangeItemFunction">Ändere Satzgliedfunktion</entry>
+  <entry key="Analysis.Syntactical.ChangePropositionFunction">Ändere Einrückungsfunktion</entry>
+  <entry key="Analysis.Syntactical.HighlightItem">Hebe Satzglied hervor</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.Bold">Fett</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.BoldAndItalic">Fett und Kursiv</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.Italic">Kursiv</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.Plain">Normal</entry>
+  <entry key="Analysis.Syntactical.IndentProposition">Ordne die ausgewählte Proposition unter</entry>
+  <entry key="Analysis.Syntactical.MergeCheckedPropositions">Verbinde mit ausgewählter Proposition</entry>
+  <entry key="Analysis.Syntactical.MergeWithFollowingItem">Verbinde mit nachgestelltem Satzglied</entry>
+  <entry key="Analysis.Syntactical.MergeWithPriorItem">Verbinde mit vorangestelltem Satzglied</entry>
+  <entry key="Analysis.Syntactical.RemoveOneIndentation">Entferne eine Unterordnung</entry>
+  <entry key="Analysis.Syntactical.RemoveOneIndentation.AffectsOthers">Das Entfernen einer Unterordnung dieser Proposition entfernt
+auch die Einrückung einer oder mehrer anderer Propositionen.
+Wollen Sie wirklich fortfahren?</entry>
+  <entry key="Analysis.Syntactical.RemoveOneIndentation.AffectsOthers.Title">Beeinflusst andere Propositionen</entry>
+  <entry key="Analysis.Syntactical.ResetStandaloneProposition">Eigenständigkeit der Proposition wiederherstellen</entry>
+  <entry key="Analysis.Syntactical.SplitClauseItemAfter">Teile Satzglied nach</entry>
+  <entry key="Analysis.Syntactical.SplitProposition">Teile Proposition nach diesem Satzglied</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects">Mit anderem Projekt zusammenführen</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects.Behind">Am Ende des aktuellen Texts</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects.InFront">Vor den aktuellen Text</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects.PositionQuestion">Wo soll der zusätzliche Text eingefügt werden?</entry>
+  <entry key="Client.MenuBar.Edit.OriginText.Add">Weitere Propositionen Hinzufügen</entry>
+  <entry key="Client.MenuBar.Edit.OriginText.Remove">Ausgewählte Propositionen Entfernen</entry>
+  <entry key="Client.MenuBar.Edit.OriginText.Remove.Confirm">Soll(en) die ausgewählte(n) Proposition(en) wirklich gelöscht werden?</entry>
+  <entry key="Client.MenuBar.Edit.ProjectInfo">Projektinformationen</entry>
+  <entry key="Error.CreateRelation.AtLeastTwoChecked">Es müssen mindestens zwei Elemente
+(über ihre CheckBoxen) ausgewählt sein.</entry>
+  <entry key="Error.CreateRelation.MoreThenTwoChecked">Die gewählte Beziehung kann
+nur zwei Elemente miteinander verbinden.</entry>
+  <entry key="Error.CreateRelation.NotConnected">Es dürfen sich keine anderen Propositionen
+zwischen den ausgewählten Elementen befinden.</entry>
+  <entry key="Error.DeletePropositions.AllSelected">Es wurden alle Propositionen zum Löschen ausgewählt.
+Mindestens eine Proposition muss erhalten bleiben.</entry>
+  <entry key="Error.DeletePropositions.ConditionsNotMet">Die zum Löschen ausgewählten Propositionen verletzen eine der folgenden Bedingungen:
+   - Sie dürfen keiner anderen Proposition über- oder untergeordnet sein.
+   - Sie dürfen keine (mit Pfeilen verbundene) mehrteilige Proposition darstellen.
+Entferne gegebenenfalls Einrückungen bzw. stelle die Eigenständigkeit von Propositionsteilen wieder her.
+Versuche dann den Löschvorgang erneut.</entry>
+  <entry key="Error.DeletePropositions.NoneSelected">Es wurde keine Proposition zum Löschen ausgewählt.</entry>
+  <entry key="Error.IndentProposition.AtLeastOneOtherChecked">Es muss eine andere Proposition (durch dessen CheckBox) ausgewählt sein,
+die der angeklickten Proposition untergeordnet werden kann.</entry>
+  <entry key="Error.Indentation.Create">Zwischen den beiden betroffenen Propositionen dürfen sich
+keine gleich- oder höherwertigen Propositionen befinden.</entry>
+  <entry key="Error.Indentation.CreateUnderOwnChild">Die gewählte Proposition kann keiner ihr selbst
+untergeordneten Proposition untergeordnet werden.</entry>
+  <entry key="Error.Indentation.Remove.Enclosed">Die Einrückung kann nicht weiter vermindert werden,
+da die Proposition von einer anderen mit Pfeilen umschlossen wird.</entry>
+  <entry key="Error.Indentation.Remove.PericopeReached">Die gewählte Proposition ist nicht eingerückt.</entry>
+  <entry key="Error.MergeCheckedPropositions.AtLeastOneOtherChecked">Es muss eine andere Proposition (durch dessen CheckBox) ausgewählt sein,
+mit der die angeklickte Proposition verbunden werden kann.</entry>
+  <entry key="Error.MergeClauseItems.NoFollower">Das gewählte Satzglied hat keinen Nachfolger.</entry>
+  <entry key="Error.MergeClauseItems.NoPrior">Das gewählte Satzglied hat keinen Vorgänger.</entry>
+  <entry key="Error.MergePericopes.LanguageConflict">Die ausgewählte Datei betrachtet einen anderssprachigen Text.
+Die beiden Projekte können daher leider nicht zusammengeführt werden.</entry>
+  <entry key="Error.MergePropositions">Die beiden betroffenen Propositionen müssen
+entweder direkt aufeinanderfolgen oder
+auf der selben Ebene sein und
+zwischen ihnen dürfen sich keine
+gleich- oder höherwertigen Propositionen befinden</entry>
+  <entry key="Error.SplitProposition">Teilung nicht möglich, da sich nach dem gewählten Satzglied
+keine weiteren Satzgliedern befinden.</entry>
+  <entry key="Error.TooManyChecked">Es darf maximal eine andere Proposition ausgewählt sein.</entry>
+  <entry key="Export.Contents.Comments">Enthaltene Kommentare</entry>
+  <entry key="Export.Contents.Comments.Which">Welche Kommentare exportieren?</entry>
+  <entry key="Export.Contents.Comments.Which.All">aus beiden Analysen (Propositionen, Beziehungen und Satzglieder)</entry>
+  <entry key="Export.Contents.Comments.Which.Semantical">nur aus der Semantischen Analyse (Propositionen und Beziehungen)</entry>
+  <entry key="Export.Contents.Comments.Which.Syntactical">nur aus der Syntaktischen Analyse (Propositionen und Satzglieder)</entry>
+  <entry key="Export.Contents.SemanticalAnalysis">Semantische Analyse</entry>
+  <entry key="Export.Contents.SyntacticalAnalysis">Syntaktische Analyse</entry>
+  <entry key="Export.Contents">Inhalte</entry>
+  <entry key="Export.Height">Höhe</entry>
+  <entry key="Export.Settings">Einstellungen</entry>
+  <entry key="Export.Settings.IncludeComments">Die Kommentare (als fortlaufende Zahlen) im Ergebnis referenzieren?</entry>
+  <entry key="Export.Start">Exportieren</entry>
+  <entry key="Export.Success">Export erfolgreich abgeschlossen.</entry>
+  <entry key="Export.SVG">SVG (Skalierbare Vektor Grafik)</entry>
+  <entry key="Export.Title">HermeneutiX Projekt</entry>
+  <entry key="Export.Title.Author">von</entry>
+  <entry key="Export.Width">Breite</entry>
+  <entry key="Hmx.Project.New">Wo soll das neue HermeneutiX Projekt gespeichert werden?</entry>
+  <entry key="Preferences.Analysis.ProjectInfo.DefaultAuthor">Standard-Autor</entry>
+  <entry key="Preferences.Analysis.TextInput.DefaultOriginLanguage">Standard-Ausgangssprache</entry>
+  <entry key="Preferences.General">HmX – Allgemein</entry>
+  <entry key="Preferences.Export">HmX – Export</entry>
+  <entry key="Preferences.Export.Color">Elementfarben</entry>
+  <entry key="Preferences.Export.Font">Schrift für nicht-ausgangssprachliche Texte</entry>
+  <entry key="Preferences.Export.Proposition.BackgroundColor">Proposition: Hintergrund</entry>
+  <entry key="Preferences.Export.Proposition.BorderColor">Proposition: Rahmen</entry>
+  <entry key="Preferences.Export.FontColor">Schriftfarben</entry>
+  <entry key="Preferences.Export.Label.FontColor">Bezeichner</entry>
+  <entry key="Preferences.Export.OriginText.FontColor">Ausgangstext</entry>
+  <entry key="Preferences.Export.SemRole.FontColor">Semant. Rollen</entry>
+  <entry key="Preferences.Export.SynFunction.Bold.FontColor">Syntakt. Funktion (fett)</entry>
+  <entry key="Preferences.Export.SynFunction.BoldItalic.FontColor">Syntakt. Funktion (fett-kursiv)</entry>
+  <entry key="Preferences.Export.SynFunction.Italic.FontColor">Syntakt. Funktion (kursiv)</entry>
+  <entry key="Preferences.Export.SynFunction.Plain.FontColor">Syntakt. Funktion (normal)</entry>
+  <entry key="Preferences.Export.Translation.FontColor">Übersetzungstext</entry>
+  <entry key="Preferences.View.Color.Arrow">Farbe der Pfeile</entry>
+  <entry key="Preferences.View.Color.Change">Ändern</entry>
+  <entry key="Preferences.View.Color.CommentedBorder">Rahmenfarbe kommentierter Elemente</entry>
+  <entry key="Preferences.View.Color.Relation">Farbe der Beziehungen</entry>
+  <entry key="Preferences.View.Color.Transparent">Ausblenden</entry>
+  <entry key="Preferences.View.IndentationWidth">Breite der Einrückungen</entry>
+  <entry key="Preferences.View.TextInput.ShowInputSettings">Beim Start der Texteingabe Einstellungen einblenden</entry>
+  <entry key="ProjectInfo.Author">Autor</entry>
+  <entry key="ProjectInfo.Comment">Kommentar</entry>
+  <entry key="ProjectInfo.FrameTitle">Allgemeine Projektinformationen</entry>
+  <entry key="ProjectInfo.Title">Titel</entry>
+  <entry key="Setting.Font.Type">Schriftart</entry>
+  <entry key="Setting.Font.Size">Schriftgröße</entry>
+  <entry key="Setting.Font.SampleText">Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.</entry>
+  <entry key="TextInput.AddText.Before">Neuen Text voranstellen</entry>
+  <entry key="TextInput.AddText.Behind">Neuen Text anhängen</entry>
+  <entry key="TextInput.Hint">Nehmen Sie Zeilenumbrüche vor:
+Jede Zeile wird im Weiteren als eigenständige Proposition behandelt
+
+Setzen Sie Tabs:
+Jeder innerhalb einer Zeile durch Tabs getrennte Textabschnitt, wird im Weiteren als Satzglied behandelt.
+
+Stellen Sie die Ausgangssprache ein:
+In der syntaktischen Analyse können nur Satzgliedfunktionen ausgewählt werden, die für die jeweilige Sprache hinterlegt sind.</entry>
+  <entry key="TextInput.Quit.DiscardInputQuestion">Sollen die bisherigen Eingaben wirklich verworfen werden?</entry>
+  <entry key="TextInput.Quit.DiscardInputTitle">Eingaben verwerfen?</entry>
+  <entry key="TextInput.Settings.Hide">Ausblenden</entry>
+  <entry key="TextInput.Settings.OriginLanguage">Ausgangssprache</entry>
+  <entry key="TextInput.Settings.Show">Einblenden</entry>
+  <entry key="TextInput.StartAnalysis">Beginne Analyse</entry>
+  <entry key="TextInput.Topic">Schritt 1 :  Fügen Sie den Ausgangstext ein und legen Sie dessen Eigenschaften fest</entry>
+  <entry key="TextInput.Topic.AddPropositions">Fügen Sie zusätzlichen Text zum aktuellen Projekt hinzu</entry>
+  <entry key="TextInput.Warning">WARNUNG:
+Die Sprache des Ausgangstextes kann nach dem Betätigen der "Beginne Analyse"-Schaltfläche nicht mehr nachträglich geändert werden!</entry>
+</properties>

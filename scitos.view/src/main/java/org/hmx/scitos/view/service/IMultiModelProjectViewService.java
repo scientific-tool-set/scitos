@@ -29,11 +29,13 @@ import org.hmx.scitos.view.swing.AbstractProjectView;
  *
  * @param <P>
  *            type of the associated project
+ * @param <M>
+ *            type of the project's (top level) model element
  * @param <S>
  *            type of the sub models of the multi model project
  */
-public interface IMultiModelProjectViewService<P extends IViewProject<? extends IMultiObjectModel<?, S>>, S extends IModel<S>> extends
-        IProjectViewService<P> {
+public interface IMultiModelProjectViewService<P extends IViewProject<M>, M extends IMultiObjectModel<M, S>, S extends IModel<S>> extends
+        IProjectViewService<P, M> {
 
     /**
      * Create the view for the model group with the given label in the given project instance.

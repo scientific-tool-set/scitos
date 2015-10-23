@@ -19,7 +19,10 @@
 
 package org.hmx.scitos.core.option;
 
+import java.awt.Color;
 import java.util.Locale;
+
+import org.hmx.scitos.core.util.ConversionUtil;
 
 /**
  * Collection of user preferences.
@@ -84,44 +87,24 @@ public enum Option implements IOptionSetting {
 
     @Override
     public int getValueAsInteger() {
-        final String value = Option.HANDLER.getProperty(this);
-        if (value != null) {
-            try {
-                return Integer.parseInt(value);
-            } catch (final NumberFormatException nfe) {
-                // use default value instead
-            }
+        int value = ConversionUtil.toInt(Option.HANDLER.getProperty(this), Integer.MIN_VALUE);
+        if (value == Integer.MIN_VALUE) {
+            value = ConversionUtil.toInt(this.defaultValue, 0);
         }
-        if (this.defaultValue != null) {
-            try {
-                return Integer.parseInt(this.defaultValue);
-            } catch (final NumberFormatException nfe) {
-                // send fall back value
-            }
-        }
-        return 0;
+        return value;
+    }
+
+    @Override
+    public Color getValueAsColor() {
+        return ConversionUtil.toColor(Option.HANDLER.getProperty(this), ConversionUtil.toColor(this.defaultValue, null));
     }
 
     /**
      * Getter for the value of this specific setting, interpreted as a {@link Locale}.
-     * 
+     *
      * @return the currently set value (or the default if none is specified)
      */
     public Locale getValueAsLocale() {
-        final String stringValue = this.getValue();
-        if (stringValue == null || stringValue.isEmpty()) {
-            return Locale.getDefault();
-        }
-        final String language;
-        final String country;
-        final int separatorIndex = stringValue.indexOf('_');
-        if (separatorIndex == -1) {
-            language = stringValue;
-            country = "";
-        } else {
-            language = stringValue.substring(0, separatorIndex);
-            country = stringValue.substring(separatorIndex + 1);
-        }
-        return new Locale(language, country);
+        return ConversionUtil.toLocale(this.getValue(), Locale.getDefault());
     }
 }

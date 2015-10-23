@@ -19,19 +19,12 @@
 
 package org.hmx.scitos.core.i18n;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.hmx.scitos.core.XmlResourceBundleControl;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.core.util.ClassPathUtil;
 
@@ -48,7 +41,7 @@ public final class Translator<M extends ILocalizableMessage> {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param messageType
      *            message type (to deduce the resource bundle's base name from)
      */
@@ -69,7 +62,7 @@ public final class Translator<M extends ILocalizableMessage> {
 
     /**
      * Determine the Locales for which message files are provided. This excludes the default translation.
-     * 
+     *
      * @param messageType
      *            the type of messages to check available languages/countries for
      * @return Locales with explicit translations for the given message type
@@ -105,92 +98,5 @@ public final class Translator<M extends ILocalizableMessage> {
             availableLocales.add(new Locale(language, country, variant));
         }
         return availableLocales;
-    }
-
-    /** Resource bundle handler, that only handles property files in XML form. */
-    private static final class XmlResourceBundleControl extends ResourceBundle.Control {
-
-        /** Default constructor. */
-        XmlResourceBundleControl() {
-            super();
-        }
-
-        @Override
-        public List<String> getFormats(final String baseName) {
-            return Collections.singletonList("xml");
-        }
-
-        @Override
-        public Locale getFallbackLocale(final String baseName, final Locale locale) {
-            if (baseName == null || locale == null) {
-                throw new NullPointerException();
-            }
-            // avoid falling back on the default locale
-            return null;
-        }
-
-        @Override
-        public ResourceBundle newBundle(final String baseName, final Locale locale, final String format, final ClassLoader loader,
-                final boolean reload) throws IllegalAccessException, InstantiationException, IOException {
-            if (baseName == null || locale == null || format == null || loader == null) {
-                throw new NullPointerException();
-            }
-            final String bundleName = this.toBundleName(baseName, locale);
-            final String resourceName = this.toResourceName(bundleName, format);
-            final ResourceBundle bundle;
-            final URL url = loader.getResource(resourceName);
-            if (url == null) {
-                bundle = null;
-            } else {
-                final URLConnection connection = url.openConnection();
-                if (connection == null) {
-                    bundle = null;
-                } else {
-                    connection.setUseCaches(!reload);
-                    final InputStream stream = connection.getInputStream();
-                    if (stream == null) {
-                        bundle = null;
-                    } else {
-                        final BufferedInputStream bis = new BufferedInputStream(stream);
-                        try {
-                            bundle = new XmlResourceBundle(bis);
-                        } finally {
-                            bis.close();
-                        }
-                    }
-                }
-            }
-            return bundle;
-        }
-    }
-
-    /** Resource bundle backed by a properties file in XML form. */
-    private static final class XmlResourceBundle extends ResourceBundle {
-
-        /** The properties file capable of reading the XML form. */
-        private final Properties xmlProperties;
-
-        /**
-         * Constructor: assuming an XML structured properties file in the given stream.
-         * 
-         * @param stream
-         *            input to load the resource bundle from
-         * @throws IOException
-         *             error while reading the given stream
-         */
-        XmlResourceBundle(final InputStream stream) throws IOException {
-            this.xmlProperties = new Properties();
-            this.xmlProperties.loadFromXML(stream);
-        }
-
-        @Override
-        protected Object handleGetObject(final String key) {
-            return this.xmlProperties.getProperty(key);
-        }
-
-        @Override
-        public Enumeration<String> getKeys() {
-            return Collections.enumeration(this.xmlProperties.stringPropertyNames());
-        }
     }
 }

@@ -49,7 +49,7 @@ import org.hmx.scitos.domain.util.ComparisonUtil;
 /**
  * Single manager for handling model changes in an {@link AisProject}.
  */
-public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> implements IModelHandler {
+public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> implements AisModelHandler {
 
     /** RegEx: where to split an interview's text into separate paragraphs (at line separators). */
     private static final String REGEX_PARAGRAPH_SEPARATOR = "[\\s\\p{Z}]*[" + System.getProperty("line.separator") + "]([\\s\\p{Z}]*["

@@ -38,6 +38,7 @@ import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
 import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -48,7 +49,7 @@ import org.junit.Test;
  */
 public class ModelHandlerTest {
 
-    private static MutableDetailCategoryModel CATEGORY_MODEL;
+    private static MutableDetailCategoryModel categoryModel;
     private AisProject project;
     private ModelHandlerImpl modelHandler;
     private Interview interview;
@@ -59,7 +60,13 @@ public class ModelHandlerTest {
      */
     @BeforeClass
     public static void setUp() {
-        ModelHandlerTest.CATEGORY_MODEL = AisOption.createDefaultCategoryModel();
+        ModelHandlerTest.categoryModel = AisOption.createDefaultCategoryModel();
+    }
+
+    /** Final clearing up: discard the reference to the default category model. */
+    @AfterClass
+    public static void tearDown() {
+        ModelHandlerTest.categoryModel = null;
     }
 
     /**
@@ -68,7 +75,7 @@ public class ModelHandlerTest {
      */
     @Before
     public void prepareInterview() {
-        this.project = new AisProject("test", ModelHandlerTest.CATEGORY_MODEL.provide());
+        this.project = new AisProject("test", ModelHandlerTest.categoryModel.provide());
         this.modelHandler = new ModelHandlerImpl(this.project);
         this.interview = this.modelHandler.createInterview("Subj123");
         this.modelHandler.setInterviewText(this.interview, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20");
@@ -76,7 +83,7 @@ public class ModelHandlerTest {
     }
 
     /**
-     * Test: delete interviews via the {@link IModelHandler} interface.
+     * Test: delete interviews via the {@link AisModelHandler} interface.
      */
     @Test
     public void testDeleteInterview() {
@@ -111,7 +118,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testReplaceCategoryModel() throws HmxException {
-        final List<DetailCategory> oldSelectableCategories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> oldSelectableCategories = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), oldSelectableCategories.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), oldSelectableCategories.get(1));
@@ -291,7 +298,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignSingleStart() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(this.paragraphStartToken), detail);
         this.assertTokenState(this.paragraphStartToken, true, detail, true);
         TextToken currentToken = this.paragraphStartToken.getFollowingToken();
@@ -314,7 +321,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignSingleMid() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(this.paragraphStartToken.getFollowingToken().getFollowingToken()),
                 detail);
         this.assertTokenState(this.paragraphStartToken, true, null, false);
@@ -342,7 +349,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignSingleEnd() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         TextToken paragraphEndToken = this.paragraphStartToken;
         while (paragraphEndToken.getFollowingToken() != null) {
             paragraphEndToken = paragraphEndToken.getFollowingToken();
@@ -368,7 +375,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignGroupStart() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview,
                 Arrays.asList(this.paragraphStartToken, this.paragraphStartToken.getFollowingToken()), detail);
         this.assertTokenState(this.paragraphStartToken, true, detail, false);
@@ -394,7 +401,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignGroupMid() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionStart, selectionStart.getFollowingToken()), detail);
         this.assertTokenState(this.paragraphStartToken, true, null, false);
@@ -424,7 +431,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignGroupEnd() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         TextToken paragraphEndToken = this.paragraphStartToken;
         while (paragraphEndToken.getFollowingToken() != null) {
             paragraphEndToken = paragraphEndToken.getFollowingToken();
@@ -453,7 +460,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartStart() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         this.modelHandler.assignDetailCategory(this.interview,
                 Arrays.asList(this.paragraphStartToken, this.paragraphStartToken.getFollowingToken().getFollowingToken()), detail);
         this.assertTokenState(this.paragraphStartToken, true, detail, false);
@@ -481,7 +488,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartMid_1() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
         this.modelHandler.assignDetailCategory(this.interview,
                 Arrays.asList(selectionStart, selectionStart.getFollowingToken().getFollowingToken()), detail);
@@ -514,7 +521,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartMid_2() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory detailToBeShortened = categories.get(0);
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
@@ -551,7 +558,7 @@ public class ModelHandlerTest {
      */
     @Test(expected = HmxException.class)
     public void testAssignTwoPartMid_3() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 4), categories.get(0));
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(2), tokens.get(4)), categories.get(1));
@@ -567,7 +574,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartMid_4() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory detailToBeEnclosed = categories.get(0);
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
@@ -604,7 +611,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartMid_5() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory detailToBeEnclosed = categories.get(0);
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
@@ -641,7 +648,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartMid_6() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory detailToBeEnclosed = categories.get(0);
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
@@ -678,7 +685,7 @@ public class ModelHandlerTest {
      */
     @Test(expected = HmxException.class)
     public void testAssignTwoPartMid_7() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, tokens.subList(3, 6), categories.get(0));
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(2), tokens.get(4)), categories.get(1));
@@ -694,7 +701,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartMid_8() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory detailToBeShortened = categories.get(0);
         final DetailCategory assigned = categories.get(1);
         final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
@@ -732,7 +739,7 @@ public class ModelHandlerTest {
      */
     @Test(expected = HmxException.class)
     public void testAssignTwoPartMid_9() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 6), categories.get(0));
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(2), tokens.get(4)), categories.get(1));
@@ -748,7 +755,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignTwoPartEnd() throws HmxException {
-        final DetailCategory detail = ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0);
+        final DetailCategory detail = ModelHandlerTest.categoryModel.provideSelectables().get(0);
         TextToken paragraphEndToken = this.paragraphStartToken;
         while (paragraphEndToken.getFollowingToken() != null) {
             paragraphEndToken = paragraphEndToken.getFollowingToken();
@@ -773,7 +780,7 @@ public class ModelHandlerTest {
      * Test: remove assigned categories via interrupted selection:<br/>
      * origin: --a-a---------------<br/>
      * result: --------------------
-     * 
+     *
      * @throws HmxException
      *             internal error when assigning/unassigning category
      */
@@ -781,7 +788,7 @@ public class ModelHandlerTest {
     public void testUnassignTwoPart() throws HmxException {
         final TextToken thirdToken = this.paragraphStartToken.getFollowingToken().getFollowingToken();
         final List<TextToken> selection = Arrays.asList(thirdToken, thirdToken.getFollowingToken().getFollowingToken());
-        this.modelHandler.assignDetailCategory(this.interview, selection, ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0));
+        this.modelHandler.assignDetailCategory(this.interview, selection, ModelHandlerTest.categoryModel.provideSelectables().get(0));
         this.modelHandler.assignDetailCategory(this.interview, selection, null);
         this.assertTokenState(this.paragraphStartToken, true, null, false);
         TextToken currentToken = this.paragraphStartToken.getFollowingToken();
@@ -802,7 +809,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignFourPart() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         // prepare start setup
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         final DetailCategory detailA = categories.get(0);
@@ -879,7 +886,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testAssignSixPart() throws HmxException {
-        final List<DetailCategory> categories = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         // prepare start setup
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         final DetailCategory detailA = categories.get(0);
@@ -991,8 +998,8 @@ public class ModelHandlerTest {
         final Interview resetState = this.interview.clone();
         this.modelHandler.setParticipantId(this.interview, "Subj001");
         this.modelHandler.setInterviewText(this.interview, "1 2 3");
-        this.modelHandler.assignDetailCategory(this.interview, this.interview.getText(),
-                ModelHandlerTest.CATEGORY_MODEL.provideSelectables().get(0));
+        this.modelHandler.assignDetailCategory(this.interview, this.interview.getText(), ModelHandlerTest.categoryModel.provideSelectables()
+                .get(0));
         Assert.assertNotEquals(resetState, this.interview);
         this.modelHandler.reset(this.interview, resetState);
         Assert.assertEquals(resetState, this.interview);
@@ -1006,7 +1013,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testCountDetailOccurrences() throws HmxException {
-        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), selectables.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), selectables.get(1));
@@ -1034,7 +1041,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testCountTokensWithAssignedDetail() throws HmxException {
-        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), selectables.get(0));
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), selectables.get(1));
@@ -1059,7 +1066,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testExtractDetailPattern() throws HmxException {
-        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory firstDetail = selectables.get(0);
         final DetailCategory secondDetail = selectables.get(1);
         final DetailCategory thirdDetail = selectables.get(2);
@@ -1105,7 +1112,7 @@ public class ModelHandlerTest {
      */
     @Test
     public void testExtractDetailSequence() throws HmxException {
-        final List<DetailCategory> selectables = ModelHandlerTest.CATEGORY_MODEL.provideSelectables();
+        final List<DetailCategory> selectables = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory firstDetail = selectables.get(0);
         final DetailCategory secondDetail = selectables.get(1);
         final DetailCategory thirdDetail = selectables.get(2);

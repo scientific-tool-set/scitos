@@ -48,11 +48,10 @@ import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.IModelParseService;
 import org.hmx.scitos.core.i18n.Message;
+import org.hmx.scitos.core.util.DomUtil;
 import org.hmx.scitos.domain.IModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -182,21 +181,20 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
     }
 
     @Override
-    public Entry<AisProject, List<Object>> parseModelFromXml(final Document doc, final File originPath) throws HmxException {
+    public Entry<AisProject, List<?>> parseModelFromXml(final Document doc, final File originPath) throws HmxException {
         // retrieve used detail categories from document
         final MutableDetailCategoryModel categories = this.parseDetailCategoriesFromXml(doc);
         final AisProject project = new AisProject(originPath.getName(), categories.provide());
         // retrieve interviews from document
-        final NodeList interviewRoot = doc.getDocumentElement().getElementsByTagName(ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
-        if (interviewRoot.getLength() == 1) {
+        final Element interviewRoot = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
+        if (interviewRoot != null) {
             final List<Interview> containedInterviews = new LinkedList<Interview>();
-            final NodeList interviews = ((Element) interviewRoot.item(0)).getElementsByTagName(ModelParseServiceImpl.TAG_INTERVIEW);
-            for (int index = 0; index < interviews.getLength(); index++) {
-                containedInterviews.add(this.parseInterviewFromXml((Element) interviews.item(index), categories));
+            for (final Element singleInterview : DomUtil.getChildElements(interviewRoot, ModelParseServiceImpl.TAG_INTERVIEW)) {
+                containedInterviews.add(this.parseInterviewFromXml(singleInterview, categories));
             }
             project.setInterviews(containedInterviews);
         }
-        return new SimpleEntry<AisProject, List<Object>>(project, this.parseOpenViewElementsFromXml(doc, project));
+        return new SimpleEntry<AisProject, List<?>>(project, this.parseOpenViewElementsFromXml(doc, project));
     }
 
     /**
@@ -263,10 +261,10 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      *             given document does not contain a valid detail category model
      */
     MutableDetailCategoryModel parseDetailCategoriesFromXml(final Document doc) throws HmxException {
-        final NodeList categoryWrapper = doc.getDocumentElement().getElementsByTagName(ModelParseServiceImpl.TAG_CATEGORY_ROOT);
-        if (categoryWrapper.getLength() > 0) {
-            final NodeList topLevelCategories = categoryWrapper.item(0).getChildNodes();
-            if (topLevelCategories.getLength() > 0) {
+        final Element categoryWrapper = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_CATEGORY_ROOT);
+        if (categoryWrapper != null) {
+            final List<Element> topLevelCategories = DomUtil.getChildElements(categoryWrapper, ModelParseServiceImpl.TAG_CATEGORY);
+            if (!topLevelCategories.isEmpty()) {
                 final MutableDetailCategoryModel categories = new MutableDetailCategoryModel();
                 categories.addAll(this.parseDetailCategoriesFromXmlRecursively(topLevelCategories, null));
                 return categories;
@@ -287,14 +285,10 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      * @throws HmxException
      *             at least one of the parsed xml nodes did contain an invalid detail category definition
      */
-    private List<DetailCategory> parseDetailCategoriesFromXmlRecursively(final NodeList categories, final DetailCategory parentCategory)
+    private List<DetailCategory> parseDetailCategoriesFromXmlRecursively(final List<Element> categories, final DetailCategory parentCategory)
             throws HmxException {
         final List<DetailCategory> result = new LinkedList<DetailCategory>();
-        for (int index = 0; index < categories.getLength(); index++) {
-            if (!(categories.item(index) instanceof Element)) {
-                continue;
-            }
-            final Element singleCategoryElement = (Element) categories.item(index);
+        for (final Element singleCategoryElement : categories) {
             // parse mandatory category attributes
             final String code = singleCategoryElement.getAttribute(ModelParseServiceImpl.ATTR_CATEGORY_CODE);
             final String name = singleCategoryElement.getAttribute(ModelParseServiceImpl.ATTR_CATEGORY_NAME);
@@ -325,12 +319,11 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
                 shortCut = null;
             }
             // check for potential child categories
-            final NodeList subCategories = singleCategoryElement.getChildNodes();
+            final List<Element> subCategories = DomUtil.getChildElements(singleCategoryElement, ModelParseServiceImpl.TAG_CATEGORY);
             // only categories without any children are deemed selectable
-            final boolean isSelectable = subCategories.getLength() == 0;
-            final DetailCategory category = new DetailCategory(parentCategory, code, name, isSelectable, color, shortCut);
+            final DetailCategory category = new DetailCategory(parentCategory, code, name, subCategories.isEmpty(), color, shortCut);
             result.add(category);
-            if (!isSelectable) {
+            if (!subCategories.isEmpty()) {
                 result.addAll(this.parseDetailCategoriesFromXmlRecursively(subCategories, category));
             }
         }
@@ -460,21 +453,16 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private Interview parseInterviewFromXml(final Element interviewElement, final MutableDetailCategoryModel categories) throws HmxException {
         final String participantId = interviewElement.getAttribute(ModelParseServiceImpl.ATTR_INTERVIEW_PARTICIPANT);
-        final String indexValue = interviewElement.getAttribute(ModelParseServiceImpl.ATTR_INTERVIEW_INDEX);
-        if (participantId.isEmpty() || indexValue.isEmpty()) {
+        final int indexValue = DomUtil.getIntAttribute(interviewElement, ModelParseServiceImpl.ATTR_INTERVIEW_INDEX, -1);
+        if (participantId.isEmpty() || indexValue == -1) {
             throw new HmxException(Message.ERROR_FILE_INVALID, new IllegalArgumentException("invalid " + ModelParseServiceImpl.TAG_INTERVIEW
                     + " definition"));
         }
-        final NodeList paragraphs = interviewElement.getElementsByTagName(ModelParseServiceImpl.TAG_INTERVIEW_PARAGRAPH);
-        final int paragraphCount = paragraphs.getLength();
-        final List<TextToken> text = new ArrayList<TextToken>(paragraphCount);
-        for (int index = 0; index < paragraphCount; index++) {
-            final Node singleParagraph = paragraphs.item(index);
-            if (singleParagraph instanceof Element) {
-                text.add(this.parseTextParagraphFromXml((Element) singleParagraph, categories));
-            }
+        final List<TextToken> text = new LinkedList<TextToken>();
+        for (final Element singleParagraph : DomUtil.getChildElements(interviewElement, ModelParseServiceImpl.TAG_INTERVIEW_PARAGRAPH)) {
+            text.add(this.parseTextParagraphFromXml(singleParagraph, categories));
         }
-        return new Interview(participantId, Integer.valueOf(indexValue).intValue()).setText(text);
+        return new Interview(participantId, indexValue).setText(text);
     }
 
     /**
@@ -489,30 +477,22 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      *             encountered unexpected/invalid xml tag while parsing given xml element
      */
     private TextToken parseTextParagraphFromXml(final Element paragraphElement, final MutableDetailCategoryModel categories) throws HmxException {
-        final DetailCategory category =
-                categories.getDetailByCode(paragraphElement.getAttribute(ModelParseServiceImpl.ATTR_INTERVIEW_DETAIL_CODE));
-        final NodeList children = paragraphElement.getChildNodes();
-        final int childCount = children.getLength();
+        final String detailCode = DomUtil.getNullableAttribute(paragraphElement, ModelParseServiceImpl.ATTR_INTERVIEW_DETAIL_CODE);
+        final DetailCategory category = categories.getDetailByCode(detailCode);
         TextToken previousToken = null;
-        for (int index = 0; index < childCount; index++) {
-            final Node childNode = children.item(index);
-            if (!(childNode instanceof Element)) {
-                continue;
-            }
-            final Element singleChild = (Element) childNode;
+        for (final Element singleChild : DomUtil.getChildElements(paragraphElement, ModelParseServiceImpl.TAG_INTERVIEW_TOKEN,
+                ModelParseServiceImpl.TAG_INTERVIEW_DETAIL)) {
             final TextToken enclosedToken;
             if (ModelParseServiceImpl.TAG_INTERVIEW_TOKEN.equals(singleChild.getTagName())) {
                 enclosedToken = new TextToken(singleChild.getTextContent()).setDetail(category);
                 if (category == null && previousToken != null && previousToken.getDetail() != null) {
                     enclosedToken.setFirstTokenOfDetail(true);
                 }
-            } else if (ModelParseServiceImpl.TAG_INTERVIEW_DETAIL.equals(singleChild.getTagName())) {
+            } else {
                 enclosedToken = this.parseTextParagraphFromXml(singleChild, categories);
                 if (category == null && previousToken != null && previousToken.getDetail() == null) {
                     previousToken.setLastTokenOfDetail(true);
                 }
-            } else {
-                throw new HmxException(Message.ERROR_FILE_INVALID, new IllegalArgumentException("Unexpected node " + singleChild.getTagName()));
             }
             if (previousToken != null) {
                 previousToken.setFollowingToken(enclosedToken);
@@ -577,15 +557,9 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private List<Object> parseOpenViewElementsFromXml(final Document doc, final AisProject parsedProject) {
         final List<Object> openViewElements = new LinkedList<Object>();
-        final NodeList viewsRoot = doc.getDocumentElement().getElementsByTagName(ModelParseServiceImpl.TAG_VIEWS);
-        if (viewsRoot.getLength() == 1) {
-            final NodeList elements = viewsRoot.item(0).getChildNodes();
-            for (int index = 0; index < elements.getLength(); index++) {
-                final Node viewNode = elements.item(index);
-                if (!(viewNode instanceof Element)) {
-                    continue;
-                }
-                final Element singleView = (Element) viewNode;
+        final Element viewsRoot = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_VIEWS);
+        if (viewsRoot != null) {
+            for (final Element singleView : DomUtil.getChildElements(viewsRoot)) {
                 if (ModelParseServiceImpl.TAG_VIEWS_PROJECT.equals(singleView.getTagName())) {
                     openViewElements.add(parsedProject);
                 } else if (ModelParseServiceImpl.TAG_VIEWS_GROUP.equals(singleView.getTagName())
@@ -593,12 +567,11 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
                     openViewElements.add(singleView.getAttribute(ModelParseServiceImpl.ATTR_VIEWS_GROUP_NAME));
                 } else if (ModelParseServiceImpl.TAG_VIEWS_INTERVIEW.equals(singleView.getTagName())) {
                     final String participantId = singleView.getAttribute(ModelParseServiceImpl.ATTR_VIEWS_INTERVIEW_PARTICIPANT);
-                    final String indexValue = singleView.getAttribute(ModelParseServiceImpl.ATTR_VIEWS_INTERVIEW_INDEX);
+                    final int indexValue = DomUtil.getIntAttribute(singleView, ModelParseServiceImpl.ATTR_VIEWS_INTERVIEW_INDEX, -1);
                     final Map<String, List<Interview>> interviews = parsedProject.getSubModelObjects();
-                    if (interviews.containsKey(participantId) && !indexValue.isEmpty()) {
-                        final int interviewIndex = Integer.valueOf(indexValue).intValue();
+                    if (interviews.containsKey(participantId) && indexValue != -1) {
                         for (final Interview singleInterview : interviews.get(participantId)) {
-                            if (singleInterview.getIndex() == interviewIndex) {
+                            if (singleInterview.getIndex() == indexValue) {
                                 openViewElements.add(singleInterview);
                                 break;
                             }

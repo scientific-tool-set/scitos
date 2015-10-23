@@ -197,7 +197,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
             oneToken = oneToken.getFollowingToken();
             otherToken = otherToken.getFollowingToken();
         } while (oneToken != null && otherToken != null);
-        // check if number not one of the paragraphs was longer then the other
+        // check if number not one of the paragraphs was longer than the other
         return oneToken == null && otherToken == null;
     }
 

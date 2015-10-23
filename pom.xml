@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hmx</groupId>
 	<artifactId>scitos</artifactId>
-	<version>1.2.0</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<name>scitos</name>
 	<description>parent project of SciToS</description>
@@ -13,11 +13,14 @@
 		<module>scitos.core</module>
 		<module>scitos.view</module>
 		<module>scitos.ais</module>
+		<module>scitos.hmx</module>
 		<module>scitos.distribution</module>
 	</modules>
 
 	<properties>
-		<scitos.version>1.2.0</scitos.version>
+		<scitos.version>2.0.0</scitos.version>
+		<scitos.ais.version>1.3.0</scitos.ais.version>
+		<scitos.hmx.version>2.0.0</scitos.hmx.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -52,12 +55,12 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.18.1</version>
-				</plugin>
-				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.5.5</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.18.1</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
@@ -128,17 +131,33 @@
 			<dependency>
 				<groupId>org.hmx</groupId>
 				<artifactId>scitos.ais.domain</artifactId>
-				<version>${scitos.version}</version>
+				<version>${scitos.ais.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hmx</groupId>
 				<artifactId>scitos.ais.core</artifactId>
-				<version>${scitos.version}</version>
+				<version>${scitos.ais.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hmx</groupId>
 				<artifactId>scitos.ais.view</artifactId>
-				<version>${scitos.version}</version>
+				<version>${scitos.ais.version}</version>
+			</dependency>
+			<!-- SciToS module: HmX -->
+			<dependency>
+				<groupId>org.hmx</groupId>
+				<artifactId>scitos.hmx.domain</artifactId>
+				<version>${scitos.hmx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hmx</groupId>
+				<artifactId>scitos.hmx.core</artifactId>
+				<version>${scitos.hmx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hmx</groupId>
+				<artifactId>scitos.hmx.view</artifactId>
+				<version>${scitos.hmx.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

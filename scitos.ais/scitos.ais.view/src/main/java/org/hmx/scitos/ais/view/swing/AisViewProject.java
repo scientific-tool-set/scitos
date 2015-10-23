@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 
 import javax.swing.SwingUtilities;
 
-import org.hmx.scitos.ais.core.IModelHandler;
+import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.core.ExportOption;
@@ -40,6 +40,7 @@ import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.ScitosClient;
+import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /** Swing controller representing one open project containing the model and view elements. */
 public final class AisViewProject implements IViewProject<AisProject>, ModelChangeListener {
@@ -47,7 +48,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
     /** The main client instance this view project belongs to. */
     final ScitosClient client;
     /** The dedicated model handler for the represented model project instance. */
-    private final IModelHandler modelHandler;
+    private final AisModelHandler modelHandler;
     /** The flag indicating whether the current state contains no unsaved changes. */
     boolean saved = true;
     /** The path this project has been loaded from and/or last saved to. It is used as the default path for the next requested save operation. */
@@ -65,7 +66,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
      * @param savePath
      *            the path this file has been loaded from and/or will be saved to by default
      */
-    public AisViewProject(final ScitosClient client, final IModelHandler modelHandler, final File savePath) {
+    public AisViewProject(final ScitosClient client, final AisModelHandler modelHandler, final File savePath) {
         this.client = client;
         this.modelHandler = modelHandler;
         this.setSavePath(savePath);
@@ -88,7 +89,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
      *
      * @return the associated model handler instance
      */
-    public IModelHandler getModelHandler() {
+    public AisModelHandler getModelHandler() {
         return this.modelHandler;
     }
 
@@ -186,7 +187,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
     @Override
     public void saveAs(final File path) throws HmxException {
         this.client.getModelParseProvider().save(this.getModelObject(), this.getOpenTabElements(), path);
-        final Entry<? extends IModel<?>, List<Object>> reloadedModel;
+        final Entry<? extends IModel<?>, List<?>> reloadedModel;
         try {
             reloadedModel = this.client.getModelParseProvider().open(path);
         } catch (final HmxException validationException) {
@@ -206,7 +207,12 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
     }
 
     @Override
-    public void export(final ExportOption type, final File path) throws HmxException {
+    public void export(final ExportOption type) throws HmxException {
+        final String fileExtension = type.getTargetFileType().getExtension();
+        final File path = ViewUtil.getSaveDestination(this.client.getFrame(), fileExtension, Message.MENUBAR_FILE_EXPORT.get(), false);
+        if (path == null) {
+            return;
+        }
         switch (type.getTargetFileType()) {
         case HTML:
             this.client.getModelParseProvider().export(this.getModelObject(), type.getStylesheetPath(), path);
@@ -237,7 +243,9 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
             }
             try {
                 if (choice == MessageHandler.Choice.YES && !this.save()) {
-                    final File path = this.client.getSaveDestination(this.getFileType().getFileExtension(), Message.MENUBAR_FILE_SAVE.get());
+                    final File path =
+                            ViewUtil.getSaveDestination(this.client.getFrame(), this.getFileType().getFileExtension(),
+                                    Message.MENUBAR_FILE_SAVE.get(), true);
                     if (path == null) {
                         // user canceled file choose dialog
                         return false;

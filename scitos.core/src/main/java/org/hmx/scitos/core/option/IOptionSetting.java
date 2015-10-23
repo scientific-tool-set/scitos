@@ -19,6 +19,8 @@
 
 package org.hmx.scitos.core.option;
 
+import java.awt.Color;
+
 /**
  * Generic interface of a setting or preference to be persisted in an appropriate file to be available at the next application start.
  */
@@ -42,14 +44,21 @@ public interface IOptionSetting {
     /**
      * Getter for the value of this specific setting.
      *
-     * @return option entry for the key; returns <code>null</code> if no entry was found and no default defined
+     * @return option entry for the key; returns {@code null} if no entry was found and no default defined
      */
     String getValue();
 
     /**
      * Getter for the value of this specific setting.
      *
-     * @return option entry for the key; returns <code>0</code> if no entry was found and no default defined
+     * @return option entry for the key; returns {@code 0} if no entry was found and no default defined
      */
     int getValueAsInteger();
+
+    /**
+     * Getter for the value of this specific setting.
+     *
+     * @return option entry for the key; returns {@code null} if no entry was found, no default defined, or is set to be transparent
+     */
+    Color getValueAsColor();
 }

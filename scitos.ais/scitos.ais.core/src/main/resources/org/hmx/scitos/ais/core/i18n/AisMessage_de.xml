@@ -20,6 +20,7 @@
 -->
 <properties>
 	<entry key="Ais.Analysis.ExportToSpreadsheet">Tabellen Exportieren</entry>
+	<entry key="Ais.Analysis.ExportToSpreadSheet.Failure">Die Export-Datei konnte am gewählten Ort nicht erstellt werden.</entry>
 	<entry key="Ais.Analysis.Summary">Ergebnisse</entry>
 	<entry key="Ais.Analysis.Sequence">Sequenzen</entry>
 	<entry key="Ais.Analysis.Pattern">Muster</entry>

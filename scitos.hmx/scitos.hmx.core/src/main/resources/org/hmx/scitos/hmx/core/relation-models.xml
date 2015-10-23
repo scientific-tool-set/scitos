@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+-->
+<RelationModels xmlns="http://www.hermeneutix.org/schema/hmx/2.0">
+	<RelationModel>
+		<Group>
+			<Relation>
+				<Associate role="Sequential-Nucleus" weight="high" />
+				<Associate role="Sequential-Nucleus" weight="high" />
+				<Associate role="Sequential-Nucleus" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Simultaneous-Nucleus" weight="high" />
+				<Associate role="Simultaneous-Nucleus" weight="high" />
+				<Associate role="Simultaneous-Nucleus" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Nucleus" weight="high" />
+			</Relation>
+		</Group>
+		<Group>
+			<Relation>
+				<Associate role="Orienter" weight="low" />
+				<Associate role="Content" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Circumstance" weight="low" />
+				<Associate role="Nucleus" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Move" weight="low" />
+				<Associate role="Goal" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Occasion" weight="low" />
+				<Associate role="Outcome" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Time" weight="low" />
+				<Associate role="Nucleus" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Equivalent" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Generic" weight="high" />
+				<Associate role="Specificum" weight="low" />
+				<Associate role="Specificum" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Generic" weight="low" />
+				<Associate role="Specificum" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Contraction" weight="high" />
+				<Associate role="Amplification" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Positivum" weight="high" />
+				<Associate role="Negativum" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Comparison" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Illustration" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Congruence" weight="high" />
+				<Associate role="Standard" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Manner" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Contrast" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Reason" weight="low" />
+				<Associate role="Consequence" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Means" weight="low" />
+				<Associate role="Result" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Purpose" weight="low" />
+				<Associate role="Means" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Condition" weight="low" />
+				<Associate role="Consequence" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Concession" weight="low" />
+				<Associate role="Contraexpectation" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Grounds" weight="low" />
+				<Associate role="Conclusion" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Grounds" weight="low" />
+				<Associate role="Exhortation" weight="high" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Comment" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Nucleus" weight="high" />
+				<Associate role="Parenthesis" weight="low" />
+			</Relation>
+		</Group>
+		<Group>
+			<Relation>
+				<Associate role="Object" weight="high" />
+				<Associate role="Identification" weight="low" />
+			</Relation>
+			<Relation>
+				<Associate role="Object" weight="high" />
+				<Associate role="Description" weight="low" />
+			</Relation>
+		</Group>
+	</RelationModel>
+	<RelationModel locale="de">
+		<Group>
+			<Relation description="Gleichgewichtig und zeitlich aufeinander folgend.">
+				<Associate role="Sequenz-Kern" weight="high" />
+				<Associate role="Sequenz-Kern" weight="high" />
+				<Associate role="Sequenz-Kern" weight="high" />
+			</Relation>
+			<Relation description="Gleichgewichtig und zeitgleich stattfindend.">
+				<Associate role="Simultan-Kern" weight="high" />
+				<Associate role="Simultan-Kern" weight="high" />
+				<Associate role="Simultan-Kern" weight="high" />
+			</Relation>
+			<Relation description="Gleichgewichtig und ohne zeitliche Orientierung.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Kern" weight="high" />
+				<Associate role="Kern" weight="high" />
+			</Relation>
+		</Group>
+		<Group>
+			<Relation description="Einleitung bezieht sich unmittelbar&#10;und ohne Zeitorientierung auf ein geistiges Tun.">
+				<Associate role="Einleitung" weight="low" />
+				<Associate role="Inhalt" weight="high" />
+			</Relation>
+			<Relation description="Umstandshinweis weist auf den zeitlichen&#10;oder sonstigen Hintergrund des Kerns hin.">
+				<Associate role="Umstandshinweis" weight="low" />
+				<Associate role="Kern" weight="high" />
+			</Relation>
+			<Relation description="Höhergewichtetes Ziel folgt zeitlich auf die Hinbewegung.">
+				<Associate role="Hinbewegung" weight="low" />
+				<Associate role="Ziel" weight="high" />
+			</Relation>
+			<Relation description="Auf das auslösende Geschehen&#10;folgt zeitlich das Resultat.&#10;(Zeitorientiertes Gegenstück&#10;zu Grund-FOLGE)">
+				<Associate role="Geschehen" weight="low" />
+				<Associate role="Resultat" weight="high" />
+			</Relation>
+			<Relation description="Nutzung nicht empfohlen.">
+				<Associate role="Zeit" weight="low" />
+				<Associate role="Kern" weight="high" />
+			</Relation>
+			<Relation description="Inhaltliche Entsprechung verdeutlicht&#10;bzw. markiert durch Wiederholung.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Entsprechung" weight="low" />
+			</Relation>
+			<Relation description="Eine Aussage wird durch (eine oder) mehrere&#10;geringergewichtete Aussagen spezifiziert.">
+				<Associate role="Genus" weight="high" />
+				<Associate role="Specificum" weight="low" />
+				<Associate role="Specificum" weight="low" />
+			</Relation>
+			<Relation description="Eine Aussage beschreibt eine Mehrzahl&#10;von spezifischen Punkten des einen Genus.">
+				<Associate role="Genus" weight="low" />
+				<Associate role="Specificum" weight="high" />
+			</Relation>
+			<Relation description="Amplifikation führt die selbe Aussage weiter aus.">
+				<Associate role="Kurzform" weight="high" />
+				<Associate role="Amplifikation" weight="low" />
+			</Relation>
+			<Relation description="(Antithese-Kern)&#10;Das im Gegensatz zum Positivem stehende Negative&#10;wird negiert und bildet damit im Ganzen keinen&#10;Kontrast zum Positivem.">
+				<Associate role="Positivum" weight="high" />
+				<Associate role="Negativum" weight="low" />
+			</Relation>
+			<Relation description="Basiert auf dem Vergleich ähnlicher Konzepte&#10;wobei die Vergleichskomponente bekannt ist.&#10;Somit wird die eigentliche Aussage verdeutlicht.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Vergleich" weight="low" />
+			</Relation>
+			<Relation description="Die Illustration stellt eine komplexere&#10;Variation des Vergleichs dar.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Illustration" weight="low" />
+			</Relation>
+			<Relation description="Der Standard stellt ein Vorbild dar,&#10;nach dem gehandelt werden soll.">
+				<Associate role="Übereinstimmung" weight="high" />
+				<Associate role="Standard" weight="low" />
+			</Relation>
+			<Relation description="Art und Weise stellt eine&#10;Unterart der Amplifikation dar.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Art und Weise" weight="low" />
+			</Relation>
+			<Relation description="Kontrast verneint Zustand/Eigenschaft&#10;der/die im Kern bejaht wird.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Kontrast" weight="low" />
+			</Relation>
+			<Relation description="Stellt eine unbeabsichtigte&#10;Ursache-Wirkung-Beziehung dar.">
+				<Associate role="Grund" weight="low" />
+				<Associate role="Folge" weight="high" />
+			</Relation>
+			<Relation description="Stellt eine absichtliche und erfolgreiche&#10;Ursache-Wirkung-Beziehung dar.">
+				<Associate role="Mittel" weight="low" />
+				<Associate role="Ergebnis" weight="high" />
+			</Relation>
+			<Relation description="Stellt eine absichtliche&#10;Ursache-Wirkung-Beziehung dar.&#10;Ohne Erwähnung eines möglichen Erfolges.">
+				<Associate role="Zweck" weight="low" />
+				<Associate role="Mittel" weight="high" />
+			</Relation>
+			<Relation description="Stellt eine Ursache-Wirkung-Beziehung dar.&#10;Betrachtungsschwerpunkt liegt&#10;auf dem Wirklichkeitsstatus der Ursache.">
+				<Associate role="Bedingung" weight="low" />
+				<Associate role="Folge" weight="high" />
+			</Relation>
+			<Relation description="Wirkung der genannten Ursache bleibt aus.&#10;Stattdessen unerwartetes Ergebnis.">
+				<Associate role="Einräumung" weight="low" />
+				<Associate role="Nichterwartetes" weight="high" />
+			</Relation>
+			<Relation description="Folgerung soll durch referenzielle Ursache&#10;(zusätzlich) abgestützt werden.">
+				<Associate role="Grund" weight="low" />
+				<Associate role="Folgerung" weight="high" />
+			</Relation>
+			<Relation description="Entspricht Grund-Folge-Beziehung.">
+				<Associate role="Grund" weight="low" />
+				<Associate role="Aufforderung" weight="high" />
+			</Relation>
+			<Relation description="Kommentar stützt Aussage im&#10;betrachteten Abschnitt nicht.&#10;Meist Bezug auf vorangegangenen Abschnitt.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Kommentar" weight="low" />
+			</Relation>
+			<Relation description="Parenthese stützt Aussage im&#10;betrachtenten Abschnitt nicht.&#10;Folgt meist einem nicht-textkohärenten&#10;Anknüpfungspunkt.">
+				<Associate role="Kern" weight="high" />
+				<Associate role="Parenthese" weight="low" />
+			</Relation>
+		</Group>
+		<Group>
+			<Relation description="Identifizierung klärt die Identität&#10;bzw. unterscheidet von anderen.">
+				<Associate role="Sache" weight="high" />
+				<Associate role="Identifizierung" weight="low" />
+			</Relation>
+			<Relation description="Nähere Beschreibung einer&#10;bereits identifizierten Sache.">
+				<Associate role="Sache" weight="high" />
+				<Associate role="Beschreibung" weight="low" />
+			</Relation>
+		</Group>
+	</RelationModel>
+</RelationModels>

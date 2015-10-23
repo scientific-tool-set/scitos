@@ -33,7 +33,7 @@ import org.hmx.scitos.domain.util.ComparisonUtil;
  * @param <M>
  *            type of the handled (top level) model object
  */
-public abstract class AbstractModelHandler<M extends IModel<M>> {
+public abstract class AbstractModelHandler<M extends IModel<M>> implements IModelHandler<M> {
 
     /** The managed model object. */
     private final M model;
@@ -51,33 +51,19 @@ public abstract class AbstractModelHandler<M extends IModel<M>> {
         this.listeners = new LinkedList<ModelChangeListener>();
     }
 
-    /**
-     * Getter for the managed model object.
-     *
-     * @return managed model object
-     */
+    @Override
     public M getModel() {
         return this.model;
     }
 
-    /**
-     * Add the given {@link ModelChangeListener} to the collection of listeners, that are notified when a model change occurs.
-     *
-     * @param listener
-     *            listener to add
-     */
+    @Override
     public void addModelChangeListener(final ModelChangeListener listener) {
         if (!ComparisonUtil.containsInstance(this.listeners, listener)) {
             this.listeners.add(listener);
         }
     }
 
-    /**
-     * Remove the given {@link ModelChangeListener} from the collection of listeners, that are notified when a model change occurs.
-     *
-     * @param listener
-     *            listener to remove
-     */
+    @Override
     public void removeModelChangeListener(final ModelChangeListener listener) {
         final int listenerIndex = ComparisonUtil.indexOfInstance(this.listeners, listener);
         if (listenerIndex != -1) {

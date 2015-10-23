@@ -41,7 +41,7 @@ import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import org.hmx.scitos.ais.core.IModelHandler;
+import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.TextToken;
@@ -67,7 +67,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
      * @param modelHandler
      *            the model handler responsible for the displayed interview, to listen for model change events on
      */
-    public InterviewPanel(final IProvider<Interview> displayedInterviewProvider, final IModelHandler modelHandler) {
+    public InterviewPanel(final IProvider<Interview> displayedInterviewProvider, final AisModelHandler modelHandler) {
         super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         this.displayedInterviewProvider = displayedInterviewProvider;
         this.setBorder(null);
@@ -207,7 +207,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
     /**
      * Check if a range of tokens is currently selected, that is valid to get a detail category assigned.
      *
-     * @return if at least one token is currently selected (the rest is sorted out in the {@link IModelHandler model handler})
+     * @return if at least one token is currently selected (the rest is sorted out in the {@link AisModelHandler model handler})
      */
     final boolean containsValidSelection() {
         for (final Component singleParagraph : this.getViewPortView().getComponents()) {

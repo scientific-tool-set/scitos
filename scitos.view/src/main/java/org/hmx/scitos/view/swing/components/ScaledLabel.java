@@ -12,10 +12,11 @@ public class ScaledLabel extends JLabel {
 
     /** The LookAndFeel default Font key. */
     private final String fontKey;
+    private Font baseFont = null;
 
     /**
      * Constructor.
-     * 
+     *
      * @param text
      *            the text to be displayed by the label
      */
@@ -25,7 +26,7 @@ public class ScaledLabel extends JLabel {
 
     /**
      * Constructor.
-     * 
+     *
      * @param text
      *            the text to be displayed by the label
      * @param fontKey
@@ -39,7 +40,7 @@ public class ScaledLabel extends JLabel {
 
     /**
      * Constructor.
-     * 
+     *
      * @param text
      *            the text to be displayed by the label
      * @param horizontalAlignment
@@ -51,7 +52,7 @@ public class ScaledLabel extends JLabel {
 
     /**
      * Constructor.
-     * 
+     *
      * @param text
      *            the text to be displayed by the label
      * @param fontKey
@@ -66,6 +67,12 @@ public class ScaledLabel extends JLabel {
     }
 
     @Override
+    public void setFont(final Font font) {
+        this.baseFont = font;
+        this.validateScaleFactor();
+    }
+
+    @Override
     public void updateUI() {
         super.updateUI();
         this.validateScaleFactor();
@@ -73,18 +80,19 @@ public class ScaledLabel extends JLabel {
 
     /** (Re-)Apply the global content size factor to the font used to display the label's text. */
     private void validateScaleFactor() {
+        Font toApply = this.baseFont;
         // avoid NullPointer due to the font or the respective key being null on initialization
-        if (this.fontKey != null) {
-            final Font defaultFont = UIManager.getFont(this.fontKey);
-            if (defaultFont != null) {
-                final float scaleFactor;
-                if (ScitosApp.getClient() == null) {
-                    scaleFactor = 1f;
-                } else {
-                    scaleFactor = ScitosApp.getClient().getContentScaleFactor();
-                }
-                this.setFont(new Font(defaultFont.getAttributes()).deriveFont(defaultFont.getSize2D() * scaleFactor));
+        if (toApply == null && this.fontKey != null) {
+            toApply = UIManager.getFont(this.fontKey);
+        }
+        if (toApply != null) {
+            final float scaleFactor;
+            if (ScitosApp.getClient() == null) {
+                scaleFactor = 1f;
+            } else {
+                scaleFactor = ScitosApp.getClient().getContentScaleFactor();
             }
+            super.setFont(new Font(toApply.getAttributes()).deriveFont(toApply.getSize2D() * scaleFactor));
         }
     }
 }

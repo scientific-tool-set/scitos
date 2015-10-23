@@ -50,7 +50,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -72,6 +71,7 @@ import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.domain.IMultiObjectModel;
 import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.ScitosIcon;
@@ -180,10 +180,10 @@ public class MainView extends JPanel {
                 final TreePath path = tree.getPathForLocation(event.getX(), event.getY());
                 if (event.isPopupTrigger() && path != null && path.getPathCount() > 1) {
                     final ScitosTreeNode clickedNode = (ScitosTreeNode) path.getLastPathComponent();
-                    final JPopupMenu contextMenu =
+                    final ContextMenuBuilder contextMenu =
                             MainView.this.client.getProjectViewProvider().createContextMenu(clickedNode.getProject(), clickedNode.getUserObject());
                     if (contextMenu != null) {
-                        contextMenu.show(tree, event.getX(), event.getY());
+                        ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(tree, event.getX(), event.getY());
                     }
                 }
             }
@@ -248,9 +248,11 @@ public class MainView extends JPanel {
             final AbstractProjectView<?, ?> currentTab = this.getActiveTab();
             if (currentTab == null) {
                 this.client.setEditMenuItems(Collections.<JMenuItem>emptyList());
+                this.client.setViewMenuItems(Collections.<JMenuItem>emptyList());
                 this.client.setToolBarItems(Collections.<Component>emptyList());
             } else {
                 this.client.setEditMenuItems(currentTab.createEditMenuItems());
+                this.client.setViewMenuItems(currentTab.createViewMenuItems());
                 this.client.setToolBarItems(currentTab.createToolBarItems());
             }
         }
@@ -261,7 +263,7 @@ public class MainView extends JPanel {
      *
      * @return currently active (selected) project/group/model tab; returns <code>null</code> if none or another kind of tab is active
      */
-    public AbstractProjectView<?, ?> getActiveTab() {
+    AbstractProjectView<?, ?> getActiveTab() {
         final Component tab = this.tabStack.getSelectedComponent();
         if (tab instanceof AbstractProjectView<?, ?>) {
             return (AbstractProjectView<?, ?>) tab;
@@ -435,7 +437,7 @@ public class MainView extends JPanel {
      * @param project
      *            project to select
      */
-    public void selectProjectTreeNode(final IViewProject<?> project) {
+    private void selectProjectTreeNode(final IViewProject<?> project) {
         this.selectTreeNode(this.getProjectNode(project));
     }
 
@@ -451,7 +453,7 @@ public class MainView extends JPanel {
             final Enumeration<?> projectNodes = this.rootNode.children();
             while (projectNodes.hasMoreElements()) {
                 final ScitosTreeNode singleProjectNode = (ScitosTreeNode) projectNodes.nextElement();
-                if (singleProjectNode.getUserObject() == project) {
+                if (singleProjectNode.getProject() == project) {
                     return singleProjectNode;
                 }
             }
@@ -467,7 +469,7 @@ public class MainView extends JPanel {
      * @param modelGroup
      *            title of the model group to select
      */
-    public void selectModelGroupTreeNode(final IViewProject<?> project, final String modelGroup) {
+    private void selectModelGroupTreeNode(final IViewProject<?> project, final String modelGroup) {
         this.selectTreeNode(this.getModelGroupTreeNode(project, modelGroup));
     }
 
@@ -584,8 +586,8 @@ public class MainView extends JPanel {
                 final AbstractProjectView<?, ?> singleTab = (AbstractProjectView<?, ?>) singleTabComponent;
                 if (nodeProject == singleTab.getProject()) {
                     final boolean nodeObjectMatches;
-                    if (nodeObject instanceof IViewProject<?> || nodeObject instanceof IModel<?>) {
-                        nodeObjectMatches = nodeObject == singleTab.getModel();
+                    if (nodeObject == nodeProject) {
+                        nodeObjectMatches = nodeProject.getModelObject() == singleTab.getModel();
                     } else {
                         nodeObjectMatches = nodeObject.equals(singleTab.getModel());
                     }
@@ -693,7 +695,7 @@ public class MainView extends JPanel {
      * @param project
      *            project to add
      */
-    public void addProject(final IViewProject<?> project) {
+    void addProject(final IViewProject<?> project) {
         for (final IViewProject<?> singleProject : this.openProjects) {
             if (ComparisonUtil.isNullAwareEqual(singleProject.getSavePath(), project.getSavePath())) {
                 MessageHandler.showMessage(Message.MENUBAR_FILE_OPEN_ALREADY.get(), "", MessageHandler.MessageType.WARN);
@@ -722,7 +724,7 @@ public class MainView extends JPanel {
      *
      * @return current active {@link IViewProject}
      */
-    public IViewProject<?> getActiveProject() {
+    IViewProject<?> getActiveProject() {
         final IViewProject<?> project;
         if (this.openProjects.isEmpty()) {
             // no active project
@@ -759,7 +761,7 @@ public class MainView extends JPanel {
      * @param project
      *            project to refresh the displayed information for
      */
-    public void invokeRepresentationRefresh(final IViewProject<?> project) {
+    void invokeRepresentationRefresh(final IViewProject<?> project) {
         // make sure the public method does not cause trouble in the gui thread
         SwingUtilities.invokeLater(new Thread("Refresh") {
 
@@ -797,7 +799,7 @@ public class MainView extends JPanel {
      *            {@link IViewProject} to end
      * @return successfully closed
      */
-    public boolean closeProject(final IViewProject<?> project) {
+    boolean closeProject(final IViewProject<?> project) {
         if (!ComparisonUtil.containsInstance(this.openProjects, project)) {
             // already closed
             return true;
@@ -850,7 +852,7 @@ public class MainView extends JPanel {
      * @param project
      *            project to update the internal tab element list in
      */
-    public void updateOpenTabElementsForProject(final IViewProject<?> project) {
+    void updateOpenTabElementsForProject(final IViewProject<?> project) {
         if (project != null) {
             final List<Object> tabElements = new LinkedList<Object>();
             for (final AbstractProjectView<?, ?> singleTab : this.getOpenTabsForProject(project)) {
@@ -866,7 +868,7 @@ public class MainView extends JPanel {
      *
      * @return all projects successfully closed
      */
-    public boolean closeAllProjects() {
+    boolean closeAllProjects() {
         // first close actually active projects (with open tabs)
         while (this.getActiveProject() != null) {
             if (!this.closeProject(this.getActiveProject())) {
@@ -887,8 +889,6 @@ public class MainView extends JPanel {
     /**
      * Wrapper for user objects in tree nodes. The JTree is calling the toString() method of its nodes' user objects in order to display the label
      * texts.
-     *
-     * @author Carsten Englert
      */
     public final class ScitosTreeNode extends DefaultMutableTreeNode {
 

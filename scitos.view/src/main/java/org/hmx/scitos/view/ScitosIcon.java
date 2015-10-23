@@ -59,6 +59,8 @@ public enum ScitosIcon {
     FILE_HTML("/icons/fatcow/file_extension_html.png"),
     /** Icon: spreadsheet file export. **/
     FILE_ODS("/icons/misc/ods.png"),
+    /** Icon: vector graphic file export. **/
+    FILE_SVG("/icons/misc/svg.png"),
     /** Icon: undo entry in menu bar / tool bar. */
     UNDO_EDIT("/icons/eclipse/undo_edit.png"),
     /** Icon: redo entry in menu bar / tool bar. */

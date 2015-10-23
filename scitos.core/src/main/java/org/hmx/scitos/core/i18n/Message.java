@@ -47,6 +47,7 @@ public enum Message implements ILocalizableMessage {
     ERROR_SAVE_FAILED("Client.MenuBar.File.Save.Failed"),
     MENUBAR_FILE_SAVEAS("Client.MenuBar.File.SaveAs"),
     MENUBAR_FILE_TYPE_AIS("Client.MenuBar.File.Types.AIS"),
+    MENUBAR_FILE_TYPE_HMX("Client.MenuBar.File.Types.HmX"),
     // the about menu entry
     MENUBAR_ABOUT("Client.MenuBar.About"),
     MENUBAR_PREFERENCES("Client.MenuBar.Preferences"),
@@ -66,6 +67,8 @@ public enum Message implements ILocalizableMessage {
     PREFERENCES_GENERAL_TRANSLATION("Client.Preferences.General.Translation"),
     PREFERENCES_GENERAL_TRANSLATION_SYSTEM_DEFAULT("Client.Preferences.General.Translation.SystemDefault"),
     PREFERENCES_GENERAL_UNDO("Client.Preferences.General.UndoLimit"),
+    PREFERENCES_SETTING_CHANGE_COLOR("Client.Preferences.Color.Change"),
+    PREFERENCES_SETTING_TRANSPARENT_COLOR("Client.Preferences.Color.Transparent"),
     PREFERENCES_RESTART_REQUIRED("Client.Preferences.RestartRequired"),
     // the default welcome tab displayed in an empty opened client
     TAB_WELCOME_TITLE("Client.Tab.Welcome.Title"),
@@ -102,7 +105,7 @@ public enum Message implements ILocalizableMessage {
 
     /**
      * Determine the Locales for which message files are provided. This excludes the default translation.
-     * 
+     *
      * @return Locales with explicit translations
      */
     public static List<Locale> getAvailableLocales() {

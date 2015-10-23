@@ -21,6 +21,7 @@ package org.hmx.scitos.view.swing;
 
 import java.awt.Component;
 import java.awt.LayoutManager;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -90,18 +91,32 @@ public abstract class AbstractProjectView<P extends IViewProject<?>, M> extends 
     }
 
     /**
-     * Create menu items associated with this view to be added to the menu bar's 'Edit' menu. This will be called repeateddly - every time this view
-     * is displayed (i.e. the containing tab is selected).
+     * Create menu items associated with this view to be added to the menu bar's 'Edit' menu. This will be called repeatedly - every time this view is
+     * displayed (i.e. the containing tab is selected).
      *
-     * @return 'Edit' menu items (contained <code>null</code> elements are interpreted as separators)
+     * @return 'Edit' menu items (contained {@code null} elements are interpreted as separators)
      */
-    public abstract List<JMenuItem> createEditMenuItems();
+    public List<JMenuItem> createEditMenuItems() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Create menu items associated with this view to be added to the menu bar's 'View' menu. This will be called repeatedly - every time this view is
+     * displayed (i.e. the containing tab is selected).
+     *
+     * @return 'View' menu items (contained {@code null} elements are interpreted as separators)
+     */
+    public List<JMenuItem> createViewMenuItems() {
+        return Collections.emptyList();
+    }
 
     /**
      * Create components (e.g. buttons) associated with this view to be added to the main view's tool bar. This will be called repeatedly - every time
      * this view is displayed (i.e. the containing tab is selected).
      *
-     * @return tool bar items (contained <code>null</code> elements are interpreted as separators)
+     * @return tool bar items (contained {@code null} elements are interpreted as separators)
      */
-    public abstract List<Component> createToolBarItems();
+    public List<Component> createToolBarItems() {
+        return Collections.emptyList();
+    }
 }

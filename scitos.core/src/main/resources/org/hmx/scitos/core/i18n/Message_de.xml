@@ -40,6 +40,7 @@ Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder
 öffne die Datei in einem Web Browser (z.B. Firefox) und vergleiche es selbst.</entry>
 	<entry key="Client.MenuBar.File.SaveAs">Speichern unter...</entry>
 	<entry key="Client.MenuBar.File.Types.AIS">AIS Projekt</entry>
+	<entry key="Client.MenuBar.File.Types.HmX">HermeneutiX Projekt</entry>
 	<entry key="Client.MenuBar.Preferences">Einstellungen</entry>
 	<entry key="Client.MenuBar.Quit">Beenden</entry>
 	<entry key="Client.MenuBar.View">Ansicht</entry>
@@ -47,6 +48,8 @@ Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder
 	<entry key="Client.MenuBar.View.Font.ScaleDown">Schrift: Verkleinern</entry>
 	<entry key="Client.MenuBar.View.ProjectTreeVisibility">Projektbaum: Aus-/Einblenden</entry>
 	<entry key="Client.ToolBar.Title">SciToS - ToolBar</entry>
+	<entry key="Client.Preferences.Color.Change">Ändern</entry>
+	<entry key="Client.Preferences.Color.Transparent">Transparent</entry>
 	<entry key="Client.Preferences.General">Allgemein</entry>
 	<entry key="Client.Preferences.General.LookAndFeel">Java Swing Look and Feel</entry>
 	<entry key="Client.Preferences.General.Translation">Übersetzung der Nutzeroberfläche</entry>
@@ -59,7 +62,7 @@ Bitte versuche noch einmal es zu speichern (ggf. an einem anderen Ort?) oder
 Sonst gehen ungespeicherte Änderungen verloren.</entry>
 	<entry key="Client.Tab.Welcome.Text">Willkommen zu SciToS - dem Scientific Tool Set.</entry>
 	<entry key="Client.Tab.Welcome.Title">Willkommen</entry>
-	<entry key="Client.Title.SciToS">SciToS - Autobiographical Interview Scoring</entry>
+	<entry key="Client.Title.SciToS">SciToS</entry>
 	<entry key="Error">Fehler</entry>
 	<entry key="Error.Unknown">Ein unerwarteter Fehler ist aufgetreten.</entry>
 	<entry key="Ok">OK</entry>

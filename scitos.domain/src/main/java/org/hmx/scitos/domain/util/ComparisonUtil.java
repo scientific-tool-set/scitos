@@ -20,7 +20,10 @@
 package org.hmx.scitos.domain.util;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Collection of simple comparator functions.
@@ -28,13 +31,13 @@ import java.util.List;
 public final class ComparisonUtil {
 
     /**
-     * Check if either both objects are <code>null</code> or one {@link Object#equals(Object) equals} the other.
+     * Check if either both objects are {@code null} or one {@link Object#equals(Object) equals} the other.
      *
      * @param targetOne
      *            one object to check for equality
      * @param targetTwo
      *            other object to check for equality
-     * @return if both are <code>null</code> or equal to each other
+     * @return if both are {@code null} or {@link Object#equals(Object) equal} to each other
      */
     public static boolean isNullAwareEqual(final Object targetOne, final Object targetTwo) {
         final boolean checkResult;
@@ -47,13 +50,34 @@ public final class ComparisonUtil {
     }
 
     /**
-     * Check if either both objects are <code>null</code> or <code>empty</code>. Otherwise check if one {@link List#equals(Object) equals} the other.
+     * Check if either both objects are {@code null} or {@link String#isEmpty() empty}. Otherwise check if one {@link String#equals(Object) equals}
+     * the other.
      *
      * @param targetOne
-     *            one collection to check for equality
+     *            one {@code String} to check for equality
      * @param targetTwo
-     *            other collection to check for equality
-     * @return if both are <code>null</code>/<code>empty</code> or equal to each other
+     *            other {@code String} to check for equality
+     * @return if both are {@code null}/{@link String#isEmpty() empty} or {@link String#equals(Object) equal} to each other
+     */
+    public static boolean isNullOrEmptyAwareEqual(final String targetOne, final String targetTwo) {
+        final boolean checkResult;
+        if (targetOne == null || targetOne.isEmpty()) {
+            checkResult = targetTwo == null || targetTwo.isEmpty();
+        } else {
+            checkResult = targetOne.equals(targetTwo);
+        }
+        return checkResult;
+    }
+
+    /**
+     * Check if either both objects are {@code null} or {@link List#isEmpty() empty}. Otherwise check if one {@link List#equals(Object) equals} the
+     * other.
+     *
+     * @param targetOne
+     *            one list to check for equality
+     * @param targetTwo
+     *            other list to check for equality
+     * @return if both are {@code null}/{@link List#isEmpty() empty} or {@link List#equals(Object) equal} to each other
      */
     public static boolean isNullOrEmptyAwareEqual(final List<?> targetOne, final List<?> targetTwo) {
         final boolean checkResult;
@@ -70,9 +94,9 @@ public final class ComparisonUtil {
      * than, equal to, or greater than the second object.
      *
      * <p>
-     * If both objects are null, they are deemed equal (returns zero). If only the first object is null, <code>-1</code> is returned. If only the
-     * second object is null, <code>1</code> is returned. This ensures that <code>sgn(x.compareTo(y)) == -sgn(y.compareTo(x))</code> for all
-     * <code>x</code> and <code>y</code>, as defined by {@link Comparable#compareTo(Object)}.
+     * If both objects are null, they are deemed equal (returns zero). If only the first object is null, {@code -1} is returned. If only the second
+     * object is null, {@code 1} is returned. This ensures that {@code sgn(x.compareTo(y)) == -sgn(y.compareTo(x))} for all {@code x} and {@code y},
+     * as defined by {@link Comparable#compareTo(Object)}.
      * </p>
      *
      * @param targetOne
@@ -147,5 +171,25 @@ public final class ComparisonUtil {
             }
         }
         return -1;
+    }
+
+    /**
+     * Count the number of occurrences in a given collection.
+     *
+     * @param collection
+     *            the targeted collection to count repeated instances in
+     * @return mapping of contained instances to their respective count of occurrences
+     */
+    public static <T> Map<T, AtomicInteger> countOccurrences(final Collection<T> collection) {
+        final Map<T, AtomicInteger> map = new HashMap<T, AtomicInteger>();
+        for (final T instance : collection) {
+            final AtomicInteger counter = map.get(instance);
+            if (counter == null) {
+                map.put(instance, new AtomicInteger(1));
+            } else {
+                counter.incrementAndGet();
+            }
+        }
+        return map;
     }
 }

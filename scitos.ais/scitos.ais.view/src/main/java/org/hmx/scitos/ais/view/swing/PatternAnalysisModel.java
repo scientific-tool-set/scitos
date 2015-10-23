@@ -41,7 +41,7 @@ public final class PatternAnalysisModel {
 
     /**
      * Main constructor.
-     * 
+     *
      * @param project
      *            providing instance of the scored detail categories in the interviews
      */
@@ -54,7 +54,7 @@ public final class PatternAnalysisModel {
 
     /**
      * Getter for the table model, that contains the number of detail category occurrences in the scored interviews.
-     * 
+     *
      * @return the summary table model
      */
     public SummaryTableModel getSummaryTableModel() {
@@ -63,7 +63,7 @@ public final class PatternAnalysisModel {
 
     /**
      * Getter for the table model, that contains the actual detail categories in their order for each interview.
-     * 
+     *
      * @return the sequence table model
      */
     public SequenceTableModel getSequenceTableModel() {
@@ -72,7 +72,7 @@ public final class PatternAnalysisModel {
 
     /**
      * Getter for the table model, that contains the number of occurrences for recognized detail category patterns from the scored interviews.
-     * 
+     *
      * @return the pattern table model
      */
     public PatternTableModel getPatternTableModel() {
@@ -89,7 +89,7 @@ public final class PatternAnalysisModel {
 
     /**
      * Export the contained tables into an Open Document Spreadsheet.
-     * 
+     *
      * @param target
      *            the selected file destination to save to
      */

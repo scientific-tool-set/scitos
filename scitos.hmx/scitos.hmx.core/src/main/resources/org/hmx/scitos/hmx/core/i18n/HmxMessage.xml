@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+-->
+<properties>
+  <entry key="Analysis.CommentTopic">Insert the Comment for the lowered Element here</entry>
+  <entry key="Analysis.Semantical">Go To Semantical</entry>
+  <entry key="Analysis.Semantical.AlterRelationType">Alter relation type</entry>
+  <entry key="Analysis.Semantical.CreateRelation">Create Relation with checked Elements</entry>
+  <entry key="Analysis.Semantical.RelationFolding.FoldAll">Hide all Roles</entry>
+  <entry key="Analysis.Semantical.RelationFolding.FoldLevel">Hide Roles in this Column</entry>
+  <entry key="Analysis.Semantical.RelationFolding.UnfoldAll">Display all Roles</entry>
+  <entry key="Analysis.Semantical.RelationFolding.UnfoldLevel">Display Roles in this Column</entry>
+  <entry key="Analysis.Semantical.RemoveRelation">Remove Relation</entry>
+  <entry key="Analysis.Semantical.RotateAssociateRoles">Switch Roles</entry>
+  <entry key="Analysis.Syntactical">Go To Syntactical</entry>
+  <entry key="Analysis.Syntactical.ChangeItemFunction">Change Clause Item Function</entry>
+  <entry key="Analysis.Syntactical.ChangePropositionFunction">Change Indentation Function</entry>
+  <entry key="Analysis.Syntactical.HighlightItem">Highlight Clause Item</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.Bold">Bold</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.BoldAndItalic">Bold and Italic</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.Italic">Italic</entry>
+  <entry key="Analysis.Syntactical.HighlightItem.Plain">Plain</entry>
+  <entry key="Analysis.Syntactical.IndentProposition">Indent checked Proposition</entry>
+  <entry key="Analysis.Syntactical.MergeCheckedPropositions">Merge with checked Proposition</entry>
+  <entry key="Analysis.Syntactical.MergeWithFollowingItem">Merge with following Clause Item</entry>
+  <entry key="Analysis.Syntactical.MergeWithPriorItem">Merge with prior Clause Item</entry>
+  <entry key="Analysis.Syntactical.RemoveOneIndentation">Remove one Indentation</entry>
+  <entry key="Analysis.Syntactical.RemoveOneIndentation.AffectsOthers">The removal of one indentation also removes
+the indentation of at least one other Proposition.
+Continue?</entry>
+  <entry key="Analysis.Syntactical.RemoveOneIndentation.AffectsOthers.Title">Affects other Proposition's indentations</entry>
+  <entry key="Analysis.Syntactical.ResetStandaloneProposition">Reset standalone state of Proposition</entry>
+  <entry key="Analysis.Syntactical.SplitClauseItemAfter">Split Clause Item after</entry>
+  <entry key="Analysis.Syntactical.SplitProposition">Split Proposition after this Clause Item</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects">Merge with other Project</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects.Behind">Behind current Text</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects.InFront">In front of current Text</entry>
+  <entry key="Client.MenuBar.Edit.MergeProjects.PositionQuestion">Where should the additional Origin Text be inserted?</entry>
+  <entry key="Client.MenuBar.Edit.OriginText.Add">Add more Propositions</entry>
+  <entry key="Client.MenuBar.Edit.OriginText.Remove">Delete selected Propositions</entry>
+  <entry key="Client.MenuBar.Edit.OriginText.Remove.Confirm">The selected propositions and any associated information
+are being removed from this project.
+Continue?</entry>
+  <entry key="Client.MenuBar.Edit.ProjectInfo">Edit Project Info</entry>
+  <entry key="Error.CreateRelation.AtLeastTwoChecked">At least one other element needs to be checked.</entry>
+  <entry key="Error.CreateRelation.MoreThenTwoChecked">The chosen relation cannot be created
+with more then two associates.</entry>
+  <entry key="Error.CreateRelation.NotConnected">The chosen elements need to be connected
+with no other between.</entry>
+  <entry key="Error.DeletePropositions.AllSelected">You selected all propositions to be deleted.
+At least one has to remain.</entry>
+  <entry key="Error.DeletePropositions.ConditionsNotMet">The selected propositions do not meet the following conditions:
+   - They are not allowed to be sub ordinated or super ordinated to another proposition.
+   - They are not allowed to be multi-part propositions (marked by arrows).
+Remove indentations as necessary or reset the standalone state of proposition parts
+and try to delete them again.</entry>
+  <entry key="Error.DeletePropositions.NoneSelected">You selected no proposition to be deleted.</entry>
+  <entry key="Error.IndentProposition.AtLeastOneOtherChecked">Another proposition needs to
+be checked to indent under the clicked one.</entry>
+  <entry key="Error.Indentation.Create">Between the two propositions are no other
+propositions on the same or higher level allowed.</entry>
+  <entry key="Error.Indentation.CreateUnderOwnChild">Cannot indent selected proposition under
+a proposition that is already indented to itself.</entry>
+  <entry key="Error.Indentation.Remove.Enclosed">The indentation cannot be removed because
+the chosen proposition is enclosed by another one.</entry>
+  <entry key="Error.Indentation.Remove.PericopeReached">The chosen proposition got no indentation.</entry>
+  <entry key="Error.MergeCheckedPropositions.AtLeastOneOtherChecked">Another proposition needs to
+be checked to merge with.</entry>
+  <entry key="Error.MergeClauseItems.NoFollower">The chosen clause item has no follower.</entry>
+  <entry key="Error.MergeClauseItems.NoPrior">The chosen clause item has no prior.</entry>
+  <entry key="Error.MergePericopes.LanguageConflict">The selected file contains a project in another language.
+Therefore they cannot be merged.</entry>
+  <entry key="Error.MergePericopes.FileContainsNoPericope">The selected file contains no valid HermeneutiX project.
+Therefore they cannot be merged.</entry>
+  <entry key="Error.MergePropositions">The two propositions have to be on the same level
+and with no other propositions on
+the same or higher level between.</entry>
+  <entry key="Error.SplitProposition">Splitting impossible cause there is
+no other clause item behind.</entry>
+  <entry key="Error.TooManyChecked">Only one other proposition
+is allowed to be checked.</entry>
+  <entry key="Export.Contents">Contents</entry>
+  <entry key="Export.Contents.Comments">Contained Comments</entry>
+  <entry key="Export.Contents.Comments.Which.All">include comments from both Analyses (Propositions, Relations, and Clause Items)</entry>
+  <entry key="Export.Contents.Comments.Which.Semantical">include comments only from the Semantical Analysis (Propositions and Relations)</entry>
+  <entry key="Export.Contents.Comments.Which.Syntactical">include comments only from the Syntactical Analysis (Propositions and Clause Items)</entry>
+  <entry key="Export.Contents.SemanticalAnalysis">Semantical Analysis</entry>
+  <entry key="Export.Contents.SyntacticalAnalysis">Syntactical Analysis</entry>
+  <entry key="Export.Height">Height</entry>
+  <entry key="Export.Settings">Settings</entry>
+  <entry key="Export.Settings.IncludeComments">Include the commentaries (as consecutive numbers) in the generated export?</entry>
+  <entry key="Export.Start">Export</entry>
+  <entry key="Export.Success">Export finished successfully.</entry>
+  <entry key="Export.SVG">SVG (Scalable Vector Graphic)</entry>
+  <entry key="Export.Title">HermeneutiX Project</entry>
+  <entry key="Export.Title.Author">by</entry>
+  <entry key="Export.Width">Width</entry>
+  <entry key="Hmx.Project.New">Where to save the new HermeneutiX Project?</entry>
+  <entry key="Preferences.Analysis.ProjectInfo.DefaultAuthor">Default Author</entry>
+  <entry key="Preferences.Analysis.TextInput.DefaultOriginLanguage">Default Origin Language</entry>
+  <entry key="Preferences.General">HmX – General</entry>
+  <entry key="Preferences.Export">HmX – Export</entry>
+  <entry key="Preferences.Export.Color">Element Colors</entry>
+  <entry key="Preferences.Export.Font">Non-Origin Text Font</entry>
+  <entry key="Preferences.Export.Proposition.BackgroundColor">Proposition: Background</entry>
+  <entry key="Preferences.Export.Proposition.BorderColor">Proposition: Border</entry>
+  <entry key="Preferences.Export.FontColor">Font Colors</entry>
+  <entry key="Preferences.Export.Label.FontColor">Proposition Labels</entry>
+  <entry key="Preferences.Export.OriginText.FontColor">Origin Text</entry>
+  <entry key="Preferences.Export.SemRole.FontColor">Semantical Roles</entry>
+  <entry key="Preferences.Export.SynFunction.Bold.FontColor">Syntactical Function (bold)</entry>
+  <entry key="Preferences.Export.SynFunction.BoldItalic.FontColor">Syntactical Function (bold-italic)</entry>
+  <entry key="Preferences.Export.SynFunction.Italic.FontColor">Syntactical Function (italic)</entry>
+  <entry key="Preferences.Export.SynFunction.Plain.FontColor">Syntactical Function (plain)</entry>
+  <entry key="Preferences.Export.Translation.FontColor">Translation Text</entry>
+  <entry key="Preferences.View.Color.Arrow">Arrow Color</entry>
+  <entry key="Preferences.View.Color.Change">Change</entry>
+  <entry key="Preferences.View.Color.CommentedBorder">Highlight color of commented elements</entry>
+  <entry key="Preferences.View.Color.Relation">Relation Color</entry>
+  <entry key="Preferences.View.Color.Transparent">Invisible</entry>
+  <entry key="Preferences.View.IndentationWidth">Indentation Width</entry>
+  <entry key="Preferences.View.TextInput.ShowInputSettings">Show settings on start of new analysis</entry>
+  <entry key="ProjectInfo.Author">Author</entry>
+  <entry key="ProjectInfo.Comment">Comment</entry>
+  <entry key="ProjectInfo.FrameTitle">General Project Info</entry>
+  <entry key="ProjectInfo.Title">Title</entry>
+  <entry key="Setting.Font.Type">Font Type</entry>
+  <entry key="Setting.Font.Size">Font Size</entry>
+  <entry key="Setting.Font.SampleText">Heavy boxes perform waltzes and jigs.</entry>
+  <entry key="TextInput.AddText.Before">Prepend New Text</entry>
+  <entry key="TextInput.AddText.Behind">Append New Text</entry>
+  <entry key="TextInput.Hint">Use line separators:
+Each line will be treated as a single proposition
+
+Use tabs:
+All text parts divided by tabs will be treated as single clause items.
+
+Set the origin language:
+Only clause item functions deposited for the chosen language will be available in the syntactical analysis.</entry>
+  <entry key="TextInput.Quit.DiscardInputQuestion">Do you really want to discard your input?</entry>
+  <entry key="TextInput.Quit.DiscardInputTitle">Discard Input?</entry>
+  <entry key="TextInput.Settings.Hide">Hide</entry>
+  <entry key="TextInput.Settings.OriginLanguage">Origin Language</entry>
+  <entry key="TextInput.Settings.Show">Show</entry>
+  <entry key="TextInput.StartAnalysis">Start Analysis</entry>
+  <entry key="TextInput.Topic">Step 1 :  Insert origin text and set its properties</entry>
+  <entry key="TextInput.Topic.AddPropositions">Add some more text to your current project</entry>
+  <entry key="TextInput.Warning">WARNING:
+After clicking on "Start Analysis" it will be impossible to change the language of the origin text.</entry>
+</properties>

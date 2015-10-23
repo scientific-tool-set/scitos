@@ -44,8 +44,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
+import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.core.AisOption;
-import org.hmx.scitos.ais.core.IModelHandler;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
@@ -58,7 +58,7 @@ import org.hmx.scitos.view.swing.util.ViewUtil;
 public final class CategoryModelChangeDialog extends JDialog {
 
     /** Model handler for the targeted project. */
-    private final IModelHandler modelHandler;
+    private final AisModelHandler modelHandler;
     /** Handler instance to set the default for new projects as well. */
     private final AisOption options;
     /** View component displaying the modifiable detail category model. */
@@ -72,7 +72,7 @@ public final class CategoryModelChangeDialog extends JDialog {
      * @param options
      *            the handler instance to set the default for new projects on
      */
-    public CategoryModelChangeDialog(final IModelHandler modelHandler, final AisOption options) {
+    public CategoryModelChangeDialog(final AisModelHandler modelHandler, final AisOption options) {
         super(ScitosApp.getClient().getFrame(), AisMessage.PROJECT_CHANGE_CATEGORIES.get(), true);
         this.modelHandler = modelHandler;
         this.options = options;

@@ -52,6 +52,7 @@ import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.ScitosApp;
 import org.hmx.scitos.view.swing.ScitosClient;
+import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /** Component displaying the summed up scoring results of a whole project. */
 public final class PatternAnalysisPanel extends JPanel {
@@ -103,7 +104,8 @@ public final class PatternAnalysisPanel extends JPanel {
 
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final File target = client.getSaveDestination(TargetFileType.ODS.getExtension(), Message.MENUBAR_FILE_EXPORT.get());
+                final File target =
+                        ViewUtil.getSaveDestination(client.getFrame(), TargetFileType.ODS.getExtension(), Message.MENUBAR_FILE_EXPORT.get(), false);
                 if (target != null) {
                     PatternAnalysisPanel.this.model.exportToSpreadSheet(target);
                 }
@@ -181,7 +183,7 @@ public final class PatternAnalysisPanel extends JPanel {
 
     /**
      * Adjust the widths of all columns of the given table to fit the respective column's header and contents.
-     * 
+     *
      * @param table
      *            the table to adjust the columns for
      */

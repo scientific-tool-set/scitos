@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.hmx</groupId>
+		<artifactId>scitos.hmx</artifactId>
+		<version>2.0.0</version>
+	</parent>
+	<artifactId>scitos.hmx.view</artifactId>
+	<name>scitos.hmx.view</name>
+	<description>view project of the SciToS module HmX</description>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.view</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hmx</groupId>
+			<artifactId>scitos.hmx.core</artifactId>
+		</dependency>
+		<!-- lib: including TreeTable view component -->
+		<dependency>
+			<groupId>org.swinglabs.swingx</groupId>
+			<artifactId>swingx-core</artifactId>
+		</dependency>
+	</dependencies>
+</project>

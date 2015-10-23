@@ -60,7 +60,7 @@ import org.xml.sax.SAXException;
 public final class ModelParseServiceProviderImpl implements IModelParseServiceRegistry, IModelParseServiceProvider {
 
     /** The registered model implementations matched to their representing file types. */
-    private final Map<Class<? extends IModel<?>>, FileType> modelTypes;
+    private final Map<FileType, Class<? extends IModel<?>>> modelClasses;
     /** The registered model provider implementations for the supported file types. */
     private final Map<FileType, IModelParseService<?>> modelParseServices;
 
@@ -69,15 +69,15 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
      */
     @Inject
     public ModelParseServiceProviderImpl() {
-        this.modelTypes = Collections.synchronizedMap(new HashMap<Class<? extends IModel<?>>, FileType>());
+        this.modelClasses = Collections.synchronizedMap(new HashMap<FileType, Class<? extends IModel<?>>>());
         this.modelParseServices = Collections.synchronizedMap(new HashMap<FileType, IModelParseService<?>>());
     }
 
     @Override
     public <M extends IModel<M>> void registerModelParseService(final FileType type, final Class<M> modelClass, final IModelParseService<M> service) {
-        synchronized (this.modelTypes) {
+        synchronized (this.modelClasses) {
             synchronized (this.modelParseServices) {
-                this.modelTypes.put(modelClass, type);
+                this.modelClasses.put(type, modelClass);
                 this.modelParseServices.put(type, service);
             }
         }
@@ -85,18 +85,13 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
 
     @Override
     public Class<? extends IModel<?>> getModelClassForFileType(final FileType type) {
-        synchronized (this.modelTypes) {
-            for (final Map.Entry<Class<? extends IModel<?>>, FileType> entry : this.modelTypes.entrySet()) {
-                if (entry.getValue() == type) {
-                    return entry.getKey();
-                }
-            }
+        synchronized (this.modelClasses) {
+            return this.modelClasses.get(type);
         }
-        throw new IllegalStateException("No model class registered for FileType " + type.name());
     }
 
     @Override
-    public Entry<? extends IModel<?>, List<Object>> open(final File target) throws HmxException {
+    public Entry<? extends IModel<?>, List<?>> open(final File target) throws HmxException {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final Document xml;
         try {
@@ -127,27 +122,37 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
 
     @Override
     public void save(final IModel<?> model, final List<?> openViewElements, final File target) throws HmxException {
-        final Document xml = this.createXmlFromModel(model, openViewElements);
-        // create target file output stream
-        FileOutputStream output = null;
+        this.save(this.createXmlFromModel(model, openViewElements), target);
+    }
+
+    @Override
+    public void save(final Document xml, final File target) throws HmxException {
         try {
-            output = new FileOutputStream(target);
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             // make the file in its raw XML format human readable by adding indentations
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "3");
-            // write the xml structure to the output stream
-            transformer.transform(new DOMSource(xml), new StreamResult(output));
-            output.flush();
-        } catch (final IOException ioe) {
-            // error while initializing the FileOutputStream
-            throw new HmxException(Message.ERROR_UNKNOWN, ioe);
+            this.save(xml, transformer, target);
         } catch (final TransformerFactoryConfigurationError tfce) {
             // error while instantiating the transformer factory
             throw new HmxException(Message.ERROR_UNKNOWN, tfce);
         } catch (final TransformerConfigurationException tce) {
             // error while initializing the transformer instance
             throw new HmxException(Message.ERROR_UNKNOWN, tce);
+        }
+    }
+
+    private void save(final Document xml, final Transformer transformer, final File target) throws HmxException {
+        // create target file output stream
+        FileOutputStream output = null;
+        try {
+            output = new FileOutputStream(target);
+            // write the xml structure to the output stream
+            transformer.transform(new DOMSource(xml), new StreamResult(output));
+            output.flush();
+        } catch (final IOException ioe) {
+            // error while initializing the FileOutputStream
+            throw new HmxException(Message.ERROR_UNKNOWN, ioe);
         } catch (final TransformerException te) {
             // error while transferring the xml document through the output stream
             throw new HmxException(Message.ERROR_UNKNOWN, te);
@@ -165,35 +170,16 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
     @Override
     public void export(final IModel<?> model, final String stylesheetPath, final File target) throws HmxException {
         final Document xml = this.createXmlFromModel(model, Collections.emptyList());
-        // create target file output stream
-        FileOutputStream output = null;
+        final StreamSource stylesheet = new StreamSource(model.getClass().getResourceAsStream(stylesheetPath));
         try {
-            output = new FileOutputStream(target);
-            final StreamSource stylesheet = new StreamSource(model.getClass().getResourceAsStream(stylesheetPath));
             final Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);
-            // write the xml structure to the output stream
-            transformer.transform(new DOMSource(xml), new StreamResult(output));
-            output.flush();
-        } catch (final IOException ioe) {
-            // error while initializing the FileOutputStream
-            throw new HmxException(Message.ERROR_UNKNOWN, ioe);
+            this.save(xml, transformer, target);
         } catch (final TransformerFactoryConfigurationError tfce) {
             // error while instantiating the transformer factory
             throw new HmxException(Message.ERROR_UNKNOWN, tfce);
         } catch (final TransformerConfigurationException tce) {
             // error while initializing the transformer instance
             throw new HmxException(Message.ERROR_UNKNOWN, tce);
-        } catch (final TransformerException te) {
-            // error while transferring the xml document through the output stream
-            throw new HmxException(Message.ERROR_UNKNOWN, te);
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (final IOException ioex) {
-                    // at least we tried
-                }
-            }
         }
     }
 
@@ -210,10 +196,7 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
      */
     private Document createXmlFromModel(final IModel<?> model, final List<?> openViewElements) throws HmxException {
         // determine representing file type for model implementation
-        final FileType type;
-        synchronized (this.modelTypes) {
-            type = this.modelTypes.get(model.getClass());
-        }
+        final FileType type = this.getTypeForModel(model);
         // get registered model provider for file type
         final IModelParseService<?> provider;
         synchronized (this.modelParseServices) {
@@ -229,15 +212,34 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
     @Override
     public List<ExportOption> getSupportedExports(final IModel<?> model) {
         // determine representing file type for model implementation
-        final FileType type;
-        synchronized (this.modelTypes) {
-            type = this.modelTypes.get(model.getClass());
-        }
+        final FileType type = this.getTypeForModel(model);
         // get registered model provider for file type
         final IModelParseService<?> provider;
         synchronized (this.modelParseServices) {
             provider = this.modelParseServices.get(type);
         }
         return provider.getSupportedExports();
+    }
+
+    /**
+     * Determine the representing {@link FileType} for the given model implementation.
+     *
+     * @param model
+     *            specific model instance to find file type for
+     * @return associated file type
+     * @throws IllegalArgumentException
+     *             if no file type has been registered for the given model's class
+     * @see #registerModelParseService(FileType, Class, IModelParseService)
+     */
+    private FileType getTypeForModel(final IModel<?> model) {
+        final Class<?> modelClass = model.getClass();
+        synchronized (this.modelClasses) {
+            for (final Entry<FileType, Class<? extends IModel<?>>> entry : this.modelClasses.entrySet()) {
+                if (entry.getKey().getLocalizableName() != null && modelClass.equals(entry.getValue())) {
+                    return entry.getKey();
+                }
+            }
+        }
+        throw new IllegalArgumentException("No FileType associated with given model of type " + modelClass.getName());
     }
 }

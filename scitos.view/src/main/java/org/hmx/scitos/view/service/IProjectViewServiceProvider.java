@@ -21,9 +21,8 @@ package org.hmx.scitos.view.service;
 
 import java.io.File;
 
-import javax.swing.JPopupMenu;
-
 import org.hmx.scitos.domain.IModel;
+import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.swing.AbstractProjectView;
 
@@ -62,7 +61,7 @@ public interface IProjectViewServiceProvider {
      *            element in the specified project a context menu has been requested for
      * @return context menu to display (can be <code>null</code>, if none should be shown)
      */
-    JPopupMenu createContextMenu(IViewProject<?> project, Object element);
+    ContextMenuBuilder createContextMenu(IViewProject<?> project, Object element);
 
     /**
      * Create the view for the given project instance.
@@ -71,7 +70,7 @@ public interface IProjectViewServiceProvider {
      *            project instance to represent in the view
      * @return created view instance
      */
-    AbstractProjectView<?, ? extends IViewProject<?>> createProjectView(IViewProject<?> project);
+    AbstractProjectView<?, ? extends IModel<?>> createProjectView(IViewProject<?> project);
 
     /**
      * Create the view for the model group with the given label in the given project instance.

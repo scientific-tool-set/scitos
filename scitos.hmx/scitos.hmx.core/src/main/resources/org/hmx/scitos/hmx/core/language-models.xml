@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+   Copyright (C) 2015 HermeneutiX.org
+   
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+-->
+<LanguageModels xmlns="http://www.hermeneutix.org/schema/hmx/2.0">
+	<LanguageModel name="Griechisch" oldName="Greek" locale="de" text-orientation="left-to-right">
+		<Group>
+			<Function oldKey="Subject1" code="Subj" name="Subjekt" description="Satzgegenstand" />
+			<Function oldKey="Subject2" code="S/P" name="Subjekt-Prädikat" description="Mischtyp aus Subjekt und Prädikat" />
+			<Function oldKey="Subject3" code="Vok" name="Vokativ" description="Anrede" />
+		</Group>
+		<Group>
+			<Function oldKey="Predicate1" code="Präd" name="Prädikat" description="Satzaussage" />
+		</Group>
+		<Group>
+			<Function oldKey="Connector1" code="K" name="Konnektor" style="underline" />
+		</Group>
+		<Group>
+			<Function oldKey="Attribute1" code="Attr" name="Attribut" />
+		</Group>
+		<Group>
+			<Function oldKey="Object1" code="GenO" name="Genitivobjekt" description="Wir gedenken &quot;der Toten&quot;." />
+			<Function oldKey="Object2" code="DatO" name="Dativobjekt" description="Die Kinder gehorchen &quot;dem Vater&quot;-" />
+			<Function oldKey="Object3" code="AkkO" name="Akkusativobjekt" description="Jesus liebte &quot;den jungen Mann&quot;." />
+			<Function oldKey="Object4" code="PräpO" name="Präpositionalobjekt" description="Erlöse uns &quot;von dem Bösen&quot;." />
+		</Group>
+		<Group>
+			<FunctionGroup name="Ergänzung">
+				<Function oldKey="Complement1" code="SIdE" name="Subjekt-Indentifikationsergänzung"
+					description="(bezeichnete Größe mit Subjekt weitgehend gleichgesetzt)&#10;Dieser Mann ist &quot;der Vorsitzende&quot;. (völlige Gleichsetzung)&#10;Die Frau war &quot;Witwe&quot;. (Klassifizierung)" />
+				<Function oldKey="Complement2" code="SArtE" name="Subjekt-Artergänzung"
+					description="(bezeichnet Beschaffenheit der Subjektgröße)&#10;Die Kinder sind &quot;glücklich&quot;." />
+				<Function oldKey="Complement3" code="OIdE" name="Objekt-Indentifikationsergänzung"
+					description="(bezeichnete Größe mit Objekt weitgehend gleichgesetzt)&#10;Sie nannten Barnabas &quot;Zeus&quot;. (wohl Gleichsetzung)&#10;Ich habe euch &quot;Freunde&quot; genannt. (Klassifizierung)" />
+				<Function oldKey="Complement4" code="OArtE" name="Objekt-Artergänzung"
+					description="(bezeichnet Beschaffenheit der Objektgröße)&#10;Ich mache alles &quot;neu&quot;." />
+				<Function oldKey="Complement5" code="LokE" name="Lokalergänzung"
+					description="Ich bin &quot;bei euch&quot;/&quot;in eurer Mitte&quot;/&quot;dort&quot;." />
+				<Function oldKey="Complement6" code="TempE" name="Temporalergänzung"
+					description="Dies wird &quot;morgen&quot;/&quot;in zwei Jahren&quot; sein." />
+				<Function oldKey="Complement7" code="ModE" name="Modalergänzung"
+					description="Verhalte dich &quot;anständig&quot;/&quot;auf gebührende Art und Weise&quot;." />
+				<FunctionGroup name="Kausale Ergänzung">
+					<Function oldKey="CausalComplement1" code="KausE" name="kausal" />
+					<Function oldKey="CausalComplement2" code="KondE" name="konditinal" />
+					<Function oldKey="CausalComplement3" code="KonsE" name="konsekutiv" />
+					<Function oldKey="CausalComplement4" code="FinE" name="final" />
+					<Function oldKey="CausalComplement5" code="KonzE" name="konzessiv" />
+					<Function oldKey="CausalComplement6" code="InstE" name="instrumental" />
+					<Function oldKey="CausalComplement7" code="IntE" name="des Interesses" />
+				</FunctionGroup>
+			</FunctionGroup>
+			<FunctionGroup name="Angabe">
+				<Function oldKey="Adjunct1" code="SIdA" name="Subjekt-Identifikationsangabe"
+					description="(nach manchen Unterart der &quot;Apposition&quot;)&#10;Dieser ging &quot;als Gerechter&quot; nach Hause." />
+				<Function oldKey="Adjunct2" code="SArtA" name="Subjekt-Artangabe"
+					description="Dieser steht &quot;gesund&quot; vor euch." />
+				<Function oldKey="Adjunct3" code="OIdA" name="Object-Identifikationsangabe"
+					description="(alternativ: Unterart der &quot;Apposition&quot;)&#10;Er stelle sie ihnen &quot;als seine Frau&quot; vor." />
+				<Function oldKey="Adjunct4" code="OArtA" name="Objekt-Artangabe"
+					description="Er brachte ihn &quot;heil&quot; nach Hause." />
+				<Function oldKey="Adjunct5" code="LokA"
+					name="Lokale Umstandsangabeangabe"
+					description="&quot;Dort&quot;/&quot;In Galiläa&quot; werdet ihr ihn sehen." />
+				<Function oldKey="Adjunct6" code="TempA" name="Temporale Umstandsangabe"
+					description="&quot;Heute&quot; ist euch der Retter geboren." />
+				<Function oldKey="Adjunct7" code="ModA" name="Modale Unstandsangabe"
+					description="Die Brüder nahmen uns &quot;freudig&quot; auf." />
+				<FunctionGroup name="Kausale Umstandsangabe">
+					<Function oldKey="CausalAdjunct1" code="KausA" name="kausal"
+						description="&quot;Deshalb&quot; sage ich euch..." />
+					<Function oldKey="CausalAdjunct2" code="KondA" name="konditinal"
+						description="&quot;Wenn wir ihn verleugnen&quot;, wird auch er..." />
+					<Function oldKey="CausalAdjunct3" code="KonsA" name="konsekutiv"
+						description="Es wird zu einem Baum, &quot;so dass die Vögel...&quot;" />
+					<Function oldKey="CausalAdjunct4" code="FinA" name="final"
+						description="Er kam, &quot;um Zeugnis zu geben&quot;." />
+					<Function oldKey="CausalAdjunct5" code="KonzA" name="konzessiv"
+						description="&quot;Obwohl er der Sohn war&quot;, lernte er..." />
+					<Function oldKey="CausalAdjunct6" code="InstA" name="instrumental"
+						description="Sie werden &quot;durchs Schwert&quot; umkommen." />
+					<Function oldKey="CausalAdjunct7" code="IntA" name="des Interesses"
+						description="Salomo baute &quot;ihm&quot; dann ein Haus." />
+				</FunctionGroup>
+			</FunctionGroup>
+		</Group>
+	</LanguageModel>
+	<LanguageModel name="Greek" oldName="Greek" text-orientation="left-to-right">
+		<Group>
+			<Function oldKey="Subject1" code="Subj" name="Subject" />
+			<Function oldKey="Subject2" code="S/P" name="Subject-Predicate" />
+			<Function oldKey="Subject3" code="Voc" name="Vocative" />
+		</Group>
+		<Group>
+			<Function oldKey="Predicate1" code="Pred" name="Predicate" />
+		</Group>
+		<Group>
+			<Function oldKey="Connector1" code="C" name="Connector" style="underline" />
+		</Group>
+		<Group>
+			<Function oldKey="Attribute1" code="Attr" name="Attribute" />
+		</Group>
+		<Group>
+			<Function oldKey="Object1" code="GenO" name="Genitive Object" />
+			<Function oldKey="Object2" code="DatO" name="Dative Object" />
+			<Function oldKey="Object3" code="AccO" name="Accusative Object" />
+			<Function oldKey="Object4" code="PrepO" name="Prepositional Object" />
+		</Group>
+		<Group>
+			<FunctionGroup name="Complement" description="necessary, means&#10;not requested by verb">
+				<Function oldKey="Complement1" code="SIdC" name="Subject-Indentification-Complement" />
+				<Function oldKey="Complement2" code="SManC" name="Subject-Manner-Complement" />
+				<Function oldKey="Complement3" code="OIdC" name="Object-Indentification-Complement" />
+				<Function oldKey="Complement4" code="OManC" name="Object-Manner-Complement" />
+				<Function oldKey="Complement5" code="LocC" name="Locale-Complement" />
+				<Function oldKey="Complement6" code="TimeC" name="Time-Complement" />
+				<Function oldKey="Complement7" code="ModC" name="Modal-Complement" />
+				<FunctionGroup name="Causal Complement">
+					<Function oldKey="CausalComplement1" code="CausC" name="causal" />
+					<Function oldKey="CausalComplement2" code="CondC" name="conditional" />
+					<Function oldKey="CausalComplement3" code="ConsC" name="consecutiv" />
+					<Function oldKey="CausalComplement4" code="FinC" name="final" />
+					<Function oldKey="CausalComplement5" code="ConcC" name="concessiv" />
+					<Function oldKey="CausalComplement6" code="InstC" name="instrumental" />
+					<Function oldKey="CausalComplement7" code="IntC" name="of interest" />
+				</FunctionGroup>
+			</FunctionGroup>
+			<FunctionGroup name="Adjunct" description="erasable, means&#10;not requested by verb">
+				<Function oldKey="Adjunct1" code="SIdA" name="Subject-Indentification-Adjunct" />
+				<Function oldKey="Adjunct2" code="SManA" name="Subject-Manner-Adjunct" />
+				<Function oldKey="Adjunct3" code="OIdA" name="Object-Indentification-Adjunct" />
+				<Function oldKey="Adjunct4" code="OManA" name="Object-Manner-Adjunct" />
+				<Function oldKey="Adjunct5" code="LocA" name="Locale-Adjunct" />
+				<Function oldKey="Adjunct6" code="TimeA" name="Time-Adjunct" />
+				<Function oldKey="Adjunct7" code="ModA" name="Modal-Adjunct" />
+				<FunctionGroup name="Causal Adjunct">
+					<Function oldKey="CausalAdjunct1" code="CausA" name="causal" />
+					<Function oldKey="CausalAdjunct2" code="CondA" name="conditional" />
+					<Function oldKey="CausalAdjunct3" code="ConsA" name="consecutiv" />
+					<Function oldKey="CausalAdjunct4" code="FinA" name="final" />
+					<Function oldKey="CausalAdjunct5" code="ConcA" name="concessiv" />
+					<Function oldKey="CausalAdjunct6" code="InstA" name="instrumental" />
+					<Function oldKey="CausalAdjunct7" code="IntA" name="of interest" />
+				</FunctionGroup>
+			</FunctionGroup>
+		</Group>
+	</LanguageModel>
+	<LanguageModel name="Hebräisch" oldName="Hebrew" locale="de" text-orientation="right-to-left">
+		<Group>
+			<Function oldKey="Subject1" code="Subj" name="Subjekt" description="Satzgegenstand" />
+			<Function oldKey="Subject2" code="S/P" name="Subjekt-Prädikat" description="Mischtyp aus Subjekt und Prädikat" />
+			<Function oldKey="Subject3" code="S/P/A" name="Subjekt-Prädikat-Akkusativobjekt"
+				description="Mischtyp aus Subjekt, Prädikat und AkkO" />
+			<Function oldKey="Subject4" code="Vok" name="Vokativ" description="Anrede" />
+			<Function oldKey="Subject5" code="NomAbs" name="absoluter Nominativ" description="casus pendens" />
+		</Group>
+		<Group>
+			<Function oldKey="Predicate1" code="Präd" name="Prädikat" description="Satzaussage" />
+		</Group>
+		<Group>
+			<Function oldKey="Connector1" code="K" name="Konnektor" style="underline" />
+		</Group>
+		<Group>
+			<Function oldKey="Attribute1" code="Attr" name="Attribut" />
+		</Group>
+		<Group>
+			<Function oldKey="Object1" code="GenO" name="Genitivobjekt" description="Wir gedenken &quot;der Toten&quot;." />
+			<Function oldKey="Object2" code="DatO" name="Dativobjekt" description="Die Kinder gehorchen &quot;dem Vater&quot;-" />
+			<Function oldKey="Object3" code="AkkO" name="Akkusativobjekt" description="Jesus liebte &quot;den jungen Mann&quot;." />
+			<Function oldKey="Object4" code="PräpO" name="Präpositionalobjekt" description="Erlöse uns &quot;von dem Bösen&quot;." />
+		</Group>
+		<Group>
+			<FunctionGroup name="Ergänzung">
+				<Function oldKey="Complement1" code="SIdE" name="Subjekt-Indentifikationsergänzung"
+					description="(bezeichnete Größe mit Subjekt weitgehend gleichgesetzt)&#10;Dieser Mann ist &quot;der Vorsitzende&quot;. (völlige Gleichsetzung)&#10;Die Frau war &quot;Witwe&quot;. (Klassifizierung)" />
+				<Function oldKey="Complement2" code="SArtE" name="Subjekt-Artergänzung"
+					description="(bezeichnet Beschaffenheit der Subjektgröße)&#10;Die Kinder sind &quot;glücklich&quot;." />
+				<Function oldKey="Complement3" code="OIdE" name="Objekt-Indentifikationsergänzung"
+					description="(bezeichnete Größe mit Objekt weitgehend gleichgesetzt)&#10;Sie nannten Barnabas &quot;Zeus&quot;. (wohl Gleichsetzung)&#10;Ich habe euch &quot;Freunde&quot; genannt. (Klassifizierung)" />
+				<Function oldKey="Complement4" code="OArtE" name="Objekt-Artergänzung"
+					description="(bezeichnet Beschaffenheit der Objektgröße)&#10;Ich mache alles &quot;neu&quot;." />
+				<Function oldKey="Complement5" code="LokE" name="Lokalergänzung"
+					description="Ich bin &quot;bei euch&quot;/&quot;in eurer Mitte&quot;/&quot;dort&quot;." />
+				<Function oldKey="Complement6" code="TempE" name="Temporalergänzung"
+					description="Dies wird &quot;morgen&quot;/&quot;in zwei Jahren&quot; sein." />
+				<Function oldKey="Complement7" code="ModE" name="Modalergänzung"
+					description="Verhalte dich &quot;anständig&quot;/&quot;auf gebührende Art und Weise&quot;." />
+				<FunctionGroup name="Kausale Ergänzung">
+					<Function oldKey="CausalComplement1" code="KausE" name="kausal" />
+					<Function oldKey="CausalComplement2" code="KondE" name="konditinal" />
+					<Function oldKey="CausalComplement3" code="KonsE" name="konsekutiv" />
+					<Function oldKey="CausalComplement4" code="FinE" name="final" />
+					<Function oldKey="CausalComplement5" code="KonzE" name="konzessiv" />
+					<Function oldKey="CausalComplement6" code="InstE" name="instrumental" />
+					<Function oldKey="CausalComplement7" code="IntE" name="des Interesses" />
+				</FunctionGroup>
+			</FunctionGroup>
+			<FunctionGroup name="Angabe">
+				<Function oldKey="Adjunct1" code="SIdA" name="Subjekt-Identifikationsangabe"
+					description="(nach manchen Unterart der &quot;Apposition&quot;)&#10;Dieser ging &quot;als Gerechter&quot; nach Hause." />
+				<Function oldKey="Adjunct2" code="SArtA" name="Subjekt-Artangabe"
+					description="Dieser steht &quot;gesund&quot; vor euch." />
+				<Function oldKey="Adjunct3" code="OIdA" name="Object-Identifikationsangabe"
+					description="(alternativ: Unterart der &quot;Apposition&quot;)&#10;Er stelle sie ihnen &quot;als seine Frau&quot; vor." />
+				<Function oldKey="Adjunct4" code="OArtA" name="Objekt-Artangabe"
+					description="Er brachte ihn &quot;heil&quot; nach Hause." />
+				<Function oldKey="Adjunct5" code="LokA"
+					name="Lokale Umstandsangabeangabe"
+					description="&quot;Dort&quot;/&quot;In Galiläa&quot; werdet ihr ihn sehen." />
+				<Function oldKey="Adjunct6" code="TempA" name="Temporale Umstandsangabe"
+					description="&quot;Heute&quot; ist euch der Retter geboren." />
+				<Function oldKey="Adjunct7" code="ModA" name="Modale Unstandsangabe"
+					description="Die Brüder nahmen uns &quot;freudig&quot; auf." />
+				<FunctionGroup name="Kausale Umstandsangabe">
+					<Function oldKey="CausalAdjunct1" code="KausA" name="kausal"
+						description="&quot;Deshalb&quot; sage ich euch..." />
+					<Function oldKey="CausalAdjunct2" code="KondA" name="konditinal"
+						description="&quot;Wenn wir ihn verleugnen&quot;, wird auch er..." />
+					<Function oldKey="CausalAdjunct3" code="KonsA" name="konsekutiv"
+						description="Es wird zu einem Baum, &quot;so dass die Vögel...&quot;" />
+					<Function oldKey="CausalAdjunct4" code="FinA" name="final"
+						description="Er kam, &quot;um Zeugnis zu geben&quot;." />
+					<Function oldKey="CausalAdjunct5" code="KonzA" name="konzessiv"
+						description="&quot;Obwohl er der Sohn war&quot;, lernte er..." />
+					<Function oldKey="CausalAdjunct6" code="InstA" name="instrumental"
+						description="Sie werden &quot;durchs Schwert&quot; umkommen." />
+					<Function oldKey="CausalAdjunct7" code="IntA" name="des Interesses"
+						description="Salomo baute &quot;ihm&quot; dann ein Haus." />
+				</FunctionGroup>
+			</FunctionGroup>
+		</Group>
+	</LanguageModel>
+	<LanguageModel name="Hebrew" oldName="Hebrew" text-orientation="right-to-left">
+		<Group>
+			<Function oldKey="Subject1" code="Subj" name="Subject" />
+			<Function oldKey="Subject2" code="S/P" name="Subject-Predicate" />
+			<Function oldKey="Subject3" code="S/P/A" name="Subject-Predicate-Accusative Object" />
+			<Function oldKey="Subject4" code="Voc" name="Vocative" />
+			<Function oldKey="Subject5" code="NomAbs" name="Nominative absolut" description="casus pendens" />
+		</Group>
+		<Group>
+			<Function oldKey="Predicate1" code="Pred" name="Predicate" />
+		</Group>
+		<Group>
+			<Function oldKey="Connector1" code="C" name="Connector" style="underline" />
+		</Group>
+		<Group>
+			<Function oldKey="Attribute1" code="Attr" name="Attribute" />
+		</Group>
+		<Group>
+			<Function oldKey="Object1" code="GenO" name="Genitive Object" />
+			<Function oldKey="Object2" code="DatO" name="Dative Object" />
+			<Function oldKey="Object3" code="AccO" name="Accusative Object" />
+			<Function oldKey="Object4" code="PrepO" name="Prepositional Object" />
+		</Group>
+		<Group>
+			<FunctionGroup name="Complement" description="necessary, means&#10;not requested by verb">
+				<Function oldKey="Complement1" code="SIdC" name="Subject-Indentification-Complement" />
+				<Function oldKey="Complement2" code="SManC" name="Subject-Manner-Complement" />
+				<Function oldKey="Complement3" code="OIdC" name="Object-Indentification-Complement" />
+				<Function oldKey="Complement4" code="OManC" name="Object-Manner-Complement" />
+				<Function oldKey="Complement5" code="LocC" name="Locale-Complement" />
+				<Function oldKey="Complement6" code="TimeC" name="Time-Complement" />
+				<Function oldKey="Complement7" code="ModC" name="Modal-Complement" />
+				<FunctionGroup name="Causal Complement">
+					<Function oldKey="CausalComplement1" code="CausC" name="causal" />
+					<Function oldKey="CausalComplement2" code="CondC" name="conditional" />
+					<Function oldKey="CausalComplement3" code="ConsC" name="consecutiv" />
+					<Function oldKey="CausalComplement4" code="FinC" name="final" />
+					<Function oldKey="CausalComplement5" code="ConcC" name="concessiv" />
+					<Function oldKey="CausalComplement6" code="InstC" name="instrumental" />
+					<Function oldKey="CausalComplement7" code="IntC" name="of interest" />
+				</FunctionGroup>
+			</FunctionGroup>
+			<FunctionGroup name="Adjunct" description="erasable, means&#10;not requested by verb">
+				<Function oldKey="Adjunct1" code="SIdA" name="Subject-Indentification-Adjunct" />
+				<Function oldKey="Adjunct2" code="SManA" name="Subject-Manner-Adjunct" />
+				<Function oldKey="Adjunct3" code="OIdA" name="Object-Indentification-Adjunct" />
+				<Function oldKey="Adjunct4" code="OManA" name="Object-Manner-Adjunct" />
+				<Function oldKey="Adjunct5" code="LocA" name="Locale-Adjunct" />
+				<Function oldKey="Adjunct6" code="TimeA" name="Time-Adjunct" />
+				<Function oldKey="Adjunct7" code="ModA" name="Modal-Adjunct" />
+				<FunctionGroup name="Causal Adjunct">
+					<Function oldKey="CausalAdjunct1" code="CausA" name="causal" />
+					<Function oldKey="CausalAdjunct2" code="CondA" name="conditional" />
+					<Function oldKey="CausalAdjunct3" code="ConsA" name="consecutiv" />
+					<Function oldKey="CausalAdjunct4" code="FinA" name="final" />
+					<Function oldKey="CausalAdjunct5" code="ConcA" name="concessiv" />
+					<Function oldKey="CausalAdjunct6" code="InstA" name="instrumental" />
+					<Function oldKey="CausalAdjunct7" code="IntA" name="of interest" />
+				</FunctionGroup>
+			</FunctionGroup>
+		</Group>
+	</LanguageModel>
+</LanguageModels>

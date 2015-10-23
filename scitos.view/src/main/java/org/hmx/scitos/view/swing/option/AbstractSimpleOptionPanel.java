@@ -19,12 +19,27 @@
 
 package org.hmx.scitos.view.swing.option;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+
+import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.IOptionSetting;
+import org.hmx.scitos.core.util.ConversionUtil;
 import org.hmx.scitos.view.swing.util.SplitFrame;
 
 /**
@@ -48,8 +63,87 @@ public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOption
      * @param title
      *            message to be displayed in the OptionView's SplitFrame's tree as node label
      */
-    protected AbstractSimpleOptionPanel(final LayoutManager layout, final Message title) {
+    protected AbstractSimpleOptionPanel(final LayoutManager layout, final ILocalizableMessage title) {
         super(layout, title);
+    }
+
+    /**
+     * Create a titled setting component for a {@link Color} value, including the given {@code colorSample}.
+     *
+     * @param colorSample
+     *            the panel to display any chosen {@link Color} value on
+     * @param title
+     *            the title text to apply
+     * @param setting
+     *            the preferences entry being represented
+     * @param allowTransparent
+     *            if the given preferences entry allows transparency
+     * @return created component to be inserted into a surrounding parent
+     */
+    protected final JPanel initColorPanel(final JPanel colorSample, final ILocalizableMessage title, final S setting,
+            final boolean allowTransparent) {
+        final JPanel groupPanel = new JPanel(new GridBagLayout());
+        groupPanel.setBorder(BorderFactory.createTitledBorder(title.get()));
+        // create a panel for showing the current selected color
+        colorSample.setPreferredSize(new Dimension(50, allowTransparent ? 50 : 20));
+        colorSample.setBorder(null);
+        final GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridheight = 2;
+        constraints.insets = AbstractOptionPanel.DEFAULT_INSETS.insets;
+        groupPanel.add(colorSample, constraints);
+        constraints.insets = new Insets(0, 0, 0, 0);
+        final JToggleButton transparentButton;
+        if (allowTransparent) {
+            constraints.gridheight = 1;
+            constraints.gridy = 1;
+            transparentButton = new JToggleButton(Message.PREFERENCES_SETTING_TRANSPARENT_COLOR.get());
+            transparentButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(final ActionEvent event) {
+                    colorSample.setBackground(null);
+                    transparentButton.setSelected(true);
+                }
+            });
+            groupPanel.add(transparentButton, constraints);
+            constraints.gridy = 0;
+        } else {
+            transparentButton = null;
+        }
+        final Color colorSetting = setting.getValueAsColor();
+        colorSample.setBackground(colorSetting);
+        if (transparentButton != null) {
+            transparentButton.setSelected(colorSetting == null);
+        }
+        // create a button for choosing the color
+        final JButton changeColorButton = new JButton(Message.PREFERENCES_SETTING_CHANGE_COLOR.get());
+        final JColorChooser colorChooser = new JColorChooser();
+        changeColorButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                colorChooser.setColor(colorSample.getBackground());
+                JColorChooser.createDialog(AbstractSimpleOptionPanel.this, title.get(), true, colorChooser, new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(final ActionEvent okEvent) {
+                        colorSample.setBackground(colorChooser.getColor());
+                        if (transparentButton != null) {
+                            transparentButton.setSelected(false);
+                        }
+
+                    }
+                }, null).setVisible(true);
+            }
+        });
+        constraints.gridx = 1;
+        groupPanel.add(changeColorButton, constraints);
+        constraints.gridx = 2;
+        constraints.gridheight = 2;
+        constraints.weightx = 1;
+        groupPanel.add(new JPanel(), constraints);
+        return groupPanel;
     }
 
     /**
@@ -62,6 +156,30 @@ public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOption
      */
     protected final void addChosenSetting(final S key, final String value) {
         this.chosenSettings.put(key, value);
+    }
+
+    /**
+     * Remember the chosen {@link Color} setting value for the specified key.
+     *
+     * @param key
+     *            which option has been defined
+     * @param value
+     *            chosen {@link Color} value for this setting
+     */
+    protected final void addChosenSetting(final S key, final Color value) {
+        this.addChosenSetting(key, ConversionUtil.toString(value));
+    }
+
+    /**
+     * Remember the chosen numeric setting value for the specified key.
+     *
+     * @param key
+     *            which option has been defined
+     * @param value
+     *            chosen numeric value for this setting
+     */
+    protected final void addChosenSetting(final S key, final int value) {
+        this.addChosenSetting(key, String.valueOf(value));
     }
 
     /**

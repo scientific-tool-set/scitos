@@ -21,6 +21,7 @@ package org.hmx.scitos.view;
 
 import org.hmx.scitos.core.i18n.Message;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * The valid file types this program is able to open and save.
@@ -29,13 +30,17 @@ public enum FileType {
     /**
      * File type: autobiographical interview scoring.
      */
-    AIS(Message.MENUBAR_FILE_TYPE_AIS, ".aisp", "AI-Scoring/1.0", "org.hmx.scitos.ais.view.swing.AisModule",
-            "org.hmx.scitos.ais.view.swing.AisModuleInitializer");
-
+    AIS(Message.MENUBAR_FILE_TYPE_AIS, ".aisp", "FileType", "AI-Scoring/1.0", "org.hmx.scitos.ais.view.swing.AisModule",
+            "org.hmx.scitos.ais.view.swing.AisModuleInitializer"),
     /**
-     * The name of an xml document's root element attribute, determining the expected project/model type contained.
+     * File type: HermeneutiX (syntactical and semantical structure analysis of complex texts - potentially in foreign language).
      */
-    private static final String XML_ROOT_TYPE_ATTRIBUTE = "FileType";
+    HMX(Message.MENUBAR_FILE_TYPE_HMX, ".hmx", "FileType", "HermeneutiX/2.0", "org.hmx.scitos.hmx.view.swing.HmxModule",
+            "org.hmx.scitos.hmx.view.swing.HmxModuleInitializer"),
+    /**
+     * File type: HermeneutiX (old type for backwards compatibility).
+     */
+    HMX_OLD(null, ".hmx", "Type", "HermeneutiX", "org.hmx.scitos.hmx.view.swing.HmxModule", "org.hmx.scitos.hmx.view.swing.HmxModuleInitializer");
 
     /**
      * The localizable message to be displayed for this type.
@@ -46,9 +51,13 @@ public enum FileType {
      */
     private final String fileExtension;
     /**
-     * The <code>type</code> attribute value in the actual <code>xml</code> root element of the represented files.
+     * The {@code type} attribute on a {@code xml}'s root element of an associated file.
      */
-    private final String internalTypeAttribute;
+    private final String typeAttribute;
+    /**
+     * The {@code type} attribute's value in the actual {@code xml} root element of an associated file.
+     */
+    private final String typeAttributeValue;
     /**
      * The fully qualified name of the associated module class (to construct a dependency injection graph).
      */
@@ -66,9 +75,9 @@ public enum FileType {
      * @return represented file type (i.e. expected project/model type contained)
      */
     public static FileType fromXml(final Document xml) {
-        final String attributeValue = xml.getDocumentElement().getAttribute(FileType.XML_ROOT_TYPE_ATTRIBUTE);
+        final Element root = xml.getDocumentElement();
         for (final FileType singleType : FileType.values()) {
-            if (singleType.internalTypeAttribute.equalsIgnoreCase(attributeValue)) {
+            if (root.getAttribute(singleType.typeAttribute).equals(singleType.typeAttributeValue)) {
                 return singleType;
             }
         }
@@ -82,18 +91,21 @@ public enum FileType {
      *            the localizable message to be displayed for this type
      * @param extension
      *            the file extension
-     * @param internalTypeAttribute
-     *            the internal file type (as expected in the actual XML structure of an opened file)
+     * @param typeAttribute
+     *            the internal file type attribute (on the XML structure's document element)
+     * @param typeAttributeValue
+     *            the internal file type value (as expected in the actual XML structure of an opened file)
      * @param moduleClassName
      *            the fully qualified name of the associated module class (to construct a dependency injection graph)
      * @param moduleInitializerClassName
      *            the fully qualified name of the associated module's initializing class (to be loaded via dependency injection)
      */
-    private FileType(final Message localizableName, final String extension, final String internalTypeAttribute, final String moduleClassName,
-            final String moduleInitializerClassName) {
+    private FileType(final Message localizableName, final String extension, final String typeAttribute, final String typeAttributeValue,
+            final String moduleClassName, final String moduleInitializerClassName) {
         this.localizableName = localizableName;
         this.fileExtension = extension;
-        this.internalTypeAttribute = internalTypeAttribute;
+        this.typeAttribute = typeAttribute;
+        this.typeAttributeValue = typeAttributeValue;
         this.moduleClassName = moduleClassName;
         this.moduleInitializerClassName = moduleInitializerClassName;
     }
@@ -110,7 +122,7 @@ public enum FileType {
     /**
      * Getter for the file extension.
      *
-     * @return the file extension
+     * @return the file extension (is {@code null} if this type only exists for backward compatibility)
      */
     public String getFileExtension() {
         return this.fileExtension;
@@ -141,6 +153,6 @@ public enum FileType {
      *            the xml document to be marked as representing this file type
      */
     public void applyToXml(final Document xml) {
-        xml.getDocumentElement().setAttribute(FileType.XML_ROOT_TYPE_ATTRIBUTE, this.internalTypeAttribute);
+        xml.getDocumentElement().setAttribute(this.typeAttribute, this.typeAttributeValue);
     }
 }

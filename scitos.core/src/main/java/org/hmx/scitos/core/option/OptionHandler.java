@@ -125,7 +125,7 @@ public final class OptionHandler<O extends Enum<? extends IOptionSetting> & IOpt
      *
      * @param key
      *            key of the required option entry
-     * @return option entry for the key; returns <code>null</code> if no entry found
+     * @return option entry for the key; returns {@code null} if no entry found
      */
     public String getProperty(final O key) {
         return this.chosenOptions.getProperty(key.getKey());

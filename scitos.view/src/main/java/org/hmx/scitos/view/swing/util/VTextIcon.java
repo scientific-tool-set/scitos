@@ -1,6 +1,7 @@
 package org.hmx.scitos.view.swing.util;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -67,7 +68,7 @@ public final class VTextIcon implements Icon, PropertyChangeListener {
     /** The applied buffer space between characters in pixels. */
     private static final int SPACING = 5;
 
-    /** The text being displayed */
+    /** The text being displayed. */
     private String labelText;
     /** For efficiency, break the labelText into one-char strings to be passed to drawString individually. */
     private String[] labelCharacters;
@@ -123,7 +124,7 @@ public final class VTextIcon implements Icon, PropertyChangeListener {
     }
 
     /**
-     * sets the label to the given string, updating the orientation as needed and invalidating the layout if the size changes
+     * Set the label to the given string. Updating the orientation as needed and invalidating the layout if the size changes.
      *
      * @param label
      *            the new text to display
@@ -136,7 +137,9 @@ public final class VTextIcon implements Icon, PropertyChangeListener {
         this.recalcDimensions();
     }
 
-    /** Checks for changes to the font on the {@code parentComponent} so that it can invalidate the layout if the size changes */
+    /**
+     * Checks for changes to the {@link Font} on the {@code parentComponent} so that it can invalidate the layout if the size changes.
+     */
     @Override
     public void propertyChange(final PropertyChangeEvent event) {
         if ("font".equals(event.getPropertyName())) {

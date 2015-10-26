@@ -50,7 +50,7 @@ import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.view.swing.util.Validation;
 
 /**
- * Panel to be added in the <code>General</code> node of the {@link OptionView}, offering the choice of the LookAndFeel and the maximum number of
+ * Panel to be added in the {@code General} node of the {@link OptionView}, offering the choice of the LookAndFeel and the maximum number of
  * stored model states available for undo-actions.
  */
 public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> {

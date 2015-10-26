@@ -49,7 +49,7 @@ public final class DetailCategory implements Serializable {
      * Main constructor.
      *
      * @param parent
-     *            the detail category this is sub category of; or <code>null</code> if it is a top level category itself
+     *            the detail category this is sub category of; or {@code null} if it is a top level category itself
      * @param code
      *            the short label displayed inside an interview scoring (e.g. E2, I4, ...)
      * @param name
@@ -73,7 +73,7 @@ public final class DetailCategory implements Serializable {
     }
 
     /**
-     * Getter for the detail category this is sub category of (can be <code>null</code>).
+     * Getter for the detail category this is sub category of (can be {@code null}).
      *
      * @return the parent
      */

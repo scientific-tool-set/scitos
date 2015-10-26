@@ -31,20 +31,26 @@ import org.hmx.scitos.view.swing.MessageHandler.MessageType;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 import org.w3c.dom.Document;
 
-/**
- *
- */
-public class SvgExportDetailsDialog extends JDialog {
+/** Dialog offering all relevant options for the export into svg. */
+public final class SvgExportDetailsDialog extends JDialog {
 
+    /** Copy/clone of the model to be exported. */
     private final Pericope model;
+    /** Service provider required to allow the actual export feature to write the result to a file. */
     private final IModelParseServiceProvider modelParseProvider;
-
-    private final JCheckBox includeCommentsCheckBox;
+    /** What content to export: Syntactical Analysis. */
     private final JRadioButton syntacticalButton;
+    /** What content to export: Semantical Analysis. */
     private final JRadioButton semanticalButton;
+    /** What content to export: Comments. */
     private final JRadioButton commentsButton;
+    /** Settings when exporting one of the analyses: if comments should be included and indicated by numeric identifiers. */
+    private final JCheckBox includeCommentsCheckBox;
+    /** Settings when exporting comments: export from both analyses (i.e. from all model elements).. */
     private final JRadioButton commentsAllButton;
+    /** Settings when exporting comments: export only from the Syntactical Analysis. */
     private final JRadioButton commentsSynButton;
+    /** Settings when exporting comments: export only from the Semantical Analysis. */
     private final JRadioButton commentsSemButton;
 
     /**
@@ -166,6 +172,13 @@ public class SvgExportDetailsDialog extends JDialog {
         ViewUtil.centerOnParent(this);
     }
 
+    /**
+     * Generate the svg export with the current settings.
+     * 
+     * @return if the export was generated successfully (is {@code false} if the user aborted the file selection)
+     * @throws HmxException
+     *             failed to generate svg or could not save the export result to the designated file
+     */
     boolean executeExport() throws HmxException {
         final Document svg;
         if (this.syntacticalButton.isSelected()) {

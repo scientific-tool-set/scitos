@@ -100,7 +100,7 @@ public interface IViewProject<M extends IModel<M>> {
     boolean save() throws HmxException;
 
     /**
-     * Save the current project to the specified path and store it for the next <code>saveProject()</code> call.
+     * Save the current project to the specified path and store it for the next {@code saveProject()} call.
      *
      * @param path
      *            designated save location

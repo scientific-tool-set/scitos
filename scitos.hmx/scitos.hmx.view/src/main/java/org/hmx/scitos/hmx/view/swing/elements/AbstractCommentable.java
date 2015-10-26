@@ -25,7 +25,9 @@ public abstract class AbstractCommentable<T extends ICommentable> extends JPanel
     }
 
     /**
-     * @return represented commentable model element
+     * Getter for the represented commentable model element.
+     * 
+     * @return represented model element
      */
     public abstract T getRepresented();
 

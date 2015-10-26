@@ -150,7 +150,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
      * Create a single button for the main tool bar, that is assigning the specified detail category to all selected tokens on click.
      *
      * @param category
-     *            detail category to assign when clicked (can be <code>null</code> to remove any category assignments)
+     *            detail category to assign when clicked (can be {@code null} to remove any category assignments)
      * @return create button for the main tool bar
      */
     private JButton createCategoryToolBarItem(final DetailCategory category) {
@@ -170,7 +170,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
      * Assign the given category to all currently selected tokens.
      *
      * @param category
-     *            detail category to assign (can be <code>null</code> to remove any category assignments)
+     *            detail category to assign (can be {@code null} to remove any category assignments)
      */
     void assignDetailCategoryToSelectedTokens(final DetailCategory category) {
         if (this.viewPanel instanceof InterviewScoringPanel) {

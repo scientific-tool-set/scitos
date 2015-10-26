@@ -22,27 +22,80 @@ import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Implementation of the svg export functionality for the semantical analysis contained in a {@link Pericope}.
+ */
 class SemanticalSvgCreator extends AbstractSvgCreator {
 
     private static final double ARROW_SCALE = .6;
 
+    /**
+     * Width of the lines being drawn to represent a {@link Relation}.
+     */
     private final double relationStroke;
+    /**
+     * Stroke color applied to the lines being drawn to represent a {@link Relation}.
+     */
     private final String colorRelation;
+    /**
+     * Font color applied to the associates' roles in a {@link Relation}.
+     */
     private final String colorSemRole;
 
+    /** If comments should be indicated by a numeric identifier on the commented element. */
     private boolean commentsIncluded;
-    private Locale locale;
+    /**
+     * The running counter for the numeric identifier on commented elements, if the {@code commentsIncluded} is set to {@code true}.
+     */
     private int commentCounter;
+    /**
+     * Which {@link Locale} to use when converting the high weight associate roles in a {@link Relation} to upper case.
+     */
+    private Locale locale;
+    /**
+     * The overall maximum width of a single {@link Proposition} in the currently generated svg document, in order to determine the position of the
+     * {@link Relation}s.
+     */
     private double propositionExtentX;
+    /**
+     * The horizontal space reserved for the {@link Proposition} labels.
+     */
     private double labelWidth;
+    /**
+     * The baseline (y coordinate) of the label and origin text in a {@link Proposition}.
+     */
     private double originTextBaseLine;
+    /**
+     * The vertical space reserved for a {@link Proposition}.
+     */
     private double propositionHeight;
+    /**
+     * The vertical space reserved for the a {@link Proposition}'s translation text.
+     */
     private double translationHeight;
+    /**
+     * The expected height of a single arrow connecting a {@link Proposition}'s parts with enclosed children.
+     */
     private double arrowHeight;
+    /**
+     * The expected width of a single arrow connecting a {@link Proposition}'s parts with enclosed children.
+     */
     private double arrowWidth;
+    /**
+     * The reserved vertical space for an associate's role label in a {@link Relation}.
+     */
     private double roleHeight;
+    /**
+     * The reserved horizontal space for the role labels in {@link Relation}s on the different levels.
+     */
     private List<Double> semColumnWidths;
 
+    /**
+     * Constructor.
+     * 
+     * @param model
+     *            the model containing the semantical analysis to be exported into a svg document
+     */
     protected SemanticalSvgCreator(final Pericope model) {
         super(model);
         this.relationStroke = this.verticalSpacing / 2;
@@ -51,13 +104,14 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
-     * Executes the svg generation.
+     * Generate an svg document representing the semantical analysis.
      *
      * @param includeComments
      *            if the comments are to be included in the created SVG as slightly smaller numbers and invisible description elements (in some SVG
      *            viewers processed as tool tips)
      * @return generated svg document
      * @throws HmxException
+     *             failed to create an empty document to be filled
      */
     protected synchronized Document generateSvg(final boolean includeComments) throws HmxException {
         this.commentsIncluded = includeComments;
@@ -135,6 +189,14 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         return xml;
     }
 
+    /**
+     * Calculate horizontal and vertical spacings to be applied to the whole generated svg document.
+     * 
+     * @param flatPropositions
+     *            all {@link Proposition}s to be contained in the generated svg document
+     * @param flatRelations
+     *            all {@link Relation}s to be contained in the generated svg document
+     */
     private void prepareConstraints(final List<Proposition> flatPropositions, final List<Relation> flatRelations) {
         final List<String> texts = this.collectTexts(flatPropositions, flatRelations);
         // height of origin text parts: texts[0] Propositions origin texts separated by spaces
@@ -244,9 +306,12 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
-     * WARNING: all non-origin-text parts are assumed to be left-to-right oriented.<br>
-     * In order to provide a dynamic positioning one must explicitly identify the orientation of the user language.</br>
+     * Create the svg representation of the {@link Proposition} at the given {@code targetIndex}.<br>
+     * WARNING: all non-origin-text parts are assumed to be left-to-right oriented. In order to provide a dynamic positioning one must explicitly
+     * identify the orientation of the user language.
      *
+     * @param xml
+     *            the designated svg document this element is created for
      * @param flatPropositions
      *            {@link Proposition}s in the origin order disregarding indentations and splittings (indicated by arrows)
      * @param targetIndex
@@ -319,8 +384,13 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
+     * Insert the svg representation for the {@link Proposition}'s origin text (and potential arrows connecting parts with enclosed children) at the
+     * given {@code index}.
+     * 
+     * @param xml
+     *            the designated svg document the {@code parent} element belongs to
      * @param parent
-     *            parent element to subordinate all clause items
+     *            parent element in the svg document to subordinate all clause items
      * @param flatPropositions
      *            {@link Proposition}s in the origin order disregarding indentations and splittings (indicated by arrows)
      * @param index
@@ -372,6 +442,18 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         return horizontalExtent;
     }
 
+    /**
+     * Create the svg representation for the given {@link Relation}.
+     * 
+     * @param xml
+     *            designated svg document this element is created for
+     * @param target
+     *            the {@link Relation} to represent as a svg element
+     * @param flatPropositions
+     *            all {@link Proposition} contained in the semantical analysis, to determine the vertical position of the {@link Relation} in the
+     *            document
+     * @return the created svg element
+     */
     protected Element createRelation(final Document xml, final Relation target, final List<Proposition> flatPropositions) {
         final Element groupElement = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_GROUP);
         final double indentX = this.calculateConnectX(target);
@@ -447,6 +529,13 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         return groupElement;
     }
 
+    /**
+     * Determine the X coordinate where to connect a super ordinated {@link Relation} to the given {@code target} element.
+     * 
+     * @param target
+     *            the associate in a super ordinated {@link Relation} to connect with
+     * @return the X coordinate where to connect a super ordinated {@link Relation}
+     */
     private double calculateConnectX(final AbstractConnectable target) {
         double indentX;
         final int columnIndex;
@@ -463,17 +552,23 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         return indentX;
     }
 
+    /**
+     * Determine the Y coordinate where to connect a super ordinated {@link Relation} to the given {@code target} element.
+     * 
+     * @param target
+     *            the associate in a super ordinated {@link Relation} to connect with (either a {@link Relation} or {@link Proposition})
+     * @param flatPropositions
+     *            all {@link Proposition}s, representing the lowest elements in the {@link Relation} hierarchy
+     * @return the Y coordinate where to connect a super ordinated {@link Relation}
+     */
     private double calculateConnectY(final AbstractConnectable target, final List<Proposition> flatPropositions) {
         if (target instanceof Proposition) {
             return this.propositionHeight / 2 + ComparisonUtil.indexOfInstance(flatPropositions, target)
                     * (this.propositionHeight + this.verticalSpacing / 2);
         }
-        return this.calculateConnectY((Relation) target, flatPropositions);
-    }
-
-    private double calculateConnectY(final Relation target, final List<Proposition> flatPropositions) {
+        final List<AbstractConnectable> associates = ((Relation) target).getAssociates();
         AbstractConnectable highWeightAssociate = null;
-        for (final AbstractConnectable singleAssociate : target) {
+        for (final AbstractConnectable singleAssociate : associates) {
             if (singleAssociate.getRole().isHighWeight()) {
                 if (highWeightAssociate == null) {
                     highWeightAssociate = singleAssociate;
@@ -484,9 +579,9 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
             }
         }
         if (highWeightAssociate == null) {
-            final List<AbstractConnectable> associates = target.getAssociates();
-            return (this.calculateConnectY(associates.get(0), flatPropositions) + this.calculateConnectY(associates.get(associates.size() - 1),
-                    flatPropositions)) / 2;
+            final double firstAssociateY = this.calculateConnectY(associates.get(0), flatPropositions);
+            final double lastAssociateY = this.calculateConnectY(associates.get(associates.size() - 1), flatPropositions);
+            return (firstAssociateY + lastAssociateY) / 2;
         }
         return this.calculateConnectY(highWeightAssociate, flatPropositions);
     }

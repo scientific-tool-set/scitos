@@ -51,7 +51,7 @@ import org.hmx.scitos.view.swing.util.SplitFrame;
 public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOptionSetting> & IOptionSetting> extends AbstractOptionPanel {
 
     /**
-     * All settings chosen in this instance, which will be saved when the {@link SplitFrame} is closed by the <code>OK</code>-button.
+     * All settings chosen in this instance, which will be saved when the {@link SplitFrame} is closed by the {@code OK}-button.
      */
     private final Map<S, String> chosenSettings = new HashMap<S, String>();
 

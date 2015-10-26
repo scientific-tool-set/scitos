@@ -36,7 +36,7 @@ public interface IMultiObjectModel<M extends IMultiObjectModel<M, S>, S extends 
      * Getter for the grouping key used in {@link #getSubModelObjects()} for the given sub model instance.
      *
      * @param subModel
-     *            sub model instance to get the grouping key for (assumed to be of type <code>S</code>)
+     *            sub model instance to get the grouping key for (assumed to be of type {@code S})
      * @return grouping key
      */
     String getGroupKey(Object subModel);

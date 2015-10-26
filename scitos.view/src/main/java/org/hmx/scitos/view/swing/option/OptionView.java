@@ -41,7 +41,7 @@ import org.hmx.scitos.view.swing.util.SplitFrame;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
- * Swing handler representing the <code>Preferences</code> entry in the JMenuBar; opened JFrame offers the opportunity to set default values for a new
+ * Swing handler representing the {@code Preferences} entry in the JMenuBar; opened JFrame offers the opportunity to set default values for a new
  * analysis and customizing the appearance of the {@link ScitosClient} and its displayed content.
  */
 public final class OptionView {

@@ -960,7 +960,7 @@ public class ModelHandlerTest {
      * @param firstOfDetail
      *            if the given token is the first element of a token range with the same detail category
      * @param detail
-     *            the assigned detail category (can be <code>null</code>
+     *            the assigned detail category (can be {@code null}
      * @param lastOfDetail
      *            if the given token is the last element of a token range with the same detail category
      */

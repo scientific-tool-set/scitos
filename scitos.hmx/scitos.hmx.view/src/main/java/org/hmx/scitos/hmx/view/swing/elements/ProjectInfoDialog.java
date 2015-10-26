@@ -24,6 +24,7 @@ import javax.swing.border.Border;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
+import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.view.swing.HmxSwingProject;
 import org.hmx.scitos.hmx.view.swing.option.FontChooser;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
@@ -31,29 +32,46 @@ import org.hmx.scitos.view.swing.components.ScaledTextPane;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
- * small dialog offering the opportunity to read and edit the stored title, author and comment of a Pericope
+ * Dialog offering the opportunity to edit the stored title, author and comment as well as the origin text's {@link Font} of a {@link Pericope}.
  */
 public final class ProjectInfoDialog extends JDialog {
 
     private static final Border BORDER = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(),
             BorderFactory.createEmptyBorder(3, 3, 3, 3));
-
+    /**
+     * The project to modify the title, author, comment, and origin text {@link Font} for.
+     */
     private final HmxSwingProject project;
+    /**
+     * If the origin text's {@link Font} should be editable as well.
+     */
     private final boolean analysisInProgress;
+    /** The container for the settings components. */
     final JPanel contentPane = new JPanel(new GridBagLayout());
+    /**
+     * The input field for the {@link Pericope}'s title.
+     */
     private final JTextField titleField = new ScaledTextField();
+    /**
+     * The input field for the {@link Pericope}'s author.
+     */
     private final JTextField authorField = new ScaledTextField();
+    /**
+     * The input area for the {@link Pericope}'s comment.
+     */
     private final JTextPane commentArea = new ScaledTextPane();
+    /**
+     * The component for setting the origin text {@link Font}.
+     */
     private FontChooser fontChooser = null;
 
     /**
-     * creates a ProjectInfoDialog for the designated Pericope in the specified {@link HmxClient} to call a refresh of its title if the title has been
-     * changed
+     * Constructor.
      *
      * @param project
-     *            {@link HmxSwingProject} containing the Pericope to edit title, author and comment of
+     *            project representing the {@link Pericope} that should be edited in this dialog
      * @param analysisInProgress
-     *            if the analysis is already in progress
+     *            if the analysis is already in progress (i.e. if the origin text's {@link Font} should be editable as well)
      */
     public ProjectInfoDialog(final HmxSwingProject project, final boolean analysisInProgress) {
         super(project.getFrame(), HmxMessage.PROJECTINFO_FRAME_TITLE.get(), false);
@@ -62,20 +80,18 @@ public final class ProjectInfoDialog extends JDialog {
         this.project = project;
         this.analysisInProgress = analysisInProgress;
         this.initContent();
+        final Dimension minimumSize;
         if (analysisInProgress) {
-            this.setSize(400, 600);
-            this.setMinimumSize(new Dimension(400, 500));
+            minimumSize = new Dimension(400, 500);
         } else {
-            this.setSize(350, 300);
-            this.setMinimumSize(new Dimension(350, 300));
+            minimumSize = new Dimension(350, 300);
         }
+        this.setSize(minimumSize);
+        this.setMinimumSize(minimumSize);
         ViewUtil.centerOnParent(this);
     }
 
-    /**
-     * initializes the input text fields, presets them with the currently stored values and adds the buttons for <code>Commit</code> and
-     * <code>Cancel</code>
-     */
+    /** Initialize the input text fields, presets them with the currently stored values and add the buttons for OK and CANCEL. */
     private void initContent() {
         this.initInput();
         this.initButtons();
@@ -102,8 +118,17 @@ public final class ProjectInfoDialog extends JDialog {
     }
 
     /**
-     * initializes the input text fields and presets them with the currently stored values
+     * Adjust the {@link #contentPane}'s preferred size to fit the dialog's changed size.
      */
+    void handleResizing() {
+        int width = this.getSize().width - 20;
+        if (this.fontChooser != null) {
+            width = Math.min(width, this.fontChooser.getSize().width + 20);
+        }
+        this.contentPane.setPreferredSize(new Dimension(width, this.contentPane.getPreferredSize().height));
+    }
+
+    /** Initialize the input text fields and presets them with the currently stored values. */
     private void initInput() {
         // initialize the title input field
         final JPanel titlePanel = new JPanel(new GridLayout(0, 1));
@@ -140,11 +165,9 @@ public final class ProjectInfoDialog extends JDialog {
         scrollableComment.setBorder(ProjectInfoDialog.BORDER);
         scrollableComment.setMinimumSize(this.commentArea.getPreferredSize());
         commentPanel.add(scrollableComment);
-
         constraints.weighty = 1;
         constraints.gridy = 2;
         this.contentPane.add(commentPanel, constraints);
-
         if (this.analysisInProgress) {
             constraints.gridy = 3;
             final Font pericopeFont = this.project.getModelObject().getFont();
@@ -154,7 +177,7 @@ public final class ProjectInfoDialog extends JDialog {
         }
     }
 
-    /** initializes the OK and CANCEL buttons on the bottom of the dialog */
+    /** Initialize the OK and CANCEL buttons on the bottom of the dialog. */
     private void initButtons() {
         final JPanel buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 30, 10, 30));
@@ -199,7 +222,7 @@ public final class ProjectInfoDialog extends JDialog {
     }
 
     /**
-     * save the current values of the input text fields in the Pericope and close the frame afterwards
+     * Save the current values of the input text fields in the {@link Pericope} and close this dialog afterwards.
      */
     void saveAndClose() {
         this.setVisible(false);
@@ -212,13 +235,5 @@ public final class ProjectInfoDialog extends JDialog {
         this.project.getModelHandler().setMetaData(this.titleField.getText(), this.authorField.getText(), this.commentArea.getText(),
                 selectedFont.getFamily(), selectedFont.getSize());
         this.dispose();
-    }
-
-    void handleResizing() {
-        int width = this.getSize().width - 20;
-        if (this.fontChooser != null) {
-            width = Math.min(width, this.fontChooser.getSize().width + 20);
-        }
-        this.contentPane.setPreferredSize(new Dimension(width, this.contentPane.getPreferredSize().height));
     }
 }

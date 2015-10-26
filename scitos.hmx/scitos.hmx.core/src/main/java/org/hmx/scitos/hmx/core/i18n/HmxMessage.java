@@ -4,11 +4,11 @@ import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Translator;
 
 /**
- * constant interface to avoid hard coded language file keys in the acting classes
+ * constant interface to avoid hard coded language file keys in the acting classes.
  */
 public enum HmxMessage implements ILocalizableMessage {
     PROJECT_NEW("Hmx.Project.New"),
-    /** menubar entry: File -&gt; Export -&gt; to SVG */
+    /** menubar entry: File -&gt; Export to -&gt; SVG. */
     EXPORT_TYPE_SVG("Export.SVG"),
     EXPORT_CONTENT("Export.Contents"),
     EXPORT_CONTENT_SYNTACTICAL("Export.Contents.SyntacticalAnalysis"),
@@ -22,128 +22,136 @@ public enum HmxMessage implements ILocalizableMessage {
     EXPORT_START("Export.Start"),
     EXPORT_SUCCESS("Export.Success"),
 
-    /** menubar entry: Edit -&gt; Project Informations */
+    /** menubar entry: Edit -&gt; Project Informations. */
     MENUBAR_PROJECTINFO("Client.MenuBar.Edit.ProjectInfo"),
-    /** menubar entry: Edit -&gt; Add new Propositions */
+    /** menubar entry: Edit -&gt; Add new Propositions. */
     MENUBAR_ORIGINTEXT_ADD("Client.MenuBar.Edit.OriginText.Add"),
-    /** menubar entry: Edit -&gt; Remove Propositions */
+    /** menubar entry: Edit -&gt; Remove Propositions. */
     MENUBAR_ORIGINTEXT_REMOVE("Client.MenuBar.Edit.OriginText.Remove"),
-    /** confirmation question before removing propositions */
+    /** confirmation question before removing propositions. */
     MENUBAR_ORIGINTEXT_REMOVE_CONFIRM("Client.MenuBar.Edit.OriginText.Remove.Confirm"),
-    /** menubar entry: Edit -&gt; Merge With Other Project */
+    /** menubar entry: Edit -&gt; Merge With Other Project. */
     MENUBAR_PROJECT_MERGE("Client.MenuBar.Edit.MergeProjects"),
-    /** question where to insert the content of project to merge with */
+    /** question where to insert the content of project to merge with. */
     MENUBAR_PROJECT_MERGE_POSITION("Client.MenuBar.Edit.MergeProjects.PositionQuestion"),
-    /** answer: insert content of project to merge with in front of current text */
+    /** answer: insert content of project to merge with in front of current text. */
     MENUBAR_PROJECT_MERGE_INFRONT("Client.MenuBar.Edit.MergeProjects.InFront"),
-    /** answer: insert content of project to merge with behind current text */
+    /** answer: insert content of project to merge with behind current text. */
     MENUBAR_PROJECT_MERGE_BEHIND("Client.MenuBar.Edit.MergeProjects.Behind"),
 
-    /** in the new-project-setup: the hint label over the main text input */
+    /** in the new-project-setup: the hint label over the main text input. */
     TEXTINPUT_TOPIC("TextInput.Topic"),
-    /** alternative topic over main text input when adding more text to project */
+    /** alternative topic over main text input when adding more text to project. */
     TEXTINPUT_TOPIC_ADD_PROPOSITIONS("TextInput.Topic.AddPropositions"),
-    /** in the new-project-setup: button to finish the setup process */
+    /** in the new-project-setup: button to finish the setup process. */
     TEXTINPUT_START_BUTTON("TextInput.StartAnalysis"),
-    /** in the new-project-setup: button to hide the setup area on the right */
+    /** in the new-project-setup: button to hide the setup area on the right. */
     TEXTINPUT_HIDE_BUTTON("TextInput.Settings.Hide"),
-    /** in the new-project-setup: button to show the setup area on the right */
+    /** in the new-project-setup: button to show the setup area on the right. */
     TEXTINPUT_SHOW_BUTTON("TextInput.Settings.Show"),
-    /** in the new-project-setup: label for language selection */
+    /** in the new-project-setup: label for language selection. */
     TEXTINPUT_LANGUAGE("TextInput.Settings.OriginLanguage"),
-    /** in the new-project-setup: additional hints on the right */
+    /** in the new-project-setup: additional hints on the right. */
     TEXTINPUT_HINT("TextInput.Hint"),
-    /** in the new-project-setup: additional warnings on the right */
+    /** in the new-project-setup: additional warnings on the right. */
     TEXTINPUT_WARNING("TextInput.Warning"),
-    /** text input view: button to add new propositions in front of current text */
+    /** text input view: button to add new propositions in front of current text. */
     TEXTINPUT_BEFORE_BUTTON("TextInput.AddText.Before"),
-    /** text input view: button to add new propositions behind current text */
+    /** text input view: button to add new propositions behind current text. */
     TEXTINPUT_BEHIND_BUTTON("TextInput.AddText.Behind"),
-    /** confirmation question: proceed closing of new project in setup mode */
+    /** confirmation question: proceed closing of new project in setup mode. */
     TEXTINPUT_QUIT_QUESTION("TextInput.Quit.DiscardInputQuestion"),
-    /** title of the {@link #TEXTINPUT_QUIT_QUESTION} dialog */
+    /**
+     * title of the {@link #TEXTINPUT_QUIT_QUESTION} dialog.
+     */
     TEXTINPUT_QUIT_TITLE("TextInput.Quit.DiscardInputTitle"),
 
-    /** title of the popup behind the {@link #MENUBAR_PROJECTINFO} entry */
+    /**
+     * title of the popup behind the {@link #MENUBAR_PROJECTINFO} entry.
+     */
     PROJECTINFO_FRAME_TITLE("ProjectInfo.FrameTitle"),
-    /** topic of the popup behind the {@link #MENUBAR_PROJECTINFO} entry */
+    /**
+     * topic of the popup behind the {@link #MENUBAR_PROJECTINFO} entry.
+     */
     PROJECTINFO_TITLE("ProjectInfo.Title"),
-    /** author label in the {@link #MENUBAR_PROJECTINFO} popup */
+    /**
+     * author label in the {@link #MENUBAR_PROJECTINFO} popup.
+     */
     PROJECTINFO_AUTHOR("ProjectInfo.Author"),
-    /** comment label in the {@link #MENUBAR_PROJECTINFO} popup */
+    /**
+     * comment label in the {@link #MENUBAR_PROJECTINFO} popup.
+     */
     PROJECTINFO_COMMENT("ProjectInfo.Comment"),
 
-    /** label over the comment area in the analysis mode */
+    /** label over the comment area in the analysis mode. */
     ANALYSIS_COMMENT_TOPIC("Analysis.CommentTopic"),
 
-    /** button to switch to the syntactical analysis view */
+    /** button to switch to the syntactical analysis view. */
     ANALYSIS_SYNTACTICAL_BUTTON("Analysis.Syntactical"),
-    /** syntactical context menu entry: change clause item function */
+    /** syntactical context menu entry: change clause item function. */
     MENU_CHANGE_ITEM_FUNCTION("Analysis.Syntactical.ChangeItemFunction"),
-    /** syntactical context menu entry: change indentation function */
+    /** syntactical context menu entry: change indentation function. */
     MENU_CHANGE_PROP_FUNCTION("Analysis.Syntactical.ChangePropositionFunction"),
-    /** syntactical context menu entry: merge clause item with its prior */
+    /** syntactical context menu entry: merge clause item with its prior. */
     MENU_MERGE_ITEM_PRIOR("Analysis.Syntactical.MergeWithPriorItem"),
-    /** syntactical context menu entry: merge clause item with its follower */
+    /** syntactical context menu entry: merge clause item with its follower. */
     MENU_MERGE_ITEM_FOLLOWER("Analysis.Syntactical.MergeWithFollowingItem"),
-    /** syntactical context menu entry: split clause item */
+    /** syntactical context menu entry: split clause item. */
     MENU_SPLIT_ITEM_AFTER("Analysis.Syntactical.SplitClauseItemAfter"),
-    /** syntactical context menu entry: set clause item function style */
+    /** syntactical context menu entry: set clause item function style. */
     MENU_HIGHLIGHT_ITEM("Analysis.Syntactical.HighlightItem"),
-    /** clause item function style sub menu: set to plain */
+    /** clause item function style sub menu: set to plain. */
     MENU_HIGHLIGHT_ITEM_PLAIN("Analysis.Syntactical.HighlightItem.Plain"),
-    /** clause item function style sub menu: set to bold */
+    /** clause item function style sub menu: set to bold. */
     MENU_HIGHLIGHT_ITEM_BOLD("Analysis.Syntactical.HighlightItem.Bold"),
-    /** clause item function style sub menu: set to italic */
+    /** clause item function style sub menu: set to italic. */
     MENU_HIGHLIGHT_ITEM_ITALIC("Analysis.Syntactical.HighlightItem.Italic"),
-    /** clause item function style sub menu: set to bold and italic */
+    /** clause item function style sub menu: set to bold and italic. */
     MENU_HIGHLIGHT_ITEM_BOLD_ITALIC("Analysis.Syntactical.HighlightItem.BoldAndItalic"),
-    /** syntactical context menu entry: split proposition */
+    /** syntactical context menu entry: split proposition. */
     MENU_SPLIT_PROP("Analysis.Syntactical.SplitProposition"),
-    /** syntactical context menu entry: merge propositions */
+    /** syntactical context menu entry: merge propositions. */
     MENU_MERGE_CHECKED_PROP("Analysis.Syntactical.MergeCheckedPropositions"),
-    /** syntactical context menu entry: indent proposition */
+    /** syntactical context menu entry: indent proposition. */
     MENU_INDENT_PROP("Analysis.Syntactical.IndentProposition"),
-    /** syntactical context menu entry: unindent proposition */
+    /** syntactical context menu entry: unindent proposition. */
     MENU_UNINDENT_PROP("Analysis.Syntactical.RemoveOneIndentation"),
-    /** hint: the desired unindentation affects the indentation of others */
+    /** hint: the desired unindentation affects the indentation of others. */
     MENU_UNINDENT_PROP_COLATERAL("Analysis.Syntactical.RemoveOneIndentation.AffectsOthers"),
-    /** title of the {@link #MENU_UNINDENT_PROP_COLATERAL} hint message */
+    /**
+     * title of the {@link #MENU_UNINDENT_PROP_COLATERAL} hint message.
+     */
     MENU_UNINDENT_PROP_COLATERAL_TITLE("Analysis.Syntactical.RemoveOneIndentation.AffectsOthers.Title"),
-    /** syntactical context menu entry: split part-after-arrow from other part */
+    /** syntactical context menu entry: split part-after-arrow from other part. */
     MENU_RESET_PROP_PART("Analysis.Syntactical.ResetStandaloneProposition"),
 
-    /** button to switch to the syntactical analysis view */
+    /** button to switch to the syntactical analysis view. */
     ANALYSIS_SEMANTICAL_BUTTON("Analysis.Semantical"),
-    /** semantical context menu entry: create relation */
+    /** semantical context menu entry: create relation. */
     MENU_CREATE_RELATION("Analysis.Semantical.CreateRelation"),
-    /** semantical context menu entry: rotate roles of relation parts */
+    /** semantical context menu entry: rotate roles of relation parts. */
     MENU_ROTATE_RELATION_ROLES("Analysis.Semantical.RotateAssociateRoles"),
-    /** semantical context menu entry: change relation type */
+    /** semantical context menu entry: change relation type. */
     MENU_ALTER_RELATION_TYPE("Analysis.Semantical.AlterRelationType"),
-    /** semantical context menu entry: remove relation */
+    /** semantical context menu entry: remove relation. */
     MENU_KILL_RELATION("Analysis.Semantical.RemoveRelation"),
-    /**
-     * semantical analysis view check box tooltip: fold relations on single level
-     */
+    /** semantical analysis view check box tooltip: fold relations on single level. */
     MENU_FOLD_RELATION_LEVEL("Analysis.Semantical.RelationFolding.FoldLevel"),
-    /**
-     * semantical analysis view check box tooltip: unfold relations on single level
-     */
+    /** semantical analysis view check box tooltip: unfold relations on single level. */
     MENU_UNFOLD_RELATION_LEVEL("Analysis.Semantical.RelationFolding.UnfoldLevel"),
-    /** semantical analysis view button: fold all relations */
+    /** semantical analysis view button: fold all relations. */
     MENU_FOLD_RELATION_ALL("Analysis.Semantical.RelationFolding.FoldAll"),
-    /** semantical analysis view button: unfold all relations */
+    /** semantical analysis view button: unfold all relations. */
     MENU_UNFOLD_RELATION_ALL("Analysis.Semantical.RelationFolding.UnfoldAll"),
 
-    /** export related labels */
+    /** export related labels. */
     EXPORT_TITLE("Export.Title"),
     EXPORT_TITLE_AUTHOR("Export.Title.Author"),
 
     EXPORT_HEIGHT("Export.Height"),
     EXPORT_WIDTH("Export.Width"),
 
-    /** error messages */
+    /** error messages. */
     ERROR_INDENT("Error.Indentation.Create"),
     ERROR_INDENT_UNDER_OWN_CHILD("Error.Indentation.CreateUnderOwnChild"),
     ERROR_UNINDENT_PERICOPE("Error.Indentation.Remove.PericopeReached"),
@@ -172,7 +180,7 @@ public enum HmxMessage implements ILocalizableMessage {
     FONT_SAMPLE_TEXT("Setting.Font.SampleText"),
     SETTING_CHANGE_COLOR("Preferences.View.Color.Change"),
     SETTING_SET_TRANSPARENT("Preferences.View.Color.Transparent"),
-    /** user preferences */
+    /** user preferences. */
     PREFERENCES_GENERAL("Preferences.General"),
     PREFERENCES_GENERAL_ARROW_COLOR("Preferences.View.Color.Arrow"),
     PREFERENCES_GENERAL_RELATION_COLOR("Preferences.View.Color.Relation"),

@@ -36,14 +36,14 @@ import javax.swing.SwingUtilities;
 public class WrapLayout extends FlowLayout {
 
     /**
-     * Constructs a new <code>WrapLayout</code> with a left alignment and a default 5-unit horizontal and vertical gap.
+     * Constructs a new {@code WrapLayout} with a left alignment and a default 5-unit horizontal and vertical gap.
      */
     public WrapLayout() {
         super();
     }
 
     /**
-     * Constructs a new <code>WrapLayout</code> with the specified alignment and a default 5-unit horizontal and vertical gap. The value of the
+     * Constructs a new {@code WrapLayout} with the specified alignment and a default 5-unit horizontal and vertical gap. The value of the
      * alignment argument must be one of {@link FlowLayout#CENTER}, {@link FlowLayout#LEADING}, or {@link FlowLayout#TRAILING}.
      *
      * @param align
@@ -54,7 +54,7 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
-     * Creates a new <code>WrapLayout</code> with the indicated alignment and the indicated horizontal and vertical gaps. The value of the alignment
+     * Creates a new {@code WrapLayout} with the indicated alignment and the indicated horizontal and vertical gaps. The value of the alignment
      * argument must be one of {@link FlowLayout#CENTER}, {@link FlowLayout#LEADING}, or {@link FlowLayout#TRAILING}.
      *
      * @param align

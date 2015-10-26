@@ -46,11 +46,17 @@ public class ProjectViewServiceImpl implements IProjectViewService<HmxSwingProje
 
     /** The associated active client instance, to forward to created views. */
     private final ScitosClient client;
+    /**
+     * The (user defined) provider of {@link LanguageModel}s available for new projects.
+     */
     private final HmxLanguageOption languageModelProvider;
+    /**
+     * The (user defined) provider of the {@link RelationModel} being applied.
+     */
     private final HmxRelationOption relationProvider;
 
     /**
-     * Main constructor.
+     * Constructor.
      *
      * @param client
      *            associated active client instance

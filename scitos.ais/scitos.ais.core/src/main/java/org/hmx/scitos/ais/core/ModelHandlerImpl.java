@@ -462,7 +462,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *
      * @param tokenRange
      *            range of tokens to check for not-self-contained detail categories
-     * @return not-self-contained detail categories: <code>+1</code> for each opened detail without a close, and <code>-1</code> for each closed
+     * @return not-self-contained detail categories: {@code +1} for each opened detail without a close, and {@code -1} for each closed
      *         detail without a start
      */
     private Map<DetailCategory, AtomicInteger> collectIntersectedCategories(final List<TextToken> tokenRange) {
@@ -541,7 +541,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * @param sectionCategory
      *            the detail category of the section to fix
      * @param steps
-     *            the number of sections with the same detail category to fix in this method (must be a positive number <code>>0</code> )
+     *            the number of sections with the same detail category to fix in this method (must be a positive number {@code >0} )
      */
     private void moveCategorySectionStartToTheRight(final TextToken firstPossibleTarget, final DetailCategory sectionCategory, final int steps) {
         int stepsRemaining = steps;
@@ -570,7 +570,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * @param sectionCategory
      *            the detail category of the section to fix
      * @param steps
-     *            the number of sections with the same detail category to fix in this method (must be a positive number <code>>0</code> )
+     *            the number of sections with the same detail category to fix in this method (must be a positive number {@code >0} )
      */
     private void moveCategorySectionEndToTheLeft(final TextToken firstPossibleTarget, final DetailCategory sectionCategory, final int steps) {
         int stepsRemaining = steps;
@@ -617,7 +617,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     }
 
     /**
-     * Assign the <code>interviewsToAdd</code> to the given participant id, while ensuring that the <code>index</code> attribute of the added
+     * Assign the {@code interviewsToAdd} to the given participant id, while ensuring that the {@code index} attribute of the added
      * interviews is consistent with already assigned interviews.
      *
      * @param previousInterviews
@@ -802,7 +802,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *            the interview to check against
      * @param otherInterview
      *            other interview to compare with
-     * @return message describing an occurred difference, or <code>null</code> if both interviews are equal
+     * @return message describing an occurred difference, or {@code null} if both interviews are equal
      */
     String validateEquality(final Interview oneInterview, final Interview otherInterview) {
         if (oneInterview == otherInterview) {
@@ -835,7 +835,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *            the paragraph (represented by its first token) to check against
      * @param otherParagraphStart
      *            other paragraph (represented by its first token) to compare with
-     * @return message describing an occurred difference, or <code>null</code> if both paragraphs are equal
+     * @return message describing an occurred difference, or {@code null} if both paragraphs are equal
      */
     String validateEquality(final TextToken oneParagraphStart, final TextToken otherParagraphStart) {
         TextToken oneToken = oneParagraphStart;

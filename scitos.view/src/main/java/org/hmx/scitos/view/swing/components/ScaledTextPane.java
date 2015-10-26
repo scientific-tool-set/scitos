@@ -7,9 +7,14 @@ import javax.swing.UIManager;
 
 import org.hmx.scitos.view.swing.ScitosApp;
 
-/** TextPane extension that is scaling the displayed text's font according to the global setting. */
+/**
+ * {@link JTextPane} extension that is scaling the displayed text's {@link Font} according to the global setting.
+ */
 public class ScaledTextPane extends JTextPane {
 
+    /**
+     * The specific {@link Font} that has been set via the {@link #setFont(Font)} method from outside this class.
+     */
     private Font baseFont = null;
 
     @Override
@@ -33,10 +38,13 @@ public class ScaledTextPane extends JTextPane {
         this.validateScaleFactor();
     }
 
+    /** (Re-)Apply the global content size factor to the font used to display the label's text. */
     private void validateScaleFactor() {
-        Font toApply = this.baseFont;
-        if (toApply == null) {
+        final Font toApply;
+        if (this.baseFont == null) {
             toApply = UIManager.getFont("TextPane.font");
+        } else {
+            toApply = this.baseFont;
         }
         if (toApply != null) {
             final float scaleFactor;

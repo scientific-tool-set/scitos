@@ -28,9 +28,13 @@ import org.hmx.scitos.domain.util.ComparisonUtil;
  */
 public final class TextToken implements Cloneable, Serializable {
 
-    /** The preceding token in the interview's paragraph (is <code>null</code> if this is the first token in the paragraph). */
+    /**
+     * The preceding token in the interview's paragraph (is {@code null} if this is the first token in the paragraph).
+     */
     private TextToken previousToken;
-    /** The next token in the interview's paragraph (is <code>null</code> if this is the last token in the paragraph). */
+    /**
+     * The next token in the interview's paragraph (is {@code null} if this is the last token in the paragraph).
+     */
     private TextToken followingToken;
     /** The text this token is comprised of (usually a single word). */
     private final String text;
@@ -54,7 +58,7 @@ public final class TextToken implements Cloneable, Serializable {
     /**
      * Getter for the preceding token.
      *
-     * @return the previous token (is <code>null</code> if this is the first token in the paragraph)
+     * @return the previous token (is {@code null} if this is the first token in the paragraph)
      */
     public TextToken getPreviousToken() {
         return this.previousToken;
@@ -75,7 +79,7 @@ public final class TextToken implements Cloneable, Serializable {
     /**
      * Getter for the next token.
      *
-     * @return the following token (is <code>null</code> if this is the last token in the paragraph)
+     * @return the following token (is {@code null} if this is the last token in the paragraph)
      */
     public TextToken getFollowingToken() {
         return this.followingToken;
@@ -105,7 +109,7 @@ public final class TextToken implements Cloneable, Serializable {
     /**
      * Getter for the assigned detail category.
      *
-     * @return the assigned detail (can be <code>null</code>)
+     * @return the assigned detail (can be {@code null})
      */
     public DetailCategory getDetail() {
         return this.detail;

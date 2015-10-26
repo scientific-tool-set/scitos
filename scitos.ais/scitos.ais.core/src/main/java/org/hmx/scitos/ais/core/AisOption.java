@@ -136,7 +136,7 @@ public final class AisOption implements IDetailCategoryProvider {
      * Create a selectable detail category with the given properties, converting the virtualKeyCode value into an actual KeyStroke.
      *
      * @param parent
-     *            not-selectable parent detail category (can be <code>null</code> if the create category should have now parent)
+     *            not-selectable parent detail category (can be {@code null} if the create category should have now parent)
      * @param code
      *            short detail name (max. five characters/symbols)
      * @param description
@@ -144,7 +144,7 @@ public final class AisOption implements IDetailCategoryProvider {
      * @param color
      *            the color to show over TextTokens with this assigned detail category
      * @param virtualKeyCode
-     *            the virtual key (as found as KeyEvent constant <code>VK_xxx</code>) to use as short cut
+     *            the virtual key (as found as KeyEvent constant {@code VK_xxx}) to use as short cut
      * @return the created detail category
      * @see #createDefaultCategoryModel()
      */

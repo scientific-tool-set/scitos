@@ -11,14 +11,14 @@ import org.hmx.scitos.hmx.view.IPericopeView;
 /** Abstract base panel for a single analysis. */
 abstract class AbstractAnalysisPanel extends JPanel {
 
-    /** The view project instance this belongs to. */
+    /** The view this panel is displayed in. */
     private final IPericopeView viewReference;
 
     /**
      * Constructor: initializing the invisible and empty panel with the given layout manager.
      *
-     * @param project
-     *            the view project this belongs to
+     * @param viewReference
+     *            the view this panel is displayed in
      * @param layout
      *            the main layout manager to apply
      */

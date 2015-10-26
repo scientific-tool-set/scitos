@@ -6,10 +6,10 @@ import org.hmx.scitos.hmx.core.HmxModelHandler;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
 import org.hmx.scitos.hmx.domain.model.Proposition;
-import org.hmx.scitos.hmx.view.swing.ICommentHandler;
+import org.hmx.scitos.hmx.view.swing.elements.AbstractCommentable;
 
 /** Generic interface of a user view regardless of its actual implementation. */
-public interface IPericopeView extends ICommentHandler, ISemanticalRelationProvider {
+public interface IPericopeView extends ISemanticalRelationProvider {
 
     /**
      * Getter for the model handler, responsible for all actual model changes and manager of any model change events.
@@ -39,4 +39,13 @@ public interface IPericopeView extends ICommentHandler, ISemanticalRelationProvi
      * @return the currently selected {@link AbstractConnectable}s
      */
     List<? extends AbstractConnectable> getSelectedConnectables(AbstractConnectable selectedConnectable);
+
+    /**
+     * Store the most recent modifications in the displayed comment area to the previously selected {@link AbstractCommentable commentable element}
+     * and mark the given {@code newSelected} view element as the currently selected one.
+     *
+     * @param newSelected
+     *            the newly selected commentable view element
+     */
+    void handleSelectedCommentable(AbstractCommentable<?> newSelected);
 }

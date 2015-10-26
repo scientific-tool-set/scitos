@@ -104,7 +104,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
     }
 
     /**
-     * Getter for the detail categories, that have a <code>null</code> parent category.
+     * Getter for the detail categories, that have a {@code null} parent category.
      *
      * @return the root categories without any super ordinated category
      */
@@ -116,7 +116,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
      * Getter for the detail categories, that are children of the given detail category.
      *
      * @param parent
-     *            detail category to collect the children categories for (can be <code>null</code> to get the list of root categories)
+     *            detail category to collect the children categories for (can be {@code null} to get the list of root categories)
      * @return detail category that have the given one as their parent
      */
     public List<DetailCategory> getChildCategories(final DetailCategory parent) {

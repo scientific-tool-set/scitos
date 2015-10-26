@@ -29,17 +29,17 @@ import org.hmx.scitos.core.util.ConversionUtil;
  * Collection of general user preferences for the HermeneutiX module.
  */
 public enum HmxGeneralOption implements IOptionSetting {
-    /** user setting: color of arrows (between splitted propositions) */
+    /** user setting: color of arrows (between splitted propositions). */
     ARROW_COLOR("Arrow.Color", ConversionUtil.toString(Color.BLUE)),
-    /** user setting: color of semantical relations */
+    /** user setting: color of semantical relations. */
     RELATION_COLOR("Relation.Color", ConversionUtil.toString(Color.RED)),
-    /** user setting: color of semantical relations */
+    /** user setting: color of semantical relations. */
     COMMENTED_BORDER_COLOR("Commented.BorderColor", ConversionUtil.toString(Color.GREEN)),
-    /** user setting: width of syntactical indentations */
+    /** user setting: width of syntactical indentations. */
     INDENTATION_WIDTH("SynAnalysis.IndentationWidth", "50"),
-    /** user setting: if the setting area in the new-project-setup should be visible by default */
+    /** user setting: if the setting area in the new-project-setup should be visible by default. */
     SHOW_SETTINGS("TextInput.ShowInputSettings", String.valueOf(true)),
-    /** user setting: default author name when setting up new projects */
+    /** user setting: default author name when setting up new projects. */
     AUTHOR("ProjectInfo.DefaultAuthor", null);
 
     /** The handler for this specific settings collection. */
@@ -51,7 +51,7 @@ public enum HmxGeneralOption implements IOptionSetting {
     private final String defaultValue;
 
     /**
-     * Main constructor.
+     * Constructor.
      *
      * @param attributeKey
      *            actual settings key

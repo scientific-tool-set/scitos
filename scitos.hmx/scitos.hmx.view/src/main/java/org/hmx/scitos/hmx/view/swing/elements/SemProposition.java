@@ -21,27 +21,26 @@ import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
 
 /**
- * extension of the {@link AbstractProposition} with a non-editable {@link JTextField} for the origin text in the top right position
+ * extension of the {@link AbstractProposition} with a non-editable {@link JTextField} for the origin text in the top right position.
  */
 public final class SemProposition extends AbstractProposition implements IConnectable<Proposition> {
 
-    /**
-     * super ordinated semantical analysis panel
-     */
+    /** The super ordinated semantical analysis this is a part of. */
     private final SemAnalysisPanel semArea;
     /**
-     * single field containing the origin text of all clause items
+     * The single text field displaying the origin text of all {@link ClauseItem}s of the represented {@link Proposition}.
      */
     private final JTextField originText = new ScaledTextField();
 
     /**
-     * creates a new {@link SemProposition} on the specified {@link SemAnalysisPanel} representing the designated {@link Proposition} with the defined
-     * language and {@link Font} of the origin text to display
-     *
+     * Constructor: for an element on the specified {@link SemAnalysisPanel} representing the designated {@link Proposition}.
+     * 
+     * @param viewReference
+     *            the view providing access to the project's model handler and handling the comments on model elements
      * @param semPanel
-     *            semantical analysis view to be contained in
+     *            semantical analysis to be contained in
      * @param represented
-     *            model {@link Proposition} to display
+     *            model {@link Proposition} to represent/display
      */
     public SemProposition(final IPericopeView viewReference, final SemAnalysisPanel semPanel, final Proposition represented) {
         super(viewReference.getModelHandler(), represented);
@@ -73,8 +72,8 @@ public final class SemProposition extends AbstractProposition implements IConnec
     }
 
     /**
-     * initializes the explicit semantical functionality by adding a listener to the translation field, activating the comment listener and inserting
-     * the {@link JTextField} for the origin text with the specified {@link Font}
+     * Initialize the explicit semantical functionality by adding a listener to the translation field, activating the comment listener and inserting
+     * the {@link JTextField} for the origin text with the specified {@link Font}.
      */
     private void init() {
         this.getTranslationField().addFocusListener(new FocusAdapter() {
@@ -106,6 +105,8 @@ public final class SemProposition extends AbstractProposition implements IConnec
     }
 
     /**
+     * Getter for the represented {@link Proposition}'s origin text.
+     * 
      * @return displayed origin text
      */
     public String getOriginText() {
@@ -113,7 +114,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
     }
 
     /**
-     * set the displayed origin text regarding to the origin text stored in the represented {@link Proposition}s {@link ClauseItem}s
+     * Set the displayed origin text regarding to the origin text stored in the represented {@link Proposition}'s {@link ClauseItem}s.
      */
     public void refreshOriginText() {
         final StringBuffer text = new StringBuffer(" ");
@@ -130,7 +131,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
     }
 
     /**
-     * sets the semantical translation text regarding the stored translation in the represented {@link Proposition}
+     * sets the semantical translation text regarding the stored translation in the represented {@link Proposition}.
      *
      * @see AbstractProposition#refreshTranslation()
      */
@@ -141,7 +142,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
     }
 
     /**
-     * resets the tool tip info containing the comment text regarding its value in the represented {@link Proposition}
+     * resets the tool tip info containing the comment text regarding its value in the represented {@link Proposition}.
      */
     public void refreshComment() {
         final String comment = this.getRepresented().getComment();

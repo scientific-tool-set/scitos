@@ -41,24 +41,44 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /** The responsible model handler implementation realizing any model changes. */
     private final HmxModelHandler modelHandler;
-    /** represented model {@link Proposition}. */
+    /**
+     * The represented model {@link Proposition}.
+     */
     private final Proposition represented;
-    /** raised bevel border with color, when not selected and with comment set */
+    /** raised bevel border with color, when not selected and with comment set. */
     private final Border defaultBorderCommented;
-
+    /** The actual container of the components this element is comprised of. This abstraction layer allows it being resized as needed. */
     private final JPanel contentPane = new JPanel(new GridBagLayout());
-
+    /** The input field for the (up to five characters) identifier. */
     private final JTextField labelField = new ScaledTextField();
+    /**
+     * The placeholder realizing the indentation of the {@link Proposition} contents.
+     */
     private final JPanel indentationArea = new JPanel(new GridBagLayout());
+    /**
+     * The placeholder for upward pointing arrows referring to a {@code partBeforeArrow} of the represented {@link Proposition} (part).
+     */
     private final ArrowStack leftArrows;
+    /** The container for the origin text, which is displayed differently in the syntactical and semantical analysis. */
     private final JPanel itemArea = new JPanel();
+    /**
+     * The placeholder for downward pointing arrows referring to a {@code partAfterArrow} of the represented {@link Proposition} (part).
+     */
     private final ArrowStack rightArrows;
+    /** The input field for the translation text related to the respective analysis (either syntactical or semantical). */
     private final JTextField translationField = new ScaledTextField();
+    /**
+     * The view element allowing this {@link Proposition} to be selected for any more complex operations involving multiple model elements.
+     */
     private final JCheckBox checkBox = new JCheckBox();
+    /**
+     * The view element replacing the {@link #checkBox} if the represented {@link Proposition} is not eligible for being part of any more complex
+     * operations.
+     */
     private final JPanel checkBoxDummy = new JPanel();
 
     /**
-     * creates an {@link AbstractProposition} by setting all values regarding to the represented {@link Proposition}.
+     * Constructor: creating an {@link AbstractProposition} by setting all values derived from the represented {@link Proposition}.
      *
      * @param modelHandler
      *            the responsible model handler implementation realizing any model changes
@@ -89,7 +109,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * initializes the left part of the {@link AbstractProposition} containing the {@link JCheckBox}, the label {@link JTextField} and an expanding
+     * Initialize the left part of the {@link AbstractProposition} containing the {@link JCheckBox}, the label {@link JTextField} and an expanding
      * {@link JPanel} for the indentations in the syntactical analysis view.
      */
     private void initCheckboxAndLabel() {
@@ -124,7 +144,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * deal with a label text which lost the focus and might have been changed
+     * Deal with a label text which lost the focus and might have been changed.
      */
     final void lostFocusOnLabel() {
         // only transfer if necessary
@@ -144,8 +164,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * initializes the top right part of the proposition containing a panel for the origin text as well as arrows on the left and on the right side of
-     * it.
+     * Initialize the top right part of the {@link Proposition} containing a panel for the origin text as well as arrows on the left and on the right
+     * side of it.
      */
     private void initOriginTextArea() {
         // leftArrows
@@ -176,7 +196,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * initializes the bottom right part of the proposition containing the text field for the translation.
+     * Initialize the bottom right part of the {@link Proposition} containing the text field for the translation.
      */
     private final void initTranslationArea() {
         this.translationField.setDocument(new Validation(Proposition.MAX_TRANSLATION_LENGTH));
@@ -191,6 +211,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
+     * Getter for the identifier's input field.
+     * 
      * @return label field
      */
     protected final JTextField getLabelField() {
@@ -198,6 +220,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
+     * Getter for the placeholder realizing the indentation of the {@link Proposition} contents.
+     * 
      * @return indentation area
      */
     protected final JPanel getIndentationArea() {
@@ -205,6 +229,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
+     * Getter for the placeholder for upward pointing arrows referring to a {@code partBeforeArrow} of the represented {@link Proposition} (part).
+     * 
      * @return left arrow stack
      */
     protected final ArrowStack getLeftArrows() {
@@ -212,7 +238,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * sets the number of displayed upward arrows on the left of the item area.
+     * Setter for the number of displayed upward arrows on the left of the item area.
      *
      * @param count
      *            number of displayed arrows to set
@@ -222,6 +248,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
+     * Getter for the origin text container, which is displayed differently in the syntactical and semantical analysis.
+     * 
      * @return item area containing the origin text
      */
     protected final JPanel getItemArea() {
@@ -229,6 +257,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
+     * Getter for the placeholder for downward pointing arrows referring to a {@code partAfterArrow} of the represented {@link Proposition} (part).
+     * 
      * @return right arrow stack
      */
     protected final ArrowStack getRightArrows() {
@@ -236,7 +266,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * sets the number of displayed downward arrows on the right of the item area.
+     * Setter for the number of displayed downward arrows on the right of the item area.
      *
      * @param count
      *            number of displayed arrows to set
@@ -246,6 +276,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
+     * Getter for the translation input field.
+     * 
      * @return translation field
      */
     protected final JTextField getTranslationField() {
@@ -253,7 +285,9 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * @return represented {@link Proposition}
+     * Getter for the represented {@link Proposition}.
+     * 
+     * @return represented model element
      */
     @Override
     public final Proposition getRepresented() {
@@ -261,15 +295,15 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * sets the label text regarding the represented {@link Proposition}s label.
+     * Update the displayed identifier text to match the value in the represented {@link Proposition}.
      */
     public final void refreshLabelText() {
         this.labelField.setText(this.represented.getLabel());
     }
 
     /**
-     * does NOT refresh the translation TEXT, just fits the proposition on possible expanded translation field size<br>
-     * RECOMMENDED: Override and use this method in extending class to refresh and fit the changed translation text.
+     * This does NOT refresh the translation TEXT, just fits the {@link Proposition} to the possible expanded translation field size. RECOMMENDED:
+     * Override and use this method in extending class to refresh and fit the changed translation text.
      */
     protected void refreshTranslation() {
         // if the translation text wants more space, it gets more
@@ -298,7 +332,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * sets the visibility of the {@link JCheckBox} contained.
+     * Setter for the contained checkbox's visibility.
      *
      * @param visible
      *            visibility to set
@@ -339,7 +373,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * adds the specified {@link MouseListener} to all components included except the single {@link SynItem}s in the syntactical analysis view.
+     * Add the specified {@link MouseListener} to all components included except the single {@link SynItem}s in the syntactical analysis view.
      */
     @Override
     public synchronized void addMouseListener(final MouseListener listener) {
@@ -353,7 +387,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * sets the specified tool tip text to all of its components except the single {@link SynItem}s in the syntactical analysis view.
+     * Ses the specified tool tip text to all of its components except the single {@link SynItem}s in the syntactical analysis view.
      */
     @Override
     public synchronized void setToolTipText(final String toolTip) {
@@ -374,13 +408,13 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         /** The base font size to apply – will be scaled with global setting. */
         private static final int BASE_ARROW_FONT_SIZE = 20;
 
-        /** If the displayed arrows are pointing from bottom to top; else top to bottom */
+        /** If the displayed arrows are pointing from bottom to top; else top to bottom. */
         private final boolean upward;
         /** The current number of arrows being displayed. */
         private int arrowCount = 0;
 
         /**
-         * creates a new {@link ArrowStack} with the specified direction, number of arrows and size
+         * Constructor.
          *
          * @param pointsUp
          *            flag if the arrows should point upwards

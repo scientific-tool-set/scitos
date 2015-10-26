@@ -31,40 +31,77 @@ import javax.swing.JPanel;
 import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxExportOption;
+import org.hmx.scitos.hmx.domain.model.Proposition;
+import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.view.swing.option.AbstractOptionPanel;
 import org.hmx.scitos.view.swing.option.AbstractSimpleOptionPanel;
 import org.hmx.scitos.view.swing.option.OptionView;
 
 /**
- * Panel to be added in the {@code HmX - General} node of the {@link OptionView}.
+ * Panel to be added in the {@code HmX - Export} node of the {@link OptionView}.
  */
 public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExportOption> {
 
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#ARROW_COLOR}.
+     */
     final JPanel arrowColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#RELATION_COLOR}.
+     */
     final JPanel relationColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_ORIGINTEXT}.
+     */
     final JPanel originFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_TRANSLATION}.
+     */
     final JPanel translationFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_LABEL}.
+     */
     final JPanel labelFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_SEMROLE}.
+     */
     final JPanel roleFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_SYNFUNCTION_PLAIN}.
+     */
     final JPanel plainFunctionFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_SYNFUNCTION_BOLD}.
+     */
     final JPanel boldFunctionFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_SYNFUNCTION_BOLDTALIC}.
+     */
     final JPanel boldItalicFunctionFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#FONTCOLOR_SYNFUNCTION_ITALIC}.
+     */
     final JPanel italicFunctionFontColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#PROPOSITION_COLOR_BORDER}.
+     */
     final JPanel propositionBorderSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxExportOption#PROPOSITION_COLOR_BACKGROUND}.
+     */
     final JPanel propositionBackgroundSample = new JPanel();
+    /**
+     * Selection component for the non-origin text's {@link Font}.
+     */
     final FontChooser fontChooser = new FontChooser();
 
-    /**
-     * Main constructor: create the general options panel.
-     */
+    /** Constructor: create the general options panel. */
     public HmxExportOptionPanel() {
         super(new GridBagLayout(), HmxMessage.PREFERENCES_EXPORT);
         this.init();
     }
 
-    /**
-     * Initialize all components and their default values.
-     */
+    /** Initialize all components and their default values. */
     private void init() {
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
         // color options
@@ -83,6 +120,11 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
         this.setMinimumSize(this.getPreferredSize());
     }
 
+    /**
+     * Initialize the color selection for the {@link Proposition} and {@link Relation} options.
+     * 
+     * @return the created panel containing the four color selection components
+     */
     private JPanel initElementColorPanel() {
         final JPanel elementColorGroup = new JPanel(new GridBagLayout());
         elementColorGroup.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_EXPORT_ELEMENTCOLOR.get()));
@@ -102,15 +144,20 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
         constraints.gridx = 1;
         constraints.gridy = 0;
         // RelationColor.RGB
-        elementColorGroup.add(
-                this.initColorPanel(this.relationColorSample, HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR, HmxExportOption.RELATION_COLOR, false),
-                constraints);
+        elementColorGroup.add(this.initColorPanel(this.relationColorSample, HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR,
+                HmxExportOption.RELATION_COLOR, false), constraints);
         constraints.gridy++;
+        // Proposition Background
         elementColorGroup.add(this.initColorPanel(this.propositionBackgroundSample, HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BACKGROUND,
                 HmxExportOption.PROPOSITION_COLOR_BACKGROUND, true), constraints);
         return elementColorGroup;
     }
 
+    /**
+     * Initialize the font color selection for the various kinds of texts.
+     * 
+     * @return the created panel containing the various color selection components
+     */
     private JPanel initFontColorPanel() {
         final JPanel fontColorGroup = new JPanel(new GridBagLayout());
         fontColorGroup.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_EXPORT_FONTCOLOR.get()));
@@ -147,6 +194,11 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
         return fontColorGroup;
     }
 
+    /**
+     * Initialize the font selection component for all non-origin texts.
+     * 
+     * @return the created panel containing the font type and size selection component
+     */
     private JPanel initFontPanel() {
         final JPanel fontPanel = new JPanel(new GridBagLayout());
         fontPanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_EXPORT_FONT.get()));

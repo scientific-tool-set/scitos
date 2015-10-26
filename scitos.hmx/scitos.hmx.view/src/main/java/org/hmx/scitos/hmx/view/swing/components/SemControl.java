@@ -20,11 +20,11 @@ import org.hmx.scitos.hmx.view.swing.elements.SemRelation;
  */
 public final class SemControl implements ModelChangeListener {
 
-    /** targeted semantical analysis view */
+    /** targeted semantical analysis view. */
     final SemAnalysisPanel semArea;
 
     /**
-     * stores the targeted semantical analysis view to display the listened changes in
+     * Constructor: storing the targeted semantical analysis view to display the listened changes in.
      *
      * @param panel
      *            targeted semantical analysis view
@@ -34,8 +34,8 @@ public final class SemControl implements ModelChangeListener {
     }
 
     /**
-     * creates the listening functions for the defined {@link SemAnalysisPanel}, responsible for the whole handling of event representing a change in
-     * the model
+     * Create the listening functions for the defined {@link SemAnalysisPanel}, responsible for the whole handling of event representing a change in
+     * the model.
      *
      * @param event
      *            thrown {@link ModelEvent} containing the changed model element
@@ -61,7 +61,7 @@ public final class SemControl implements ModelChangeListener {
     }
 
     /**
-     * handles a {@link ModelEvent} containing a {@link Proposition}
+     * Handle a {@link ModelEvent} containing a {@link Proposition}.
      *
      * @param target
      *            proposition to refresh in view
@@ -82,8 +82,7 @@ public final class SemControl implements ModelChangeListener {
     }
 
     /**
-     * searches for the view representation ({@link SemProposition}/ {@link SemRelation}) of the specified model object ( {@link Proposition}/
-     * {@link Relation})
+     * Get the view representation ({@link SemProposition}/{@link SemRelation}) of the specified model object ({@link Proposition}/{@link Relation}).
      *
      * @param semArea
      *            analysis view to search in
@@ -102,7 +101,7 @@ public final class SemControl implements ModelChangeListener {
     }
 
     /**
-     * browses all {@link SemProposition}s in the syntactical analysis view for the specified {@link Proposition}
+     * Get the representing view component for the given {@link Proposition}.
      *
      * @param semArea
      *            analysis view to search in
@@ -123,7 +122,7 @@ public final class SemControl implements ModelChangeListener {
     }
 
     /**
-     * gets the representation of the specified {@link Relation} in the semantical analysis view
+     * Get the representation of the specified {@link Relation} in the semantical analysis view.
      *
      * @param semArea
      *            analysis view to search in

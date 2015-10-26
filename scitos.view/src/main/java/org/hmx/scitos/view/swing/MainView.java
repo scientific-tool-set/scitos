@@ -261,7 +261,7 @@ public class MainView extends JPanel {
     /**
      * Getter for the currently active (selected) project/group/model tab.
      *
-     * @return currently active (selected) project/group/model tab; returns <code>null</code> if none or another kind of tab is active
+     * @return currently active (selected) project/group/model tab; returns {@code null} if none or another kind of tab is active
      */
     AbstractProjectView<?, ?> getActiveTab() {
         final Component tab = this.tabStack.getSelectedComponent();
@@ -531,7 +531,7 @@ public class MainView extends JPanel {
      * Discard any current selection in the project tree, select the given node and ensure that the associated tab view is displayed.
      *
      * @param node
-     *            project tree node to select (can be <code>null</code> if the selection should only be cleared)
+     *            project tree node to select (can be {@code null} if the selection should only be cleared)
      */
     private void selectTreeNode(final ScitosTreeNode node) {
         if (node == null) {
@@ -573,7 +573,7 @@ public class MainView extends JPanel {
      *
      * @param node
      *            project tree node to find the associated tab view for
-     * @return associated tab view (is <code>null</code> if no such tab view exists at the moment)
+     * @return associated tab view (is {@code null} if no such tab view exists at the moment)
      */
     private AbstractProjectView<?, ?> getExistingTabForNode(final ScitosTreeNode node) {
         final Object nodeObject = node.getUserObject();

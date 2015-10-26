@@ -137,7 +137,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
      * Trigger the assignment (i.e. scoring) of the given detail category to all currently selected text tokens.
      *
      * @param category
-     *            detail category to assign (can be <code>null</code> to remove any current category assignments)
+     *            detail category to assign (can be {@code null} to remove any current category assignments)
      */
     void assignDetailCategoryToSelectedTokens(final DetailCategory category) {
         try {
@@ -416,7 +416,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
          *
          * @param event
          *            occurred event to extract the associated text token ui component for
-         * @return (can be <code>-1</code> if the event's location does not relate to any token.
+         * @return (can be {@code -1} if the event's location does not relate to any token.
          */
         private int getTextTokenComponentIndex(final MouseEvent event) {
             Component eventSource = (Component) event.getSource();

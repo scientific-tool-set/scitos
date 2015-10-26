@@ -23,6 +23,8 @@ import javax.swing.border.Border;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
+import org.hmx.scitos.hmx.domain.model.Pericope;
+import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
 import org.hmx.scitos.hmx.view.IPericopeView;
@@ -33,79 +35,58 @@ import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
 
 /**
- * view representation of a {@link Relation} drawing colored lines to show the relations between its subordinated {@link IConnectable}s and
- * {@link JTextField}s above displaying their roles
+ * View representation of a {@link Relation} drawing colored lines to show the relations between its subordinated {@link IConnectable}s and
+ * {@link JTextField}s above displaying their roles.
  */
 public final class SemRelation extends AbstractCommentable<Relation> implements IConnectable<Relation> {
 
-    /**
-     * half thickness of the displayed lines
-     */
+    /** half thickness of the displayed lines. */
     protected static final int HALF_LINE_THICKNESS = 2;
-    /**
-     * lowered bevel border, when selected
-     */
+    /** lowered bevel border, when selected. */
     protected static final Border COMMENT_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(),
             BorderFactory.createEmptyBorder(2, 0, 2, 0));
-
-    /**
-     * Raised bevel border, when not selected and no comment assigned.
-     */
+    /** Raised bevel border, when not selected and no comment assigned. */
     private final Border defaultBorder;
-    /**
-     * Colored, raised bevel border, when not selected and with assigned comment.
-     */
+    /** Colored, raised bevel border, when not selected and with assigned comment. */
     private final Border defaultCommentedBorder;
-    /**
-     * The semantical analysis view this is displayed in.
-     */
+    /** The semantical analysis this is displayed in. */
     final SemAnalysisPanel semArea;
-    /**
-     * view representation of the sub ordinated associates
-     */
+    /** The view representations of the sub ordinated associates. */
     private final List<IConnectable<?>> viewAssociates;
-    /**
-     * text fields displaying the respective roles of the sub ordinated associates
-     */
+    /** The text fields displaying the respective roles of the sub ordinated associates. */
     private final List<JTextField> roleFields;
-    /**
-     * relation line color
-     */
+    /** The color of the relation lines. */
     private final Color color;
-
     /**
-     * represented model {@link Relation}
+     * The represented model {@link Relation}.
      */
     private final Relation represented;
-    /**
-     * the origin language of the current analysis is aligned from left to right
-     */
+    /** The origin language of the current analysis is aligned from left to right. */
     private final boolean leftAligned;
     /**
-     * check box to select this {@link SemRelation}
+     * check box to select this {@link SemRelation}.
      */
     private final JCheckBox checkBox = new JCheckBox();
-    /**
-     * depth in the relation tree of the current analysis
-     */
+    /** The depth in the relation tree of the current analysis. */
     private final int depth;
     /**
-     * index of the first contained proposition
+     * index of the first contained {@link Proposition} (sub) associate.
      */
     private final double firstGridY;
     /**
-     * index of the last contained proposition
+     * index of the last contained {@link Proposition} (sub) associate.
      */
     private final double lastGridY;
     /**
-     * index where to connect to the super ordinated relation
+     * index where to connect to the super ordinated {@link Relation}.
      */
     private double connectY;
 
     /**
-     * creates a new {@link SemRelation} in the specified semantical analysis view and setting its values regarding to the represented
-     * {@link Relation}
-     *
+     * Constructor.
+     * 
+     * @param viewReference
+     *            the view providing access to the project's model handler and handling the comments on model elements
      * @param semArea
      *            semantical analysis view to be contained in
      * @param represented
@@ -196,7 +177,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         final Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setColor(this.color);
         // prepare for calculations
-        final int gridHeight = (int) (this.lastGridY - this.firstGridY + 1);
+        final int gridHeight = (int) (this.lastGridY - this.firstGridY) + 1;
         final int height = this.getSize().height;
         final double partY = height / (double) gridHeight;
         int startX;
@@ -268,7 +249,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     }
 
     /**
-     * calculates the minimum preferred width of the {@link SemRelation} regarding the {@link JTextField}s containing the roles and the additional
+     * Calculate the minimum preferred width of the {@link SemRelation} regarding the {@link JTextField}s containing the roles and the additional
      * border spacings.
      *
      * @return minimum preferred width
@@ -309,7 +290,11 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         this.checkBox.setSelected(false);
     }
 
-    /** @return if the semantical roles are hidden */
+    /**
+     * Check if the semantical roles are currently hidden/invisible.
+     * 
+     * @return if the semantical roles are hidden
+     */
     public boolean isFolded() {
         return this.roleFields == null;
     }
@@ -336,6 +321,9 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     }
 
     /**
+     * Getter for top most vertical position contained in the represented {@link Relation} subtree. This is the index of the first contained
+     * {@link Proposition} in the {@link Pericope} {@code + 0.5} (e.g. {@code 0.5}, {@code 1.5}, {@code 2.5}, ...).
+     * 
      * @return point to connect of the first contained {@link SemProposition}
      */
     public double getFirstGridY() {
@@ -343,6 +331,9 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     }
 
     /**
+     * Getter for bottom most vertical position contained in the represented {@link Relation} subtree. This is the index of the last contained
+     * {@link Proposition} in the {@link Pericope} {@code + 0.5} (e.g. {@code 1.5}, {@code 2.5}, {@code 3.5}, ...).
+     * 
      * @return point to connect of the last contained {@link SemProposition}
      */
     public double getLastGridY() {
@@ -360,7 +351,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     }
 
     /**
-     * shows the current roles of the represented {@link Relation}.
+     * Update the displayed associate roles to match the values in the represented {@link Relation}.
      */
     private void refreshRoles() {
         if (this.roleFields != null) {
@@ -399,9 +390,8 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
                 }
             }
         }
-        Dimension preferred = this.getPreferredSize();
-        preferred = new Dimension(preferred.width + (2 * SemRelation.HALF_LINE_THICKNESS), preferred.height);
-        this.setSize(preferred);
+        final Dimension preferred = this.getPreferredSize();
+        this.setSize(new Dimension(preferred.width + (2 * SemRelation.HALF_LINE_THICKNESS), preferred.height));
 
         // recalculate connectY
         final boolean firstAssociateHighWeight = this.viewAssociates.get(0).getRepresented().getRole().isHighWeight();
@@ -422,7 +412,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     }
 
     /**
-     * adds the specified {@link MouseListener} to itself and all of its {@link Component}s.
+     * Add the specified {@link MouseListener} to itself and all of its {@link Component}s.
      */
     @Override
     public synchronized void addMouseListener(final MouseListener listener) {

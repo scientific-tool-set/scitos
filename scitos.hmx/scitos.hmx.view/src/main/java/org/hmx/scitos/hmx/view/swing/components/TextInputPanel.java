@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -38,42 +39,71 @@ import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.hmx.core.ILanguageModelProvider;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
+import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
-import org.hmx.scitos.hmx.view.swing.HmxSwingProject;
+import org.hmx.scitos.hmx.domain.model.Pericope;
+import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.view.swing.components.ScaledTextPane;
 import org.hmx.scitos.view.swing.util.VTextIcon;
 
 /**
- * {@link JPanel} offering the possibility to paste or insert a text to analyse at the beginning of a HermeneutiX project<br>
- * in this view the user chooses the language, alignment, {@link Font} and {@link Font} size of the origin text which will be used and unchangeable
- * for the rest of the analysis.
+ * View offering the possibility to insert a text to analyze, which is referred to as the {@code origin text} in the HermeneutiX project. The user
+ * chooses the language model (text orientation and applicable syntactical functions) and {@link Font} for the origin text.
  */
 public final class TextInputPanel extends JPanel {
 
+    /** The default font type to select if none is elsewhere configured/preset. */
     private static final String DEFAULT_FONT = "Times New Roman";
 
+    /**
+     * The super ordinated main view representing the associated HermeneutiX project, in which this view is referred to a {@code text-input mode}.
+     */
     final SingleProjectView parentView;
+    /**
+     * All selectable {@link LanguageModel}s, mapped by their names.
+     */
     final Map<String, LanguageModel> languageModels;
-
-    final ScaledTextPane originTextPane = new ScaledTextPane();
+    /** The text area to insert the origin text in. */
+    final JTextPane originTextPane = new ScaledTextPane();
+    /** The button for toggling the visibility of the settings area. */
     private final JToggleButton showOrHideSettingsButton = new JToggleButton();
+    /**
+     * The area on the right side containing the selection of the {@link LanguageModel} and {@link Font}.
+     */
     private final JPanel settingArea = new JPanel(new GridBagLayout());
+    /**
+     * The selection component for the {@link #languageModels}.
+     */
     final JComboBox languageBox = new JComboBox();
+    /** The selection component for the origin text's font type. */
     private final JComboBox fontTypeBox = new JComboBox();
+    /** Available font types. */
     private List<String> fontFamilyNames;
+    /** The selection component for setting the origin text's font size. */
     final JSlider fontSizeSlider = new JSlider();
+    /** The button(s) for finishing the text input and switching to the analysis mode. */
     private final JButton[] buttons;
-
+    /**
+     * The vertical button label for the {@link #showOrHideSettingsButton} to make the {@link #settingArea} visible.
+     */
     private VTextIcon showButtonIcon;
+    /**
+     * The vertical button label for the {@link #showOrHideSettingsButton} to hide the {@link #settingArea}.
+     */
     private VTextIcon hideButtonIcon;
-
+    /**
+     * The {@link #originTextPane}'s undo manager.
+     */
     UndoManager undoManager;
 
     /**
-     * creates a new {@link TextInputPanel} by initializing all of its components and setting their default behavior and functionality
+     * Constructor.
      *
-     * @param project
-     *            {@link HmxSwingProject} invoking this
+     * @param parentView
+     *            the super ordinated main view representing the associated HermeneutiX project, in which this view is referred to a
+     *            {@code text-input mode}
+     * @param languageModelProvider
+     *            provider of all selectable {@link LanguageModel}s
      */
     public TextInputPanel(final SingleProjectView parentView, final ILanguageModelProvider languageModelProvider) {
         super(new GridBagLayout());
@@ -136,14 +166,13 @@ public final class TextInputPanel extends JPanel {
         this.initShowOrHideSettingsButton();
         // creating the setting area
         this.initSettingArea(newProject);
-
         // set default setting visibility
         this.manageSettingVisibility();
         this.originTextPane.requestFocus();
     }
 
     /**
-     * initializes the topic label at the top left position.
+     * Initialize the topic label at the top left position.
      *
      * @param newProject
      *            if this is the initial text input, else it is just adding more text to an existing project
@@ -161,7 +190,7 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * initializes the origin text area on the left side.
+     * Initialize the origin text area on the left side.
      *
      * @param bottomInset
      *            additional bottom inset
@@ -188,9 +217,7 @@ public final class TextInputPanel extends JPanel {
         this.initUndoRedoOption();
     }
 
-    /**
-     * enables the undo- and redo-option for the origin text area.
-     */
+    /** Enable the undo-/redo-option for the origin text area. */
     private void initUndoRedoOption() {
         // manage undo / redo
         this.undoManager = new UndoManager() {
@@ -223,7 +250,7 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * check if a rollback of the last change in the origin text area is possible.
+     * Check if a rollback of the last change in the origin text area is possible.
      *
      * @return undo possible
      */
@@ -232,7 +259,7 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * check if the last action in the origin text area was an undo() call.
+     * Check if the last action in the origin text area was an {@link #undo()} call.
      *
      * @return redo possible
      */
@@ -240,9 +267,7 @@ public final class TextInputPanel extends JPanel {
         return this.undoManager.canRedo();
     }
 
-    /**
-     * execute rollback of the last change in the origin text area.
-     */
+    /** Execute rollback of the last change in the origin text area. */
     public void undo() {
         // avoid exception
         if (this.canUndo()) {
@@ -251,7 +276,7 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * revert last undo() call in the origin text area.
+     * Revert the last {@link #undo()} call in the origin text area.
      */
     public void redo() {
         // avoid exception
@@ -260,9 +285,7 @@ public final class TextInputPanel extends JPanel {
         }
     }
 
-    /**
-     * initializes the button for changing the setting sidebars visibility on the right side.
-     */
+    /** Initialize the button for toggling the setting sidebar's visibility on the right side. */
     private void initShowOrHideSettingsButton() {
         // increase the font size for the showOrHideSettingsButton by 2
         final Font defaultFont = this.showOrHideSettingsButton.getFont();
@@ -292,7 +315,7 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * initializes the setting side bar to the right of the button to set its visibility.
+     * Initialize the setting side bar to the right of the button to set its visibility.
      *
      * @param newProject
      *            if this is the initial text input, else it is just adding more text to an existing project
@@ -360,9 +383,7 @@ public final class TextInputPanel extends JPanel {
         this.setOriginTextPaneOrientation();
     }
 
-    /**
-     * sets the setting sidebars visibility regarding to the current selection state of the responsible button.
-     */
+    /** Set the setting sidebar's visibility regarding to the current selection state of the associated button. */
     void manageSettingVisibility() {
         if (this.showOrHideSettingsButton.isSelected()) {
             this.settingArea.setVisible(true);
@@ -374,10 +395,10 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * creates a {@link JPanel} containing the {@link JComboBox} for choosing the language of the origin text, which influences the available
-     * functions of ClauseItems in the syntactical analysis.
+     * Create a {@link JPanel} containing the {@link JComboBox} for choosing the language of the origin text, which influences the available functions
+     * of {@link ClauseItem} in the syntactical analysis and the overall text orientation.
      *
-     * @return {@link JComboBox} containing {@link JPanel}
+     * @return created {@link JPanel}
      */
     private JPanel createLanguageComboBox() {
         final JPanel languagePanel = new JPanel();
@@ -401,6 +422,9 @@ public final class TextInputPanel extends JPanel {
         return languagePanel;
     }
 
+    /**
+     * Apply the appropriate text orientation, based on the currently selected {@link LanguageModel} in the {@link #languageBox}.
+     */
     void setOriginTextPaneOrientation() {
         final ComponentOrientation orientation;
         final Object selectedEntry = this.languageBox.getSelectedItem();
@@ -418,11 +442,11 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * creates a {@link JPanel} containing the {@link JComboBox} for choosing the {@link Font} type of the origin text.
+     * Create a {@link JPanel} containing the {@link JComboBox} for choosing the {@link Font} type of the origin text.
      *
      * @param newProject
      *            if this is the initial text input, else it is just adding more text to an existing project
-     * @return {@link JComboBox} containing {@link JPanel}
+     * @return created {@link JPanel}
      */
     private JPanel createFontTypeComboBox(final boolean newProject) {
         final JPanel fontTypePanel = new JPanel();
@@ -435,7 +459,6 @@ public final class TextInputPanel extends JPanel {
                 TextInputPanel.this.setFontTypeAndStyle();
             }
         });
-
         this.fontFamilyNames = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         Collections.sort(this.fontFamilyNames);
         for (final String singleFontName : this.fontFamilyNames) {
@@ -446,7 +469,7 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * set the font type and size selection regarding the currently chosen origin text language.
+     * Set the font type and size selection based on the currently chosen {@link LanguageModel}.
      */
     void setFontSelection() {
         final Object selectedEntry = this.languageBox.getSelectedItem();
@@ -493,11 +516,11 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * creates a {@link JPanel} containing the {@link JSlider} for adjusting the {@link Font} size of the origin text.
+     * Create a {@link JPanel} containing the {@link JSlider} for adjusting the {@link Font} size of the origin text.
      *
      * @param newProject
      *            if this is the initial text input, else it is just adding more text to an existing project
-     * @return {@link JSlider} containing {@link JPanel}
+     * @return created {@link JPanel}
      */
     private JPanel createFontSizeSlider(final boolean newProject) {
         final JPanel fontSizePanel = new JPanel(new GridBagLayout());
@@ -524,14 +547,14 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * sets the {@link Font} of the origin text regarding to the chosen type in the setting sidebar.
+     * Set the {@link Font} of the origin text, as it configured by the {@link #fontTypeBox} and {@link #fontSizeSlider} in the setting sidebar.
      */
     void setFontTypeAndStyle() {
         this.originTextPane.setFont(new Font(this.fontTypeBox.getSelectedItem().toString(), Font.PLAIN, this.fontSizeSlider.getValue()));
     }
 
     /**
-     * initializes a new Pericope by transferring the pasted origin text and tells its {@link ProjectControl} to start the analysis.
+     * Initialize a new {@link Pericope} by transferring the inserted origin text and display the appropriate analysis view.
      */
     void startAnalysis() {
         if (this.containsText()) {
@@ -545,6 +568,13 @@ public final class TextInputPanel extends JPanel {
         // if the originTextArea is empty, do nothing
     }
 
+    /**
+     * Add the inserted origin text to the associated {@link Pericope}.
+     * 
+     * @param inFront
+     *            if the additional {@link Proposition}s should be added as the leading contents in the {@link Pericope}; otherwise they will be
+     *            appended as trailing addition
+     */
     void addOriginText(final boolean inFront) {
         if (this.containsText()) {
             this.parentView.addNewPropositions(this.getPropositionTexts(), inFront);
@@ -553,6 +583,8 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
+     * Check if the {@link #originTextPane} contains any text to be interpreted as {@link Proposition}s.
+     * 
      * @return if the origin text pane contains valid input text
      */
     public boolean containsText() {
@@ -560,21 +592,19 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * Retrieve text from origin text pane, handle multiple whitespaces and split at line separators.
-     * <ul>
-     * <li>>=4 whitespaces are replaced by a tabstop</li>
-     * <li><4 whitespaces are reduced to a single one</li>
-     * </ul>
+     * Retrieve the text from the {@link #originTextPane}, cleaning up multiple whitespaces and split it into {@link Proposition}s at line separators.
+     * Occurrences of four or more spaces will be replaced by tabstops, which in turn are later used to split a single {@link Proposition} into
+     * multiple {@link ClauseItem}s.
      *
-     * @return proposition texts containing tabstop to separate clause items
+     * @return inserted origin text
      */
     String getPropositionTexts() {
         // get the current input text
         String rawText = this.originTextPane.getText();
         // replace each substring containing at least four adjacent whitespaces
-        rawText = rawText.replaceAll("    * ", "\t");
+        rawText = rawText.replaceAll("    +", "\t");
         // reduce each remaining substring with multiple whitespaces to one
-        rawText = rawText.replaceAll("  * ", " ");
+        rawText = rawText.replaceAll("  +", " ");
         // split at line separators to get single strings for each proposition
         return rawText;
     }

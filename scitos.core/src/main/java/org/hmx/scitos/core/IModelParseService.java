@@ -52,7 +52,7 @@ public interface IModelParseService<M extends IModel<M>> {
      * Create the xml structure for the given model instance.
      *
      * @param model
-     *            model instance to parse (should be of type <code>M</code>)
+     *            model instance to parse (should be of type {@code M})
      * @param openViewElements
      *            list of currently displayed view elements, to be restored on opening
      * @return created xml structure

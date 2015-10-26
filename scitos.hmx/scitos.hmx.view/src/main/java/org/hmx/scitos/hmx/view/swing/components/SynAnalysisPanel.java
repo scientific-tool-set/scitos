@@ -19,28 +19,32 @@ import org.hmx.scitos.domain.ModelChangeListener;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.view.IPericopeView;
-import org.hmx.scitos.hmx.view.swing.HmxSwingProject;
 import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
 
 /**
- * syntactical analysis view displaying the syntactical structured analysis consisting of {@link Proposition}s disregarding super ordinated Relations
- * and semantical translations<br>
- * offering the opportunity to edit the whole syntactical structure displayed
+ * View displaying the Syntactical Structured Analysis consisting of {@link Proposition}s disregarding super ordinated Relations and semantical
+ * translations; offering the opportunity to edit the whole syntactical structure displayed.
  */
-public class SynAnalysisPanel extends AbstractAnalysisPanel {
+public final class SynAnalysisPanel extends AbstractAnalysisPanel {
 
+    /** The model change listener responsible for keeping this view up to date while it is active. */
     private final SynControl listener;
-
+    /**
+     * Complete list of all displayed {@link Proposition}s in the correct (i.e. text) order.
+     */
     private List<SynProposition> propositionList = null;
-
+    /** The single main view element allowing all its contents to be scrolled. */
     JScrollPane scrollPane = null;
+    /**
+     * The actual container of the view components representing {@link Proposition}s.
+     */
     private final Box contentPane = new Box(BoxLayout.PAGE_AXIS);
 
     /**
-     * creates a new {@link SynAnalysisPanel} representing the Pericope contained in the specified project.
+     * Constructor.
      *
-     * @param project
-     *            {@link HmxSwingProject} to display
+     * @param viewReference
+     *            super ordinated view this panel belongs to
      */
     public SynAnalysisPanel(final IPericopeView viewReference) {
         super(viewReference, new GridLayout(0, 1));
@@ -55,7 +59,7 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * initializes the general layout and position of the content to display
+     * Initialize the general layout and position of the content to display.
      */
     private void initView() {
         final JPanel scrollable = new JPanel(new GridBagLayout());
@@ -103,7 +107,7 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * adds the specified {@link Proposition} and all of its subordinated {@link Proposition}s to the view regarding its indentation level
+     * Add the specified {@link Proposition} and all of its (further indented) child {@link Proposition}s to the view.
      *
      * @param proposition
      *            {@link Proposition} to insert in view
@@ -112,22 +116,16 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
      */
     private void addSynProposition(final Proposition proposition, final int level) {
         // first: add all prior children
-        final List<Proposition> priorChildren = proposition.getPriorChildren();
-        if (priorChildren != null) {
-            for (final Proposition singlePriorChild : priorChildren) {
-                this.addSynProposition(singlePriorChild, level + 1);
-            }
+        for (final Proposition singlePriorChild : proposition.getPriorChildren()) {
+            this.addSynProposition(singlePriorChild, level + 1);
         }
         // second: add the proposition itself
         final SynProposition viewProposition = SynProposition.createSynPropositionByLevel(this.getViewReference(), proposition, level);
         this.propositionList.add(viewProposition);
         this.contentPane.add(viewProposition);
         // third: add all later children
-        final List<Proposition> laterChildren = proposition.getLaterChildren();
-        if (laterChildren != null) {
-            for (final Proposition singleLaterChild : laterChildren) {
-                this.addSynProposition(singleLaterChild, level + 1);
-            }
+        for (final Proposition singleLaterChild : proposition.getLaterChildren()) {
+            this.addSynProposition(singleLaterChild, level + 1);
         }
         // finally: add the part after arrow
         final Proposition partAfterArrow = proposition.getPartAfterArrow();
@@ -137,23 +135,19 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * adds the specified {@link Proposition} and all of its subordinated {@link Proposition}s to the view regarding the indentation level and the
-     * width of the {@link SynProposition} of its <code>partBeforeArrow</code>
+     * Add the specified {@link Proposition} and all of its (further indented) child {@link Proposition}s to the view.
      *
      * @param proposition
      *            {@link Proposition} to insert in view
      * @param level
-     *            indentation level of the <code>partBeforeArrow</code>
+     *            indentation level of the {@code partBeforeArrow}
      * @param partBeforeArrow
      *            view representation of the partBeforeArrow
      */
     private void addSynPropositionAfterArrow(final Proposition proposition, final int level, final SynProposition partBeforeArrow) {
         // first: add prior children
-        final List<Proposition> priorChildren = proposition.getPriorChildren();
-        if (priorChildren != null) {
-            for (final Proposition singlePriorChild : priorChildren) {
-                this.addSynProposition(singlePriorChild, level + 1);
-            }
+        for (final Proposition singlePriorChild : proposition.getPriorChildren()) {
+            this.addSynProposition(singlePriorChild, level + 1);
         }
         // second: add the proposition itself
         final SynProposition viewProposition =
@@ -177,11 +171,8 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
         // show proposition in view
         this.contentPane.add(viewProposition);
         // third: add later children
-        final List<Proposition> laterChildren = proposition.getLaterChildren();
-        if (laterChildren != null) {
-            for (final Proposition singleLaterChild : laterChildren) {
-                this.addSynProposition(singleLaterChild, level + 1);
-            }
+        for (final Proposition singleLaterChild : proposition.getLaterChildren()) {
+            this.addSynProposition(singleLaterChild, level + 1);
         }
         // finally: add part after arrow
         final Proposition partAfterArrow = proposition.getPartAfterArrow();
@@ -191,17 +182,17 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * browses the syntactical analysis view for all checked {@link Proposition Propositions} (regarding their check boxes); treats the clicked one as
-     * checked too
+     * Collect all checked {@link Proposition}s in the displayed syntactical analysis.
      *
      * @param clicked
-     *            {@link Proposition} requesting the list (can be <code>NULL</code>)
-     * @return list of all checked {@link Proposition}s
+     *            {@link Proposition} requesting the list, that is included in the result list regardless of it being checked or not (ignored, if it
+     *            is {@code null})
+     * @return list of all checked {@link Proposition}s in the correct (i.e. text) order
      */
     public List<Proposition> getChecked(final Proposition clicked) {
         final List<Proposition> checked = new LinkedList<Proposition>();
         for (final SynProposition singleProposition : this.propositionList) {
-            if ((singleProposition.isChecked()) || (singleProposition.getRepresented() == clicked)) {
+            if (singleProposition.isChecked() || singleProposition.getRepresented() == clicked) {
                 checked.add(singleProposition.getRepresented());
             }
         }
@@ -209,6 +200,8 @@ public class SynAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
+     * Getter for the complete list of all displayed {@link Proposition}s in the correct (i.e. text) order.
+     * 
      * @return list of all displayed {@link SynProposition}s
      */
     public List<SynProposition> getPropositionList() {

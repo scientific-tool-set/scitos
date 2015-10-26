@@ -39,7 +39,7 @@ import org.hmx.scitos.view.swing.option.OptionView;
 public class ExportOptionPanelServiceImpl implements IOptionPanelService {
 
     /**
-     * Main constructor.
+     * Constructor.
      */
     @Inject
     public ExportOptionPanelServiceImpl() {

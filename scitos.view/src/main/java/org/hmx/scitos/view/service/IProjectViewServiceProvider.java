@@ -59,7 +59,7 @@ public interface IProjectViewServiceProvider {
      *            project containing the given element
      * @param element
      *            element in the specified project a context menu has been requested for
-     * @return context menu to display (can be <code>null</code>, if none should be shown)
+     * @return context menu to display (can be {@code null}, if none should be shown)
      */
     ContextMenuBuilder createContextMenu(IViewProject<?> project, Object element);
 
@@ -79,7 +79,7 @@ public interface IProjectViewServiceProvider {
      *            project instance containing the model group with the given label
      * @param modelGroup
      *            label of the model to represent in the view
-     * @return created view instance (or <code>NULL</code> if no group view is provided)
+     * @return created view instance (or {@code NULL} if no group view is provided)
      */
     AbstractProjectView<?, String> createModelGroupView(IViewProject<?> project, String modelGroup);
 

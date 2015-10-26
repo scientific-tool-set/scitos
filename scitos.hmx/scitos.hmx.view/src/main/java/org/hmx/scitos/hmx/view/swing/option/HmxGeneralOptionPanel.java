@@ -39,6 +39,7 @@ import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.core.util.ConversionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
+import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.view.swing.option.AbstractOptionPanel;
 import org.hmx.scitos.view.swing.option.AbstractSimpleOptionPanel;
 import org.hmx.scitos.view.swing.option.OptionView;
@@ -49,25 +50,36 @@ import org.hmx.scitos.view.swing.util.Validation;
  */
 public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGeneralOption> {
 
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxGeneralOption#ARROW_COLOR}.
+     */
     final JPanel arrowColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxGeneralOption#RELATION_COLOR}.
+     */
     final JPanel relationColorSample = new JPanel();
+    /**
+     * Sample panel displaying the currently selected value for {@link HmxGeneralOption#COMMENTED_BORDER_COLOR}.
+     */
     final JPanel commentedBorderColorSample = new JPanel();
-    final JSlider slider = new JSlider();
+    /**
+     * Selection component for the width of a single indentation of a {@link Proposition} ({@link HmxGeneralOption#INDENTATION_WIDTH}).
+     */
+    final JSlider indentationSizeSlider = new JSlider();
+    /**
+     * Checkbox to determine if the settings area should be visible by default for new projects ({@link HmxGeneralOption#SHOW_SETTINGS}).
+     */
     private final JCheckBox showSettings = new JCheckBox();
+    /**
+     * Input field for the default value for a new project's author ({@link HmxGeneralOption#AUTHOR}).
+     */
     private final JTextField authorField = new JTextField();
 
     /**
-     * Main constructor: create the general options panel.
+     * Constructor.
      */
     public HmxGeneralOptionPanel() {
         super(new GridBagLayout(), HmxMessage.PREFERENCES_GENERAL);
-        this.init();
-    }
-
-    /**
-     * Initialize all components and their default values.
-     */
-    private void init() {
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
         contentBox
                 .add(this.initColorPanel(this.arrowColorSample, HmxMessage.PREFERENCES_GENERAL_ARROW_COLOR, HmxGeneralOption.ARROW_COLOR, false));
@@ -93,7 +105,6 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
         constraints.insets = new Insets(2, 5, 2, 5);
         authorPanel.add(this.authorField, constraints);
         contentBox.add(authorPanel);
-
         this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);
         final GridBagConstraints spacing = new GridBagConstraints();
         spacing.fill = GridBagConstraints.VERTICAL;
@@ -112,10 +123,10 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
     private JPanel initIndentationPanel() {
         final JPanel indentationPanel = new JPanel(new GridBagLayout());
         indentationPanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_GENERAL_INDENTATION.get()));
-        this.slider.setMinimum(30);
-        this.slider.setMaximum(200);
+        this.indentationSizeSlider.setMinimum(30);
+        this.indentationSizeSlider.setMaximum(200);
         final int width = HmxGeneralOption.INDENTATION_WIDTH.getValueAsInteger();
-        this.slider.setValue(width);
+        this.indentationSizeSlider.setValue(width);
         // create a panel for showing the current selected indentation width
         final JPanel sampleBar = new JPanel();
         sampleBar.setBackground(Color.WHITE);
@@ -123,14 +134,14 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
         final Dimension initialSize = new Dimension(width, 24);
         sampleBar.setPreferredSize(initialSize);
         sampleBar.setSize(initialSize);
-        indentationPanel.add(this.slider, AbstractOptionPanel.DEFAULT_INSETS);
+        indentationPanel.add(this.indentationSizeSlider, AbstractOptionPanel.DEFAULT_INSETS);
         indentationPanel.add(sampleBar, AbstractOptionPanel.DEFAULT_INSETS);
-        this.slider.addChangeListener(new ChangeListener() {
+        this.indentationSizeSlider.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(final ChangeEvent event) {
                 // adjust the size of the sample panel
-                final Dimension size = new Dimension(HmxGeneralOptionPanel.this.slider.getValue(), 24);
+                final Dimension size = new Dimension(HmxGeneralOptionPanel.this.indentationSizeSlider.getValue(), 24);
                 sampleBar.setPreferredSize(size);
                 sampleBar.setSize(size);
             }
@@ -144,7 +155,7 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
         this.addChosenSetting(HmxGeneralOption.ARROW_COLOR, ConversionUtil.toString(this.arrowColorSample.getBackground()));
         this.addChosenSetting(HmxGeneralOption.RELATION_COLOR, ConversionUtil.toString(this.relationColorSample.getBackground()));
         this.addChosenSetting(HmxGeneralOption.COMMENTED_BORDER_COLOR, ConversionUtil.toString(this.commentedBorderColorSample.getBackground()));
-        this.addChosenSetting(HmxGeneralOption.INDENTATION_WIDTH, Integer.toString(this.slider.getValue()));
+        this.addChosenSetting(HmxGeneralOption.INDENTATION_WIDTH, Integer.toString(this.indentationSizeSlider.getValue()));
         this.addChosenSetting(HmxGeneralOption.SHOW_SETTINGS, String.valueOf(this.showSettings.isSelected()));
         this.addChosenSetting(HmxGeneralOption.AUTHOR, this.authorField.getText());
     }

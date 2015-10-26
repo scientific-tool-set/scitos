@@ -31,39 +31,41 @@ import org.hmx.scitos.view.swing.components.ScaledTextPane;
 
 /**
  * view representation of a {@link ClauseItem} in the syntactical analysis view consisting of a non-editable {@link JTextPane} for the origin text on
- * the top and a label displaying the current selected function on the bottom
+ * the top and a label displaying the current selected function on the bottom.
  */
 public final class SynItem extends AbstractCommentable<ClauseItem> {
 
-    /** etched border, when not selected */
+    /** etched border, when not selected. */
     private static final Border DEFAULT_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
             BorderFactory.createEmptyBorder(2, 0, 2, 0));
-    /** lowered bevel border, when selected */
+    /** lowered bevel border, when selected. */
     private static final Border COMMENT_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(),
             BorderFactory.createEmptyBorder(2, 0, 2, 0));
 
-    /** etched border with color, when not selected and with comment set */
+    /** etched border with color, when not selected and with comment set. */
     private final Border defaultBorderCommented = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
             BorderFactory.createMatteBorder(2, 0, 2, 0, HmxGeneralOption.COMMENTED_BORDER_COLOR.getValueAsColor()));
+    /** The containing view, providing access to higher functions. */
     IPericopeView viewReference;
-    /** represented model {@link ClauseItem} */
+    /**
+     * represented model {@link ClauseItem}.
+     */
     private final ClauseItem represented;
-    /** text field to display the origin text in */
+    /** text field to display the origin text in. */
     private final JTextPane originTextPane;
-    /** label for showing the syntactical function */
+    /** label for showing the syntactical function. */
     private final JLabel functionLabel;
 
-    /** mouse listener creating the popup containing all available functions */
+    /** mouse listener creating the popup containing all available functions. */
     private MouseAdapter popupListener;
 
     /**
-     * creates a new {@link SynItem} in the specified syntactical analysis view representing the specified {@link ClauseItem} and regarding the chosen
-     * language and {@link Font} of the origin text to display
+     * Constructor: for a new {@link SynItem} in the given view representing the specified {@link ClauseItem}.
      *
      * @param viewReference
      *            containing view, enabling further interactions
      * @param represented
-     *            {@link ClauseItem} to display
+     *            model element to represent/display
      */
     protected SynItem(final IPericopeView viewReference, final ClauseItem represented) {
         super(new GridBagLayout());
@@ -75,7 +77,6 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
         this.initOriginTextPane();
         this.initFunctionLabel();
         this.refreshFontStyle();
-
         // initialize the comment showing listener for the item
         this.addMouseListener(new MouseAdapter() {
 
@@ -89,7 +90,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
         this.refreshComment();
     }
 
-    /** initializes the origin text pane on the top */
+    /** Initialize the origin text pane on the top. */
     private void initOriginTextPane() {
         this.originTextPane.setFont(this.viewReference.getModelHandler().getModel().getFont());
         this.originTextPane.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
@@ -103,7 +104,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
         this.add(this.originTextPane, constraints);
     }
 
-    /** initializes the label for displaying the function on the bottom */
+    /** Initialize the label for displaying the function on the bottom. */
     private void initFunctionLabel() {
         this.functionLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         this.functionLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -116,7 +117,9 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
         this.add(this.functionLabel, constraints);
     }
 
-    /** create and enable the {@link JPopupMenu} */
+    /**
+     * Create and enable the {@link JPopupMenu}.
+     */
     private void refreshPopup() {
         if (this.popupListener != null) {
             // remove the old popup listener
@@ -154,7 +157,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     }
 
     /**
-     * sets the displayed function regarding to the current saved value in the represented {@link ClauseItem}
+     * Update the displayed {@link SyntacticalFunction} to match the current value in the represented {@link ClauseItem}.
      */
     public void refreshFunction() {
         final SyntacticalFunction function = this.represented.getFunction();
@@ -173,7 +176,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     }
 
     /**
-     * sets the displayed origin text regarding to the current saved value in the represented {@link ClauseItem}
+     * Update the displayed origin text to match the current value in the represented {@link ClauseItem}.
      */
     public void refreshOriginText() {
         this.originTextPane.setText(this.represented.getOriginText());
@@ -181,7 +184,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     }
 
     /**
-     * sets the displayed {@link Font} style regarding to the current saved value in the represented {@link ClauseItem}
+     * Update the displayed {@link Font} style to match the current setting in the represented {@link ClauseItem}.
      */
     public void refreshFontStyle() {
         final Style style = this.represented.getFontStyle();
@@ -190,7 +193,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     }
 
     /**
-     * resets the tool tip info containing the comment text regarding its value in the represented Proposition
+     * Reset the tool tip info containing the comment text to match the value in the represented {@link ClauseItem}.
      */
     public void refreshComment() {
         final String comment = this.getRepresented().getComment();
@@ -244,7 +247,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     }
 
     /**
-     * sets the {@link Font} style of the designated {@link JTextPane} to the specified value
+     * Set the {@link Font} style of the designated {@link JTextPane} to the specified value.
      *
      * @param target
      *            {@link JTextPane} to set the {@link Font} style
@@ -260,7 +263,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     }
 
     /**
-     * underlines the text in the designated {@link JTextPane} regarding to the flag
+     * Underline the text in the designated {@link JTextPane}, if the associated flag is {@code true}, remove it otherwise.
      *
      * @param target
      *            {@link JTextPane} to underline

@@ -22,6 +22,7 @@ import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
+import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.view.swing.HmxSwingProject;
 import org.hmx.scitos.hmx.view.swing.elements.ProjectInfoDialog;
 import org.hmx.scitos.view.ScitosIcon;
@@ -32,18 +33,33 @@ import org.hmx.scitos.view.swing.MessageHandler.MessageType;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
- *
+ * The content of a tab in the main SciToS view representing a single project in the HermeneutiX module.
  */
 public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Pericope> {
 
+    /**
+     * Provider of available {@link RelationTemplate}s to be created/applied in the semantical analysis.
+     */
     private final ISemanticalRelationProvider relationProvider;
+    /** Service provider for saving and exporting the represented project/model to files. */
     private final IModelParseServiceProvider modelParseProvider;
     /** The undo manager for the whole model. */
     private UndoManager<Pericope> undoManager;
+    /**
+     * The currently active view component. This is either the {@link TextInputPanel} or {@link CombinedAnalysesPanel}.
+     */
     JPanel activeView;
-
+    /**
+     * View specific Edit menu item for adding more {@link Proposition}s to this project which is already in progress (i.e. in analysis mode).
+     */
     private JMenuItem addTextItem;
+    /**
+     * View specific Edit menu item for removing {@link Proposition}s from this project which is already in progress (i.e. in analysis mode).
+     */
     private JMenuItem removeTextItem;
+    /**
+     * View specific Edit menu item for adding the contents of another project to this one which is already in progress (i.e. in analysis mode).
+     */
     private JMenuItem mergeProjectItem;
 
     /**
@@ -51,7 +67,12 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
      *
      * @param project
      *            the represented view project
+     * @param languageModelProvider
+     *            provider of available {@link LanguageModel}s to be selected when the represented project is setup initially
+     * @param relationProvider
+     *            provider of available {@link RelationTemplate}s to be created/applied in the semantical analysis
      * @param modelParseProvider
+     *            service provider for saving and exporting the represented project/model to files
      */
     public SingleProjectView(final HmxSwingProject project, final ILanguageModelProvider languageModelProvider,
             final ISemanticalRelationProvider relationProvider, final IModelParseServiceProvider modelParseProvider) {
@@ -68,30 +89,38 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     }
 
     /**
-     * initializes the analysis by referring to the chosen origin language and {@link Font}, opens the default (syntactical) analysis view
+     * Initialize the analysis by referring to the chosen origin language and {@link Font}, opening the analysis view with the syntactical analysis.
      *
      * @param originText
-     * @param languageModel
-     * @param relationProvider
+     *            the user input that should be interpreted as the {@link Proposition}s to be analyzed
+     * @param originLanguage
+     *            the user selected language model associated with the {@code originText}, determining its text orientation and the applicable
+     *            functions in the syntactical analysis
      * @param originTextFont
+     *            the user defined font to display the {@code originText} with
      */
-    public void startAnalysis(final String originText, final LanguageModel languageModel, final Font originTextFont) {
-        this.getModel().init(originText, languageModel, originTextFont);
+    public void startAnalysis(final String originText, final LanguageModel originLanguage, final Font originTextFont) {
+        this.getModel().init(originText, originLanguage, originTextFont);
         this.undoManager = new UndoManager<Pericope>(this.getModel());
         this.goToAnalysisView();
         new ProjectInfoDialog(this.getProject(), false).setVisible(true);
     }
 
     /**
+     * Prepend/append the given {@code originText} to the represented {@link Pericope}.
      *
      * @param originText
+     *            the user input that should be interpreted as the {@link Proposition}s to be added
      * @param inFront
+     *            if the new {@link Proposition}s should be inserted as the first in this {@link Pericope}; otherwise they will be appended as the
+     *            last
      */
     public void addNewPropositions(final String originText, final boolean inFront) {
         this.getProject().getModelHandler().addNewPropositions(originText, inFront);
         this.goToAnalysisView();
     }
 
+    /** Switch from the text-input mode to the analysis mode. If this is already in analysis mode, this method does nothing. */
     void goToAnalysisView() {
         if (this.activeView instanceof TextInputPanel) {
             this.remove(this.activeView);
@@ -102,6 +131,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         }
     }
 
+    /** Switch from the analysis mode to the text-input mode. If this is already in text-input mode, this method does nothing. */
     void goToTextInputView() {
         if (this.activeView instanceof CombinedAnalysesPanel) {
             this.submitChangesToModel();
@@ -113,6 +143,10 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         }
     }
 
+    /**
+     * Parse another HermeneutiX file and prepend or append its contents. This will prompt the user to select the other file, decide if the content
+     * should be inserted in front or in the back of the current {@link Proposition}s.
+     */
     void mergeWithOtherPericope() {
         final File mergeTarget = ViewUtil.openFile(this.getProject().getFrame(), HmxMessage.MENUBAR_PROJECT_MERGE.get(), false);
         if (mergeTarget == null) {
@@ -129,6 +163,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
                             new String[] { HmxMessage.MENUBAR_PROJECT_MERGE_INFRONT.get(), HmxMessage.MENUBAR_PROJECT_MERGE_BEHIND.get(),
                                     Message.CANCEL.get() }, 1);
             if (optionIndex == 0 || optionIndex == 1) {
+                // TODO allow user to merge language models instead of rejecting any differing ones
                 this.getProject().getModelHandler().mergeWithOtherPericope((Pericope) modelToMergeWith.getKey(), optionIndex == 0);
             }
         } catch (final HmxException ex) {
@@ -136,21 +171,17 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         }
     }
 
+    /** Ensure the menu options' availability based on the current state of the represented project. */
     private void manageMenuOptions() {
         // handle general menu options
         this.getProject().manageMenuOptions();
         // handle view specific options
-        this.manageViewSpecificMenuOptions();
-    }
-
-    private void manageViewSpecificMenuOptions() {
-        if (this.addTextItem == null) {
-            return;
+        if (this.addTextItem != null) {
+            final boolean inAnalysisMode = this.activeView instanceof CombinedAnalysesPanel;
+            this.addTextItem.setEnabled(inAnalysisMode);
+            this.removeTextItem.setEnabled(inAnalysisMode);
+            this.mergeProjectItem.setEnabled(inAnalysisMode);
         }
-        final boolean inAnalysisMode = this.activeView instanceof CombinedAnalysesPanel;
-        this.addTextItem.setEnabled(inAnalysisMode);
-        this.removeTextItem.setEnabled(inAnalysisMode);
-        this.mergeProjectItem.setEnabled(inAnalysisMode);
     }
 
     @Override

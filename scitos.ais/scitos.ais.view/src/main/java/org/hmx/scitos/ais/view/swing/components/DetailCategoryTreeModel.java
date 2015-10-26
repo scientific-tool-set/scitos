@@ -390,7 +390,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * Recursively fill the given model and old-to-new category mapping with the specified row and its subordinated (i.e. child category) rows.
      *
      * @param parent
-     *            super ordinated (i.e. parent) detail category row (can be <code>null</code> if directly under root without parent)
+     *            super ordinated (i.e. parent) detail category row (can be {@code null} if directly under root without parent)
      * @param row
      *            detail category to add to the model
      * @param model
@@ -455,7 +455,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
          * @param shortCut
          *            short cut associated with the represented category, to assign it to selected tokens in the scoring view
          * @param oldCategory
-         *            the initial detail category this row is derived from (can be <code>null</code> for a new row)
+         *            the initial detail category this row is derived from (can be {@code null} for a new row)
          */
         DetailCategoryRow(final String code, final String name, final Color highlightColor, final KeyStroke shortCut,
                 final DetailCategory oldCategory) {

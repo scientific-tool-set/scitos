@@ -1,13 +1,13 @@
 package org.hmx.scitos.hmx.view.swing.elements;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,38 +20,29 @@ import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
 import org.hmx.scitos.hmx.view.IPericopeView;
-import org.hmx.scitos.hmx.view.swing.components.SynAnalysisPanel;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
 import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.util.VTextIcon;
 
 /**
- * extension of the {@link AbstractProposition} with a {@link SynItem}s in the top right area to display the contained {@link ClauseItem}s and their
+ * Extension of the {@link AbstractProposition} with a {@link SynItem}s in the top right area to display the contained {@link ClauseItem}s and their
  * included origin text.
  */
 public final class SynProposition extends AbstractProposition {
 
+    /** Containing view, providing access to higher functions. */
     final IPericopeView viewReference;
-    /**
-     * label displaying the syntactical indentation function.
-     */
+    /** label displaying the syntactical indentation function. */
     private final JLabel functionLabel = new ScaledLabel(" ");
-    /**
-     * view representation of the contained clause items.
-     */
+    /** view representation of the contained clause items. */
     private final List<SynItem> items = new LinkedList<SynItem>();
 
     /**
-     * creates a {@link SynProposition} by setting all values regarding to the represented {@link Proposition} and the language and {@link Font} of
-     * the origin text.
-     *
-     * @param synArea
-     *            syntactical analysis view to be contained in
-     * @param commentHandler
-     *            handling entity for comments on view elements
-     * @param modelHandler
-     *            the responsible model handler implementation realizing any model changes
+     * Constructor.
+     * 
+     * @param viewReference
+     *            the containing view, providing access to higher functions
      * @param represented
      *            represented {@link Proposition} to set
      */
@@ -83,11 +74,10 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * creates a {@link SynProposition} by setting all values regarding to the represented {@link Proposition} and its indentation referring to the
-     * given level; transmitting the chosen language and {@link Font} of the origin text to the {@link SynItem}s contained.
+     * Create a {@link SynProposition} representing the given {@link Proposition} on the specified indentation {@code level}.
      *
-     * @param synPanel
-     *            syntactical analysis view to be contained in
+     * @param viewReference
+     *            the containing view, providing access to higher functions
      * @param represented
      *            represented {@link Proposition} to set
      * @param level
@@ -103,16 +93,15 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * creates a {@link SynProposition} by setting all values regarding to the represented {@link Proposition} and its indentation equivalent to the
-     * width of the view representation of the <code>partBeforeArrow</code>; transmitting the chosen language and {@link Font} of the origin text to
-     * the {@link SynItem}s contained.
+     * Create a {@link SynProposition} representing the given {@link Proposition}, which is the {@code partAfterArrow} for the other given
+     * {@link SynProposition}, determining the created elements indentation.
      *
-     * @param synPanel
-     *            syntactical analysis view to be contained in
+     * @param viewReference
+     *            the containing view, providing access to higher functions
      * @param represented
-     *            represented {@link Proposition} to set
+     *            represented {@link Proposition} part to set
      * @param partBeforeArrow
-     *            view representation of the <code>partBeforeArrow</code>
+     *            view representation of the {@code partBeforeArrow}
      * @return created {@link SynProposition}
      */
     public static SynProposition createSynPropositionByPartBeforeArrow(final IPericopeView viewReference, final Proposition represented,
@@ -123,9 +112,9 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * initializes the {@link JLabel} in the indentation area for displaying its indentation function and an expanding {@link JPanel} on the right to
-     * make sure it is always at the left side of its containing {@link SynAnalysisPanel} and the explicit syntactical functionality by inserting the
-     * contained {@link SynItem}s, adding a listener to the translation field and activating the comment listener.
+     * Initialize the {@link JLabel} in the indentation area for displaying its indentation function and an expanding {@link JPanel} on the right to
+     * make sure it is always at the left side of its parent and the explicit syntactical functionality by inserting the contained {@link SynItem}s,
+     * adding a listener to the translation field and activating the comment listener.
      */
     private void init() {
         final SyntacticalFunction function = this.getRepresented().getFunction();
@@ -142,7 +131,6 @@ public final class SynProposition extends AbstractProposition {
             verticalSpan.insets = new Insets(0, border, 0, border);
             this.getIndentationArea().add(this.functionLabel, verticalSpan);
         }
-
         // create expanding panel on the right side of the proposition
         final GridBagConstraints rightSpacing = new GridBagConstraints();
         rightSpacing.fill = GridBagConstraints.HORIZONTAL;
@@ -150,7 +138,6 @@ public final class SynProposition extends AbstractProposition {
         rightSpacing.gridx = 1;
         rightSpacing.gridy = 0;
         this.add(new JPanel(), rightSpacing);
-
         this.getTranslationField().addFocusListener(new FocusAdapter() {
 
             @Override
@@ -169,11 +156,11 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * creates a {@link Dimension} for the indentation by settings its width regarding to the width of the view representation of the
-     * <code>partBeforeArrow</code>
+     * Create a {@link Dimension} for the indentation by settings its width regarding to the width of the view representation of the
+     * {@code partBeforeArrow}.
      *
      * @param partBeforeArrow
-     *            view representation of the <code>partBeforeArrow</code>
+     *            view representation of the {@code partBeforeArrow}
      * @return {@link Dimension} representing the indentation
      */
     private static Dimension createIndentationAfterArrow(final SynProposition partBeforeArrow) {
@@ -182,7 +169,7 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * inserts the specified {@link ClauseItem} at the end of displayed {@link SynItem}s
+     * Insert the specified {@link ClauseItem} at the end of the displayed {@link SynItem}s.
      *
      * @param item
      *            {@link ClauseItem} to insert
@@ -194,7 +181,7 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * removes the specified {@link SynItem} from the displayed item area
+     * Remove the specified {@link SynItem} from the displayed item area.
      *
      * @param target
      *            {@link SynItem} to remove
@@ -206,20 +193,18 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
+     * Getter for the contained {@link SynItem}s.
+     * 
      * @return displayed {@link SynItem}s
      */
-    public SynItem[] getItems() {
-        final SynItem[] val = new SynItem[this.items.size()];
-        for (int i = 0; i < val.length; i++) {
-            val[i] = this.items.get(i);
-        }
-        return val;
+    public List<SynItem> getItems() {
+        return new ArrayList<SynItem>(this.items);
     }
 
     /**
-     * sets the function (related to parent {@link Proposition} it is indented to) regarding the represented {@link Proposition}.
+     * Update the indentation function (in relation to the parent {@link Proposition}) to match the represented {@link Proposition}'s function value.
      *
-     * @return if a <code>repaint()</code> is neccessary
+     * @return if a {@code repaint()} is neccessary
      */
     public boolean refreshFunction() {
         final SyntacticalFunction function = this.getRepresented().getFunction();
@@ -235,7 +220,7 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * sets the syntactical translation text regarding the stored translation in the represented {@link Proposition}.
+     * Update the syntactical translation text to match the stored translation in the represented {@link Proposition}.
      *
      * @see AbstractProposition#refreshTranslation()
      */
@@ -246,7 +231,7 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * resets the tool tip info containing the comment text regarding its value in the represented {@link Proposition}
+     * Update the tool tip info containing the comment text to match its value in the represented {@link Proposition}.
      */
     public void refreshComment() {
         final String comment = this.getRepresented().getComment();

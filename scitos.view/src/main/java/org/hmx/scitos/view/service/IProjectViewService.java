@@ -47,7 +47,7 @@ public interface IProjectViewService<P extends IViewProject<M>, M extends IModel
      * Create a view project and populate it with the given model instance.
      *
      * @param model
-     *            model instance to manage in the project (should be of type <code>M</code>)
+     *            model instance to manage in the project (should be of type {@code M})
      * @param savePath
      *            path from where the given model has been loaded (will be used as default save destination)
      * @return created project instance
@@ -62,7 +62,7 @@ public interface IProjectViewService<P extends IViewProject<M>, M extends IModel
      *            project containing the given element
      * @param element
      *            element in the specified project a context menu has been requested for
-     * @return context menu to display (can be <code>null</code>, if none should be shown)
+     * @return context menu to display (can be {@code null}, if none should be shown)
      */
     ContextMenuBuilder createContextMenu(IViewProject<?> project, Object element);
 
@@ -70,7 +70,7 @@ public interface IProjectViewService<P extends IViewProject<M>, M extends IModel
      * Create the view for the given project instance.
      *
      * @param project
-     *            project instance to represent in the view (should be of type <code>P</code>)
+     *            project instance to represent in the view (should be of type {@code P})
      * @return created view instance
      */
     AbstractProjectView<P, M> createProjectView(IViewProject<?> project);

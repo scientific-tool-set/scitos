@@ -25,7 +25,7 @@ import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
 
 /**
- * utility class to manage all possible changes in the model
+ * utility class to manage all possible changes in the model.
  */
 public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> implements HmxModelHandler {
 
@@ -329,6 +329,17 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         return true;
     }
 
+    /**
+     * Merge the given {@link Proposition}s by appending the {@code secondPart} to the {@code firstPart} WITHOUT REMOVING the {@code secondPart} from
+     * its parent, which needs to be called separately. This method assumes both {@link Proposition}s being adjacent to one another and preserves any
+     * (other) child {@link Proposition}s and handles potentially affected {@link Proposition} parts or enclosed children.
+     * 
+     * @param prop1Part
+     *            leading {@link Proposition} to receive the other {@link Proposition}'s {@link ClauseItem}s, translations, and child
+     *            {@link Proposition}s
+     * @param prop2Part
+     *            trailing {@link Proposition} to be merged into the other {@link Proposition}
+     */
     private void mergeConnectedPropositions(final Proposition prop1Part, final Proposition prop2Part) {
         if (prop1Part == prop2Part.getParent()) {
             // prop2 is the first later child of prop1
@@ -398,6 +409,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
      *            {@link Proposition} which appears earlier in the {@link Pericope}
      * @param secondPart
      *            {@link Proposition} to be added at the end of the firstPart
+     * @see #mergeConnectedPropositions(Proposition, Proposition)
      */
     private void mergeConnectedPropositionsIntoOne(final Proposition firstPart, final Proposition secondPart) {
         // merge ClauseItems
@@ -428,6 +440,17 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         }
     }
 
+    /**
+     * Combine the two texts by separating them with the given character. If one of the texts is {@code null}, the other one is returned.
+     * 
+     * @param textOne
+     *            leading text to be merged
+     * @param textTwo
+     *            trailing text to be merged
+     * @param separatorChar
+     *            whitespace character to insert between both texts if they are both not {@code null}
+     * @return merged text
+     */
     private String mergeText(final String textOne, final String textTwo, final char separatorChar) {
         final String result;
         if (textOne == null) {

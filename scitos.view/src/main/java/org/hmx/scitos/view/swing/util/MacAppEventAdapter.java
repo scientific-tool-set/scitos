@@ -36,8 +36,9 @@ public class MacAppEventAdapter implements InvocationHandler {
     final Method targetMethod;
     /** The name of the designated application event handler to be. */
     final String proxySignature;
-
-    /** The actual <code>com.apple.eawt.Application</code> instance to register event handlers. */
+    /**
+     * The actual {@code com.apple.eawt.Application} instance to register event handlers on.
+     */
     static Object macOSXApplication;
 
     /**
@@ -45,10 +46,10 @@ public class MacAppEventAdapter implements InvocationHandler {
      * or not the quit should occur.
      *
      * @param target
-     *            instance to invoke the quitHandler method on, for a handleQuit request (can be <code>null</code> if the quitHandler method is
-     *            <code>static</code>)
+     *            instance to invoke the quitHandler method on, for a handleQuit request (can be {@code null} if the quitHandler method is
+     *            {@code static})
      * @param quitHandler
-     *            actual method to invoke for a handleQuit request (returning a <code>boolean</code>)
+     *            actual method to invoke for a handleQuit request (returning a {@code boolean})
      */
     public static void setQuitHandler(final Object target, final Method quitHandler) {
         MacAppEventAdapter.setHandler(new MacAppEventAdapter("handleQuit", target, quitHandler));
@@ -59,8 +60,8 @@ public class MacAppEventAdapter implements InvocationHandler {
      * application menu.
      *
      * @param target
-     *            instance to invoke the aboutHandler method on, for a handleAbout request (can be <code>null</code> if the aboutHandler method is
-     *            <code>static</code>)
+     *            instance to invoke the aboutHandler method on, for a handleAbout request (can be {@code null} if the aboutHandler method is
+     *            {@code static})
      * @param aboutHandler
      *            actual method to invoke for a handleAbout request
      */
@@ -81,8 +82,8 @@ public class MacAppEventAdapter implements InvocationHandler {
      * from the application menu
      *
      * @param target
-     *            instance to invoke the prefsHandler method on, for a handlePreferences request (can be <code>null</code> if the prefsHandler method
-     *            is <code>static</code>)
+     *            instance to invoke the prefsHandler method on, for a handlePreferences request (can be {@code null} if the prefsHandler method is
+     *            {@code static})
      * @param prefsHandler
      *            actual method to invoke for a handlePreferences request
      */
@@ -103,8 +104,8 @@ public class MacAppEventAdapter implements InvocationHandler {
      * CFBundleDocumentTypes dictionary in the application bundle's Info.plist.
      *
      * @param target
-     *            instance to invoke the fileHandler method on, for a handleOpenFile request (can be <code>null</code> if the fileHandler method is
-     *            <code>static</code>)
+     *            instance to invoke the fileHandler method on, for a handleOpenFile request (can be {@code null} if the fileHandler method is
+     *            {@code static})
      * @param fileHandler
      *            actual method to invoke for a handleOpenFile request
      */
@@ -185,8 +186,7 @@ public class MacAppEventAdapter implements InvocationHandler {
      * @param proxySignature
      *            name of the handled application event method (i.e. handleXXX)
      * @param target
-     *            instance to invoke the handler method on, for a handleXXX request (can be <code>null</code> if the handler method is
-     *            <code>static</code>)
+     *            instance to invoke the handler method on, for a handleXXX request (can be {@code null} if the handler method is {@code static})
      * @param handler
      *            actual method to invoke for a handleXXX request
      */
@@ -201,7 +201,7 @@ public class MacAppEventAdapter implements InvocationHandler {
      *
      * @param appleEvent
      *            application event to handle
-     * @return if the declared handler method returned <code>null</code> (incl. it being <code>void</code>) or not empty/<code>false</code>
+     * @return if the declared handler method returned {@code null} (incl. it being {@code void}) or not empty/{@code false}
      * @throws InvocationTargetException
      *             error in the invoked handler method
      * @throws IllegalAccessException

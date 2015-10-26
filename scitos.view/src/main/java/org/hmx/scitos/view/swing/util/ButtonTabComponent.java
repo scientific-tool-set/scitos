@@ -168,7 +168,7 @@ public class ButtonTabComponent extends JPanel {
      * Close all tab in the associated tab pane – with the option to leave the tab at the specified index open.
      *
      * @param tabIndexToLeaveOpen
-     *            index of the single tab to leave open; if the index is invalid (e.g. <code>-1</code>), all tabs are being closed
+     *            index of the single tab to leave open; if the index is invalid (e.g. {@code -1}), all tabs are being closed
      */
     void closeAllOtherTabs(final int tabIndexToLeaveOpen) {
         for (int tabIndex = this.pane.getTabCount() - 1; tabIndex > -1; tabIndex--) {

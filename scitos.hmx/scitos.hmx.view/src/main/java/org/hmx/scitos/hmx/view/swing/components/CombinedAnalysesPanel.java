@@ -24,6 +24,7 @@ import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
+import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.view.IPericopeView;
@@ -33,25 +34,50 @@ import org.hmx.scitos.view.swing.components.ScaledTextPane;
 import org.hmx.scitos.view.swing.util.VTextIcon;
 
 /**
- *
+ * The view representation of a {@link Pericope} in the analysis mode – containing both the syntactical and semantical analysis.
  */
 public final class CombinedAnalysesPanel extends JPanel implements IPericopeView {
 
+    /** The represented project's model handler instance. */
     private final HmxModelHandler modelHandler;
+    /**
+     * The provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus.
+     */
     private final ISemanticalRelationProvider relationProvider;
 
+    /** The button to switch between the syntactical and semantical analysis. */
     private final JButton switchButton;
+    /**
+     * The vertical label for the {@link #switchButton} to switch from the syntactical to the semantical analysis.
+     */
     private final VTextIcon semButtonIcon;
+    /**
+     * The vertical label for the {@link #switchButton} to switch from the semantical to the syntactical analysis.
+     */
     private final VTextIcon synButtonIcon;
+    /** The view component representing the semantical analysis. */
     private final SemAnalysisPanel semAnalysisView;
+    /** The view component representing the syntactical analysis. */
     private final SynAnalysisPanel synAnalysisView;
+    /** The input area at the bottom of the view, allowing the display and modification of a selected element's comment. */
     private final JTextPane commentArea;
 
+    /**
+     * The currently active analysis: either {@link #semAnalysisView} or {@link #synAnalysisView}.
+     */
     private JPanel activeAnalysisView;
+    /**
+     * The most recently selected commentable model element currently associated with the {@link #commentArea}.
+     */
     private AbstractCommentable<?> lastSelectedCommentable;
 
     /**
-     * Main constructor.
+     * Constructor.
+     * 
+     * @param modelHandler
+     *            the represented project's model handler instance
+     * @param relationProvider
+     *            the provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus
      */
     public CombinedAnalysesPanel(final HmxModelHandler modelHandler, final ISemanticalRelationProvider relationProvider) {
         super(new GridBagLayout());
@@ -135,7 +161,7 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
     }
 
     /**
-     * changes the active analysis view by setting their visibility to make sure that only one analysis view is visible; and clears the shown comment
+     * Change the active analysis view by setting their visibility to make sure that only one analysis view is visible; and clear the shown comment.
      */
     void changeActiveAnalysisView() {
         // make sure only one analysis view is visible at the end
@@ -205,7 +231,7 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
     }
 
     /**
-     *
+     * Fully rebuild the currently displayed representation of the {@link Pericope}.
      */
     public void refresh() {
         if (this.synAnalysisView.isShowing()) {

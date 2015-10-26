@@ -65,7 +65,7 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
     private final Map<FileType, IModelParseService<?>> modelParseServices;
 
     /**
-     * Main constructor.
+     * Constructor.
      */
     @Inject
     public ModelParseServiceProviderImpl() {
@@ -142,6 +142,18 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
         }
     }
 
+    /**
+     * Save the given xml document to the {@code target} file by using the given {@code transformer}.
+     * 
+     * @param xml
+     *            the document to write to a file
+     * @param transformer
+     *            the transformer performing the file writing according to its configuration
+     * @param target
+     *            the designated file location to save to
+     * @throws HmxException
+     *             error occurred when preparing for or writing the file
+     */
     private void save(final Document xml, final Transformer transformer, final File target) throws HmxException {
         // create target file output stream
         FileOutputStream output = null;

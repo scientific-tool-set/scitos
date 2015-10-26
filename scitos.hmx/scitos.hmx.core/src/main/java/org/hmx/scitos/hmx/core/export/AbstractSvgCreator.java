@@ -29,7 +29,9 @@ import org.w3c.dom.Element;
  */
 abstract class AbstractSvgCreator {
 
-    /** SVG compatible number format for {@link #numberToString(double)} */
+    /**
+     * SVG compatible number format for {@link #numberToString(double)}.
+     */
     private final NumberFormat numberFormatter = NumberFormat.getInstance(Locale.ENGLISH);
 
     {
@@ -41,24 +43,35 @@ abstract class AbstractSvgCreator {
         this.numberFormatter.setMaximumFractionDigits(5);
     }
 
-    /** copy of the targeted model at the time of constructor invocation */
+    /** Copy of the targeted model at the time of this svg creator instance being initialized. */
     protected final Pericope model;
+    /** Font to apply for non-origin texts with plain style. */
     protected final Font labelFontPlain;
+    /** Font to apply for non-origin texts with bold style. */
     protected final Font labelFontBold;
+    /** Font to apply for non-origin texts with bold and italic style. */
     protected final Font labelFontBoldItalic;
+    /** Font to apply for non-origin texts with italic style. */
     protected final Font labelFontItalic;
+    /** Smaller sized font to apply for comments and their representing numeric identifiers. */
     protected final Font commentFont;
+    /** The spacing to insert between elements on the x-axis. */
     protected final double horizontalSpacing;
+    /** The spacing to insert between elements on the y-axis. */
     protected final double verticalSpacing;
     /**
-     * just for avoiding repeated instantiations of a generic {@link FontRenderContext} in order to execute calculations in
-     * {@link #getTextBounds(String, Font)} and
+     * Generic {@link FontRenderContext} for executing calculations in {@link #getTextBounds(String, Font)}.
      */
     private final FontRenderContext fontContext = new FontRenderContext(new AffineTransform(), true, true);
+    /** Font color to be applied to orgin text parts. */
     protected final String colorOriginText;
+    /** Font color to be applied to translations. */
     protected final String colorTranslationText;
+    /** Font color to be applied to labels. */
     protected final String colorLabelText;
+    /** Border color to be applied to propositions. */
     protected final String colorPropositionBorder;
+    /** Background color to be applied to propositions. */
     protected final String colorPropositionBackground;
 
     /**
@@ -100,6 +113,7 @@ abstract class AbstractSvgCreator {
      *            language file key representing what kind of SVG document this is, too include it in the main title element
      * @return created XML document with the SVG root
      * @throws HmxException
+     *             failed to create an empty document to be filled
      */
     protected Document createSvgDocument(final String exportTypeTitle) throws HmxException {
         final Document xml;
@@ -139,6 +153,8 @@ abstract class AbstractSvgCreator {
      * Creates colored polygon definitions for upward and downward arrows (indicating a {@link Proposition} with encapsulated child
      * {@link Proposition}s), which can be called by their IDs.
      *
+     * @param xml
+     *            the designated document this element is created for
      * @param arrowHeight
      *            desired height of the rendered arrows
      * @return created definitions
@@ -152,20 +168,33 @@ abstract class AbstractSvgCreator {
         // prepare scaling
         final double scalingFactor = this.calculateArrowScalingFactor(arrowHeight);
         final String transformScale = String.format(SvgConstants.VAL_GROUP_TRANSFORM_SCALE_1, String.valueOf(scalingFactor));
-
         // prepare a scaled version of a upward pointing arrow
-        result.add(this
-                .createArrow(xml, SvgConstants.VAL_ID_ARROW_UPWARD, arrowColor, SvgConstants.VAL_POLYGON_POINTS_UPWARDARROW, transformScale));
+        result.add(this.createArrowTemplate(xml, SvgConstants.VAL_ID_ARROW_UPWARD, arrowColor, SvgConstants.VAL_POLYGON_POINTS_UPWARDARROW,
+                transformScale));
         // prepare a scaled version of a downward pointing arrow
-        result.add(this.createArrow(xml, SvgConstants.VAL_ID_ARROW_DOWNWARD, arrowColor, SvgConstants.VAL_POLYGON_POINTS_DOWNWARDARROW,
+        result.add(this.createArrowTemplate(xml, SvgConstants.VAL_ID_ARROW_DOWNWARD, arrowColor, SvgConstants.VAL_POLYGON_POINTS_DOWNWARDARROW,
                 transformScale));
         return result;
     }
 
+    /**
+     * Calculate the factor required to scale one of the predefined arrow templates to the specified height.
+     * 
+     * @param arrowHeight
+     *            expected height of the arrow element
+     * @return scaling factor to apply for reaching the given height for an arrow
+     */
     private double calculateArrowScalingFactor(final double arrowHeight) {
         return arrowHeight / (2 * SvgConstants.ARROWS_CENTERY);
     }
 
+    /**
+     * Calculate the width for an arrow with the specified height while preserving the predefined aspect ratio.
+     * 
+     * @param arrowHeight
+     *            expected height of the arrow element
+     * @return matching width to be expected for an arrow element with the given height
+     */
     protected double calculateArrowWidth(final double arrowHeight) {
         return this.calculateArrowScalingFactor(arrowHeight) * 2 * SvgConstants.ARROWS_CENTERX;
     }
@@ -173,6 +202,8 @@ abstract class AbstractSvgCreator {
     /**
      * Calls one of the predefined arrow templates according to the given ID.
      *
+     * @param xml
+     *            the designated document this element is created for
      * @param arrowRefID
      *            ID of the arrow template to use
      * @param coordX
@@ -194,23 +225,40 @@ abstract class AbstractSvgCreator {
         return singleArrow;
     }
 
-    private Element createArrow(final Document xml, final String id, final String color, final String points, final String transform) {
-        final Element wrappedArrow = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_GROUP);
-        wrappedArrow.setAttribute(SvgConstants.ATT_ID, id);
-        wrappedArrow.setAttribute(SvgConstants.ATT_GROUP_TRANSFORM, transform);
-        final Element arrowTemplate = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_POLYGON);
-        arrowTemplate.setAttribute(SvgConstants.ATT_FILL, color);
-        arrowTemplate.setAttribute(SvgConstants.ATT_STROKE_LINECAP, SvgConstants.VAL_STROKE_LINECAP_ARROWS);
-        arrowTemplate.setAttribute(SvgConstants.ATT_STROKE_LINEJOIN, SvgConstants.VAL_STROKE_LINEJOIN_ARROWS);
-        arrowTemplate.setAttribute(SvgConstants.ATT_STROKE_WIDTH, SvgConstants.VAL_STROKE_WIDTH_ARROWS);
-        arrowTemplate.setAttribute(SvgConstants.ATT_POLYGON_POINTS, points);
-        wrappedArrow.appendChild(arrowTemplate);
-        return wrappedArrow;
+    /**
+     * Create a template for a polygon with the specified fill color and coordinates.
+     * 
+     * @param xml
+     *            the designated document this element is created for
+     * @param id
+     *            ID to set for this arrow template, which can be used to insert it in the main document
+     * @param color
+     *            the fill color to apply for the arrow
+     * @param points
+     *            pairs of x,y coordinates making up the arrow form
+     * @param transform
+     *            the transformation to be applied to the defined arrow
+     * @return create template definition containing the arrow
+     */
+    private Element createArrowTemplate(final Document xml, final String id, final String color, final String points, final String transform) {
+        final Element template = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_POLYGON);
+        template.setAttribute(SvgConstants.ATT_FILL, color);
+        template.setAttribute(SvgConstants.ATT_STROKE_LINECAP, SvgConstants.VAL_STROKE_LINECAP_ARROWS);
+        template.setAttribute(SvgConstants.ATT_STROKE_LINEJOIN, SvgConstants.VAL_STROKE_LINEJOIN_ARROWS);
+        template.setAttribute(SvgConstants.ATT_STROKE_WIDTH, SvgConstants.VAL_STROKE_WIDTH_ARROWS);
+        template.setAttribute(SvgConstants.ATT_POLYGON_POINTS, points);
+        final Element wrappedTemplate = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_GROUP);
+        wrappedTemplate.setAttribute(SvgConstants.ATT_ID, id);
+        wrappedTemplate.setAttribute(SvgConstants.ATT_GROUP_TRANSFORM, transform);
+        wrappedTemplate.appendChild(template);
+        return wrappedTemplate;
     }
 
     /**
      * Creates a color definition element, which can be called by the given ID.
      *
+     * @param xml
+     *            the designated document this element is created for
      * @param id
      *            ID to set for this color definition, which can be used to call for its specific value
      * @param option
@@ -225,8 +273,10 @@ abstract class AbstractSvgCreator {
     }
 
     /**
-     * Creates a filled rectangle with the given size on the coordinates <code>(0, 0)</code> according to the user selected color options.
+     * Creates a filled rectangle with the given size on the coordinates {@code (0, 0)} according to the user selected color options.
      *
+     * @param xml
+     *            the designated document this element is created for
      * @param horizontalExtent
      *            width of the background rectangle
      * @param verticalExtent
@@ -252,9 +302,11 @@ abstract class AbstractSvgCreator {
     }
 
     /**
-     * WARNING: the label is assumed to be left-to-right oriented.<br>
-     * In order to provide a dynamic positioning one must identify the desired text orientation of the label text itself...</br>
+     * WARNING: the label is assumed to be left-to-right oriented. In order to provide a dynamic positioning one must identify the desired text
+     * orientation of the label text itself...
      *
+     * @param xml
+     *            the designated document this element is created for
      * @param label
      *            short description label to insert
      * @param labelWidth
@@ -274,14 +326,16 @@ abstract class AbstractSvgCreator {
     }
 
     /**
-     * WARNING: the translation is assumed to be left-to-right oriented.<br>
-     * In order to provide a dynamic positioning one must identify the desired text orientation of the translation text itself...</br>
+     * WARNING: the translation is assumed to be left-to-right oriented. In order to provide a dynamic positioning one must identify the desired text
+     * orientation of the translation text itself...
      *
+     * @param xml
+     *            the designated document this element is created for
      * @param translation
      *            translation text to insert
      * @param width
-     *            horizontal space needed for rendering this translation text<br>
-     *            <i>currently ignored, cause it would only be necessary for right-to-left oriented translations</i></br>
+     *            horizontal space needed for rendering this translation text; <i>currently ignored, cause it would only be necessary for
+     *            right-to-left oriented translations</i>
      * @param propositionHeight
      *            height of the proposition containing this translation
      * @return created SVG-Element representing the given translation text
@@ -315,17 +369,19 @@ abstract class AbstractSvgCreator {
     /**
      * Creates a &lt;{@link SvgConstants#NAMESPACE_SVG svg}:{@link SvgConstants#TAG_TEXT text}/&gt; element containing the given text, on the
      * specified (parent-relative) position.
-     *
+     * 
+     * @param xml
+     *            the designated document this element is created for
      * @param text
      *            content of the create element
      * @param font
      *            font to set (extracting its family name, size, style and weight)
      * @param coordX
-     *            horizontal position (relative to its parent element)<br>
-     *            if this is on the left, mid or right of the text is determined by the <code>anchor</code> parameter</br>
+     *            horizontal position (relative to its parent element); if this is on the left, mid or right of the text is determined by the
+     *            {@code anchor} parameter
      * @param coordY
-     *            vertical position (relative to its parent element)<br>
-     *            if this is on the top, mid or bottom of the text is determined by the <code>anchor</code> parameter</br>
+     *            vertical position (relative to its parent element); if this is on the top, mid or bottom of the text is determined by the
+     *            {@code anchor} parameter
      * @param anchor
      *            <ul>
      *            <li>{@link SvgConstants#VAL_TEXT_ANCHOR_START start}: the given point is the bottom left (or bottom right in right-to-left

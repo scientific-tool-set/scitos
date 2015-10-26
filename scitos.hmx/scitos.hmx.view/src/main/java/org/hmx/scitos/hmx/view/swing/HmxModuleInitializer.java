@@ -44,11 +44,13 @@ public final class HmxModuleInitializer {
      * @param modelServiceRegistry
      *            registry for services handling conversions between xml and java model
      * @param modelService
-     *            service implementation handling conversions between xml and java model for AIS module
+     *            service implementation handling conversions between xml and java model for the HermeneutiX module
      * @param optionPanelServiceRegistry
      *            registry for services handling the view panels offering customizing options for the user
      * @param generalOptionPanelService
      *            service implementation handling the view panel offering general customizing options in the HermeneutiX module
+     * @param exportOptionPanelService
+     *            service implementation handling the view panel offering export customizing options in the HermeneutiX module
      * @param viewServiceRegistry
      *            registry for services handling the generation of view projects and their respective views
      * @param viewService

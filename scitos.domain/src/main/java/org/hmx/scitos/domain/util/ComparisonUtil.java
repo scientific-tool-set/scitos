@@ -176,6 +176,8 @@ public final class ComparisonUtil {
     /**
      * Count the number of occurrences in a given collection.
      *
+     * @param <T>
+     *            the type to count the occurrences in the given {@code collection} for
      * @param collection
      *            the targeted collection to count repeated instances in
      * @return mapping of contained instances to their respective count of occurrences

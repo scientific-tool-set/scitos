@@ -29,35 +29,33 @@ import org.hmx.scitos.core.util.ConversionUtil;
  * Collection of general user preferences for the HermeneutiX module.
  */
 public enum HmxExportOption implements IOptionSetting {
-    /** user setting: color of arrows (between splitted propositions) in exports */
+    /** user setting: color of arrows (between splitted propositions) in exports. */
     ARROW_COLOR("Export.Arrow.Color", ConversionUtil.toString(Color.BLUE)),
-    /** user setting: border color of propositions in exports */
+    /** user setting: border color of propositions in exports. */
     PROPOSITION_COLOR_BORDER("Export.Proposition.BorderColor", ConversionUtil.toString(null)),
-    /** user setting: background color of propositions in exports */
+    /** user setting: background color of propositions in exports. */
     PROPOSITION_COLOR_BACKGROUND("Export.Proposition.BackgroundColor", ConversionUtil.toString(new Color(240, 240, 240))),
-    /** user setting: color of semantical relations in exports */
+    /** user setting: color of semantical relations in exports. */
     RELATION_COLOR("Export.Relation.Color", ConversionUtil.toString(Color.RED)),
-    /** user setting: color of origin texts in exports */
+    /** user setting: color of origin texts in exports. */
     FONTCOLOR_ORIGINTEXT("Export.OriginText.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of translation texts in exports */
+    /** user setting: color of translation texts in exports. */
     FONTCOLOR_TRANSLATION("Export.Translation.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of label texts in exports */
+    /** user setting: color of label texts in exports. */
     FONTCOLOR_LABEL("Export.Label.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of semantical relation roles in exports */
+    /** user setting: color of semantical relation roles in exports. */
     FONTCOLOR_SEMROLE("Export.SemRole.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of plain syntactical functions in exports */
+    /** user setting: color of plain syntactical functions in exports. */
     FONTCOLOR_SYNFUNCTION_PLAIN("Export.SynFunction.Plain.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of bold syntactical functions in exports */
+    /** user setting: color of bold syntactical functions in exports. */
     FONTCOLOR_SYNFUNCTION_BOLD("Export.SynFunction.Bold.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of bold-italic syntactical functions in exports */
+    /** user setting: color of bold-italic syntactical functions in exports. */
     FONTCOLOR_SYNFUNCTION_BOLDTALIC("Export.SynFunction.BoldItalic.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /** user setting: color of italic syntactical functions in exports */
+    /** user setting: color of italic syntactical functions in exports. */
     FONTCOLOR_SYNFUNCTION_ITALIC("Export.SynFunction.Italic.FontColor", ConversionUtil.toString(Color.BLACK)),
-    /**
-     * user setting: family name of the font to use for non-origin texts in exports
-     */
+    /** user setting: family name of the font to use for non-origin texts in exports. */
     NONORIGINTEXT_FONT_TYPE("Export.FontType", "Times New Roman"),
-    /** user setting: size of the font to use for non-origin texts in exports */
+    /** user setting: size of the font to use for non-origin texts in exports. */
     NONORIGINTEXT_FONT_SIZE("Export.FontSize", "14");
 
     /** The handler for this specific settings collection. */
@@ -69,7 +67,7 @@ public enum HmxExportOption implements IOptionSetting {
     private final String defaultValue;
 
     /**
-     * Main constructor.
+     * Constructor.
      *
      * @param attributeKey
      *            actual settings key

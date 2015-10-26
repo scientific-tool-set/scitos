@@ -31,18 +31,18 @@ import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.MessageHandler.Choice;
 
 /**
- * swing utility class creating all {@link ContextMenuBuilder}s for user interactions on the analysis elements
+ * swing utility class creating all {@link ContextMenuBuilder}s for user interactions on the analysis elements.
  */
 public final class ContextMenuFactory {
 
-    /** hidden constructor due to only static methods */
+    /** hidden constructor due to only static methods. */
     private ContextMenuFactory() {
         // never called
     }
 
     /**
-     * creates a {@link ContextMenuBuilder} with all entries related to the specified {@link ClauseItem} and the {@link Proposition} it is contained
-     * in
+     * Create a {@link ContextMenuBuilder} with all entries related to the specified {@link ClauseItem} and the {@link Proposition} it is contained
+     * in.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -60,8 +60,8 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * creates a {@link ContextMenuBuilder} with all entries related to the specified {@link ClauseItem} and the option to reset standalone state of
-     * the {@link Proposition} part
+     * Create a {@link ContextMenuBuilder} with all entries related to the specified {@link ClauseItem} and the option to reset standalone state of
+     * the {@link Proposition} part.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -80,7 +80,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * creates a {@link ContextMenuBuilder} with all entries related to the specified {@link Proposition}
+     * Create a {@link ContextMenuBuilder} with all entries related to the specified {@link Proposition}.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -95,7 +95,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * creates a {@link ContextMenuBuilder} with only one entry to reset the standalone state of the {@link Proposition} part
+     * Create a {@link ContextMenuBuilder} with only one entry to reset the standalone state of the {@link Proposition} part.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -110,7 +110,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * creates a {@link ContextMenuBuilder} with only one entry to create a {@link Relation} over the clicked {@link Proposition}
+     * Create a {@link ContextMenuBuilder} with only one entry to create a {@link Relation} over the clicked {@link Proposition}.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -125,8 +125,8 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * creates a {@link ContextMenuBuilder} with four entries to create a {@link Relation} over the clicked {@link Relation}, rotate its roles, change
-     * its type or to delete it
+     * Create a {@link ContextMenuBuilder} with four entries to create a {@link Relation} over the clicked {@link Relation}, rotate its roles, change
+     * its type or to delete it.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -159,10 +159,11 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * adds the sub menu for changing the {@link ClauseItem}s (or {@link Proposition}s) function to the designated {@link ContextMenuBuilder};
-     * <p>
-     * MODE1: <code>(target != null)</code> sets the function of the targeted clause item;<br>
-     * MODE2: <code>(target == null)</code> indents the represented synProposition and sets its function
+     * Add the sub menu for changing the {@link ClauseItem}s (or {@link Proposition}s) function to the designated {@link ContextMenuBuilder}.
+     * <ul>
+     * <li>MODE1: {@code (target != null)} sets the function of the targeted clause item;</li>
+     * <li>MODE2: {@code (target == null)} indents the represented synProposition and sets its function</li>
+     * </ul>
      *
      * @param popupMenu
      *            popup to contain the new sub menu
@@ -190,7 +191,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * adds multiple entries for different syntactical functions to the popup sub menu for setting the functions
+     * Add multiple entries for different {@link SyntacticalFunction}s to the popup sub menu for setting the functions.
      *
      * @param changeFunctionMenu
      *            sub menu to contain the entries
@@ -234,7 +235,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * adds the {@link ClauseItem} related entries to the designated {@link ContextMenuBuilder}
+     * Add the {@link ClauseItem} related entries to the designated {@link ContextMenuBuilder}.
      *
      * @param popupMenu
      *            popup to contain the new entries
@@ -312,7 +313,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * adds the sub menu for changing the {@link ClauseItem}s {@link Font} style (PLAIN, BOLD, ITALIC, BOLD and ITALIC)
+     * Add the sub menu for changing the {@link ClauseItem}s style (PLAIN, BOLD, ITALIC, BOLD and ITALIC).
      *
      * @param popupMenu
      *            popup to contain the new sub menu
@@ -344,7 +345,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * adds all entries to the {@link ContextMenuBuilder} that deals with the specified {@link Proposition}
+     * Add all entries to the {@link ContextMenuBuilder} that deals with the specified {@link Proposition}.
      *
      * @param popupMenu
      *            popup to contain the new entries
@@ -383,7 +384,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * adds a single entry for resetting the standalone state of the {@link Proposition} part
+     * Add a single entry for resetting the standalone state of the {@link Proposition} part.
      *
      * @param popup
      *            popup to contain the new entry
@@ -405,7 +406,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * tries to merge the selected {@link Proposition}s in the syntactical analysis view
+     * Try to merge the selected {@link Proposition}s in the syntactical analysis view.
      *
      * @param viewReference
      *            panel representing the syntactical analysis
@@ -431,7 +432,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * tries to indent the specified {@link Proposition} in the syntactical analysis view under the checked one
+     * Try to indent the specified {@link Proposition} in the syntactical analysis view under the checked one.
      *
      * @param viewReference
      *            panel representing the syntactical analysis
@@ -466,7 +467,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * removes one indentation of the specified {@link Proposition} in the viewReference, if the user agrees to possible effects on other propositions
+     * Remove one indentation of the specified {@link Proposition} in the viewReference, if the user agrees to possible effects on other propositions.
      *
      * @param viewReference
      *            viewReference containing the {@link Proposition}
@@ -498,6 +499,20 @@ public final class ContextMenuFactory {
         }
     }
 
+    /**
+     * Add a submenu to the given {@link ContextMenuBuilder} for creating a {@link Relation} over the selected associates including the given one or
+     * for altering the type of given {@link Relation}.
+     * 
+     * @param popup
+     *            the context menu to add the created submenu to
+     * @param viewReference
+     *            viewReference containing the {@link Relation}
+     * @param selectedConnectable
+     *            the designated popup owner
+     * @param onlyAlterType
+     *            if the sub menu should allow to alter the {@link Relation}'s type; otherwise it will allow the creation of a super ordinated
+     *            {@link Relation}
+     */
     private static void addCreateOrAlterRelationEntry(final ContextMenuBuilder popup, final IPericopeView viewReference,
             final AbstractConnectable selectedConnectable, final boolean onlyAlterType) {
         final String menuLabel = onlyAlterType ? HmxMessage.MENU_ALTER_RELATION_TYPE.get() : HmxMessage.MENU_CREATE_RELATION.get();
@@ -546,6 +561,18 @@ public final class ContextMenuFactory {
         }
     }
 
+    /**
+     * Build the text representing the {@link Relation} consisting of the given roles.
+     * 
+     * @param roles
+     *            the associate roles the represented {@link Relation} is comprised of
+     * @param onlyAlterType
+     *            if the menu item should allow to alter the {@link Relation}'s type; otherwise it will allow the creation of a super ordinated
+     *            {@link Relation}
+     * @param localeForStringConversion
+     *            the {@link Locale} to use for converting a high weight associate's role label to upper case
+     * @return the representing text
+     */
     private static String buildRelationLabel(final List<AssociateRole> roles, final boolean onlyAlterType, final Locale localeForStringConversion) {
         final Map<AssociateRole, AtomicInteger> occurrences = ComparisonUtil.countOccurrences(roles);
         final StringBuilder itemLabel = new StringBuilder();
@@ -591,7 +618,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * create a new {@link Relation} of the specified kind over the selected {@link AbstractConnectable}s
+     * Create a new {@link Relation} of the specified kind over the selected {@link AbstractConnectable}s.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -616,7 +643,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * changes the type of the designated {@link Relation} to the chosen one represented by the language file key
+     * Change the type of the designated {@link Relation} to the chosen one represented by the given {@code template}.
      *
      * @param viewReference
      *            the view the request for this context menu originated from
@@ -630,7 +657,7 @@ public final class ContextMenuFactory {
     }
 
     /**
-     * Get the matching {@link Font} style value for the given style option.
+     * Get the matching {@link Font} style value for the given {@link Style} option.
      *
      * @param style
      *            the option to get the {@link Font} style value for

@@ -17,11 +17,11 @@ import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
  */
 public final class SynControl implements ModelChangeListener {
 
-    /** targeted syntactical analysis view */
+    /** The targeted syntactical analysis view. */
     final SynAnalysisPanel synArea;
 
     /**
-     * stores the targeted syntactical analysis view to display the listened changes in
+     * Constructor.
      *
      * @param panel
      *            targeted syntactical analysis view
@@ -31,10 +31,10 @@ public final class SynControl implements ModelChangeListener {
     }
 
     /**
-     * creates the listener for the defined {@link SynAnalysisPanel}, responsible for the whole handling of event representing a change in the model
+     * Handle the given {@code event} and update the associated {@link SynAnalysisPanel} accordingly.
      *
      * @param event
-     *            thrown {@link ModelEvent} containing the changed model element
+     *            the {@link ModelEvent} indicating a changed model (part)
      */
     @Override
     public void modelChanged(final ModelEvent<?> event) {
@@ -59,7 +59,7 @@ public final class SynControl implements ModelChangeListener {
     }
 
     /**
-     * handles a {@link ModelEvent} containing a {@link Proposition}
+     * Handle a {@link ModelEvent} for a single {@link Proposition}.
      *
      * @param target
      *            {@link Proposition} to refresh in view
@@ -79,8 +79,7 @@ public final class SynControl implements ModelChangeListener {
         representative.refreshTranslation();
         representative.refreshComment();
         // remove all items in view
-        final SynItem[] viewItems = representative.getItems();
-        for (final SynItem singleViewItem : viewItems) {
+        for (final SynItem singleViewItem : representative.getItems()) {
             representative.removeItem(singleViewItem);
         }
         // reinsert all items in view
@@ -90,7 +89,7 @@ public final class SynControl implements ModelChangeListener {
     }
 
     /**
-     * handles a {@link ModelEvent} containing a {@link ClauseItem}
+     * Handle a {@link ModelEvent} for a single {@link ClauseItem}.
      *
      * @param target
      *            {@link ClauseItem} to refresh in view
@@ -106,13 +105,13 @@ public final class SynControl implements ModelChangeListener {
     }
 
     /**
-     * browses all {@link SynProposition}s in the syntactical analysis view for the specified {@link Proposition}
+     * Lookup the view component in the given syntactical analysis view that represent the specified {@link Proposition}.
      *
      * @param synArea
-     *            syntactical analysis view containing the searched representation
+     *            syntactical analysis view to find the view component in
      * @param target
      *            {@link Proposition} to look for
-     * @return {@link SynProposition} representing the target
+     * @return {@link SynProposition} representing the {@code target}
      */
     public static SynProposition getRepresentative(final SynAnalysisPanel synArea, final Proposition target) {
         final List<SynProposition> viewPropositions = synArea.getPropositionList();
@@ -127,20 +126,18 @@ public final class SynControl implements ModelChangeListener {
     }
 
     /**
-     * browses all {@link SynProposition}s in the syntactical analysis view for the parent of the specified {@link ClauseItem} and the contained
-     * representative of the item
+     * Lookup the view component in the given syntactical analysis view that represent the specified {@link ClauseItem}.
      *
      * @param synArea
      *            syntactical analysis view containing the searched representation
      * @param target
      *            {@link ClauseItem} to look for
-     * @return {@link SynItem} representing the target
+     * @return {@link SynItem} representing the {@code target}
      */
     public static SynItem getRepresentative(final SynAnalysisPanel synArea, final ClauseItem target) {
         final SynProposition parentRepresentative = SynControl.getRepresentative(synArea, target.getParent());
         if (parentRepresentative != null) {
-            final SynItem[] viewItems = parentRepresentative.getItems();
-            for (final SynItem singleViewItem : viewItems) {
+            for (final SynItem singleViewItem : parentRepresentative.getItems()) {
                 if (target == singleViewItem.getRepresented()) {
                     return singleViewItem;
                 }

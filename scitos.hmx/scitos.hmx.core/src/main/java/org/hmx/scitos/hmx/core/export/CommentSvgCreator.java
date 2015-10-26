@@ -13,17 +13,42 @@ import org.hmx.scitos.hmx.domain.model.Relation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Creator for svg document listing comments contained in a single project's {@link Pericope}.
+ */
 class CommentSvgCreator extends AbstractSvgCreator {
 
+    /** Counter of comments matching with its counter part in respective svgs created for the analyses. */
     private int commentCounter;
+    /** Horizontal indentation of the comment texts, providing for enough space for the counter to be displayed in front. */
     private double indexExtentX;
+    /** The overall with of the widest comment text, to set the generated document's size appropriately. */
     private double commentExtentX;
+    /** The overall height of all comment texts combined, to set the generated document's appropriately. */
     private double extentY;
 
+    /**
+     * Constructor.
+     * 
+     * @param model
+     *            the model to create the comment containing document for
+     */
     protected CommentSvgCreator(final Pericope model) {
         super(model);
     }
 
+    /**
+     * Create a svg document listing the comments in the associated {@link Pericope}. Comments on {@link Proposition}s are always included. The
+     * inclusion of {@link Relation} and {@link ClauseItem} comments is enabled/disabled by the respective flags.
+     * 
+     * @param considerRelations
+     *            if comments on {@link Relation}s should be included in the generated document
+     * @param considerClauseItems
+     *            if comments on {@link ClauseItem}s should be included in the generated document
+     * @return generated svg document
+     * @throws HmxException
+     *             failed to create an empty document to be filled
+     */
     protected synchronized Document generateSvg(final boolean considerRelations, final boolean considerClauseItems) throws HmxException {
         final Document xml = this.createSvgDocument(HmxMessage.EXPORT_CONTENT_COMMENTS.get());
         final Element root = xml.getDocumentElement();
@@ -76,6 +101,15 @@ class CommentSvgCreator extends AbstractSvgCreator {
         return xml;
     }
 
+    /**
+     * Create a single element reoresenting the given comment text.
+     * 
+     * @param xml
+     *            the designated document this element is created for
+     * @param commentText
+     *            the comment text to represent
+     * @return created comment element
+     */
     private Element createCommentElement(final Document xml, final String commentText) {
         final Element groupElement = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_GROUP);
         groupElement.setAttribute(SvgConstants.ATT_GROUP_TRANSFORM,

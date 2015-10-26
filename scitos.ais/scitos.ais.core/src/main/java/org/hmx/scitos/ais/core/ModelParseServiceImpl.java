@@ -387,7 +387,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      *            xml document, API to use for creating xml nodes
      * @param rangeStart
      *            first token of the range with the same assigned category to represent as a xml node
-     * @return created {@value #TAG_INTERVIEW_DETAIL} node and the next token after the represented range (token reference is <code>null</code> if
+     * @return created {@value #TAG_INTERVIEW_DETAIL} node and the next token after the represented range (token reference is {@code null} if
      *         there is no following token to the last in the represented range)
      */
     private Entry<Element, TextToken> parseXmlFromTokenRange(final Document doc, final TextToken rangeStart) {

@@ -99,7 +99,7 @@ public final class ScitosClient {
     private final JFrame frame = new JFrame() {
 
         /**
-         * lets the <code>processWindowEvent()</code> of the {@link JFrame} deal with all {@link WindowEvent}s except the WINDOW_CLOSING. In this case
+         * lets the {@code processWindowEvent()} of the {@link JFrame} deal with all {@link WindowEvent}s except the WINDOW_CLOSING. In this case
          * it attempts to close all projects and exiting the application afterwards. if the user aborted the closing of one of the open projects the
          * closing of the application is stopped too
          */
@@ -670,7 +670,7 @@ public final class ScitosClient {
      * Set the view specific tool bar items, after removing any potentially view specific tool bar items currently displayed.
      *
      * @param toolBarItems
-     *            components (e.g. buttons) associated with this view to be added to the tool bar (contained <code>null</code> elements are
+     *            components (e.g. buttons) associated with this view to be added to the tool bar (contained {@code null} elements are
      *            interpreted as separators)
      */
     public void setToolBarItems(final Collection<Component> toolBarItems) {
@@ -829,7 +829,7 @@ public final class ScitosClient {
     }
 
     /**
-     * Realize the <code>Quit</code> option in the menu bar; first asking for last save, storing the window size and position for the next start, and
+     * Realize the {@code Quit} option in the menu bar; first asking for last save, storing the window size and position for the next start, and
      * disposing the applications frame at last.
      *
      * @return executed successfully

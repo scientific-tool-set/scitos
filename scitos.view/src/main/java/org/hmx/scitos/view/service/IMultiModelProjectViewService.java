@@ -41,10 +41,10 @@ public interface IMultiModelProjectViewService<P extends IViewProject<M>, M exte
      * Create the view for the model group with the given label in the given project instance.
      *
      * @param project
-     *            project instance containing the model group with the given label (should be of type <code>P</code>)
+     *            project instance containing the model group with the given label (should be of type {@code P})
      * @param modelGroup
      *            label of the model to represent in the view
-     * @return created view instance (or <code>NULL</code> if no group view is provided)
+     * @return created view instance (or {@code NULL} if no group view is provided)
      */
     AbstractProjectView<P, String> createModelGroupView(IViewProject<?> project, String modelGroup);
 
@@ -52,9 +52,9 @@ public interface IMultiModelProjectViewService<P extends IViewProject<M>, M exte
      * Create the view for the given model instance in the given project instance.
      *
      * @param project
-     *            project instance containing the given model (should be of type <code>P</code>)
+     *            project instance containing the given model (should be of type {@code P})
      * @param model
-     *            model instance to represent in the view (should be of type <code>S</code>)
+     *            model instance to represent in the view (should be of type {@code S})
      * @return created view instance
      */
     AbstractProjectView<P, S> createModelView(IViewProject<?> project, IModel<?> model);

@@ -13,32 +13,41 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicToolTipUI;
 
 /**
- * Renders ToolTips:<br>
- * - with multiple lines<br>
- * - autowidth + max. width<br>
- * - linewrap<br>
- * - uses jTextArea
- * <p>
- * For ease of use insert the following lines into you Application:
+ * Renders ToolTips:
+ * <ul>
+ * <li>with multiple lines</li>
+ * <li>auto-width + max. width</li>
+ * <li>line wrap</li>
+ * <li>uses {@link JTextArea}</li>
+ * </ul>
+ * For ease of use insert the following lines into your Application:
+ * 
  * <p>
  * MultiLineToolTipUI.setMaximumWidth(250);<br>
  * MultiLineToolTipUI.initialize();<br>
  * javax.swing.ToolTipManager.sharedInstance().setDismissDelay(20000);
+ * </p>
  *
- * @author Dexter 2008 <a href= "http://www.java-forum.org/awt-swing-swt/82817-tooltips-als-hilfefunktion.html#post515996" >Source</a>
+ * @author Dexter 2008 <a href= "http://www.java-forum.org/awt-swing-swt/82817-tooltips-als-hilfefunktion.html#post515996">Source</a>
  */
 public final class MultiLineToolTipUI extends BasicToolTipUI {
 
+    /**
+     * The {@link UIManager} key to register under.
+     */
     private static final String UIMANAGER_KEY = "ToolTipUI";
-
-    private CellRendererPane rendererPane;
-    private JTextArea textArea;
-    private static int maximumWidth = 0;
-
+    /** The singleton instance of the UI definition. */
     private static MultiLineToolTipUI singleton = new MultiLineToolTipUI();
 
+    /** The component to render tool tips on. */
+    private CellRendererPane rendererPane;
+    /** The component handling wrapping of the tool tip text in the given size constraints. */
+    private JTextArea textArea;
+    /** Specifically defined maximum width for a displayed tool tip. */
+    private static int maximumWidth = 0;
+
     /**
-     * registers this ToolTipUI.
+     * Registers this ToolTipUI.
      */
     public static void initialize() {
         final Class<? extends MultiLineToolTipUI> cls = MultiLineToolTipUI.singleton.getClass();
@@ -48,12 +57,19 @@ public final class MultiLineToolTipUI extends BasicToolTipUI {
     }
 
     /**
-     * constructor for the singleton instance.
+     * Constructor for the singleton instance.
      */
     private MultiLineToolTipUI() {
         super();
     }
 
+    /**
+     * Conventional method for retrieving the UI for the given component's tool tip.
+     * 
+     * @param component
+     *            the component to render a tool tip for
+     * @return the singleton instance of this UI definition
+     */
     public static ComponentUI createUI(final JComponent component) {
         return MultiLineToolTipUI.singleton;
     }
@@ -72,7 +88,7 @@ public final class MultiLineToolTipUI extends BasicToolTipUI {
     }
 
     /**
-     * set maximum width 0 = no maximum width
+     * Setter for the maximum width. Setting it to {@code 0} disables the enforcement of a maximum width.
      *
      * @param width
      *            maximum width to set

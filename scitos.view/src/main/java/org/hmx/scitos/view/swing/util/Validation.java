@@ -27,8 +27,8 @@ import javax.swing.text.PlainDocument;
  * This class is a document for text fields to limit the maximum count of inserted characters with the additional ability to ignore a subset of them.
  *
  * <p>
- * to use: <code>JTextfield.setDocument(new Validation(int limit))</code> or
- * <code>JTextfield.setDocument(new Validation(int limit, String regEx))</code>
+ * to use: {@code JTextfield.setDocument(new Validation(int limit))} or
+ * {@code JTextfield.setDocument(new Validation(int limit, String regEx))}
  * </p>
  *
  * @author Alexander Elsholz <a href="http://geocities.ws/uweplonus/faq/swing.html#zeichenBeschraenken">Source</a>

@@ -315,9 +315,9 @@ public final class DetailCategoryTreeTable extends JPanel {
         /**
          * Flag if the stopped editing should submit the current value, or ignore it.
          * <ul>
-         * <li><code>null</code> - after initialization, editing still in progress</li>
-         * <li><code>true</code> - {@link #cancelCellEditing()} has been invoked to stop the editing (ignore current value)</li>
-         * <li><code>false</code> - {@link #stopCellEditing()} has been invoked to stop the editing (submit current value)</li>
+         * <li>{@code null} - after initialization, editing still in progress</li>
+         * <li>{@code true} - {@link #cancelCellEditing()} has been invoked to stop the editing (ignore current value)</li>
+         * <li>{@code false} - {@link #stopCellEditing()} has been invoked to stop the editing (submit current value)</li>
          * </ul>
          */
         private Boolean wasCancelled;

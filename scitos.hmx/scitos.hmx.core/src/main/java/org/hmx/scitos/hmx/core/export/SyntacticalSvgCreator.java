@@ -3,6 +3,7 @@ package org.hmx.scitos.hmx.core.export;
 import java.awt.Font;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,29 +21,88 @@ import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Implementation of the svg export functionality for the syntactical analysis contained in a {@link Pericope}.
+ */
 class SyntacticalSvgCreator extends AbstractSvgCreator {
 
     private static final double ARROW_SCALE = .6;
 
+    /**
+     * The font to be applied to {@link Proposition} indentation functions.
+     */
     private Font indentFunctionFont;
+    /** If comments should be indicated by a numeric identifier on the commented element. */
     private boolean commentsIncluded;
+    /**
+     * The running counter for the numeric identifier on commented elements, if the {@code commentsIncluded} is set to {@code true}.
+     */
     private int commentCounter;
+    /**
+     * The overall maximum width of a {@link Proposition}, in order to determine the resulting size of the generated svg document.
+     */
     private double extentX;
+    /**
+     * The horizontal space reserved for {@link Proposition} labels.
+     */
     private double labelWidth;
+    /**
+     * The fixed horizontal spacing inserted for a {@link Proposition}'s single indentation under another one.
+     */
     private final double indentationWidth;
+    /**
+     * The vertical space reserved for a single {@link Proposition}.
+     */
     private double propositionHeight;
+    /**
+     * The baseline (y coordinate) of the label and origin text in a {@link Proposition}.
+     */
     private double originTextBaseLine;
+    /**
+     * The vertical space reserved for the {@link ClauseItem} functions.
+     */
     private double functionHeight;
+    /**
+     * The vertical space reserved for a {@link Proposition}'s translation.
+     */
     private double translationHeight;
+    /**
+     * The expected height of a single arrow connecting a {@link Proposition}'s parts with enclosed children.
+     */
     private double arrowHeight;
+    /**
+     * The expected width of a single arrow connecting a {@link Proposition}'s parts with enclosed children.
+     */
     private double arrowWidth;
+    /**
+     * The horizontal space occupied by a {@code partBeforeArrow} of a {@link Proposition} with an enclosed children, to indent its
+     * {@code partAfterArrow} appropriately.
+     */
     private Map<Integer, Double> arrowPartIndentation;
 
+    /**
+     * Font color to be applied to {@link Proposition} and {@link ClauseItem} functions without specific styling.
+     */
     private final String colorPlainFunctionText;
+    /**
+     * Font color to be applied to {@link ClauseItem} functions with {@code bold} styling.
+     */
     private final String colorBoldFunctionText;
+    /**
+     * Font color to be applied to {@link ClauseItem} functions with combined {@code bold} and {@code italic} styling.
+     */
     private final String colorBoldItalicFunctionText;
+    /**
+     * Font color to be applied to {@link ClauseItem} functions with {@code italic} styling.
+     */
     private final String colorItalicFunctionText;
 
+    /**
+     * Constructor.
+     * 
+     * @param model
+     *            the model containing the syntactical analysis to be exported into a svg document
+     */
     protected SyntacticalSvgCreator(final Pericope model) {
         super(model);
         // ensure minimum indentation space for including function labels
@@ -54,13 +114,14 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
-     * Executes the svg generation.
+     * Generate an svg document representing the syntactical analysis.
      *
      * @param includeComments
      *            if the comments are to be included in the created SVG as slightly smaller numbers and invisible description elements (in some SVG
      *            viewers processed as tool tips)
      * @return generated svg document
      * @throws HmxException
+     *             failed to create an empty document to be filled
      */
     protected synchronized Document generateSvg(final boolean includeComments) throws HmxException {
         this.commentsIncluded = includeComments;
@@ -109,41 +170,46 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
+     * Calculate horizontal and vertical spacings to be applied to the whole generated svg document.
+     * 
      * @param flatPropositions
      *            {@link Proposition}s in the origin order disregarding indentations and splittings (indicated by arrows)
      */
     private void prepareConstraints(final List<Proposition> flatPropositions) {
         this.commentCounter = 0;
-        final String[] texts = this.collectTexts(flatPropositions);
-        // texts[0] Proposition labels separated by line breaks
+        final List<String> texts = this.collectTexts(flatPropositions);
+        // texts.get(0) Proposition labels separated by line breaks
         this.labelWidth = 0;
-        if (!texts[0].isEmpty()) {
-            for (final String singleLabel : texts[0].split("[\n]")) {
+        if (!texts.get(0).isEmpty()) {
+            for (final String singleLabel : texts.get(0).split("[\n]")) {
                 this.labelWidth = Math.max(this.labelWidth, this.getTextBounds(singleLabel, this.labelFontPlain).getWidth());
             }
         }
-        this.originTextBaseLine =
-                Math.max(texts[0].isEmpty() ? 0 : this.getTextBounds(texts[0].replaceAll("[\n]", " "), this.labelFontPlain).getHeight(),
-                // texts[1] ClauseItems origin text parts
-                        this.getTextBounds(texts[1], this.model.getFont()).getHeight());
-        // texts[2] Propositions syntactical translations
-        this.translationHeight = texts[2].isEmpty() ? 0 : this.getTextBounds(texts[2], this.labelFontPlain).getHeight();
-        this.functionHeight = 0;
-        // texts[3] ClauseItem functions with the PLAIN style
-        if (!texts[3].isEmpty()) {
-            this.functionHeight = this.getTextBounds(texts[3], this.labelFontPlain).getHeight();
+        // texts.get(1) ClauseItems origin text parts
+        this.originTextBaseLine = this.getTextBounds(texts.get(1), this.model.getFont()).getHeight();
+        if (!texts.get(0).isEmpty()) {
+            this.originTextBaseLine =
+                    Math.max(this.originTextBaseLine, this.getTextBounds(texts.get(0).replaceAll("[\n]", " "), this.labelFontPlain).getHeight());
         }
-        // texts[4] ClauseItem functions with the BOLD style
-        if (!texts[4].isEmpty()) {
-            this.functionHeight = Math.max(this.functionHeight, this.getTextBounds(texts[4], this.labelFontBold).getHeight());
+        // texts.get(2) Propositions syntactical translations
+        this.translationHeight = texts.get(2).isEmpty() ? 0 : this.getTextBounds(texts.get(2), this.labelFontPlain).getHeight();
+        // texts.get(3) ClauseItem functions with the PLAIN style
+        if (texts.get(3).isEmpty()) {
+            this.functionHeight = 0;
+        } else {
+            this.functionHeight = this.getTextBounds(texts.get(3), this.labelFontPlain).getHeight();
         }
-        // texts[5] ClauseItem functions with the ITALIC style
-        if (!texts[5].isEmpty()) {
-            this.functionHeight = Math.max(this.functionHeight, this.getTextBounds(texts[5], this.labelFontItalic).getHeight());
+        // texts.get(4) ClauseItem functions with the BOLD style
+        if (!texts.get(4).isEmpty()) {
+            this.functionHeight = Math.max(this.functionHeight, this.getTextBounds(texts.get(4), this.labelFontBold).getHeight());
         }
-        // texts[6] ClauseItem functions with the combined BOLD | ITALIC style
-        if (!texts[6].isEmpty()) {
-            this.functionHeight = Math.max(this.functionHeight, this.getTextBounds(texts[6], this.labelFontBoldItalic).getHeight());
+        // texts.get(5) ClauseItem functions with the ITALIC style
+        if (!texts.get(5).isEmpty()) {
+            this.functionHeight = Math.max(this.functionHeight, this.getTextBounds(texts.get(5), this.labelFontItalic).getHeight());
+        }
+        // texts.get(6) ClauseItem functions with the combined BOLD | ITALIC style
+        if (!texts.get(6).isEmpty()) {
+            this.functionHeight = Math.max(this.functionHeight, this.getTextBounds(texts.get(6), this.labelFontBoldItalic).getHeight());
         }
         this.originTextBaseLine += this.verticalSpacing;
         this.propositionHeight = 2 * SvgConstants.BORDER_PROPOSITION + this.originTextBaseLine;
@@ -155,22 +221,20 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
         }
         this.arrowHeight = (this.originTextBaseLine + this.functionHeight) * SyntacticalSvgCreator.ARROW_SCALE;
         this.arrowWidth = this.calculateArrowWidth(this.arrowHeight);
-        // texts[7] Proposition indentation functions with the PLAIN style
-        if (!texts[7].isEmpty()) {
+        // texts.get(7) Proposition indentation functions with the PLAIN style
+        if (!texts.get(7).isEmpty()) {
             int maxFunctionLength = 0;
-            for (final String singleFunction : texts[7].split("[ ]")) {
+            for (final String singleFunction : texts.get(7).split("[ ]")) {
                 maxFunctionLength = Math.max(maxFunctionLength, singleFunction.length());
             }
-            // how much space do we GOT for indentation functions
+            // how much vertical space to we NEED for indentation functions
+            final double neededSpace = maxFunctionLength * this.getTextBounds(texts.get(7), this.labelFontPlain).getHeight();
+            // how much vertical space do we GOT for indentation functions
             final double functionAreaHeight = this.propositionHeight - 2 * SvgConstants.BORDER_PROPOSITION - this.verticalSpacing;
-            // how much space to we NEED for indentation functions
-            final double neededSpace = this.getTextBounds(texts[7], this.labelFontPlain).getHeight() * maxFunctionLength;
             if (neededSpace > functionAreaHeight) {
-                // we need too much...
-                // how large can the Font for the indentation functions be
-                final double maxSize = this.labelFontPlain.getSize2D() * functionAreaHeight / neededSpace;
-                // store scaled font
-                this.indentFunctionFont = this.labelFontPlain.deriveFont((float) Math.floor(maxSize));
+                // we need too much; scale the Font size for the vertical text down
+                this.indentFunctionFont =
+                        this.labelFontPlain.deriveFont((float) Math.floor(this.labelFontPlain.getSize2D() * functionAreaHeight / neededSpace));
             } else {
                 this.indentFunctionFont = this.labelFontPlain;
             }
@@ -179,13 +243,13 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
-     * Collects all texts to display of the {@link Pericope} in an array.
+     * Collect all texts to display in the syntactical analysis.
      *
      * @param flatPropositions
      *            {@link Proposition}s in the origin order disregarding indentations and splittings (indicated by arrows)
      * @return collected text fragments
      *         <ol start=0>
-     *         <li>{@link Proposition} labels separated by line breaks [{@code \n}]</li>
+     *         <li>{@link Proposition} labels separated by line breaks {@code [\n]}</li>
      *         <li>{@link ClauseItem}s origin text parts separated by single spaces</li>
      *         <li>{@link Proposition}s syntactical translations separated by single spaces</li>
      *         <li>{@link ClauseItem} functions with the {@link Style#PLAIN} style separated by single spaces</li>
@@ -195,7 +259,7 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
      *         <li>{@link Proposition} indentation functions separated by single spaces</li>
      *         </ol>
      */
-    private String[] collectTexts(final List<Proposition> flatPropositions) {
+    private List<String> collectTexts(final List<Proposition> flatPropositions) {
         final StringBuilder labels = new StringBuilder();
         final StringBuilder originTexts = new StringBuilder();
         final StringBuilder translations = new StringBuilder();
@@ -240,15 +304,19 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
                 functionCollector.append(singleItem.getFunction().getCode()).append(' ');
             }
         }
-        return new String[] { labels.toString().trim(), originTexts.toString().trim(), translations.toString().trim(),
-                functionsPlain.toString().trim(), functionsBold.toString().trim(), functionsItalic.toString().trim(),
-                functionsBoldItalic.toString().trim(), indentFunctions.toString().trim() };
+
+        return Arrays.asList(labels.toString().trim(), originTexts.toString().trim(), translations.toString().trim(), functionsPlain.toString()
+                .trim(), functionsBold.toString().trim(), functionsItalic.toString().trim(), functionsBoldItalic.toString().trim(),
+                indentFunctions.toString().trim());
     }
 
     /**
-     * WARNING: all non-origin-text parts are assumed to be left-to-right oriented.<br>
-     * In order to provide a dynamic positioning one must explicitly identify the orientation of the user language.</br>
+     * Create the svg element representing the {@link Proposition} at the given {@code targetIndex}.<br>
+     * WARNING: all non-origin-text parts are assumed to be left-to-right oriented. In order to provide a dynamic positioning one must explicitly
+     * identify the orientation of the user language.
      *
+     * @param xml
+     *            the designated svg document this element is created for
      * @param flatPropositions
      *            {@link Proposition}s in the origin order disregarding indentations and splittings (indicated by arrows)
      * @param targetIndex
@@ -344,18 +412,27 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
         return groupElement;
     }
 
+    /**
+     * Determine the horizontal spacing inserted in front of the {@link Proposition}'s contents ({@link ClauseItem}s, translation, potential arrows)
+     * at the given {@code targetIndex}.
+     * 
+     * @param flatPropositions
+     *            {@link Proposition}s in the origin order disregarding indentations and splittings (indicated by arrows)
+     * @param targetIndex
+     *            the index of the {@link Proposition} to calculate the indentation width for
+     * @return the horizontal spacing to insert in front of the designated {@link Proposition}'s contents
+     */
     private double calculateSyntacticalPropositionIndentation(final List<Proposition> flatPropositions, final int targetIndex) {
         final Proposition target = flatPropositions.get(targetIndex);
-        // start width calculation including label and spacings left
         double indentation;
-        // calculate the horizontal start position
         if (target.getPartBeforeArrow() == null) {
-            // multiply with number of indentations
             IPropositionParent loopParent = target.getParent();
+            // start width calculation including label and spacings left
             indentation = this.horizontalSpacing + this.labelWidth;
             if (this.labelWidth > 0) {
                 indentation += this.horizontalSpacing;
             }
+            // multiply with number of indentations
             while (loopParent instanceof Proposition) {
                 indentation += this.indentationWidth;
                 loopParent = ((Proposition) loopParent).getParent();
@@ -368,15 +445,18 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
-     * WARNING: the function label is assumed to be left-to-right oriented.<br>
-     * In order to provide a dynamic positioning one must identify the desired text orientation of the function label itself...</br>
+     * Create a svg element for the vertical text representing the given indentation function.<br>
+     * WARNING: the function label is assumed to be left-to-right oriented. In order to provide a dynamic positioning one must identify the desired
+     * text orientation of the function label itself...
      *
-     * @param storedFunction
-     *            not yet translated syntactical function key
+     * @param xml
+     *            the designated svg document this element is created for
+     * @param function
+     *            indentation function to be inserted
      * @return created SVG-Element representing the top-to-bottom rendered indentation function
      */
-    private Element createIndentationFunctionElement(final Document xml, final SyntacticalFunction storedFunction) {
-        final String indentFunction = storedFunction.getCode();
+    private Element createIndentationFunctionElement(final Document xml, final SyntacticalFunction function) {
+        final String indentFunction = function.getCode();
         final double functionCharHeight = this.getTextBounds(indentFunction, this.indentFunctionFont).getHeight() * 1.2;
         double currentCharY =
                 (this.propositionHeight + this.verticalSpacing - functionCharHeight * (indentFunction.length() - 1)) / 2
@@ -386,8 +466,8 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
             charX *= -1;
         }
         final String staticCharX = this.numberToString(charX);
-        final StringBuilder coordsY = new StringBuilder();
         final StringBuilder coordsX = new StringBuilder();
+        final StringBuilder coordsY = new StringBuilder();
         for (int i = 0; i < indentFunction.length(); i++) {
             if (i > 0) {
                 coordsX.append(',');
@@ -402,16 +482,19 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
     }
 
     /**
-     * WARNING: the function label is assumed to be left-to-right oriented.<br>
-     * In order to provide a dynamic positioning one must identify the desired text orientation of the function label itself...</br>
+     * Insert the svg representation for the given {@link Proposition}'s {@link ClauseItem}s (origin text and function). WARNING: the function label
+     * is assumed to be left-to-right oriented. In order to provide a dynamic positioning one must identify the desired text orientation of the
+     * function label itself.
      *
+     * @param xml
+     *            the designated svg document containing the given {@code parent} element
      * @param parent
-     *            parent element to subordinate all clause items
+     *            parent element to subordinate all {@link ClauseItem}s to
      * @param targetProposition
-     *            proposition containing the clause items to insert
+     *            {@link Proposition} containing the {@link ClauseItem}s to insert
      * @param offsetX
      *            horizontal margin
-     * @return needed horizontal space of the
+     * @return needed horizontal space of the inserted {@link ClauseItem}s
      */
     private double insertClauseItems(final Document xml, final Element parent, final Proposition targetProposition, final double offsetX) {
         double widthSum = 0;
@@ -453,24 +536,24 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
             }
             final double originTextWidth = this.getTextBounds(singleItem.getOriginText(), this.model.getFont()).getWidth();
             final double itemWidth = Math.max(originTextWidth, functionWidth);
-
-            double clauseItemMidX = itemWidth / 2;
+            String clauseItemMidX = this.numberToString(itemWidth / 2);
             if (!this.model.isLeftToRightOriented()) {
-                clauseItemMidX *= -1;
+                clauseItemMidX = '-' + clauseItemMidX;
             }
             final Element originTextElement =
-                    this.createTextElement(xml, singleItem.getOriginText(), this.model.getFont(), this.numberToString(clauseItemMidX),
+                    this.createTextElement(xml, singleItem.getOriginText(), this.model.getFont(), clauseItemMidX,
                             this.numberToString(this.verticalSpacing + this.originTextBaseLine / 2), SvgConstants.VAL_TEXT_ANCHOR_MIDDLE,
                             this.colorOriginText);
             groupElement.appendChild(originTextElement);
-            boolean underline = false;
-            if (singleItem.getFunction() != null) {
+            final boolean underline;
+            if (singleItem.getFunction() == null) {
+                underline = false;
+            } else {
                 underline = singleItem.getFunction().isUnderlined();
                 if (underline) {
                     originTextElement.setAttribute(SvgConstants.ATT_TEXT_DECORATION, SvgConstants.VAL_TEXT_DECORATION_UNDERLINE);
                 }
-                groupElement.appendChild(this.createTextElement(xml, singleItem.getFunction().getCode(), functionFont,
-                        this.numberToString(clauseItemMidX),
+                groupElement.appendChild(this.createTextElement(xml, singleItem.getFunction().getCode(), functionFont, clauseItemMidX,
                         this.numberToString(this.originTextBaseLine + this.verticalSpacing + this.functionHeight / 2),
                         SvgConstants.VAL_TEXT_ANCHOR_MIDDLE,
                         // VAL_DIRECTION_LTR,

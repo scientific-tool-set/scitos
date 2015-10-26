@@ -10,18 +10,18 @@ import javax.swing.JPanel;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 
 /**
- * simple {@link JPanel} with a colored horizontal in a vertically centered position to fill gaps between a {@link SemRelation} and its subordinated
- * elements
+ * simple {@link JPanel} with a colored horizontal line in a vertically centered position to fill gaps between a {@link SemRelation} and its
+ * subordinated elements.
  */
 public final class SemRelationExtender extends JPanel {
 
     /**
-     * relation line color
+     * relation line color.
      */
     private final Color color;
 
     /**
-     * creates a new {@link SemRelationExtender} without any special functions
+     * creates a new {@link SemRelationExtender} without any special functions.
      */
     public SemRelationExtender() {
         super(null);
@@ -30,7 +30,7 @@ public final class SemRelationExtender extends JPanel {
     }
 
     /**
-     * draw the colored line from the left to the right of the {@link JPanel} to fill a gap of one depth level
+     * draw the colored line from the left to the right of the {@link JPanel} to fill a gap of one depth level.
      *
      * @see javax.swing.JComponent#paintComponent(Graphics)
      */

@@ -19,6 +19,7 @@
 
 package org.hmx.scitos.hmx.view.swing;
 
+import java.awt.Font;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -143,10 +144,10 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
     }
 
     /**
-     * opens a dialog for editing the project informations (title, author, comment)
+     * Open a dialog for editing the project information (title, author, comment).
      *
      * @param analysisInProgress
-     *            analysis is already in progress
+     *            if the analysis is already in progress (i.e. if the origin text's {@link Font} should be editable as well)
      */
     public void editInfo(final boolean analysisInProgress) {
         new ProjectInfoDialog(this, analysisInProgress).setVisible(true);

@@ -202,8 +202,8 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
      * @param interview
      *            targeted interview to move up or down
      * @param swapWithFollowingInterview
-     *            <code>true</code> – move interview down (index + 1)<br/>
-     *            <code>false</code> – move interview up (index - 1)
+     *            {@code true} – move interview down (index + 1)<br/>
+     *            {@code false} – move interview up (index - 1)
      */
     void swapInterviews(final Interview interview, final boolean swapWithFollowingInterview) {
         final int newIndex;

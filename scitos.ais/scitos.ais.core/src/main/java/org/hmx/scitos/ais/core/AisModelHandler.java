@@ -176,7 +176,7 @@ public interface AisModelHandler extends IModelHandler<AisProject> {
      *
      * @param otherProject
      *            other project to compare with
-     * @return message describing an occurred difference, or <code>null</code> if both projects are equal
+     * @return message describing an occurred difference, or {@code null} if both projects are equal
      */
     String validateEquality(AisProject otherProject);
 }

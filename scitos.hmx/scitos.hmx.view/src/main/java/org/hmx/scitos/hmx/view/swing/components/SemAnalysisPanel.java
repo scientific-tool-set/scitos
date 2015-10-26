@@ -30,46 +30,64 @@ import org.hmx.scitos.domain.ModelChangeListener;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
+import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.view.IPericopeView;
-import org.hmx.scitos.hmx.view.swing.HmxSwingProject;
 import org.hmx.scitos.hmx.view.swing.elements.IConnectable;
 import org.hmx.scitos.hmx.view.swing.elements.SemProposition;
 import org.hmx.scitos.hmx.view.swing.elements.SemRelation;
 import org.hmx.scitos.hmx.view.swing.elements.SemRelationExtender;
 
 /**
- * semantical analysis view displaying the semantical structured analysis consisting of {@link Proposition}s and {@link Relation}s disregarding the
- * syntactical functions, indentations, ClauseItems and syntactical translations in the {@link Proposition}s; offering the opportunity to create, edit
- * and remove {@link Relation}s
+ * Semantical analysis view displaying the semantical structured analysis consisting of {@link Proposition}s and {@link Relation}s. This is
+ * disregarding the syntactical functions, indentations, individual ClauseItems and syntactical translations in the {@link Proposition}s. Instead,
+ * offering the opportunity to create, edit and remove {@link Relation}s.
  */
 public final class SemAnalysisPanel extends AbstractAnalysisPanel {
 
+    /**
+     * The current maximum depth of the represented tree of {@link Relation}s.
+     */
     private int levels = 0;
-
+    /** The single main component allowing everything to be scrolled. */
     final JScrollPane scrollPane;
+    /** The actual container for view elements. */
     private final JPanel contentArea = new JPanel(new GridBagLayout());
+    /**
+     * The header bar allowing to expand/collapse {@link Relation} columns by toggling the roles' visibility.
+     */
     final JPanel contentHeaders = new JPanel(new GridBagLayout()) {
 
         @Override
         public void updateUI() {
             if (SemAnalysisPanel.this.contentHeaders != null) {
+                // reset to apply potentially changed scale factor
                 SemAnalysisPanel.this.resetHeaders();
             }
         }
     };
+    /** The model change listener responsible for keeping this panel up to date as long as it is active. */
     private final SemControl listener;
+    /**
+     * The indices of currently collapsed {@link Relation} columns, i.e. where the associate roles are currently hidden to reduce required horizontal
+     * space.
+     */
     private final Set<Integer> foldedLevels = new HashSet<Integer>();
-
+    /**
+     * Complete list of currently contained view components representing the {@link Pericope}'s {@link Proposition}s.
+     */
     private List<SemProposition> propositionList;
+    /**
+     * Complete mapping of {@link Relation}s to their representing view components.
+     */
     private Map<Relation, SemRelation> relationMap;
 
     /**
-     * creates a new {@link SemAnalysisPanel} representing the Pericope contained in the specified project
+     * Constructor.
      *
-     * @param project
-     *            {@link HmxSwingProject} to display
+     * @param viewReference
+     *            super ordinated view this panel belongs to
      */
     public SemAnalysisPanel(final IPericopeView viewReference) {
         super(viewReference, new GridLayout(0, 1));
@@ -84,9 +102,9 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * initializes the general layout and position of the content to display
+     * Initialize the general layout and position of the content to display.
      *
-     * @return the JScrollPane containing the whole content
+     * @return the {@link JScrollPane} containing the whole content
      */
     private JScrollPane initView() {
         // make the whole analysis view scrollable
@@ -137,10 +155,12 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
+     * Hide/show the associate roles on the {@link Relation} column at the given index.
+     * 
      * @param level
-     *            single relation level to fold/unfold (targets all levels, when is <code>-1</code>)
+     *            single relation level to fold/unfold (targets all levels, when is {@code -1})
      * @param fold
-     *            if the semantic roles of this/these level(s) should be hidden
+     *            if the semantic roles of the indicated {@code level} should be hidden
      */
     public void foldRelationRolesOnLevel(final int level, final boolean fold) {
         final boolean onlySelectedLevel = -1 != level;
@@ -205,7 +225,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * transfers the {@link SemProposition}s contained in the <code>propositionList</code> to the displayed view
+     * Transfer the {@link SemProposition}s contained in the {@link #propositionList} to the displayed view.
      */
     private void displayPropositions() {
         final GridBagConstraints constraints = new GridBagConstraints();
@@ -222,8 +242,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * builds the <code>relationMap</code> and displays it in the view<br>
-     * REQUIREMENT: already created <code>propositionList</code>
+     * Build the {@link #relationMap} and display it; assuming the already created {@link #propositionList}.
      */
     private void displayRelations() {
         this.relationMap = new HashMap<Relation, SemRelation>();
@@ -253,7 +272,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * display the specified {@link Relation} and all of its subordinated {@link AbstractConnectable}s
+     * Display the specified {@link Relation} and all of its subordinated {@link AbstractConnectable}s.
      *
      * @param relation
      *            {@link Relation} to display
@@ -298,7 +317,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * adds the specified {@link Proposition} to the list of {@link SemProposition}s WITHOUT adding it to the view
+     * Add the specified {@link Proposition} to the list of {@link SemProposition}s WITHOUT adding it to the view.
      *
      * @param proposition
      *            {@link Proposition} to add to list
@@ -351,7 +370,9 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * @return list containing all representative propositions in this view
+     * Expose a mutable copy of the internal list of displayed {@link SemProposition}s.
+     * 
+     * @return list containing all {@link Proposition} components in this view
      */
     public List<SemProposition> getPropositionList() {
         if (this.propositionList == null) {
@@ -365,7 +386,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * calculates the maximum number of super ordinated {@link Relation}s
+     * Calculate the maximum number of super ordinated {@link Relation}s.
      *
      * @return calculated maximum level
      */
@@ -384,7 +405,9 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * @return map containing all relations and there representations
+     * Expose a mutable copy of the mapping of displayed {@link Relation} and their respective components.
+     * 
+     * @return map containing all relations and their representations
      */
     public Map<Relation, SemRelation> getRelationMap() {
         if (this.relationMap == null) {
@@ -394,10 +417,10 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     /**
-     * browse the whole view for all checked relations and/or propositions and returns them in the right order
+     * Collect all currently checked {@link Relation}s and/or {@link Proposition}s in the right order.
      *
      * @param clicked
-     *            source object who called this
+     *            single element to include in the result list (regardless of its checked state)
      * @return list containing all checked elements sorted from top to bottom
      */
     public List<AbstractConnectable> getChecked(final AbstractConnectable clicked) {
@@ -418,9 +441,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
         return list;
     }
 
-    /**
-     * Make sure the headers for folding/collapsing the relations (hide/show roles) are present and sized properly.
-     */
+    /** Make sure the headers for expanding/collapsing the relations (hide/show roles) are present and sized properly. */
     public void resetHeaders() {
         // remove old headers
         this.contentHeaders.removeAll();

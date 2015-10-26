@@ -16,7 +16,7 @@ import org.hmx.scitos.view.ContextMenuBuilder.CMenuItemAction;
 import org.hmx.scitos.view.ContextMenuBuilder.CMenuSeparator;
 
 /**
- *
+ * Utility class for converting a view implementation independent {@link ContextMenuBuilder} into a swing specific {@link JPopupMenu}.
  */
 public class ContextMenuPopupBuilder {
 

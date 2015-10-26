@@ -7,11 +7,18 @@ import javax.swing.UIManager;
 
 import org.hmx.scitos.view.swing.ScitosApp;
 
-/** Label extension that is scaling the displayed text's font according to the global setting. */
+/**
+ * {@link JLabel} extension that is scaling the displayed text's {@link Font} according to the global setting.
+ */
 public class ScaledLabel extends JLabel {
 
-    /** The LookAndFeel default Font key. */
+    /**
+     * The LookAndFeel default {@link Font} key.
+     */
     private final String fontKey;
+    /**
+     * The specific {@link Font} that has been set via the {@link #setFont(Font)} method from outside this class.
+     */
     private Font baseFont = null;
 
     /**
@@ -80,10 +87,12 @@ public class ScaledLabel extends JLabel {
 
     /** (Re-)Apply the global content size factor to the font used to display the label's text. */
     private void validateScaleFactor() {
-        Font toApply = this.baseFont;
+        final Font toApply;
         // avoid NullPointer due to the font or the respective key being null on initialization
-        if (toApply == null && this.fontKey != null) {
+        if (this.baseFont == null && this.fontKey != null) {
             toApply = UIManager.getFont(this.fontKey);
+        } else {
+            toApply = this.baseFont;
         }
         if (toApply != null) {
             final float scaleFactor;

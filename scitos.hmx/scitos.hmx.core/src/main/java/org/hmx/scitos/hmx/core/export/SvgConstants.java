@@ -7,7 +7,7 @@ import java.awt.Color;
  */
 final class SvgConstants {
 
-    /** hidden constructor due to constants only */
+    /** hidden constructor due to constants only. */
     private SvgConstants() {
         // never called
     }
@@ -110,8 +110,17 @@ final class SvgConstants {
 
     /* attribute and value in the TAG_GROUP */
     static final String ATT_GROUP_TRANSFORM = "transform";
+    /**
+     * Format for a transformation: {@code scale()} with a single factor.
+     */
     static final String VAL_GROUP_TRANSFORM_SCALE_1 = "scale(%s)";
+    /**
+     * Format for a transformation: {@code translate()} with a single parameter.
+     */
     static final String VAL_GROUP_TRANSFORM_TRANSLATE_1 = "translate(%s)";
+    /**
+     * Format for a transformation: {@code translate()} with two parameters.
+     */
     static final String VAL_GROUP_TRANSFORM_TRANSLATE_2 = "translate(%s,%s)";
 
     /* attribute values in the TAG_RECTANGLE */
@@ -120,6 +129,9 @@ final class SvgConstants {
 
     /* attribute value in the TAG_POLYLINE */
     static final String ATT_POLYLINE_POINTS = "points";
+    /**
+     * Format for a single point in a {@code polyline}/{@code polygon} consisting of a coordinate pair {@code X,Y}.
+     */
     static final String VAL_POLYLINE_POINTS_2 = "%s,%s ";
     static final String VAL_STROKE_LINECAP_RELATION = "round";
     static final String VAL_COLOR_RELATION = "url(#" + SvgConstants.VAL_ID_COLOR_RELATION + ')';

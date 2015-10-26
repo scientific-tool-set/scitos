@@ -72,15 +72,15 @@ public final class SplitFrame extends JDialog {
 
     /**
      * Constructor: creates a splitted frame with a {@link JTree} on the left side and a content panel on the right side, also two buttons at the
-     * bottom ( <code>OK</code>, <code>CANCEL</code>); the <code>OK</code> -button is provided with the specified {@link ActionListener}, the
-     * <code>CANCEL</code>-button just closes the frame.
+     * bottom ( {@code OK}, {@code CANCEL}); the {@code OK} -button is provided with the specified {@link ActionListener}, the
+     * {@code CANCEL}-button just closes the frame.
      *
      * @param parentFrame
      *            main window to associate this dialog
      * @param title
      *            frame title to set
      * @param okListener
-     *            {@link ActionListener} for the <code>OK</code>-button to set
+     *            {@link ActionListener} for the {@code OK}-button to set
      */
     public SplitFrame(final JFrame parentFrame, final String title, final ActionListener okListener) {
         super(parentFrame, title);
@@ -100,7 +100,7 @@ public final class SplitFrame extends JDialog {
     }
 
     /**
-     * Initialize the splitted view with the {@link JTree} and the content {@link JPanel}; also adds the <code>OK</code> and <code>CANCEL</code>
+     * Initialize the splitted view with the {@link JTree} and the content {@link JPanel}; also adds the {@code OK} and {@code CANCEL}
      * buttons to the bottom area.
      */
     private void init() {

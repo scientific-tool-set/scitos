@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -37,7 +37,7 @@ import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
 import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.core.HmxException;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -78,7 +78,7 @@ public class ModelHandlerTest {
         this.project = new AisProject("test", ModelHandlerTest.categoryModel.provide());
         this.modelHandler = new ModelHandlerImpl(this.project);
         this.interview = this.modelHandler.createInterview("Subj123");
-        this.modelHandler.setInterviewText(this.interview, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20");
+        this.modelHandler.setInterviewText(this.interview, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20\n \t  ");
         this.paragraphStartToken = this.interview.getText().get(0);
     }
 
@@ -96,17 +96,17 @@ public class ModelHandlerTest {
         Assert.assertEquals(2, this.modelHandler.createInterview("Subj124").getIndex());
         final Interview deleteTargetTwo = this.modelHandler.createInterview("Subj125");
         Assert.assertEquals(1, deleteTargetTwo.getIndex());
-        Assert.assertTrue(ComparisonUtil.containsInstance(this.project.getInterviews(), deleteTargetOne));
-        Assert.assertTrue(ComparisonUtil.containsInstance(this.project.getInterviews(), deleteTargetTwo));
+        Assert.assertTrue(CollectionUtil.containsInstance(this.project.getInterviews(), deleteTargetOne));
+        Assert.assertTrue(CollectionUtil.containsInstance(this.project.getInterviews(), deleteTargetTwo));
         final int interviewCount = this.project.getInterviews().size();
         this.modelHandler.deleteInterview(deleteTargetOne);
         Assert.assertEquals("Number of interviews after first delete", interviewCount - 1, this.project.getInterviews().size());
         Assert.assertEquals("Index of fourth interview, after prior interview was deleted", 3, followerOfDeleteTargetOne.getIndex());
-        Assert.assertFalse(ComparisonUtil.containsInstance(this.project.getInterviews(), deleteTargetOne));
-        Assert.assertTrue(ComparisonUtil.containsInstance(this.project.getInterviews(), deleteTargetTwo));
+        Assert.assertFalse(CollectionUtil.containsInstance(this.project.getInterviews(), deleteTargetOne));
+        Assert.assertTrue(CollectionUtil.containsInstance(this.project.getInterviews(), deleteTargetTwo));
         this.modelHandler.deleteInterview(deleteTargetTwo);
         Assert.assertEquals("Number of interviews after second delete", interviewCount - 2, this.project.getInterviews().size());
-        Assert.assertFalse(ComparisonUtil.containsInstance(this.project.getInterviews(), deleteTargetTwo));
+        Assert.assertFalse(CollectionUtil.containsInstance(this.project.getInterviews(), deleteTargetTwo));
     }
 
     /**

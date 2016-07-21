@@ -191,45 +191,4 @@ public class ComparisonUtilTest {
         final String instance = "ab";
         Assert.assertEquals(0, ComparisonUtil.compareNullAware(instance, new String(instance)));
     }
-
-    /** Test: for containsInstance method (list with same object, String). */
-    @Test
-    public void testContainsInstance_1() {
-        final String instance = "ab";
-        Assert.assertTrue(ComparisonUtil.containsInstance(Arrays.asList("a", instance, "b"), instance));
-    }
-
-    /** Test: for containsInstance method (list with equal but not same object, String). */
-    @Test
-    public void testContainsInstance_2() {
-        final String instance = "ab";
-        Assert.assertFalse(ComparisonUtil.containsInstance(Arrays.asList("a", instance, "b"), new String(instance)));
-    }
-
-    /** Test: for indexOfInstance method (instance contained once). */
-    @Test
-    public void testIndexOfInstance_1() {
-        final String instance = "ab";
-        Assert.assertEquals(1, ComparisonUtil.indexOfInstance(Arrays.asList("a", instance, "b"), instance));
-    }
-
-    /** Test: for indexOfInstance method (instance contained twice). */
-    @Test
-    public void testIndexOfInstance_2() {
-        final String instance = "ab";
-        Assert.assertEquals(1, ComparisonUtil.indexOfInstance(Arrays.asList("a", instance, "b", instance), instance));
-    }
-
-    /** Test: for indexOfInstance method (instance not contained). */
-    @Test
-    public void testIndexOfInstance_3() {
-        Assert.assertEquals(-1, ComparisonUtil.indexOfInstance(Arrays.asList("a", "b"), "ab"));
-    }
-
-    /** Test: for indexOfInstance method (instance and equal object contained). */
-    @Test
-    public void testIndexOfInstance_4() {
-        final String instance = "ab";
-        Assert.assertEquals(3, ComparisonUtil.indexOfInstance(Arrays.asList("a", new String(instance), "b", instance), instance));
-    }
 }

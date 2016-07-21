@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -19,13 +19,9 @@
 
 package org.hmx.scitos.ais.view.swing.components;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
+
+import net.java.dev.designgridlayout.DesignGridLayout;
 
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
@@ -40,7 +36,7 @@ public final class OptionPanel extends AbstractOptionPanel {
     /** The actual AIS module's option handler, being represented by this panel. */
     private final AisOption options;
     /**
-     * The tree table component displaying the default detail category model being applied to new project. The user can modify this structure via
+     * The tree table component displaying the default detail category model being applied to a new project. The user can modify this structure via
      * in-line editing.
      */
     DetailCategoryTreeTable treeTable;
@@ -52,20 +48,18 @@ public final class OptionPanel extends AbstractOptionPanel {
      *            the actual AIS module's option handler, being represented by this panel
      */
     public OptionPanel(final AisOption options) {
-        super(new GridBagLayout(), AisMessage.PREFERENCES);
+        super(null, AisMessage.PREFERENCES);
         this.options = options;
-        final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
+        final DesignGridLayout layout = new DesignGridLayout(this);
         // since the purpose of this component is to set the default for new projects, we don't need the associated check box
         this.treeTable = new DetailCategoryTreeTable(this.options, false);
         this.treeTable.setBorder(BorderFactory.createTitledBorder(AisMessage.PREFERENCES_DETAIL_CATEGORIES.get()));
-        contentBox.add(this.treeTable);
-        contentBox.revalidate();
-        this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);
-        final GridBagConstraints spacing = new GridBagConstraints();
-        spacing.weighty = 1;
-        spacing.gridy = 1;
-        this.add(new JPanel(), spacing);
-        this.setMinimumSize(this.getPreferredSize());
+        layout.row().center().add(this.treeTable).fill();
+    }
+
+    @Override
+    protected boolean isResizeCapable() {
+        return true;
     }
 
     @Override

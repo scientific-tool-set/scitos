@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -25,7 +25,7 @@ import java.util.List;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.domain.ModelChangeListener;
 import org.hmx.scitos.domain.ModelEvent;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 
 /**
  * Abstract implementation of a model handler, that is supposed to be the single point of contact for all actual changes in one moule's handled model.
@@ -58,14 +58,14 @@ public abstract class AbstractModelHandler<M extends IModel<M>> implements IMode
 
     @Override
     public void addModelChangeListener(final ModelChangeListener listener) {
-        if (!ComparisonUtil.containsInstance(this.listeners, listener)) {
+        if (!CollectionUtil.containsInstance(this.listeners, listener)) {
             this.listeners.add(listener);
         }
     }
 
     @Override
     public void removeModelChangeListener(final ModelChangeListener listener) {
-        final int listenerIndex = ComparisonUtil.indexOfInstance(this.listeners, listener);
+        final int listenerIndex = CollectionUtil.indexOfInstance(this.listeners, listener);
         if (listenerIndex != -1) {
             this.listeners.remove(listenerIndex);
         }

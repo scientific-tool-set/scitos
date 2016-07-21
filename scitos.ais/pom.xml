@@ -7,7 +7,6 @@
 		<version>2.0.0</version>
 	</parent>
 	<artifactId>scitos.ais</artifactId>
-	<version>1.3.0</version>
 	<packaging>pom</packaging>
 	<name>scitos.ais</name>
 	<description>Autobiographical Interview Scoring module of SciToS</description>

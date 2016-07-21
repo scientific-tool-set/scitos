@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -21,7 +21,6 @@ package org.hmx.scitos.view.swing.option;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -31,8 +30,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -44,21 +41,23 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import net.java.dev.designgridlayout.DesignGridLayout;
+
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.view.swing.util.Validation;
 
 /**
- * Panel to be added in the {@code General} node of the {@link OptionView}, offering the choice of the LookAndFeel and the maximum number of
- * stored model states available for undo-actions.
+ * Panel to be added in the {@code General} node of the {@link OptionView}, offering the choice of the LookAndFeel and the maximum number of stored
+ * model states available for undo-actions.
  */
 public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> {
 
     /** The actual dialog this is displayed in (in order to apply a selected LookAndFeel). */
     final JDialog dialog;
     /** The combo box to select the installed LookAndFeels. */
-    final JComboBox lookAndFeelBox = new JComboBox();
+    final JComboBox lookAndFeelBox;
     /** The input field to configure the maximum of model states (per tab view) that are stored and available for undo/redo. */
     final JTextField undoCountField = new JTextField();
     /** The combo box to select the Locale applied for the translation of the user interface. */
@@ -80,40 +79,36 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
     public GeneralOptionPanel(final JDialog optionDialog, final JFrame viewParent) {
         super(new GridBagLayout(), Message.PREFERENCES_GENERAL);
         this.dialog = optionDialog;
-        this.init(viewParent);
-    }
+        final JPanel content = new JPanel();
+        content.setBorder(BorderFactory.createTitledBorder(Message.PREFERENCES_GENERAL.get()));
+        this.add(content, AbstractOptionPanel.HORIZONTAL_SPAN);
 
-    /**
-     * Initialize all components and their default values.
-     *
-     * @param viewParent
-     *            parent {@link JFrame} to refresh the chosen LookAndFeel
-     */
-    private void init(final JFrame viewParent) {
-        final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
-        // SwingLookAndFeel
-        contentBox.add(this.initLookAndFeelPanel(viewParent));
-        // Undo Limit
-        final JPanel undoCountPanel = new JPanel(new GridBagLayout());
-        undoCountPanel.setBorder(BorderFactory.createTitledBorder(Message.PREFERENCES_GENERAL_UNDO.get()));
-        this.undoCountField.setDocument(new Validation(3, "[^0-9]"));
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1;
-        constraints.insets = new Insets(2, 5, 2, 5);
-        undoCountPanel.add(this.undoCountField, constraints);
+        // get all available look and feels
+        final LookAndFeelInfo[] installedUIs = UIManager.getInstalledLookAndFeels();
+        this.lookAndFeels = new TreeMap<String, String>();
+        for (final LookAndFeelInfo singleLaF : installedUIs) {
+            final String shortName = singleLaF.getName();
+            if (!"Nimbus".equals(shortName)) {
+                // mapping the display name to the full class name of the look and feel
+                this.lookAndFeels.put(shortName, singleLaF.getClassName());
+            }
+        }
+        // adding the short name of the look and feel in the combo box
+        this.lookAndFeelBox = new JComboBox(this.lookAndFeels.keySet().toArray());
+        final DesignGridLayout layout = new DesignGridLayout(content);
+        layout.row().grid(new JLabel(Message.PREFERENCES_GENERAL_LOOK_AND_FEEL.get())).addMulti(this.initLookAndFeelSelection(viewParent));
         final String undoCountValue;
         if (this.containsChosenSettingKey(Option.UNDO_LIMIT)) {
             undoCountValue = this.getChosenSetting(Option.UNDO_LIMIT);
         } else {
             undoCountValue = Option.UNDO_LIMIT.getValue();
         }
+        this.undoCountField.setDocument(new Validation(3, "[^0-9]"));
         this.undoCountField.setText(undoCountValue);
-        contentBox.add(undoCountPanel);
-        // Translation
-        contentBox.add(this.initTranslationPanel());
+        layout.row().grid(new JLabel(Message.PREFERENCES_GENERAL_UNDO.get())).add(this.undoCountField);
+        layout.row().grid(new JLabel(Message.PREFERENCES_GENERAL_TRANSLATION.get()))
+                .addMulti(this.initTranslationSelection(), new JLabel(Message.PREFERENCES_RESTART_REQUIRED.get()));
 
-        this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);
         final GridBagConstraints spacing = new GridBagConstraints();
         spacing.fill = GridBagConstraints.VERTICAL;
         spacing.weighty = 1;
@@ -127,26 +122,10 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
      *
      * @param viewParent
      *            the main client window to apply the selected LookAndFeel to
-     * @return created panel containing the LookAndFeel selection
+     * @return the LookAndFeel selection component
      */
-    private JPanel initLookAndFeelPanel(final JFrame viewParent) {
-        final JPanel lookAndFeelPanel = new JPanel(new GridBagLayout());
-        lookAndFeelPanel.setBorder(BorderFactory.createTitledBorder(Message.PREFERENCES_GENERAL_LOOK_AND_FEEL.get()));
+    private JComboBox initLookAndFeelSelection(final JFrame viewParent) {
         this.lookAndFeelBox.setEditable(false);
-        // get all available look and feels
-        final LookAndFeelInfo[] installedUIs = UIManager.getInstalledLookAndFeels();
-        this.lookAndFeels = new TreeMap<String, String>();
-        for (final LookAndFeelInfo singleLaF : installedUIs) {
-            final String shortName = singleLaF.getName();
-            if (!"Nimbus".equals(shortName)) {
-                // mapping the display name to the full class name of the look and feel
-                this.lookAndFeels.put(shortName, singleLaF.getClassName());
-            }
-        }
-        for (final String shortName : this.lookAndFeels.keySet()) {
-            // adding the short name of the look and feel in the combo box
-            this.lookAndFeelBox.addItem(shortName);
-        }
         String selected;
         if (this.containsChosenSettingKey(Option.LOOK_AND_FEEL)) {
             selected = this.getChosenSetting(Option.LOOK_AND_FEEL);
@@ -168,7 +147,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
             @Override
             public void actionPerformed(final ActionEvent event) {
                 try {
-                    UIManager.setLookAndFeel(GeneralOptionPanel.this.lookAndFeels.get(GeneralOptionPanel.this.lookAndFeelBox.getSelectedIndex()));
+                    UIManager.setLookAndFeel(GeneralOptionPanel.this.lookAndFeels.get(GeneralOptionPanel.this.lookAndFeelBox.getSelectedItem()));
                     SwingUtilities.updateComponentTreeUI(GeneralOptionPanel.this.dialog);
                     SwingUtilities.updateComponentTreeUI(viewParent);
                     viewParent.validate();
@@ -183,19 +162,15 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
                 }
             }
         });
-        lookAndFeelPanel.add(this.lookAndFeelBox, AbstractOptionPanel.DEFAULT_INSETS);
-        lookAndFeelPanel.add(new JPanel(), AbstractOptionPanel.HORIZONTAL_SPAN);
-        return lookAndFeelPanel;
+        return this.lookAndFeelBox;
     }
 
     /**
      * Initialize the Translation selection.
      *
-     * @return created panel containing the Translation selection
+     * @return the Translation selection component
      */
-    private JPanel initTranslationPanel() {
-        final JPanel translationPanel = new JPanel(new GridBagLayout());
-        translationPanel.setBorder(BorderFactory.createTitledBorder(Message.PREFERENCES_GENERAL_TRANSLATION.get()));
+    private JComboBox initTranslationSelection() {
         this.localeBox.setEditable(false);
         // get all available look and feels
         final List<Locale> availableLocales = Message.getAvailableLocales();
@@ -226,14 +201,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
                 break;
             }
         }
-        translationPanel.add(this.localeBox, AbstractOptionPanel.DEFAULT_INSETS);
-        final GridBagConstraints constraints = (GridBagConstraints) AbstractOptionPanel.DEFAULT_INSETS.clone();
-        constraints.gridx = 1;
-        translationPanel.add(new JLabel(Message.PREFERENCES_RESTART_REQUIRED.get()), constraints);
-        final GridBagConstraints spacingConstraints = (GridBagConstraints) AbstractOptionPanel.HORIZONTAL_SPAN.clone();
-        spacingConstraints.gridx = 2;
-        translationPanel.add(new JPanel(), spacingConstraints);
-        return translationPanel;
+        return this.localeBox;
     }
 
     /** Store the chosen settings in the associated map. */

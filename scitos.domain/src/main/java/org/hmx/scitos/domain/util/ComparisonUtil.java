@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -19,11 +19,7 @@
 
 package org.hmx.scitos.domain.util;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Collection of simple comparator functions.
@@ -119,79 +115,5 @@ public final class ComparisonUtil {
             result = targetOne.compareTo(targetTwo);
         }
         return result;
-    }
-
-    /**
-     * Check if the given collection contains the given object instance. Thereby avoiding the use of {@link Object#equals(Object) equals(Object)} and
-     * {@link Object#hashCode() hashCode()} in the {@link Collection#contains(Object) contains(Object)} implementation of the collection itself.
-     *
-     * <p>
-     * This check is supposed to be faster and can be used with objects, that are missing proper implementations of those methods. Additionally,
-     * objects that are deemed {@link Object#equals(Object) equal} but not identical are ignored.
-     * </p>
-     *
-     * @param collection
-     *            collection to check for contained instance
-     * @param instance
-     *            specific object instance to check for
-     * @param <T>
-     *            type of the object to check for
-     * @return if the given collection contains the given instance (not just an equal object)
-     */
-    public static <T> boolean containsInstance(final Collection<? extends T> collection, final T instance) {
-        return -1 != ComparisonUtil.indexOfInstance(collection, instance);
-    }
-
-    /**
-     * Determine the index position of the first occurrence of the given object instance in the given collection. Thereby avoiding the use of
-     * {@link Object#equals(Object) equals(Object)} and {@link Object#hashCode() hashCode()} in the {@link java.util.List#indexOf(Object)
-     * indexOf(Object)} implementation of the collection/list itself.
-     *
-     * <p>
-     * This check is supposed to be faster and can be used with objects, that are missing proper implementations of those methods. Additionally,
-     * objects that are deemed {@link Object#equals(Object) equal} but not identical are ignored.
-     * </p>
-     *
-     * @param collection
-     *            collection to check for contained instance
-     * @param instance
-     *            specific object instance to check for
-     * @param <T>
-     *            type of the object to check for
-     * @return position of the given instance in the collection (not just of an equal object)
-     */
-    public static <T> int indexOfInstance(final Collection<? extends T> collection, final T instance) {
-        if (collection != null && !collection.isEmpty()) {
-            int index = 0;
-            for (final T collectionElement : collection) {
-                if (collectionElement == instance) {
-                    return index;
-                }
-                index++;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Count the number of occurrences in a given collection.
-     *
-     * @param <T>
-     *            the type to count the occurrences in the given {@code collection} for
-     * @param collection
-     *            the targeted collection to count repeated instances in
-     * @return mapping of contained instances to their respective count of occurrences
-     */
-    public static <T> Map<T, AtomicInteger> countOccurrences(final Collection<T> collection) {
-        final Map<T, AtomicInteger> map = new HashMap<T, AtomicInteger>();
-        for (final T instance : collection) {
-            final AtomicInteger counter = map.get(instance);
-            if (counter == null) {
-                map.put(instance, new AtomicInteger(1));
-            } else {
-                counter.incrementAndGet();
-            }
-        }
-        return map;
     }
 }

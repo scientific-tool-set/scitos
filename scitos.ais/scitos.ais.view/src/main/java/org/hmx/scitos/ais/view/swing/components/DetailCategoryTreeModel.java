@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -37,7 +37,7 @@ import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.MutableDetailCategoryModel;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
 /**
@@ -335,7 +335,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
         outer: do {
             pathElements.addFirst(currentElement);
             for (final Entry<DetailCategoryRow, List<DetailCategoryRow>> childrenSet : this.categoryChildren.entrySet()) {
-                if (ComparisonUtil.containsInstance(childrenSet.getValue(), currentElement)) {
+                if (CollectionUtil.containsInstance(childrenSet.getValue(), currentElement)) {
                     currentElement = childrenSet.getKey();
                     continue outer;
                 }

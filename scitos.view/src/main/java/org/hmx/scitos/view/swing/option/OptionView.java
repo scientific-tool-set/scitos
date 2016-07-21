@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -32,12 +32,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.view.service.IOptionPanelService;
 import org.hmx.scitos.view.service.IOptionPanelServiceProvider;
 import org.hmx.scitos.view.swing.ScitosClient;
-import org.hmx.scitos.view.swing.util.SplitFrame;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
@@ -47,7 +45,7 @@ import org.hmx.scitos.view.swing.util.ViewUtil;
 public final class OptionView {
 
     /** The dialog opened and filled with content by the constructor. */
-    final SplitFrame dialog;
+    final OptionViewDialog dialog;
     /** The selectable nodes in the left hand tree. */
     private final List<DefaultMutableTreeNode> optionNodes;
 
@@ -60,17 +58,16 @@ public final class OptionView {
      *            provider for the variety of option groups
      */
     private OptionView(final ScitosClient parent, final IOptionPanelServiceProvider optionPanelProvider) {
-        this.dialog = new SplitFrame(parent.getFrame(), Message.MENUBAR_PREFERENCES.get(),
-        // define the save action of the OK button of the SplitFrame
-                new ActionListener() {
+        this.dialog = new OptionViewDialog(parent.getFrame(), new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(final ActionEvent event) {
-                        if (OptionView.this.saveOptions()) {
-                            OptionView.this.dialog.close();
-                        }
-                    }
-                });
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                // save action of the OK button on the SplitFrame
+                if (OptionView.this.saveOptions()) {
+                    OptionView.this.dialog.close();
+                }
+            }
+        });
         this.dialog.setModal(true);
         this.optionNodes = new LinkedList<DefaultMutableTreeNode>();
         DefaultMutableTreeNode firstNode = null;
@@ -87,19 +84,16 @@ public final class OptionView {
         }
         this.dialog.setSelectedNode(firstNode);
         this.dialog.setMinimumSize(new Dimension(600, 400));
-        this.dialog.setSize(new Dimension(760, 570));
+        this.dialog.pack();
+        this.dialog.setSize(this.dialog.getWidth(), 600);
         ViewUtil.centerOnParent(this.dialog);
         // define the look and feel resetting action if the frame is closed
         this.dialog.addWindowListener(new WindowAdapter() {
 
             @Override
             public void windowClosed(final WindowEvent event) {
-                String toReset = Option.LOOK_AND_FEEL.getValue();
-                if (toReset == null || toReset.isEmpty()) {
-                    toReset = UIManager.getSystemLookAndFeelClassName();
-                }
                 try {
-                    UIManager.setLookAndFeel(toReset);
+                    UIManager.setLookAndFeel(Option.LOOK_AND_FEEL.getValue());
                     SwingUtilities.updateComponentTreeUI(parent.getFrame());
                     parent.revalidate();
                 } catch (final Exception e) {
@@ -110,8 +104,8 @@ public final class OptionView {
     }
 
     /**
-     * Open a {@link SplitFrame} containing a selection tree on the left side (for the different preference categories) and the actual preference
-     * panels on the right side.
+     * Open a {@link OptionViewDialog} containing a selection tree on the left side (for the different preference categories) and the actual
+     * preference panels on the right side.
      *
      * @param parent
      *            parent {@link ScitosClient} to refresh the chosen LookAndFeel

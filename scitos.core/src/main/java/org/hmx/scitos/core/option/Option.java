@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -22,6 +22,8 @@ package org.hmx.scitos.core.option;
 import java.awt.Color;
 import java.util.Locale;
 
+import javax.swing.UIManager;
+
 import org.hmx.scitos.core.util.ConversionUtil;
 
 /**
@@ -31,7 +33,7 @@ public enum Option implements IOptionSetting {
     /** User setting: the display language. */
     TRANSLATION("Translation", null),
     /** User setting: the gui (swing) look-and-feel. */
-    LOOK_AND_FEEL("SwingLookAndFeel", null),
+    LOOK_AND_FEEL("SwingLookAndFeel", UIManager.getSystemLookAndFeelClassName()),
     /** User setting: the number of undo-able steps per open project. */
     UNDO_LIMIT("Undo.Limit", "10"),
     /** For usability: last directory used for saving. */

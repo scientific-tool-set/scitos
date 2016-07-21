@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -44,6 +44,7 @@ import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.core.AbstractModelHandler;
 import org.hmx.scitos.core.HmxException;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 
 /**
@@ -135,7 +136,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
             }
         }
         // remove the targeted interview from the model's list of interviews
-        interviews.remove(ComparisonUtil.indexOfInstance(interviews, interview));
+        interviews.remove(CollectionUtil.indexOfInstance(interviews, interview));
         // set the modified list of interviews on the model
         this.getModel().setInterviews(interviews);
         // trigger model change event for the whole model (as multiple interviews might be changed)
@@ -382,7 +383,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         boolean currentPartSelected = true;
         TextToken currentToken = selectedTokens.get(0);
         do {
-            if (currentPartSelected != ComparisonUtil.containsInstance(selectedTokens, currentToken)) {
+            if (currentPartSelected != CollectionUtil.containsInstance(selectedTokens, currentToken)) {
                 // switch between selected/unselected section
                 currentPartSelected = !currentPartSelected;
                 // add current part to result list

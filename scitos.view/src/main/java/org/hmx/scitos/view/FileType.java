@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -66,6 +66,10 @@ public enum FileType {
      * The fully qualified name of the associated module's initializing class (to be loaded via dependency injection).
      */
     private final String moduleInitializerClassName;
+    /**
+     * Flag indicating whether this file type's module is part of the currently executed distribution.
+     */
+    private final boolean supportedByDistribution;
 
     /**
      * Returns the file type represented by the given xml document.
@@ -77,7 +81,7 @@ public enum FileType {
     public static FileType fromXml(final Document xml) {
         final Element root = xml.getDocumentElement();
         for (final FileType singleType : FileType.values()) {
-            if (root.getAttribute(singleType.typeAttribute).equals(singleType.typeAttributeValue)) {
+            if (singleType.typeAttributeValue.equals(root.getAttribute(singleType.typeAttribute))) {
                 return singleType;
             }
         }
@@ -108,6 +112,14 @@ public enum FileType {
         this.typeAttributeValue = typeAttributeValue;
         this.moduleClassName = moduleClassName;
         this.moduleInitializerClassName = moduleInitializerClassName;
+        boolean moduleOnClasspath;
+        try {
+            moduleOnClasspath = Class.forName(moduleClassName) != null;
+        } catch (final ClassNotFoundException ex) {
+            // expected exception: represents cases where the represented file type's module is not part of the currently executed distribution
+            moduleOnClasspath = false;
+        }
+        this.supportedByDistribution = moduleOnClasspath;
     }
 
     /**
@@ -144,6 +156,15 @@ public enum FileType {
      */
     public String getModuleInitializerClassName() {
         return this.moduleInitializerClassName;
+    }
+
+    /**
+     * Getter for the flag indicating whether this file type's module is part of the currently executed distribution.
+     * 
+     * @return flag indicating whether this file type's module is part of the currently executed distribution
+     */
+    public boolean isSupportedByDistribution() {
+        return this.supportedByDistribution;
     }
 
     /**

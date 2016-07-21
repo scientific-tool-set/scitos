@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +32,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
@@ -40,7 +40,7 @@ import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.IOptionSetting;
 import org.hmx.scitos.core.util.ConversionUtil;
-import org.hmx.scitos.view.swing.util.SplitFrame;
+import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
  * Abstract panel in the application's preferences dialog, that handles a number of simple settings, represented in an Enum.
@@ -51,7 +51,7 @@ import org.hmx.scitos.view.swing.util.SplitFrame;
 public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOptionSetting> & IOptionSetting> extends AbstractOptionPanel {
 
     /**
-     * All settings chosen in this instance, which will be saved when the {@link SplitFrame} is closed by the {@code OK}-button.
+     * All settings chosen in this instance, which will be saved when the {@link OptionViewDialog} is closed by the {@code OK}-button.
      */
     private final Map<S, String> chosenSettings = new HashMap<S, String>();
 
@@ -83,21 +83,42 @@ public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOption
     protected final JPanel initColorPanel(final JPanel colorSample, final ILocalizableMessage title, final S setting,
             final boolean allowTransparent) {
         final JPanel groupPanel = new JPanel(new GridBagLayout());
-        groupPanel.setBorder(BorderFactory.createTitledBorder(title.get()));
         // create a panel for showing the current selected color
-        colorSample.setPreferredSize(new Dimension(50, allowTransparent ? 50 : 20));
-        colorSample.setBorder(null);
+        colorSample.setPreferredSize(new Dimension(60, allowTransparent ? 60 : 30));
+        colorSample.setBorder(BorderFactory.createEtchedBorder());
+        final Color colorSetting = setting.getValueAsColor();
+        colorSample.setBackground(colorSetting);
         final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.anchor = GridBagConstraints.BASELINE;
+        constraints.fill = GridBagConstraints.NONE;
         constraints.gridheight = 2;
-        constraints.insets = AbstractOptionPanel.DEFAULT_INSETS.insets;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
         groupPanel.add(colorSample, constraints);
-        constraints.insets = new Insets(0, 0, 0, 0);
-        final JToggleButton transparentButton;
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1;
+        constraints.gridx = 2;
+        groupPanel.add(new JPanel(), constraints);
+
+        final JButton changeColorButton = new JButton(Message.PREFERENCES_SETTING_CHANGE_COLOR.get());
+        constraints.gridheight = 1;
+        constraints.weightx = 0;
+        constraints.gridx = 1;
+        groupPanel.add(changeColorButton, constraints);
+        final JToggleButton transparentButton = new JToggleButton(Message.PREFERENCES_SETTING_TRANSPARENT_COLOR.get());
+        constraints.gridy = 1;
+        groupPanel.add(transparentButton, constraints);
+
+        final Dimension buttonSize1 = changeColorButton.getPreferredSize();
+        final Dimension buttonSize2 = transparentButton.getPreferredSize();
+        final Dimension uniButtonSize =
+                new Dimension(Math.max(buttonSize1.width, buttonSize2.width), Math.max(buttonSize1.height, buttonSize2.height));
+        changeColorButton.setPreferredSize(uniButtonSize);
+        transparentButton.setPreferredSize(uniButtonSize);
+
         if (allowTransparent) {
-            constraints.gridheight = 1;
-            constraints.gridy = 1;
-            transparentButton = new JToggleButton(Message.PREFERENCES_SETTING_TRANSPARENT_COLOR.get());
+            transparentButton.setSelected(colorSetting == null);
             transparentButton.addActionListener(new ActionListener() {
 
                 @Override
@@ -106,43 +127,30 @@ public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOption
                     transparentButton.setSelected(true);
                 }
             });
-            groupPanel.add(transparentButton, constraints);
-            constraints.gridy = 0;
         } else {
-            transparentButton = null;
+            transparentButton.setVisible(false);
         }
-        final Color colorSetting = setting.getValueAsColor();
-        colorSample.setBackground(colorSetting);
-        if (transparentButton != null) {
-            transparentButton.setSelected(colorSetting == null);
-        }
-        // create a button for choosing the color
-        final JButton changeColorButton = new JButton(Message.PREFERENCES_SETTING_CHANGE_COLOR.get());
         final JColorChooser colorChooser = new JColorChooser();
         changeColorButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent event) {
                 colorChooser.setColor(colorSample.getBackground());
-                JColorChooser.createDialog(AbstractSimpleOptionPanel.this, title.get(), true, colorChooser, new ActionListener() {
+                final JDialog dialog =
+                        JColorChooser.createDialog(AbstractSimpleOptionPanel.this, title.get(), true, colorChooser, new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(final ActionEvent okEvent) {
-                        colorSample.setBackground(colorChooser.getColor());
-                        if (transparentButton != null) {
-                            transparentButton.setSelected(false);
-                        }
-
-                    }
-                }, null).setVisible(true);
+                            @Override
+                            public void actionPerformed(final ActionEvent okEvent) {
+                                colorSample.setBackground(colorChooser.getColor());
+                                if (allowTransparent) {
+                                    transparentButton.setSelected(false);
+                                }
+                            }
+                        }, null);
+                ViewUtil.centerOnParent(dialog);
+                dialog.setVisible(true);
             }
         });
-        constraints.gridx = 1;
-        groupPanel.add(changeColorButton, constraints);
-        constraints.gridx = 2;
-        constraints.gridheight = 2;
-        constraints.weightx = 1;
-        groupPanel.add(new JPanel(), constraints);
         return groupPanel;
     }
 

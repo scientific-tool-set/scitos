@@ -1,8 +1,24 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.view.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,38 +29,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.java.dev.designgridlayout.DesignGridLayout;
+
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 
-/**
- * The application's about dialog.
- */
+/** The application's about dialog. */
 public final class AboutDialog extends JDialog {
 
     /**
-     * Main constructor.
+     * Constructor.
      *
      * @param parent
      *            parent frame
      */
     public AboutDialog(final JFrame parent) {
         super(parent, Message.MENUBAR_ABOUT.get(), true);
-        final JPanel contentPane = new JPanel(new GridBagLayout());
+        final JPanel contentPane = new JPanel();
         contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 5, 20));
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        contentPane.add(new JLabel(ScitosIcon.APPLICATION.createScaled(-1, 128)), constraints);
-        constraints.insets = new Insets(5, 5, 5, 5);
-        constraints.gridy++;
-        contentPane.add(new JLabel("SciToS – the Scientific Tool Set"), constraints);
-        constraints.gridy++;
-        contentPane.add(new JLabel('v' + AboutDialog.class.getPackage().getImplementationVersion()), constraints);
-        constraints.gridy++;
-        contentPane.add(new JLabel("by " + AboutDialog.class.getPackage().getImplementationVendor()), constraints);
-        constraints.gridy++;
-        contentPane.add(new JLabel("GNU General Public License version 3 (GPLv3)"), constraints);
+        final DesignGridLayout layout = new DesignGridLayout(contentPane).withoutConsistentWidthAcrossNonGridRows();
+        layout.row().center().add(new JLabel(ScitosIcon.APPLICATION.createScaled(-1, 128)));
+        layout.row().center().add(new JLabel("SciToS – the Scientific Tool Set"));
+        layout.row().center().add(new JLabel('v' + AboutDialog.class.getPackage().getImplementationVersion()));
+        layout.row().center().add(new JLabel("by " + AboutDialog.class.getPackage().getImplementationVendor()));
+        layout.row().center().add(new JLabel("GNU General Public License version 3 (GPLv3)"));
         final JButton okButton = new JButton(Message.OK.get());
         okButton.addActionListener(new ActionListener() {
 
@@ -53,9 +62,7 @@ public final class AboutDialog extends JDialog {
                 AboutDialog.this.dispose();
             }
         });
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.gridy++;
-        contentPane.add(okButton, constraints);
+        layout.row().center().add(okButton).fill();
         this.setContentPane(contentPane);
         this.pack();
         ViewUtil.centerOnParent(this);

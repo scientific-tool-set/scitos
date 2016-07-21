@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -70,6 +70,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.domain.IMultiObjectModel;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.FileType;
@@ -341,7 +342,7 @@ public class MainView extends JPanel {
                     continue;
                 }
                 final IViewProject<?> project = ((ScitosTreeNode) singlePath[1]).getProject();
-                if (!ComparisonUtil.containsInstance(expandedProjectNodes, project)) {
+                if (!CollectionUtil.containsInstance(expandedProjectNodes, project)) {
                     expandedProjectNodes.add(project);
                 }
                 if (singlePath.length > 2 && ((DefaultMutableTreeNode) singlePath[2]).getUserObject() instanceof String) {
@@ -800,7 +801,7 @@ public class MainView extends JPanel {
      * @return successfully closed
      */
     boolean closeProject(final IViewProject<?> project) {
-        if (!ComparisonUtil.containsInstance(this.openProjects, project)) {
+        if (!CollectionUtil.containsInstance(this.openProjects, project)) {
             // already closed
             return true;
         }
@@ -830,7 +831,7 @@ public class MainView extends JPanel {
      * @return open tab views belonging to the given project
      */
     private List<AbstractProjectView<?, ?>> getOpenTabsForProject(final IViewProject<?> project) {
-        if (!ComparisonUtil.containsInstance(this.openProjects, project)) {
+        if (!CollectionUtil.containsInstance(this.openProjects, project)) {
             return Collections.emptyList();
         }
         final List<AbstractProjectView<?, ?>> openTabs = new LinkedList<AbstractProjectView<?, ?>>();

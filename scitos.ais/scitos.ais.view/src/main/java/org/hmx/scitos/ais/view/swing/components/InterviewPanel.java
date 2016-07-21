@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -48,7 +48,7 @@ import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.domain.IProvider;
 import org.hmx.scitos.domain.ModelChangeListener;
 import org.hmx.scitos.domain.ModelEvent;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.view.swing.util.WrapLayout;
 
 /** Component displaying a single interview's text, including the assigned detail categories. */
@@ -177,7 +177,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
             TextToken currentToken = paragraphStart;
             do {
                 final TextTokenComponent tokenComponent = this.createTextTokenComponent(currentToken);
-                tokenComponent.setSelected(ComparisonUtil.containsInstance(selection, currentToken));
+                tokenComponent.setSelected(CollectionUtil.containsInstance(selection, currentToken));
                 paragraphWrapper.add(tokenComponent);
                 currentToken = currentToken.getFollowingToken();
             } while (currentToken != null);

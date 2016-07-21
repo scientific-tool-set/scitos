@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -56,6 +56,16 @@ public abstract class AbstractOptionPanel extends JPanel {
         super(layout);
         this.title = title;
         this.setBorder(null);
+    }
+
+    /**
+     * Indicate whether this option panel handles any potential resizing or scrolling requirements itself.
+     * 
+     * @return if the option panel is capable of adjusting to any dialog size
+     */
+    protected boolean isResizeCapable() {
+        // default: let the containing dialog add a scrollable wrapper to the individual option panel implementation
+        return false;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -123,10 +123,12 @@ public final class ScitosApp {
         modules.add(new ScitosModule());
         // add all sub modules
         for (final FileType singleType : FileType.values()) {
-            final Class<?> moduleClass = Class.forName(singleType.getModuleClassName());
-            final Class<?> moduleInitializerClass = Class.forName(singleType.getModuleInitializerClassName());
-            modules.add(moduleClass.newInstance());
-            initializerClasses.add(moduleInitializerClass);
+            if (singleType.isSupportedByDistribution()) {
+                final Class<?> moduleClass = Class.forName(singleType.getModuleClassName());
+                final Class<?> moduleInitializerClass = Class.forName(singleType.getModuleInitializerClassName());
+                modules.add(moduleClass.newInstance());
+                initializerClasses.add(moduleInitializerClass);
+            }
         }
         // create dependency injection graph from combined modules
         final ObjectGraph objectGraph = ObjectGraph.create(modules.toArray());

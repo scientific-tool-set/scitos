@@ -21,5 +21,15 @@
 			<groupId>org.hmx</groupId>
 			<artifactId>scitos.core</artifactId>
 		</dependency>
+		<!-- lib: including TreeTable view component -->
+		<dependency>
+			<groupId>org.swinglabs.swingx</groupId>
+			<artifactId>swingx-core</artifactId>
+		</dependency>
+		<!-- lib: DesignGridLayout for arranging views -->
+		<dependency>
+		    <groupId>net.java.dev.designgridlayout</groupId>
+		    <artifactId>designgridlayout</artifactId>
+		</dependency>
 	</dependencies>
 </project>

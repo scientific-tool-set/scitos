@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -253,8 +253,7 @@ public final class MessageHandler {
         final StringBuilder traceBuffer = new StringBuilder();
         traceBuffer.append(error.getLocalizedMessage());
         for (final StackTraceElement singleElement : error.getStackTrace()) {
-            traceBuffer.append('\n');
-            traceBuffer.append(singleElement.toString());
+            traceBuffer.append('\n').append(singleElement.toString());
         }
         return traceBuffer.toString();
     }
@@ -270,6 +269,6 @@ public final class MessageHandler {
         if (message == null) {
             return "";
         }
-        return message.replaceAll("[\n\r][\n\r]", "\n \n");
+        return message.replaceAll("[\n\r]{2,}+", "\n \n");
     }
 }

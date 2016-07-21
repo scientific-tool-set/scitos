@@ -1,14 +1,33 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.view.swing.util;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
 
+import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.JToolTip;
 import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicToolTipUI;
 
@@ -111,7 +130,7 @@ public final class MultiLineToolTipUI extends BasicToolTipUI {
             return new Dimension(0, 0);
         }
         this.textArea = new JTextArea(tipText);
-        this.textArea.setBorder(new EmptyBorder(2, 2, 2, 2));
+        this.textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         this.rendererPane.removeAll();
         this.rendererPane.add(this.textArea);
         this.textArea.setWrapStyleWord(true);

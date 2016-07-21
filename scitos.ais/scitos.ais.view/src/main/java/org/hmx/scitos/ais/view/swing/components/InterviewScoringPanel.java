@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -40,7 +40,7 @@ import org.hmx.scitos.ais.domain.model.TextToken;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.UndoManager;
 import org.hmx.scitos.domain.ModelEvent;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.view.swing.IUndoManagedView;
 import org.hmx.scitos.view.swing.MessageHandler;
 
@@ -355,18 +355,18 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
                 } else {
                     final List<TextTokenComponent> currentSelection = InterviewScoringPanel.this.getSelection();
                     if ((event.getModifiers() & (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK)) != 0 && !currentSelection.isEmpty()
-                            && ComparisonUtil.containsInstance(this.textTokenComponents, currentSelection.get(0))) {
+                            && CollectionUtil.containsInstance(this.textTokenComponents, currentSelection.get(0))) {
                         // remember selection state while dragging to preserve old selected tokens
                         this.previousSelection = currentSelection;
                         // SHIFT modifier was pressed and something was already selected
                         this.invertSelection = false;
-                        final int firstSelectionIndex = ComparisonUtil.indexOfInstance(this.textTokenComponents, currentSelection.get(0));
+                        final int firstSelectionIndex = CollectionUtil.indexOfInstance(this.textTokenComponents, currentSelection.get(0));
                         if (this.dragStartIndex < firstSelectionIndex) {
                             this.dragPositionIndex = this.dragStartIndex;
                             this.dragStartIndex = firstSelectionIndex;
                         } else {
                             final int lastSelectionIndex =
-                                    ComparisonUtil.indexOfInstance(this.textTokenComponents, currentSelection.get(currentSelection.size() - 1));
+                                    CollectionUtil.indexOfInstance(this.textTokenComponents, currentSelection.get(currentSelection.size() - 1));
                             this.dragPositionIndex = this.dragStartIndex;
                             this.dragStartIndex = lastSelectionIndex;
                         }
@@ -406,7 +406,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
             if (fromIndex < toIndex) {
                 for (final Component singleToken : this.textTokenComponents.subList(fromIndex, toIndex)) {
                     ((TextTokenComponent) singleToken).setSelected(selected
-                            || ComparisonUtil.containsInstance(this.previousSelection, singleToken));
+                            || CollectionUtil.containsInstance(this.previousSelection, singleToken));
                 }
             }
         }
@@ -437,7 +437,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
             if (origin == null) {
                 return -1;
             }
-            return ComparisonUtil.indexOfInstance(this.textTokenComponents, origin);
+            return CollectionUtil.indexOfInstance(this.textTokenComponents, origin);
         }
     }
 }

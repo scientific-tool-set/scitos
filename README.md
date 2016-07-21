@@ -1,4 +1,4 @@
-# SciToS
+# SciToS [![Build Status (master)](https://travis-ci.org/scientific-tool-set/scitos.svg?branch=master)](https://travis-ci.org/scientific-tool-set/scitos)
 The Scientific Tool Set is (planned to be) a collection of helpful tools for the scientific context.
 By automating (parts of) recurring tasks, SciToS aims to:
 - improve the outcome's quality (Validation)

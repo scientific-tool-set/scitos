@@ -93,7 +93,7 @@ public class ModelHandlerImplTest {
         final String title = "Pericope Title applied via setMetaData()";
         final String author = "Someone who knows how";
         final String comment = "Optional comment,\ndescribing what this is all about.\nFor completeness sake...";
-        final Font originTextFont = new Font("Times New Roman", Font.PLAIN, 16);
+        final Font originTextFont = new Font("Dialog", Font.PLAIN, 16);
         this.modelHandler.setMetaData(title, author, comment, originTextFont.getFamily(), originTextFont.getSize());
         Assert.assertEquals(title, this.pericope.getTitle());
         Assert.assertEquals(author, this.pericope.getAuthor());
@@ -109,7 +109,7 @@ public class ModelHandlerImplTest {
         final String title = "Title Text";
         final String author = "";
         final String comment = "";
-        final Font originTextFont = new Font("Arial", Font.PLAIN, 18);
+        final Font originTextFont = new Font("Dialog", Font.PLAIN, 18);
         this.modelHandler.setMetaData(title, author, comment, originTextFont.getFamily(), originTextFont.getSize());
         Assert.assertEquals(title, this.pericope.getTitle());
         Assert.assertEquals(author, this.pericope.getAuthor());

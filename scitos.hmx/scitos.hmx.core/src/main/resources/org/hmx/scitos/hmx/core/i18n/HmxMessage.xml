@@ -92,7 +92,9 @@ Therefore they cannot be merged.</entry>
   <entry key="Error.MergePropositions">The two propositions have to be on the same level
 and with no other propositions on
 the same or higher level between.</entry>
-  <entry key="Error.SplitProposition">Splitting impossible cause there is
+  <entry key="Error.Preferences.Relation.MandatoryHighWeightRole">The role label is mandatory.</entry>
+  <entry key="Error.Preferences.Relation.MandatoryRoles">The role labels are mandatory.</entry>
+  <entry key="Error.SplitProposition">Splitting impossible as there is
 no other clause item behind.</entry>
   <entry key="Error.TooManyChecked">Only one other proposition
 is allowed to be checked.</entry>
@@ -130,13 +132,67 @@ is allowed to be checked.</entry>
   <entry key="Preferences.Export.SynFunction.Italic.FontColor">Syntactical Function (italic)</entry>
   <entry key="Preferences.Export.SynFunction.Plain.FontColor">Syntactical Function (plain)</entry>
   <entry key="Preferences.Export.Translation.FontColor">Translation Text</entry>
+  <entry key="Preferences.OriginLanguage">HmX – Languages</entry>
+  <entry key="Preferences.OriginLanguage.ApplyChanges">Apply Changes</entry>
+  <entry key="Preferences.OriginLanguage.CloneLanguage">Clone Language Model</entry>
+  <entry key="Preferences.OriginLanguage.DeleteLanguage">Delete Language Model</entry>
+  <entry key="Preferences.OriginLanguage.DiscardChanges">Discard Changes</entry>
+  <entry key="Preferences.OriginLanguage.EditEntry">Edit Selection</entry>
+  <entry key="Preferences.OriginLanguage.EditFunctions">Edit Syntactical Functions</entry>
+  <entry key="Preferences.OriginLanguage.EditLanguages">Edit Origin Text Languages</entry>
+  <entry key="Preferences.OriginLanguage.FunctionCount">{0} Function(s)</entry>
+  <entry key="Preferences.OriginLanguage.LanguageName">Name</entry>
+  <entry key="Preferences.OriginLanguage.LanguageName.Mandatory">An Origin Text Language must have a non-blank Name.</entry>
+  <entry key="Preferences.OriginLanguage.RecommendedFonts">Fonts (separated by semicolons)</entry>
+  <entry key="Preferences.OriginLanguage.SystemModel">{0} (default model)</entry>
+  <entry key="Preferences.OriginLanguage.TextOrientation">Text Orientation</entry>
+  <entry key="Preferences.OriginLanguage.TextOrientation.LeftToRight">Left to Right</entry>
+  <entry key="Preferences.OriginLanguage.TextOrientation.RightToLeft">Right to Left</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Add">Add subordinated Function</entry>
+  <entry key="Preferences.OriginLanguageFunctions.AddGroup">Add subordinated Group</entry>
+  <entry key="Preferences.OriginLanguageFunctions.AddTopLevelGroup">Add top-level Group</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Code">Code</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Code.Mandatory">The Code cannot be empty.
+It is being displayed as representation of a selected function in the Syntactical Analysis.</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Description">Description</entry>
+  <entry key="Preferences.OriginLanguageFunctions.MoveDown">Move Entry Down</entry>
+  <entry key="Preferences.OriginLanguageFunctions.MoveUp">Move Entry Up</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Name">Name</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Name.Mandatory">The Name cannot be empty.
+It is being displayed as entry in the Syntactical Analysis' context menus.</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Remove">Remove Function</entry>
+  <entry key="Preferences.OriginLanguageFunctions.RemoveGroup">Remove Group</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Underline">Underline when selected</entry>
+  <entry key="Preferences.Relation">HmX – Relations</entry>
+  <entry key="Preferences.Relation.Add">Add Template to Group</entry>
+  <entry key="Preferences.Relation.AddGroup">Add Group</entry>
+  <entry key="Preferences.Relation.Add.DefaultRole.HighWeight">High Weight</entry>
+  <entry key="Preferences.Relation.Add.DefaultRole.LowWeight">Low Weight</entry>
+  <entry key="Preferences.Relation.ApplyChanges">Apply Changes</entry>
+  <entry key="Preferences.Relation.Description">Description</entry>
+  <entry key="Preferences.Relation.DiscardChanges">Discard Changes</entry>
+  <entry key="Preferences.Relation.EditTemplate">Edit Selected Template</entry>
+  <entry key="Preferences.Relation.HighWeightOnly">Single Re-occurring Role</entry>
+  <entry key="Preferences.Relation.HighWeightPosition">Default Order</entry>
+  <entry key="Preferences.Relation.HighWeightPosition.First">High Weight First</entry>
+  <entry key="Preferences.Relation.HighWeightPosition.Last">High Weight Last</entry>
+  <entry key="Preferences.Relation.HighWeightRole">Role with High Weight</entry>
+  <entry key="Preferences.Relation.Long">Semantical Relations</entry>
+  <entry key="Preferences.Relation.LowWeightRepeatable">Can be Re-occurring</entry>
+  <entry key="Preferences.Relation.LowWeightRole">Role with Low Weight</entry>
+  <entry key="Preferences.Relation.MoveUp">Move entry up</entry>
+  <entry key="Preferences.Relation.MoveDown">Move entry down</entry>
+  <entry key="Preferences.Relation.Remove">Remove template</entry>
+  <entry key="Preferences.Relation.RemoveGroup">Remove group</entry>
+  <entry key="Preferences.Relation.RemoveGroup.Confirm">Are you sure you want to remove this group with all its contained templates?</entry>
   <entry key="Preferences.View.Color.Arrow">Arrow Color</entry>
   <entry key="Preferences.View.Color.Change">Change</entry>
-  <entry key="Preferences.View.Color.CommentedBorder">Highlight color of commented elements</entry>
+  <entry key="Preferences.View.Color.CommentedBorder">Highlight Color of commented elements</entry>
   <entry key="Preferences.View.Color.Relation">Relation Color</entry>
   <entry key="Preferences.View.Color.Transparent">Invisible</entry>
   <entry key="Preferences.View.IndentationWidth">Indentation Width</entry>
-  <entry key="Preferences.View.TextInput.ShowInputSettings">Show settings on start of new analysis</entry>
+  <entry key="Preferences.View.TextInput">On Start of new Analysis</entry>
+  <entry key="Preferences.View.TextInput.ShowSettings">Show settings</entry>
   <entry key="ProjectInfo.Author">Author</entry>
   <entry key="ProjectInfo.Comment">Comment</entry>
   <entry key="ProjectInfo.FrameTitle">General Project Info</entry>

@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core.export;
 
 import java.awt.Font;
@@ -9,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hmx.scitos.core.HmxException;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxExportOption;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
@@ -343,7 +362,7 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
         // insert upward arrows if needed
         double originTextExtent = 0;
         if (target.getPartBeforeArrow() != null) {
-            for (int i = ComparisonUtil.indexOfInstance(flatPropositions, target.getPartBeforeArrow()) + 1; i < targetIndex; i++) {
+            for (int i = CollectionUtil.indexOfInstance(flatPropositions, target.getPartBeforeArrow()) + 1; i < targetIndex; i++) {
                 final double coordX;
                 if (this.model.isLeftToRightOriented()) {
                     coordX = originTextExtent;
@@ -362,7 +381,7 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
         if (target.getPartAfterArrow() != null) {
             originTextExtent += this.horizontalSpacing;
             this.arrowPartIndentation.put(targetIndex, currentExtentX + originTextExtent);
-            for (int i = ComparisonUtil.indexOfInstance(flatPropositions, target.getPartAfterArrow()) - 1; i > targetIndex; i--) {
+            for (int i = CollectionUtil.indexOfInstance(flatPropositions, target.getPartAfterArrow()) - 1; i > targetIndex; i--) {
                 final double coordX;
                 if (this.model.isLeftToRightOriented()) {
                     coordX = originTextExtent;
@@ -439,7 +458,7 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
             }
         } else {
             // remember from part before arrow
-            indentation = this.arrowPartIndentation.get(ComparisonUtil.indexOfInstance(flatPropositions, target.getPartBeforeArrow()));
+            indentation = this.arrowPartIndentation.get(CollectionUtil.indexOfInstance(flatPropositions, target.getPartBeforeArrow()));
         }
         return indentation;
     }

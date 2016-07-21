@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -19,6 +19,7 @@
 
 package org.hmx.scitos.hmx.view.swing.option;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,7 +27,10 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import net.java.dev.designgridlayout.DesignGridLayout;
 
 import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
@@ -98,11 +102,6 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
     /** Constructor: create the general options panel. */
     public HmxExportOptionPanel() {
         super(new GridBagLayout(), HmxMessage.PREFERENCES_EXPORT);
-        this.init();
-    }
-
-    /** Initialize all components and their default values. */
-    private void init() {
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
         // color options
         contentBox.add(this.initElementColorPanel());
@@ -126,30 +125,22 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
      * @return the created panel containing the four color selection components
      */
     private JPanel initElementColorPanel() {
-        final JPanel elementColorGroup = new JPanel(new GridBagLayout());
+        final JPanel elementColorGroup = new JPanel();
         elementColorGroup.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_EXPORT_ELEMENTCOLOR.get()));
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.weightx = 1;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        // ArrowColor.RGB
-        elementColorGroup.add(
-                this.initColorPanel(this.arrowColorSample, HmxMessage.PREFERENCES_GENERAL_ARROW_COLOR, HmxExportOption.ARROW_COLOR, false),
-                constraints);
-        constraints.gridy++;
-        // Proposition Border
-        elementColorGroup.add(this.initColorPanel(this.propositionBorderSample, HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BORDER,
-                HmxExportOption.PROPOSITION_COLOR_BORDER, true), constraints);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        // RelationColor.RGB
-        elementColorGroup.add(this.initColorPanel(this.relationColorSample, HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR,
-                HmxExportOption.RELATION_COLOR, false), constraints);
-        constraints.gridy++;
-        // Proposition Background
-        elementColorGroup.add(this.initColorPanel(this.propositionBackgroundSample, HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BACKGROUND,
-                HmxExportOption.PROPOSITION_COLOR_BACKGROUND, true), constraints);
+        final DesignGridLayout layout = new DesignGridLayout(elementColorGroup);
+        layout.row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_ARROW_COLOR.get()))
+                .add(this.initColorPanel(this.arrowColorSample, HmxMessage.PREFERENCES_GENERAL_ARROW_COLOR, HmxExportOption.ARROW_COLOR, false))
+                .grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR.get()))
+                .add(this.initColorPanel(this.relationColorSample, HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR, HmxExportOption.RELATION_COLOR,
+                        false));
+        layout.row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BORDER.get()))
+                .add(this.initColorPanel(this.propositionBorderSample, HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BORDER,
+                        HmxExportOption.PROPOSITION_COLOR_BORDER, true))
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BACKGROUND.get()))
+                .add(this.initColorPanel(this.propositionBackgroundSample, HmxMessage.PREFERENCES_EXPORT_PROPOSITION_BACKGROUND,
+                        HmxExportOption.PROPOSITION_COLOR_BACKGROUND, true));
         return elementColorGroup;
     }
 
@@ -159,38 +150,37 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
      * @return the created panel containing the various color selection components
      */
     private JPanel initFontColorPanel() {
-        final JPanel fontColorGroup = new JPanel(new GridBagLayout());
+        final JPanel fontColorGroup = new JPanel();
         fontColorGroup.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_EXPORT_FONTCOLOR.get()));
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.weightx = 1;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        fontColorGroup.add(this.initColorPanel(this.originFontColorSample, HmxMessage.PREFERENCES_EXPORT_ORIGINTEXT_COLOR,
-                HmxExportOption.FONTCOLOR_ORIGINTEXT, false), constraints);
-        constraints.gridy++;
-        fontColorGroup.add(
-                this.initColorPanel(this.labelFontColorSample, HmxMessage.PREFERENCES_EXPORT_LABEL_COLOR, HmxExportOption.FONTCOLOR_LABEL, false),
-                constraints);
-        constraints.gridy++;
-        fontColorGroup.add(this.initColorPanel(this.plainFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_PLAIN_COLOR,
-                HmxExportOption.FONTCOLOR_SYNFUNCTION_PLAIN, false), constraints);
-        constraints.gridy++;
-        fontColorGroup.add(this.initColorPanel(this.italicFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_ITALIC_COLOR,
-                HmxExportOption.FONTCOLOR_SYNFUNCTION_ITALIC, false), constraints);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        fontColorGroup.add(this.initColorPanel(this.translationFontColorSample, HmxMessage.PREFERENCES_EXPORT_TRANSLATION_COLOR,
-                HmxExportOption.FONTCOLOR_TRANSLATION, false), constraints);
-        constraints.gridy++;
-        fontColorGroup.add(this.initColorPanel(this.roleFontColorSample, HmxMessage.PREFERENCES_EXPORT_SEMROLE_COLOR,
-                HmxExportOption.FONTCOLOR_SEMROLE, false), constraints);
-        constraints.gridy++;
-        fontColorGroup.add(this.initColorPanel(this.boldFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_BOLD_COLOR,
-                HmxExportOption.FONTCOLOR_SYNFUNCTION_BOLD, false), constraints);
-        constraints.gridy++;
-        fontColorGroup.add(this.initColorPanel(this.boldItalicFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_BOLDITALIC_COLOR,
-                HmxExportOption.FONTCOLOR_SYNFUNCTION_BOLDTALIC, false), constraints);
+        final DesignGridLayout layout = new DesignGridLayout(fontColorGroup);
+        layout.row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_ORIGINTEXT_COLOR.get()))
+                .add(this.initColorPanel(this.originFontColorSample, HmxMessage.PREFERENCES_EXPORT_ORIGINTEXT_COLOR,
+                        HmxExportOption.FONTCOLOR_ORIGINTEXT, false))
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_TRANSLATION_COLOR.get()))
+                .add(this.initColorPanel(this.translationFontColorSample, HmxMessage.PREFERENCES_EXPORT_TRANSLATION_COLOR,
+                        HmxExportOption.FONTCOLOR_TRANSLATION, false));
+        layout.row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_LABEL_COLOR.get()))
+                .add(this.initColorPanel(this.labelFontColorSample, HmxMessage.PREFERENCES_EXPORT_LABEL_COLOR, HmxExportOption.FONTCOLOR_LABEL,
+                        false))
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_SEMROLE_COLOR.get()))
+                .add(this.initColorPanel(this.roleFontColorSample, HmxMessage.PREFERENCES_EXPORT_SEMROLE_COLOR, HmxExportOption.FONTCOLOR_SEMROLE,
+                        false));
+        layout.row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_PLAIN_COLOR.get()))
+                .add(this.initColorPanel(this.plainFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_PLAIN_COLOR,
+                        HmxExportOption.FONTCOLOR_SYNFUNCTION_PLAIN, false))
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_BOLD_COLOR.get()))
+                .add(this.initColorPanel(this.boldFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_BOLD_COLOR,
+                        HmxExportOption.FONTCOLOR_SYNFUNCTION_BOLD, false));
+        layout.row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_ITALIC_COLOR.get()))
+                .add(this.initColorPanel(this.italicFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_ITALIC_COLOR,
+                        HmxExportOption.FONTCOLOR_SYNFUNCTION_ITALIC, false))
+                .grid(new JLabel(HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_BOLDITALIC_COLOR.get()))
+                .add(this.initColorPanel(this.boldItalicFunctionFontColorSample, HmxMessage.PREFERENCES_EXPORT_SYNFUNCTION_BOLDITALIC_COLOR,
+                        HmxExportOption.FONTCOLOR_SYNFUNCTION_BOLDTALIC, false));
         return fontColorGroup;
     }
 
@@ -200,9 +190,11 @@ public final class HmxExportOptionPanel extends AbstractSimpleOptionPanel<HmxExp
      * @return the created panel containing the font type and size selection component
      */
     private JPanel initFontPanel() {
-        final JPanel fontPanel = new JPanel(new GridBagLayout());
+        final JPanel fontPanel = new JPanel(new BorderLayout());
         fontPanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_EXPORT_FONT.get()));
-        fontPanel.add(this.fontChooser, AbstractOptionPanel.HORIZONTAL_SPAN);
+        this.fontChooser.setSelection(HmxExportOption.NONORIGINTEXT_FONT_TYPE.getValue(),
+                HmxExportOption.NONORIGINTEXT_FONT_SIZE.getValueAsInteger());
+        fontPanel.add(this.fontChooser);
         return fontPanel;
     }
 

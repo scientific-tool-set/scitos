@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -22,6 +22,7 @@ package org.hmx.scitos.hmx.domain.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
@@ -266,7 +267,7 @@ public abstract class AbstractConnectable implements Serializable, ICommentable 
         // get the first partBeforeArrow
         final Proposition referenceProposition = prior.getFirstPart();
         final List<Proposition> containingList = parent.getContainingList(referenceProposition);
-        final int nextListIndex = ComparisonUtil.indexOfInstance(containingList, referenceProposition) + 1;
+        final int nextListIndex = CollectionUtil.indexOfInstance(containingList, referenceProposition) + 1;
         if (nextListIndex < containingList.size()) {
             // prior got follower on the same level
             return containingList.get(nextListIndex);
@@ -291,7 +292,7 @@ public abstract class AbstractConnectable implements Serializable, ICommentable 
         // prior got no follower on the same level, now check higher level
         final Proposition parentProposition = (Proposition) referenceProposition.getParent();
         final List<Proposition> priorChildren = parentProposition.getPriorChildren();
-        if (ComparisonUtil.containsInstance(priorChildren, referenceProposition)) {
+        if (CollectionUtil.containsInstance(priorChildren, referenceProposition)) {
             // prior is the last child in front of its parent, parent is the next proposition
             if (!ignorePartAfterArrow || parentProposition.getPartBeforeArrow() == null) {
                 return parentProposition;
@@ -362,7 +363,7 @@ public abstract class AbstractConnectable implements Serializable, ICommentable 
         // browse for the very first of the following Propositions
         List<Proposition> followersPriorChildren = followingProposition.getPriorChildren();
         while (followersPriorChildren != null && !followersPriorChildren.isEmpty()
-                && !ComparisonUtil.containsInstance(followersPriorChildren, priorParent)) {
+                && !CollectionUtil.containsInstance(followersPriorChildren, priorParent)) {
             // followingProposition still got at least one prior child
             final Proposition firstFollowerPriorChild = followersPriorChildren.get(0);
             // regard if prior is the last prior child of a partAfterArrow

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -25,6 +25,8 @@ import javax.inject.Singleton;
 import org.hmx.scitos.hmx.core.ModelParseServiceImpl;
 import org.hmx.scitos.hmx.core.option.HmxExportOption;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
+import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
+import org.hmx.scitos.hmx.core.option.HmxRelationOption;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.service.IModelParseServiceRegistry;
@@ -51,6 +53,12 @@ public final class HmxModuleInitializer {
      *            service implementation handling the view panel offering general customizing options in the HermeneutiX module
      * @param exportOptionPanelService
      *            service implementation handling the view panel offering export customizing options in the HermeneutiX module
+     * @param relationOptionPanelService
+     *            service implementation handling the view panel offering customizing options for the available semantical relations in the
+     *            HermeneutiX module
+     * @param languageOptionPanelService
+     *            service implementation handling the view panel offering customizing options for the available origin text languages and the
+     *            contained syntactical functions in the HermeneutiX module
      * @param viewServiceRegistry
      *            registry for services handling the generation of view projects and their respective views
      * @param viewService
@@ -59,12 +67,15 @@ public final class HmxModuleInitializer {
     @Inject
     public HmxModuleInitializer(final IModelParseServiceRegistry modelServiceRegistry, final ModelParseServiceImpl modelService,
             final IOptionPanelServiceRegistry optionPanelServiceRegistry, final GeneralOptionPanelServiceImpl generalOptionPanelService,
-            final ExportOptionPanelServiceImpl exportOptionPanelService, final IProjectViewServiceRegistry viewServiceRegistry,
+            final ExportOptionPanelServiceImpl exportOptionPanelService, final RelationOptionPanelServiceImpl relationOptionPanelService,
+            final LanguageOptionPanelServiceImpl languageOptionPanelService, final IProjectViewServiceRegistry viewServiceRegistry,
             final ProjectViewServiceImpl viewService) {
         modelServiceRegistry.registerModelParseService(FileType.HMX_OLD, Pericope.class, modelService);
         modelServiceRegistry.registerModelParseService(FileType.HMX, Pericope.class, modelService);
         optionPanelServiceRegistry.registerOptionPanelService(HmxGeneralOption.class, generalOptionPanelService);
         optionPanelServiceRegistry.registerOptionPanelService(HmxExportOption.class, exportOptionPanelService);
+        optionPanelServiceRegistry.registerOptionPanelService(HmxRelationOption.class, relationOptionPanelService);
+        optionPanelServiceRegistry.registerOptionPanelService(HmxLanguageOption.class, languageOptionPanelService);
         viewServiceRegistry.registerViewService(HmxSwingProject.class, Pericope.class, viewService);
     }
 }

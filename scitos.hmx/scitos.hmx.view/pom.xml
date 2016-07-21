@@ -25,10 +25,5 @@
 			<groupId>org.hmx</groupId>
 			<artifactId>scitos.hmx.core</artifactId>
 		</dependency>
-		<!-- lib: including TreeTable view component -->
-		<dependency>
-			<groupId>org.swinglabs.swingx</groupId>
-			<artifactId>swingx-core</artifactId>
-		</dependency>
 	</dependencies>
 </project>

@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core;
 
 import java.awt.Font;
@@ -7,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hmx.scitos.core.HmxException;
+import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
@@ -15,6 +35,7 @@ import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,9 +43,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
+ * Tests for the {@link ModelHandlerImpl} class.
  */
-public class ModelHandlerTest {
+public class ModelHandlerImplTest {
 
     private static LanguageModel languageModel;
     private static RelationTemplate defaultRelationTemplate;
@@ -36,22 +57,22 @@ public class ModelHandlerTest {
      */
     @BeforeClass
     public static void setUp() {
-        final List<SyntacticalFunction> functions = new LinkedList<SyntacticalFunction>();
-        functions.add(new SyntacticalFunction("A", "A Function", false, null, null));
-        functions.add(new SyntacticalFunction("B", "Second Function", true, "some description", null));
-        functions.add(new SyntacticalFunction(null, "Group", false, null, Arrays.asList(new SyntacticalFunction("C", "Nested Function", false,
-                null, null), new SyntacticalFunction("D", "Other Sub Function", false, "The last one", null))));
-        ModelHandlerTest.languageModel = new LanguageModel("Language", true);
-        ModelHandlerTest.languageModel.add(functions);
-        ModelHandlerTest.defaultRelationTemplate =
+        final List<AbstractSyntacticalFunctionElement> functions = new LinkedList<AbstractSyntacticalFunctionElement>();
+        functions.add(new SyntacticalFunction("A", "A Function", false, null));
+        functions.add(new SyntacticalFunction("B", "Second Function", true, "some description"));
+        functions.add(new SyntacticalFunctionGroup("Group", null, Arrays.asList(new SyntacticalFunction("C", "Nested Function", false, null),
+                new SyntacticalFunction("D", "Other Sub Function", false, "The last one"))));
+        ModelHandlerImplTest.languageModel = new LanguageModel("Language", true);
+        ModelHandlerImplTest.languageModel.add(functions);
+        ModelHandlerImplTest.defaultRelationTemplate =
                 new RelationTemplate(new AssociateRole("A", true), null, new AssociateRole("B", false), "something");
     }
 
     /** Final clearing up: discard reference to the used language model. */
     @AfterClass
     public static void tearDown() {
-        ModelHandlerTest.languageModel = null;
-        ModelHandlerTest.defaultRelationTemplate = null;
+        ModelHandlerImplTest.languageModel = null;
+        ModelHandlerImplTest.defaultRelationTemplate = null;
     }
 
     /**
@@ -60,7 +81,7 @@ public class ModelHandlerTest {
     @Before
     public void prepareModelHandler() {
         this.pericope = new Pericope();
-        this.pericope.init("1  2 \t 3 \n 4 \t\t 5 \n 6 \n 7 \t 8 9 \n 10", ModelHandlerTest.languageModel, new Font("Arial", Font.PLAIN, 18));
+        this.pericope.init("1  2 \t 3 \n 4 \t\t 5 \n 6 \n 7 \t 8 9 \n 10", ModelHandlerImplTest.languageModel, new Font("Arial", Font.PLAIN, 18));
         this.modelHandler = new ModelHandlerImpl(this.pericope);
     }
 
@@ -107,7 +128,7 @@ public class ModelHandlerTest {
     public void testIndentPropositionUnderParent_1() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(first, second, function);
         Assert.assertSame(second, first.getParent());
         Assert.assertEquals(1, second.getPriorChildren().size());
@@ -127,7 +148,7 @@ public class ModelHandlerTest {
     public void testIndentPropositionUnderParent_2() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         Assert.assertSame(first, second.getParent());
         Assert.assertEquals(1, first.getLaterChildren().size());
@@ -148,8 +169,12 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(2).getSubFunctions().get(0);
-        final SyntacticalFunction functionThird = ModelHandlerTest.languageModel.provideFunctions().get(0).get(2).getSubFunctions().get(1);
+        final SyntacticalFunction functionSecond =
+                (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
+                        .getSubFunctions().get(0);
+        final SyntacticalFunction functionThird =
+                (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
+                        .getSubFunctions().get(1);
         this.modelHandler.indentPropositionUnderParent(second, first, functionSecond);
         this.modelHandler.indentPropositionUnderParent(third, first, functionThird);
         Assert.assertSame(first, third.getParent());
@@ -170,7 +195,7 @@ public class ModelHandlerTest {
     public void testIndentPropositionUnderParent_4() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(first, third, function);
     }
 
@@ -185,7 +210,7 @@ public class ModelHandlerTest {
     public void testIndentPropositionUnderParent_5() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.indentPropositionUnderParent(third, first, function);
     }
 
@@ -202,7 +227,7 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, second, function);
         this.modelHandler.indentPropositionUnderParent(first, third, function);
@@ -222,7 +247,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, fourth, function);
         this.modelHandler.indentPropositionUnderParent(third, second, function);
@@ -247,7 +272,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, fourth, function);
         this.modelHandler.indentPropositionUnderParent(second, third, function);
@@ -269,7 +294,7 @@ public class ModelHandlerTest {
     public void testIndentPropositionUnderParent_9() throws HmxException {
         final Proposition fourth = this.pericope.getPropositionAt(3);
         final Proposition fifth = this.pericope.getPropositionAt(4);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(fifth, fourth, function);
         Assert.assertEquals(1, fourth.getLaterChildren().size());
         Assert.assertSame(fifth, fourth.getLaterChildren().get(0));
@@ -286,8 +311,8 @@ public class ModelHandlerTest {
     public void testIndentPropositionUnderParent_10() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        final SyntacticalFunction functionOld = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
-        final SyntacticalFunction functionNew = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction functionOld = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionNew = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.indentPropositionUnderParent(first, second, functionOld);
         this.modelHandler.indentPropositionUnderParent(first, second, functionNew);
         Assert.assertEquals(1, second.getPriorChildren().size());
@@ -307,7 +332,7 @@ public class ModelHandlerTest {
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
         final Proposition fifth = this.pericope.getPropositionAt(4);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(fourth, third, function);
         this.modelHandler.indentPropositionUnderParent(fifth, fourth, function);
         Assert.assertEquals(1, third.getLaterChildren().size());
@@ -331,7 +356,7 @@ public class ModelHandlerTest {
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
         final Proposition fifth = this.pericope.getPropositionAt(4);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(first, third, function);
         this.modelHandler.indentPropositionUnderParent(fourth, fifth, function);
@@ -352,7 +377,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction newFunction = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction newFunction = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.mergePropositions(first, fourth);
         this.modelHandler.indentPropositionUnderParent(third, first, newFunction);
         Assert.assertEquals(2, fourth.getPriorChildren().size());
@@ -374,8 +399,8 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction initialFunction = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
-        final SyntacticalFunction newFunction = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction initialFunction = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction newFunction = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.mergePropositions(first, fourth);
         this.modelHandler.indentPropositionUnderParent(third, second, initialFunction);
         this.modelHandler.indentPropositionUnderParent(third, first, newFunction);
@@ -395,7 +420,7 @@ public class ModelHandlerTest {
     public void testRemoveOneIndentation_1() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(first, second, function);
         Assert.assertFalse(this.modelHandler.removeOneIndentationAffectsOthers(first));
         this.modelHandler.removeOneIndentation(first);
@@ -414,7 +439,7 @@ public class ModelHandlerTest {
     public void testRemoveOneIndentation_2() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         Assert.assertFalse(this.modelHandler.removeOneIndentationAffectsOthers(second));
         this.modelHandler.removeOneIndentation(second);
@@ -457,9 +482,10 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionSecond = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, third, functionSecond);
-        this.modelHandler.indentPropositionUnderParent(first, third, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler.indentPropositionUnderParent(first, third, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         Assert.assertFalse(this.modelHandler.removeOneIndentationAffectsOthers(first));
         this.modelHandler.removeOneIndentation(first);
         Assert.assertSame(this.pericope, first.getParent());
@@ -482,8 +508,10 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.indentPropositionUnderParent(second, third, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
-        this.modelHandler.indentPropositionUnderParent(first, third, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler.indentPropositionUnderParent(second, third, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(first, third, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         Assert.assertTrue(this.modelHandler.removeOneIndentationAffectsOthers(second));
         this.modelHandler.removeOneIndentation(second);
         Assert.assertSame(this.pericope, first.getParent());
@@ -505,8 +533,10 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.indentPropositionUnderParent(second, first, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
-        this.modelHandler.indentPropositionUnderParent(third, first, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler.indentPropositionUnderParent(second, first, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(third, first, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         Assert.assertTrue(this.modelHandler.removeOneIndentationAffectsOthers(second));
         this.modelHandler.removeOneIndentation(second);
         Assert.assertSame(this.pericope, second.getParent());
@@ -528,9 +558,10 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionSecond = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, functionSecond);
-        this.modelHandler.indentPropositionUnderParent(third, first, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler.indentPropositionUnderParent(third, first, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         Assert.assertFalse(this.modelHandler.removeOneIndentationAffectsOthers(third));
         this.modelHandler.removeOneIndentation(third);
         Assert.assertSame(first, second.getParent());
@@ -582,9 +613,10 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(first, second, function);
-        this.modelHandler.indentPropositionUnderParent(second, third, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler.indentPropositionUnderParent(second, third, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         Assert.assertFalse(this.modelHandler.removeOneIndentationAffectsOthers(first));
         this.modelHandler.removeOneIndentation(first);
         Assert.assertEquals(2, third.getPriorChildren().size());
@@ -604,8 +636,9 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
-        this.modelHandler.indentPropositionUnderParent(third, second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
+        this.modelHandler.indentPropositionUnderParent(third, second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         Assert.assertFalse(this.modelHandler.removeOneIndentationAffectsOthers(third));
         this.modelHandler.removeOneIndentation(third);
@@ -624,7 +657,7 @@ public class ModelHandlerTest {
     public void testMergePropositions_1() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        this.modelHandler.createRelation(Arrays.asList(first, second), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(first, second), ModelHandlerImplTest.defaultRelationTemplate);
         final String labelFirst = "A-123";
         this.modelHandler.setLabelText(first, labelFirst);
         this.modelHandler.setLabelText(second, "B");
@@ -647,7 +680,7 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.createRelation(Arrays.asList(second, third), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(second, third), ModelHandlerImplTest.defaultRelationTemplate);
         this.modelHandler.mergePropositions(first, third);
         Assert.assertEquals(3, this.pericope.getText().size());
         Assert.assertSame(third, first.getPartAfterArrow());
@@ -669,9 +702,10 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.createRelation(Arrays.asList(second, third), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(second, third), ModelHandlerImplTest.defaultRelationTemplate);
         final Relation relation = second.getSuperOrdinatedRelation();
-        this.modelHandler.indentPropositionUnderParent(first, second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(first, second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.mergePropositions(first, second);
         Assert.assertEquals(4, this.pericope.getText().size());
         final Proposition merged = this.pericope.getPropositionAt(0);
@@ -691,7 +725,8 @@ public class ModelHandlerTest {
     public void testMergePropositions_4() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        this.modelHandler.indentPropositionUnderParent(second, first, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(second, first, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.mergePropositions(second, first);
         Assert.assertEquals(4, this.pericope.getText().size());
         final Proposition merged = this.pericope.getPropositionAt(0);
@@ -715,9 +750,10 @@ public class ModelHandlerTest {
         final String label = "A-123";
         this.modelHandler.setLabelText(second, label);
         this.modelHandler.setLabelText(third, "B");
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionSecond = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, functionSecond);
-        this.modelHandler.indentPropositionUnderParent(third, fourth, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler.indentPropositionUnderParent(third, fourth, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(1));
         this.modelHandler.mergePropositions(second, third);
         Assert.assertEquals(3, this.pericope.getText().size());
         final Proposition merged = this.pericope.getPropositionAt(1);
@@ -738,7 +774,8 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.indentPropositionUnderParent(second, third, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(second, third, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.mergePropositions(first, second);
         Assert.assertEquals(4, this.pericope.getText().size());
         final Proposition merged = this.pericope.getPropositionAt(0);
@@ -758,7 +795,7 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionSecond = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, functionSecond);
         this.modelHandler.mergePropositions(second, third);
         Assert.assertEquals(3, this.pericope.getText().size());
@@ -842,7 +879,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, first, function);
         this.modelHandler.mergePropositions(first, fourth);
@@ -872,7 +909,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, first, function);
         this.modelHandler.mergePropositions(first, fourth);
@@ -922,7 +959,8 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        this.modelHandler.indentPropositionUnderParent(second, first, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(second, first, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.mergePropositions(first, third);
         this.modelHandler.mergePropositions(first, second);
         Assert.assertEquals(3, this.pericope.getFlatText().size());
@@ -943,7 +981,7 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, first, function);
         final String semTranslation = "semantical translation...";
@@ -998,7 +1036,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
         this.modelHandler.indentPropositionUnderParent(third, fourth, function);
         this.modelHandler.mergePropositions(first, fourth);
@@ -1035,7 +1073,8 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.indentPropositionUnderParent(third, second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(third, second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.mergePropositions(first, third);
     }
 
@@ -1054,9 +1093,9 @@ public class ModelHandlerTest {
         final Proposition fourth = this.pericope.getPropositionAt(3);
         final Proposition fifth = this.pericope.getPropositionAt(4);
         this.modelHandler.mergePropositions(first, fourth);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.setSyntacticalFunction(third, function);
-        this.modelHandler.createRelation(Arrays.asList(third, fifth), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(third, fifth), ModelHandlerImplTest.defaultRelationTemplate);
         final Relation relation = fifth.getSuperOrdinatedRelation();
         this.modelHandler.mergePropositions(second, third);
         Assert.assertEquals(4, this.pericope.getFlatText().size());
@@ -1079,7 +1118,7 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(first, second, function);
         this.modelHandler.indentPropositionUnderParent(third, second, function);
         this.modelHandler.mergePropositions(first, third);
@@ -1097,7 +1136,7 @@ public class ModelHandlerTest {
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
         final Proposition fourth = this.pericope.getPropositionAt(3);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.indentPropositionUnderParent(second, third, function);
         this.modelHandler.mergePropositions(first, fourth);
         this.modelHandler.indentPropositionUnderParent(second, first, function);
@@ -1113,6 +1152,39 @@ public class ModelHandlerTest {
         Assert.assertSame(fourth, merged.getPartAfterArrow());
         Assert.assertEquals(1, fourth.getPriorChildren().size());
         Assert.assertSame(third, fourth.getPriorChildren().get(0));
+    }
+
+    /**
+     * Test: of {@code mergePropositions(Proposition, Proposition)} for the three of three enclosed child {@link Proposition}s which is in turn
+     * indented under the first enclosed child.
+     *
+     * @throws HmxException
+     *             impossible to indent {@link Proposition}s for setup, or failed to merge
+     */
+    @Test
+    public void testMergePropositions_22() throws HmxException {
+        final Proposition first = this.pericope.getPropositionAt(0);
+        final Proposition second = this.pericope.getPropositionAt(1);
+        final Proposition third = this.pericope.getPropositionAt(2);
+        final Proposition fourth = this.pericope.getPropositionAt(3);
+        final Proposition fifth = this.pericope.getPropositionAt(4);
+        final SyntacticalFunction function = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
+        this.modelHandler.mergePropositions(first, fifth);
+        this.modelHandler.indentPropositionUnderParent(third, fourth, function);
+        this.modelHandler.indentPropositionUnderParent(fourth, second, function);
+        this.modelHandler.mergePropositions(first, fourth);
+        Assert.assertEquals(4, this.pericope.getFlatText().size());
+        Assert.assertTrue(first.getLaterChildren().isEmpty());
+        final Proposition merged = this.pericope.getPropositionAt(3);
+        Assert.assertEquals(2, merged.getPriorChildren().size());
+        Assert.assertSame(second, merged.getPriorChildren().get(0));
+        Assert.assertSame(third, merged.getPriorChildren().get(1));
+        Assert.assertSame(merged, first.getPartAfterArrow());
+        Assert.assertSame(first, merged.getPartBeforeArrow());
+        Assert.assertEquals(function, third.getFunction());
+        Assert.assertNull(merged.getFunction());
+        Assert.assertEquals(Arrays.asList(new ClauseItem(merged, "7"), new ClauseItem(merged, "8 9"), new ClauseItem(merged, "10")),
+                merged.getItems());
     }
 
     /**
@@ -1176,9 +1248,9 @@ public class ModelHandlerTest {
         final Proposition propositionFourth = this.pericope.getPropositionAt(3);
         final Proposition propositionFifth = this.pericope.getPropositionAt(4);
         this.modelHandler.mergePropositions(propositionFirst, propositionThird);
-        this.modelHandler.createRelation(Arrays.asList(propositionFourth, propositionFifth), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(propositionFourth, propositionFifth), ModelHandlerImplTest.defaultRelationTemplate);
         final Relation survivingRelation = propositionFourth.getSuperOrdinatedRelation();
-        this.modelHandler.createRelation(Arrays.asList(propositionSecond, survivingRelation), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(propositionSecond, survivingRelation), ModelHandlerImplTest.defaultRelationTemplate);
         final ClauseItem itemLast = propositionFirst.getItems().get(1);
         this.modelHandler.splitProposition(propositionFirst, itemLast);
         Assert.assertEquals(5, this.pericope.getFlatText().size());
@@ -1220,9 +1292,9 @@ public class ModelHandlerTest {
         final Proposition propositionFirst = this.pericope.getPropositionAt(0);
         final Proposition propositionSecond = this.pericope.getPropositionAt(1);
         final Proposition propositionThird = this.pericope.getPropositionAt(2);
-        this.modelHandler.createRelation(Arrays.asList(propositionFirst, propositionSecond), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(propositionFirst, propositionSecond), ModelHandlerImplTest.defaultRelationTemplate);
         final Relation survivingRelation = propositionSecond.getSuperOrdinatedRelation();
-        this.modelHandler.createRelation(Arrays.asList(survivingRelation, propositionThird), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(survivingRelation, propositionThird), ModelHandlerImplTest.defaultRelationTemplate);
         final ClauseItem itemFirst = propositionSecond.getItems().get(0);
         final ClauseItem itemSecond = propositionSecond.getItems().get(1);
         this.modelHandler.splitProposition(propositionSecond, itemFirst);
@@ -1269,9 +1341,10 @@ public class ModelHandlerTest {
         final Proposition proposition = this.pericope.getPropositionAt(0);
         final ClauseItem first = proposition.getItems().get(0);
         final ClauseItem second = proposition.getItems().get(1);
-        final SyntacticalFunction functionFirst = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionFirst = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.setSyntacticalFunction(first, functionFirst);
-        this.modelHandler.setSyntacticalFunction(second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler
+                .setSyntacticalFunction(second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1));
         this.modelHandler.mergeClauseItemWithPrior(second);
         Assert.assertEquals(1, proposition.getItems().size());
         Assert.assertEquals(functionFirst, proposition.getItems().get(0).getFunction());
@@ -1288,7 +1361,7 @@ public class ModelHandlerTest {
     public void testMergeClauseItemWithPrior_2() throws HmxException {
         final Proposition proposition = this.pericope.getPropositionAt(0);
         final ClauseItem second = proposition.getItems().get(1);
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction functionSecond = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.setSyntacticalFunction(second, functionSecond);
         this.modelHandler.mergeClauseItemWithPrior(second);
         Assert.assertEquals(1, proposition.getItems().size());
@@ -1319,9 +1392,10 @@ public class ModelHandlerTest {
         final Proposition proposition = this.pericope.getPropositionAt(0);
         final ClauseItem first = proposition.getItems().get(0);
         final ClauseItem second = proposition.getItems().get(1);
-        final SyntacticalFunction functionFirst = ModelHandlerTest.languageModel.provideFunctions().get(0).get(0);
+        final SyntacticalFunction functionFirst = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(0);
         this.modelHandler.setSyntacticalFunction(first, functionFirst);
-        this.modelHandler.setSyntacticalFunction(second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(1));
+        this.modelHandler
+                .setSyntacticalFunction(second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1));
         this.modelHandler.mergeClauseItemWithFollower(first);
         Assert.assertEquals(1, proposition.getItems().size());
         Assert.assertEquals(functionFirst, proposition.getItems().get(0).getFunction());
@@ -1339,7 +1413,7 @@ public class ModelHandlerTest {
         final Proposition proposition = this.pericope.getPropositionAt(0);
         final ClauseItem first = proposition.getItems().get(0);
         final ClauseItem second = proposition.getItems().get(1);
-        final SyntacticalFunction functionSecond = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        final SyntacticalFunction functionSecond = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.setSyntacticalFunction(second, functionSecond);
         this.modelHandler.mergeClauseItemWithFollower(first);
         Assert.assertEquals(1, proposition.getItems().size());
@@ -1492,8 +1566,9 @@ public class ModelHandlerTest {
     public void testSetSyntacticalFunction_Proposition() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        this.modelHandler.indentPropositionUnderParent(first, second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
-        final SyntacticalFunction functionModified = ModelHandlerTest.languageModel.provideFunctions().get(0).get(1);
+        this.modelHandler.indentPropositionUnderParent(first, second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
+        final SyntacticalFunction functionModified = (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(1);
         this.modelHandler.setSyntacticalFunction(first, functionModified);
         Assert.assertEquals(functionModified, first.getFunction());
     }
@@ -1505,7 +1580,9 @@ public class ModelHandlerTest {
     @Test
     public void testSetSyntacticalFunction_ClauseItem() {
         final ClauseItem target = this.pericope.getPropositionAt(0).getItems().get(0);
-        final SyntacticalFunction function = ModelHandlerTest.languageModel.provideFunctions().get(0).get(2).getSubFunctions().get(0);
+        final SyntacticalFunction function =
+                (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
+                        .getSubFunctions().get(0);
         this.modelHandler.setSyntacticalFunction(target, function);
         Assert.assertEquals(function, target.getFunction());
     }
@@ -1552,7 +1629,7 @@ public class ModelHandlerTest {
     @Test(expected = HmxException.class)
     public void testCreateRelation_2() throws HmxException {
         this.modelHandler.createRelation(Arrays.asList(this.pericope.getPropositionAt(0), this.pericope.getPropositionAt(2)),
-                ModelHandlerTest.defaultRelationTemplate);
+                ModelHandlerImplTest.defaultRelationTemplate);
     }
 
     /**
@@ -1563,7 +1640,7 @@ public class ModelHandlerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testCreateRelation_3() throws HmxException {
-        this.modelHandler.createRelation(Arrays.asList(this.pericope.getPropositionAt(0)), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(this.pericope.getPropositionAt(0)), ModelHandlerImplTest.defaultRelationTemplate);
     }
 
     /**
@@ -1576,10 +1653,10 @@ public class ModelHandlerTest {
     @Test(expected = HmxException.class)
     public void testCreateRelation_4() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
-        this.modelHandler.createRelation(Arrays.asList(first, this.pericope.getPropositionAt(1)), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(first, this.pericope.getPropositionAt(1)), ModelHandlerImplTest.defaultRelationTemplate);
         final Relation relation = first.getSuperOrdinatedRelation();
         Assert.assertNotNull(relation);
-        this.modelHandler.createRelation(Arrays.asList(first, relation), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(first, relation), ModelHandlerImplTest.defaultRelationTemplate);
     }
 
     /**
@@ -1850,7 +1927,7 @@ public class ModelHandlerTest {
     @Test
     public void testMergeWithOtherPericope_1() throws HmxException {
         final Pericope otherPericope = new Pericope();
-        otherPericope.init("0", ModelHandlerTest.languageModel, this.pericope.getFont());
+        otherPericope.init("0", ModelHandlerImplTest.languageModel, this.pericope.getFont());
         this.modelHandler.mergeWithOtherPericope(otherPericope, true);
         final Proposition firstAdded = this.pericope.getPropositionAt(0);
         Assert.assertEquals(6, this.pericope.getText().size());
@@ -1866,7 +1943,7 @@ public class ModelHandlerTest {
     @Test
     public void testMergeWithOtherPericope_2() throws HmxException {
         final Pericope otherPericope = new Pericope();
-        otherPericope.init("11 \n  12 \t \t 13   14", ModelHandlerTest.languageModel, this.pericope.getFont());
+        otherPericope.init("11 \n  12 \t \t 13   14", ModelHandlerImplTest.languageModel, this.pericope.getFont());
         this.modelHandler.mergeWithOtherPericope(otherPericope, false);
         final List<Proposition> propositions = this.pericope.getFlatText();
         Assert.assertEquals(7, propositions.size());
@@ -1887,7 +1964,7 @@ public class ModelHandlerTest {
         final Pericope otherPericope = new Pericope();
         // only the text orientation is different
         final LanguageModel differingModel = new LanguageModel("otherName", false);
-        differingModel.addAll(ModelHandlerTest.languageModel.provideFunctions());
+        differingModel.addAll(ModelHandlerImplTest.languageModel.provideFunctions());
         otherPericope.init("11", differingModel, this.pericope.getFont());
         this.modelHandler.mergeWithOtherPericope(otherPericope, false);
     }
@@ -1903,7 +1980,7 @@ public class ModelHandlerTest {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        this.modelHandler.createRelation(Arrays.asList(second, third), ModelHandlerTest.defaultRelationTemplate);
+        this.modelHandler.createRelation(Arrays.asList(second, third), ModelHandlerImplTest.defaultRelationTemplate);
         this.modelHandler.removePropositions(Arrays.asList(first, second));
         Assert.assertEquals(3, this.pericope.getText().size());
         Assert.assertSame(third, this.pericope.getPropositionAt(0));
@@ -1942,7 +2019,8 @@ public class ModelHandlerTest {
     public void testRemovePropositions_4() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        this.modelHandler.indentPropositionUnderParent(first, second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(first, second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.removePropositions(Collections.singletonList(first));
     }
 
@@ -1956,7 +2034,8 @@ public class ModelHandlerTest {
     public void testRemovePropositions_5() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        this.modelHandler.indentPropositionUnderParent(first, second, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(first, second, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.removePropositions(Collections.singletonList(second));
     }
 
@@ -1970,7 +2049,8 @@ public class ModelHandlerTest {
     public void testRemovePropositions_6() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
-        this.modelHandler.indentPropositionUnderParent(second, first, ModelHandlerTest.languageModel.provideFunctions().get(0).get(0));
+        this.modelHandler.indentPropositionUnderParent(second, first, (SyntacticalFunction) ModelHandlerImplTest.languageModel.provideFunctions()
+                .get(0).get(0));
         this.modelHandler.removePropositions(Collections.singletonList(first));
     }
 

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -19,19 +19,32 @@
 
 package org.hmx.scitos.hmx.core.option;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.hmx.scitos.core.HmxException;
+import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.hmx.core.ILanguageModelProvider;
 import org.hmx.scitos.hmx.core.ModelParseServiceImpl;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Application level preferences handler for the HmX module's {@link LanguageModel}s.
@@ -39,13 +52,13 @@ import org.hmx.scitos.hmx.domain.model.LanguageModel;
 @Singleton
 public final class HmxLanguageOption implements ILanguageModelProvider {
 
-    // /** The root XML tag in the persisted options file. */
-    // private static final String TAG_ROOT = "Options";
-    //
-    // /** The path (determined by convention), where the options file is persisted/saved to. */
-    // private final String filePath;
-    // /** The HmX module's ModelParseService implementation, for conversions between the XML and internal data structure. */
-    // private final ModelParseServiceImpl modelParseService;
+    /** The root XML tag in the persisted options file. */
+    private static final String TAG_ROOT = "Options";
+
+    /** The path (determined by convention), where the options file is persisted/saved to. */
+    private final String filePath;
+    /** The HmX module's ModelParseService implementation, for conversions between the XML and internal data structure. */
+    private final ModelParseServiceImpl modelParseService;
     /** The system default language models available for new projects. */
     private final List<LanguageModel> systemModels;
     /** The user defined language models available for new projects. */
@@ -59,39 +72,39 @@ public final class HmxLanguageOption implements ILanguageModelProvider {
      */
     @Inject
     public HmxLanguageOption(final ModelParseServiceImpl modelParseService) {
-        // this.modelParseService = modelParseService;
+        this.modelParseService = modelParseService;
         List<LanguageModel> systemDefinedModels = Collections.emptyList();
         try {
-            systemDefinedModels = modelParseService.getSystemLanguageModels();
+            systemDefinedModels = this.modelParseService.getSystemLanguageModels();
         } catch (final HmxException ex) {
             // some internal error when loading the system defined language models
             ex.printStackTrace();
         }
         this.systemModels = systemDefinedModels;
-        // // apply general option file naming convention
-        // this.filePath = OptionHandler.buildOptionFilePath(HmxLanguageOption.class);
+        // apply general option file naming convention
+        this.filePath = OptionHandler.buildOptionFilePath(HmxLanguageOption.class);
         // initialize user defined language models
-        this.userModels = new ArrayList<LanguageModel>(0);
-        // // retrieve settings from persistent storage (i.e. file)
-        // final File targetFile = new File(this.filePath);
-        // if (targetFile.exists() && targetFile.canRead()) {
-        // try {
-        // final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(targetFile);
-        // this.userModels.addAll(this.modelParseService.parseLanguageModelsFromXml(doc));
-        // } catch (final ParserConfigurationException pcex) {
-        // // could not create a newDocumentBuilder()
-        // pcex.printStackTrace();
-        // } catch (final IOException ioex) {
-        // // could not read the contents of the given file
-        // ioex.printStackTrace();
-        // } catch (final SAXException saxe) {
-        // // could not parse the XML structure from the given file
-        // saxe.printStackTrace();
-        // } catch (final HmxException ex) {
-        // // the parsed XML structure did not yield a valid relation model
-        // ex.printStackTrace();
-        // }
-        // }
+        this.userModels = new LinkedList<LanguageModel>();
+        // retrieve settings from persistent storage (i.e. file)
+        final File targetFile = new File(this.filePath);
+        if (targetFile.exists() && targetFile.canRead()) {
+            try {
+                final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(targetFile);
+                this.userModels.addAll(this.modelParseService.parseLanguageModelsFromXml(doc));
+            } catch (final ParserConfigurationException pcex) {
+                // could not create a newDocumentBuilder()
+                pcex.printStackTrace();
+            } catch (final IOException ioex) {
+                // could not read the contents of the given file
+                ioex.printStackTrace();
+            } catch (final SAXException saxe) {
+                // could not parse the XML structure from the given file
+                saxe.printStackTrace();
+            } catch (final HmxException ex) {
+                // the parsed XML structure did not yield a valid relation model
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -144,43 +157,43 @@ public final class HmxLanguageOption implements ILanguageModelProvider {
      * application start.
      */
     public void persistChanges() {
-        // final File targetFile = new File(this.filePath);
-        // if (!targetFile.exists() || targetFile.canWrite()) {
-        // // create target file output stream
-        // FileOutputStream output = null;
-        // try {
-        // output = new FileOutputStream(targetFile);
-        // final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        // doc.appendChild(doc.createElement(HmxLanguageOption.TAG_ROOT));
-        // // user defined language models
-        // for (final LanguageModel singleModel : this.userModels) {
-        // doc.getDocumentElement().appendChild(this.modelParseService.parseXmlFromLanguageModel(doc, singleModel));
-        // }
-        // // write the xml structure to the output stream
-        // TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(output));
-        // } catch (final IOException ioex) {
-        // // could not create/open the FileOutPutStream
-        // ioex.printStackTrace();
-        // } catch (final ParserConfigurationException pcex) {
-        // // could not create a newDocumentBuilder() for the xml structure
-        // pcex.printStackTrace();
-        // } catch (final TransformerFactoryConfigurationError tfcer) {
-        // // could not get a newInstance() from the TransformerFactory
-        // tfcer.printStackTrace();
-        // } catch (final TransformerException tex) {
-        // // could not create a newTransformer() or execute the actual transformation (i.e. file saving)
-        // tex.printStackTrace();
-        // } finally {
-        // // try to properly close the FileOutputStream anyway
-        // if (output != null) {
-        // try {
-        // output.close();
-        // } catch (final IOException ioex) {
-        // // at least we tried
-        // ioex.printStackTrace();
-        // }
-        // }
-        // }
-        // }
+        final File targetFile = new File(this.filePath);
+        if (!targetFile.exists() || targetFile.canWrite()) {
+            // create target file output stream
+            FileOutputStream output = null;
+            try {
+                output = new FileOutputStream(targetFile);
+                final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                doc.appendChild(doc.createElement(HmxLanguageOption.TAG_ROOT));
+                // user defined language models
+                for (final LanguageModel singleModel : this.userModels) {
+                    doc.getDocumentElement().appendChild(this.modelParseService.parseXmlFromLanguageModel(doc, singleModel));
+                }
+                // write the xml structure to the output stream
+                TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(output));
+            } catch (final IOException ioex) {
+                // could not create/open the FileOutPutStream
+                ioex.printStackTrace();
+            } catch (final ParserConfigurationException pcex) {
+                // could not create a newDocumentBuilder() for the xml structure
+                pcex.printStackTrace();
+            } catch (final TransformerFactoryConfigurationError tfcer) {
+                // could not get a newInstance() from the TransformerFactory
+                tfcer.printStackTrace();
+            } catch (final TransformerException tex) {
+                // could not create a newTransformer() or execute the actual transformation (i.e. file saving)
+                tex.printStackTrace();
+            } finally {
+                // try to properly close the FileOutputStream anyway
+                if (output != null) {
+                    try {
+                        output.close();
+                    } catch (final IOException ioex) {
+                        // at least we tried
+                        ioex.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

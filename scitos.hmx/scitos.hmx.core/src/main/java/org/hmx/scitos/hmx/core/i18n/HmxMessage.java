@@ -1,12 +1,30 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core.i18n;
 
 import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Translator;
 
-/**
- * constant interface to avoid hard coded language file keys in the acting classes.
- */
+/** Enum to avoid hard coded language file keys in the acting classes. */
 public enum HmxMessage implements ILocalizableMessage {
+
     PROJECT_NEW("Hmx.Project.New"),
     /** menubar entry: File -&gt; Export to -&gt; SVG. */
     EXPORT_TYPE_SVG("Export.SVG"),
@@ -171,6 +189,8 @@ public enum HmxMessage implements ILocalizableMessage {
     ERROR_PROPOSITIONS_DELETE_ALL_SELECTED("Error.DeletePropositions.AllSelected"),
     ERROR_PROPOSITIONS_DELETE_NONE_SELECTED("Error.DeletePropositions.NoneSelected"),
     ERROR_PROPOSITIONS_DELETE_CONDITIONS_NOT_MET("Error.DeletePropositions.ConditionsNotMet"),
+    ERROR_PREFERENCES_RELATION_HIGHWEIGHT_ROLE("Error.Preferences.Relation.MandatoryHighWeightRole"),
+    ERROR_PREFERENCES_RELATION_ROLES("Error.Preferences.Relation.MandatoryRoles"),
 
     /** Setting: label for font (type) selection. */
     SETTING_FONT_TYPE("Setting.Font.Type"),
@@ -186,7 +206,8 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_GENERAL_RELATION_COLOR("Preferences.View.Color.Relation"),
     PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR("Preferences.View.Color.CommentedBorder"),
     PREFERENCES_GENERAL_INDENTATION("Preferences.View.IndentationWidth"),
-    PREFERENCES_GENERAL_SHOW_INPUT_SETTINGS("Preferences.View.TextInput.ShowInputSettings"),
+    PREFERENCES_GENERAL_INPUT("Preferences.View.TextInput"),
+    PREFERENCES_GENERAL_INPUT_SHOW_SETTINGS("Preferences.View.TextInput.ShowSettings"),
     PREFERENCES_GENERAL_AUTHOR("Preferences.Analysis.ProjectInfo.DefaultAuthor"),
     PREFERENCES_GENERAL_LANGUAGE("Preferences.Analysis.TextInput.DefaultOriginLanguage"),
 
@@ -203,7 +224,60 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_EXPORT_SYNFUNCTION_ITALIC_COLOR("Preferences.Export.SynFunction.Italic.FontColor"),
     PREFERENCES_EXPORT_PROPOSITION_BORDER("Preferences.Export.Proposition.BorderColor"),
     PREFERENCES_EXPORT_PROPOSITION_BACKGROUND("Preferences.Export.Proposition.BackgroundColor"),
-    PREFERENCES_EXPORT_FONT("Preferences.Export.Font");
+    PREFERENCES_EXPORT_FONT("Preferences.Export.Font"),
+
+    PREFERENCES_RELATION("Preferences.Relation"),
+    PREFERENCES_RELATION_LONG("Preferences.Relation.Long"),
+    PREFERENCES_RELATION_ADD("Preferences.Relation.Add"),
+    PREFERENCES_RELATION_ADD_GROUP("Preferences.Relation.AddGroup"),
+    PREFERENCES_RELATION_DEFAULTROLE_HIGHWEIGHT("Preferences.Relation.Add.DefaultRole.HighWeight"),
+    PREFERENCES_RELATION_DEFAULTROLE_LOWWEIGHT("Preferences.Relation.Add.DefaultRole.LowWeight"),
+    PREFERENCES_RELATION_MOVE_UP("Preferences.Relation.MoveUp"),
+    PREFERENCES_RELATION_MOVE_DOWN("Preferences.Relation.MoveDown"),
+    PREFERENCES_RELATION_REMOVE("Preferences.Relation.Remove"),
+    PREFERENCES_RELATION_REMOVE_GROUP("Preferences.Relation.RemoveGroup"),
+    PREFERENCES_RELATION_REMOVE_GROUP_CONFIRM("Preferences.Relation.RemoveGroup.Confirm"),
+    PREFERENCES_RELATION_EDIT("Preferences.Relation.EditTemplate"),
+    PREFERENCES_RELATION_APPLY("Preferences.Relation.ApplyChanges"),
+    PREFERENCES_RELATION_DISCARD("Preferences.Relation.DiscardChanges"),
+    PREFERENCES_RELATION_HIGH_WEIGHT_ROLE("Preferences.Relation.HighWeightRole"),
+    PREFERENCES_RELATION_HIGH_WEIGHT_ONLY("Preferences.Relation.HighWeightOnly"),
+    PREFERENCES_RELATION_HIGH_WEIGHT_POSITION("Preferences.Relation.HighWeightPosition"),
+    PREFERENCES_RELATION_HIGH_WEIGHT_FIRST("Preferences.Relation.HighWeightPosition.First"),
+    PREFERENCES_RELATION_HIGH_WEIGHT_LAST("Preferences.Relation.HighWeightPosition.Last"),
+    PREFERENCES_RELATION_LOW_WEIGHT_ROLE("Preferences.Relation.LowWeightRole"),
+    PREFERENCES_RELATION_LOW_WEIGHT_REPEAT("Preferences.Relation.LowWeightRepeatable"),
+    PREFERENCES_RELATION_TOOLTIP("Preferences.Relation.Description"),
+    
+    PREFERENCES_LANGUAGE("Preferences.OriginLanguage"),
+    PREFERENCES_LANGUAGE_EDIT("Preferences.OriginLanguage.EditEntry"),
+    PREFERENCES_LANGUAGE_APPLY("Preferences.OriginLanguage.ApplyChanges"),
+    PREFERENCES_LANGUAGE_DISCARD("Preferences.OriginLanguage.DiscardChanges"),
+    PREFERENCES_LANGUAGE_EDIT_LANGUAGES("Preferences.OriginLanguage.EditLanguages"),
+    PREFERENCES_LANGUAGE_NAME("Preferences.OriginLanguage.LanguageName"),
+    PREFERENCES_LANGUAGE_NAME_MANDATORY("Preferences.OriginLanguage.LanguageName.Mandatory"),
+    PREFERENCES_LANGUAGE_ORIENTATION("Preferences.OriginLanguage.TextOrientation"),
+    PREFERENCES_LANGUAGE_ORIENTATION_LTR("Preferences.OriginLanguage.TextOrientation.LeftToRight"),
+    PREFERENCES_LANGUAGE_ORIENTATION_RTL("Preferences.OriginLanguage.TextOrientation.RightToLeft"),
+    PREFERENCES_LANGUAGE_FONTS("Preferences.OriginLanguage.RecommendedFonts"),
+    PREFERENCES_LANGUAGE_SYSTEMMODEL("Preferences.OriginLanguage.SystemModel"),
+    PREFERENCES_LANGUAGE_FUNCTION_COUNT("Preferences.OriginLanguage.FunctionCount"),
+    PREFERENCES_LANGUAGE_CLONE_LANGUAGE("Preferences.OriginLanguage.CloneLanguage"),
+    PREFERENCES_LANGUAGE_DELETE_LANGUAGE("Preferences.OriginLanguage.DeleteLanguage"),
+    PREFERENCES_LANGUAGE_EDIT_FUNCTIONS("Preferences.OriginLanguage.EditFunctions"),
+    PREFERENCES_LANGUAGEFUNCTIONS_ADD_FUNCTION("Preferences.OriginLanguageFunctions.Add"),
+    PREFERENCES_LANGUAGEFUNCTIONS_ADD_GROUP("Preferences.OriginLanguageFunctions.AddGroup"),
+    PREFERENCES_LANGUAGEFUNCTIONS_ADD_TOPLEVEL_GROUP("Preferences.OriginLanguageFunctions.AddTopLevelGroup"),
+    PREFERENCES_LANGUAGEFUNCTIONS_MOVE_UP("Preferences.OriginLanguageFunctions.MoveUp"),
+    PREFERENCES_LANGUAGEFUNCTIONS_MOVE_DOWN("Preferences.OriginLanguageFunctions.MoveDown"),
+    PREFERENCES_LANGUAGEFUNCTIONS_REMOVE("Preferences.OriginLanguageFunctions.Remove"),
+    PREFERENCES_LANGUAGEFUNCTIONS_REMOVE_GROUP("Preferences.OriginLanguageFunctions.RemoveGroup"),
+    PREFERENCES_LANGUAGEFUNCTIONS_NAME("Preferences.OriginLanguageFunctions.Name"),
+    PREFERENCES_LANGUAGEFUNCTIONS_NAME_MANDATORY("Preferences.OriginLanguageFunctions.Name.Mandatory"),
+    PREFERENCES_LANGUAGEFUNCTIONS_CODE("Preferences.OriginLanguageFunctions.Code"),
+    PREFERENCES_LANGUAGEFUNCTIONS_CODE_MANDATORY("Preferences.OriginLanguageFunctions.Code.Mandatory"),
+    PREFERENCES_LANGUAGEFUNCTIONS_UNDERLINE("Preferences.OriginLanguageFunctions.Underline"),
+    PREFERENCES_LANGUAGEFUNCTIONS_DESCRIPTION("Preferences.OriginLanguageFunctions.Description");
 
     /** The static translator instance to use for all messages of this type. */
     private static final Translator<HmxMessage> TRANSLATOR = new Translator<HmxMessage>(HmxMessage.class);

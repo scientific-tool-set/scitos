@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -23,17 +23,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import net.java.dev.designgridlayout.DesignGridLayout;
 
 import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.core.util.ConversionUtil;
@@ -65,15 +67,15 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
     /**
      * Selection component for the width of a single indentation of a {@link Proposition} ({@link HmxGeneralOption#INDENTATION_WIDTH}).
      */
-    final JSlider indentationSizeSlider = new JSlider();
+    final JSlider indentationSizeSlider = new JSlider(30, 200);
     /**
      * Checkbox to determine if the settings area should be visible by default for new projects ({@link HmxGeneralOption#SHOW_SETTINGS}).
      */
-    private final JCheckBox showSettings = new JCheckBox();
+    private final JCheckBox showSettings = new JCheckBox(HmxMessage.PREFERENCES_GENERAL_INPUT_SHOW_SETTINGS.get());
     /**
      * Input field for the default value for a new project's author ({@link HmxGeneralOption#AUTHOR}).
      */
-    private final JTextField authorField = new JTextField();
+    private final JTextField authorField = new JTextField(new Validation(100), null, 0);
 
     /**
      * Constructor.
@@ -81,30 +83,30 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
     public HmxGeneralOptionPanel() {
         super(new GridBagLayout(), HmxMessage.PREFERENCES_GENERAL);
         final Box contentBox = new Box(BoxLayout.PAGE_AXIS);
-        contentBox
+        final JPanel generalOptionsGroup = new JPanel();
+        generalOptionsGroup.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_GENERAL.get()));
+        final DesignGridLayout generalOptionsLayout = new DesignGridLayout(generalOptionsGroup);
+        generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_ARROW_COLOR.get()))
                 .add(this.initColorPanel(this.arrowColorSample, HmxMessage.PREFERENCES_GENERAL_ARROW_COLOR, HmxGeneralOption.ARROW_COLOR, false));
-        contentBox.add(this.initColorPanel(this.relationColorSample, HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR,
-                HmxGeneralOption.RELATION_COLOR, false));
-        contentBox.add(this.initColorPanel(this.commentedBorderColorSample, HmxMessage.PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR,
-                HmxGeneralOption.COMMENTED_BORDER_COLOR, false));
-        contentBox.add(this.initIndentationPanel());
-        final JPanel showSettingsPanel = new JPanel(new GridBagLayout());
-        showSettingsPanel.setBorder(BorderFactory.createTitledBorder(""));
-        this.showSettings.setText(HmxMessage.PREFERENCES_GENERAL_SHOW_INPUT_SETTINGS.get());
+        generalOptionsLayout
+                .row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR.get()))
+                .add(this.initColorPanel(this.relationColorSample, HmxMessage.PREFERENCES_GENERAL_RELATION_COLOR, HmxGeneralOption.RELATION_COLOR,
+                        false));
+        generalOptionsLayout
+                .row()
+                .grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR.get()))
+                .add(this.initColorPanel(this.commentedBorderColorSample, HmxMessage.PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR,
+                        HmxGeneralOption.COMMENTED_BORDER_COLOR, false));
         this.showSettings.setSelected(HmxGeneralOption.SHOW_SETTINGS.getValueAsBoolean());
-        showSettingsPanel.add(this.showSettings, AbstractOptionPanel.DEFAULT_INSETS);
-        showSettingsPanel.add(new JPanel(), AbstractOptionPanel.HORIZONTAL_SPAN);
-        contentBox.add(showSettingsPanel);
-        // HmxGeneralOption.AUTHOR
-        final JPanel authorPanel = new JPanel(new GridBagLayout());
-        this.authorField.setDocument(new Validation(100));
-        authorPanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_GENERAL_AUTHOR.get()));
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1;
-        constraints.insets = new Insets(2, 5, 2, 5);
-        authorPanel.add(this.authorField, constraints);
-        contentBox.add(authorPanel);
+        generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_INPUT.get())).add(this.showSettings);
+        generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_AUTHOR.get())).add(this.authorField);
+        this.indentationSizeSlider.setPreferredSize(new Dimension(this.indentationSizeSlider.getMaximum(), this.indentationSizeSlider
+                .getPreferredSize().height));
+        generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_INDENTATION.get())).addMulti(this.indentationSizeSlider);
+        generalOptionsLayout.row().grid().add(this.initIndentationPanel());
+
+        contentBox.add(generalOptionsGroup);
         this.add(contentBox, AbstractOptionPanel.HORIZONTAL_SPAN);
         final GridBagConstraints spacing = new GridBagConstraints();
         spacing.fill = GridBagConstraints.VERTICAL;
@@ -122,9 +124,6 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
      */
     private JPanel initIndentationPanel() {
         final JPanel indentationPanel = new JPanel(new GridBagLayout());
-        indentationPanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.PREFERENCES_GENERAL_INDENTATION.get()));
-        this.indentationSizeSlider.setMinimum(30);
-        this.indentationSizeSlider.setMaximum(200);
         final int width = HmxGeneralOption.INDENTATION_WIDTH.getValueAsInteger();
         this.indentationSizeSlider.setValue(width);
         // create a panel for showing the current selected indentation width
@@ -134,7 +133,6 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
         final Dimension initialSize = new Dimension(width, 24);
         sampleBar.setPreferredSize(initialSize);
         sampleBar.setSize(initialSize);
-        indentationPanel.add(this.indentationSizeSlider, AbstractOptionPanel.DEFAULT_INSETS);
         indentationPanel.add(sampleBar, AbstractOptionPanel.DEFAULT_INSETS);
         this.indentationSizeSlider.addChangeListener(new ChangeListener() {
 

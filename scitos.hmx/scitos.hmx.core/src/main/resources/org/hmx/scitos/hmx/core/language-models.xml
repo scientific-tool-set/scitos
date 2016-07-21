@@ -18,7 +18,7 @@
    along with SciToS. If not, see <http://www.gnu.org/licenses/>.
 -->
 <LanguageModels xmlns="http://www.hermeneutix.org/schema/hmx/2.0">
-	<LanguageModel name="Griechisch" oldName="Greek" locale="de" text-orientation="left-to-right">
+	<LanguageModel name="Griechisch" oldName="Greek" locale="de" text-orientation="left-to-right" recommended-fonts="Palatino Linotype">
 		<Group>
 			<Function oldKey="Subject1" code="Subj" name="Subjekt" description="Satzgegenstand" />
 			<Function oldKey="Subject2" code="S/P" name="Subjekt-Prädikat" description="Mischtyp aus Subjekt und Prädikat" />
@@ -100,7 +100,7 @@
 			</FunctionGroup>
 		</Group>
 	</LanguageModel>
-	<LanguageModel name="Greek" oldName="Greek" text-orientation="left-to-right">
+	<LanguageModel name="Greek" oldName="Greek" text-orientation="left-to-right" recommended-fonts="Palatino Linotype">
 		<Group>
 			<Function oldKey="Subject1" code="Subj" name="Subject" />
 			<Function oldKey="Subject2" code="S/P" name="Subject-Predicate" />

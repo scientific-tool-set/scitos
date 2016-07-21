@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hmx.scitos.domain.IModel;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
@@ -252,7 +253,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     }
 
     @Override
-    public List<List<SyntacticalFunction>> provideFunctions() {
+    public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
         return this.languageModel.provideFunctions();
     }
 
@@ -327,7 +328,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     public void insertChildPropositionBeforeFollower(final Proposition toInsert, final Proposition follower) {
         // make sure to deal with first part of following proposition
         final Proposition following = follower.getFirstPart();
-        final int pos = ComparisonUtil.indexOfInstance(this.text, following);
+        final int pos = CollectionUtil.indexOfInstance(this.text, following);
         if (pos == -1) {
             // follower not contained
             throw new IllegalArgumentException();
@@ -341,7 +342,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     public void insertChildPropositionAfterPrior(final Proposition toInsert, final Proposition prior) {
         // make sure to deal with first part of prior proposition
         final Proposition before = prior.getFirstPart();
-        final int pos = ComparisonUtil.indexOfInstance(this.text, before);
+        final int pos = CollectionUtil.indexOfInstance(this.text, before);
         if (pos == -1) {
             // prior not contained
             throw new IllegalArgumentException();
@@ -353,12 +354,17 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
 
     @Override
     public void removeChildProposition(final Proposition deleted) {
-        this.text.remove(ComparisonUtil.indexOfInstance(this.text, deleted));
+        final int index = CollectionUtil.indexOfInstance(this.text, deleted);
+        if (index != -1) {
+            this.text.remove(index);
+        } else {
+            deleted.getPartBeforeArrow().removeChildProposition(deleted);
+        }
     }
 
     @Override
     public List<Proposition> getContainingList(final Proposition childProposition) {
-        if (ComparisonUtil.containsInstance(this.text, childProposition)) {
+        if (CollectionUtil.containsInstance(this.text, childProposition)) {
             return this.getText();
         }
         return null;
@@ -463,11 +469,11 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
             final List<Relation> clonedRelations) {
         final List<AbstractConnectable> topAssociates = subTreeHead.getAssociates();
         final List<AbstractConnectable> clonedAssociates = new ArrayList<AbstractConnectable>(topAssociates.size());
-        final Relation clonedSubTreeHead = clonedRelations.get(ComparisonUtil.indexOfInstance(originRelations, subTreeHead));
+        final Relation clonedSubTreeHead = clonedRelations.get(CollectionUtil.indexOfInstance(originRelations, subTreeHead));
         for (final AbstractConnectable originAssociate : topAssociates) {
             final AbstractConnectable clonedAssociate;
             if (originAssociate instanceof Relation) {
-                clonedAssociate = clonedRelations.get(ComparisonUtil.indexOfInstance(originRelations, originAssociate));
+                clonedAssociate = clonedRelations.get(CollectionUtil.indexOfInstance(originRelations, originAssociate));
                 this.cloneAssociations((Relation) originAssociate, originRelations, clonedPericope, clonedRelations);
             } else {
                 clonedAssociate = clonedPericope.getPropositionAt(this.indexOfProposition((Proposition) originAssociate));

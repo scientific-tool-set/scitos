@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.view.swing.components;
 
 import java.awt.GridBagConstraints;
@@ -16,7 +35,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import org.hmx.scitos.domain.ModelChangeListener;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
@@ -155,7 +174,7 @@ public final class SynAnalysisPanel extends AbstractAnalysisPanel {
         this.propositionList.add(viewProposition);
         // show arrows
         final int listSize = this.propositionList.size();
-        final int beforeArrowPos = ComparisonUtil.indexOfInstance(this.propositionList, partBeforeArrow);
+        final int beforeArrowPos = CollectionUtil.indexOfInstance(this.propositionList, partBeforeArrow);
         // count number of arrows to set
         int arrowCount = listSize - beforeArrowPos - 1;
         // ignore partAfterArrows

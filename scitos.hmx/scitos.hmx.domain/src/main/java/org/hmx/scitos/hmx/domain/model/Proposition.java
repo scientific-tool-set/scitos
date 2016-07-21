@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
@@ -346,10 +347,10 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      * @return the list of child propositions that contains the given one
      */
     private List<Proposition> getInternalContainingList(final Proposition childProposition) {
-        if (this.priorChildren != null && ComparisonUtil.containsInstance(this.priorChildren, childProposition)) {
+        if (this.priorChildren != null && CollectionUtil.containsInstance(this.priorChildren, childProposition)) {
             return this.priorChildren;
         }
-        if (this.laterChildren != null && ComparisonUtil.containsInstance(this.laterChildren, childProposition)) {
+        if (this.laterChildren != null && CollectionUtil.containsInstance(this.laterChildren, childProposition)) {
             return this.laterChildren;
         }
         if (this.partAfterArrow != null) {
@@ -444,7 +445,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
         // make sure to deal with first part of following proposition
         final Proposition following = follower.getFirstPart();
         final List<Proposition> containingList = this.getInternalContainingList(following);
-        containingList.add(ComparisonUtil.indexOfInstance(containingList, following), toInsert);
+        containingList.add(CollectionUtil.indexOfInstance(containingList, following), toInsert);
         toInsert.setParent(this);
     }
 
@@ -458,14 +459,14 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
             throw new IllegalArgumentException();
         }
         toInsert.setParent(this);
-        containingList.add(ComparisonUtil.indexOfInstance(containingList, before) + 1, toInsert);
+        containingList.add(CollectionUtil.indexOfInstance(containingList, before) + 1, toInsert);
     }
 
     @Override
     public void removeChildProposition(final Proposition toDelete) {
         final List<Proposition> containingList = this.getInternalContainingList(toDelete);
         if (containingList != null) {
-            containingList.remove(ComparisonUtil.indexOfInstance(containingList, toDelete));
+            containingList.remove(CollectionUtil.indexOfInstance(containingList, toDelete));
         } else if (this.partAfterArrow == toDelete) {
             this.setPartAfterArrow(null);
         } else {
@@ -483,7 +484,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     public void insertClauseItemAfterPrior(final ClauseItem toInsert, final ClauseItem prior) {
         toInsert.setParent(this);
-        this.items.add(ComparisonUtil.indexOfInstance(this.items, prior) + 1, toInsert);
+        this.items.add(CollectionUtil.indexOfInstance(this.items, prior) + 1, toInsert);
     }
 
     /**
@@ -494,7 +495,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     public void removeClauseItems(final List<ClauseItem> toDelete) {
         for (final ClauseItem singleItem : toDelete) {
-            this.items.remove(ComparisonUtil.indexOfInstance(this.items, singleItem));
+            this.items.remove(CollectionUtil.indexOfInstance(this.items, singleItem));
         }
     }
 

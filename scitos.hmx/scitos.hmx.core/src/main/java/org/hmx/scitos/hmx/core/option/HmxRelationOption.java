@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2015 HermeneutiX.org
+   Copyright (C) 2016 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -44,7 +44,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Application level preferences handler for the HmX module.
+ * Application level preferences handler for the HmX module's available semantical {@link RelationTemplate}s.
  */
 @Singleton
 public final class HmxRelationOption implements ISemanticalRelationProvider {

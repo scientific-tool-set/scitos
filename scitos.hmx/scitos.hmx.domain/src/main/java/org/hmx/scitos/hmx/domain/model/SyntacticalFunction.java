@@ -1,29 +1,34 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.domain.model;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.hmx.scitos.domain.util.ComparisonUtil;
-import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 
 /**
  * Representation of an associated function in the syntactical analysis. Either for a {@link ClauseItem} in its containing {@link Proposition}, or for
  * a subordinated (i.e. indented) {@link Proposition} to its {@code parent} {@link Proposition}.
  */
-public class SyntacticalFunction implements Serializable {
+public class SyntacticalFunction extends AbstractSyntacticalFunctionElement {
 
     /** Short identifier that is used as the textual representation of this function in the syntactical analysis. */
     private final String code;
-    /** Full identifier for this function, displayed for selection in the syntactical analysis. */
-    private final String name;
-    /** More elaborate description what this syntactical function represents. */
-    private final String description;
     /** If an element with this syntactical function should be underlined. */
     private final boolean underlined;
-    /** Functions belonging to this function group – or an empty list if this a selectable function. */
-    private final List<SyntacticalFunction> subFunctions;
 
     /**
      * Constructor: setting all fields to the given values to achieve immutability.
@@ -36,21 +41,11 @@ public class SyntacticalFunction implements Serializable {
      *            if an element with this syntactical function should be underlined
      * @param description
      *            the description of this function's meaning
-     * @param subFunctions
-     *            the functions belonging to this function group – {@code null} or an empty list indicate that this a selectable function (i.e. not a
-     *            group)
      */
-    public SyntacticalFunction(final String code, final String name, final boolean underlined, final String description,
-            final List<SyntacticalFunction> subFunctions) {
+    public SyntacticalFunction(final String code, final String name, final boolean underlined, final String description) {
+        super(name, description);
         this.code = code;
-        this.name = name;
-        this.description = description;
         this.underlined = underlined;
-        if (subFunctions == null || subFunctions.isEmpty()) {
-            this.subFunctions = Collections.emptyList();
-        } else {
-            this.subFunctions = Collections.unmodifiableList(new ArrayList<SyntacticalFunction>(subFunctions));
-        }
     }
 
     /**
@@ -63,24 +58,6 @@ public class SyntacticalFunction implements Serializable {
     }
 
     /**
-     * Getter for the full identifier that is used when displaying available functions in the syntactical analysis..
-     *
-     * @return the full identifier
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Getter for the more elaborate description what this syntactical function represents.
-     *
-     * @return the description of this function's meaning
-     */
-    public String getDescription() {
-        return this.description;
-    }
-
-    /**
      * Getter for the flag indicating if an element with this syntactical function should be underlined..
      *
      * @return if an associated element should be underlined
@@ -89,51 +66,23 @@ public class SyntacticalFunction implements Serializable {
         return this.underlined;
     }
 
-    /**
-     * Getter for the functions belonging to this function group. This returns an empty list, if this a selectable function and not a group.
-     *
-     * @return the subordinated functions
-     * @see #isSelectable()
-     */
-    public List<SyntacticalFunction> getSubFunctions() {
-        return this.subFunctions;
-    }
-
-    /**
-     * Determine if this function can be directly assigned to an element implementing the {@link ICanHaveSyntacticalFunction} interface.
-     *
-     * @return if this is a selectable function and not a group with contained sub functions
-     * @see #getSubFunctions()
-     */
-    public boolean isSelectable() {
-        return this.subFunctions.isEmpty();
-    }
-
-    @Override
-    public int hashCode() {
-        return this.code.hashCode();
-    }
-
     @Override
     public boolean equals(final Object otherObj) {
-        if (this == otherObj) {
-            return true;
+        if (!super.equals(otherObj)) {
+            return false;
         }
         if (!(otherObj instanceof SyntacticalFunction)) {
             return false;
         }
         final SyntacticalFunction otherFunction = (SyntacticalFunction) otherObj;
-        return this.code.equals(otherFunction.code) && this.name.equals(otherFunction.name) && this.underlined == otherFunction.underlined
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.description, otherFunction.description)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.subFunctions, otherFunction.subFunctions);
+        return this.code.equals(otherFunction.code) && this.underlined == otherFunction.underlined;
     }
 
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("code: '").append(this.code).append("' - name: '").append(this.name);
-        builder.append("' - description: '").append(this.description).append("' - underline: ").append(this.underlined);
-        builder.append(" - subFunctions: ").append(this.subFunctions == null ? 0 : this.subFunctions.size());
+        builder.append("code: '").append(this.getCode()).append("' - name: '").append(this.getName());
+        builder.append("' - description: '").append(this.getDescription()).append("' - underline: ").append(this.isUnderlined());
         return builder.toString();
     }
 }

@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core;
 
 import java.awt.Font;
@@ -17,6 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
+import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
@@ -26,6 +46,7 @@ import org.hmx.scitos.hmx.domain.model.RelationModel;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,7 +56,7 @@ import org.w3c.dom.Document;
 /**
  * Test for the {@link ModelParseServiceImpl} class.
  */
-public class ModelParseServiceTest {
+public class ModelParseServiceImplTest {
 
     /** The model parse service implementation being tested. */
     private static ModelParseServiceImpl parseService;
@@ -43,7 +64,7 @@ public class ModelParseServiceTest {
     /** Initialize the service implementation being tested. */
     @BeforeClass
     public static void initServiceImplementation() {
-        ModelParseServiceTest.parseService = new ModelParseServiceImpl();
+        ModelParseServiceImplTest.parseService = new ModelParseServiceImpl();
         // enforce the English Locale to make this test independent of the executing system's Locale
         Option.TRANSLATION.setValue(Locale.ENGLISH.toString());
     }
@@ -51,7 +72,7 @@ public class ModelParseServiceTest {
     /** Discard reference to tested service implementation. */
     @AfterClass
     public static void tearDown() {
-        ModelParseServiceTest.parseService = null;
+        ModelParseServiceImplTest.parseService = null;
         Option.TRANSLATION.setValue(null);
     }
 
@@ -63,7 +84,7 @@ public class ModelParseServiceTest {
      */
     @Test
     public void testParseModelToAndFromXml_1() throws HmxException {
-        final LanguageModel language = ModelParseServiceTest.parseService.getSystemLanguageModels().get(0);
+        final LanguageModel language = ModelParseServiceImplTest.parseService.getSystemLanguageModels().get(0);
         final Pericope model = new Pericope();
         model.init("1A\t1B\t1C\t1D\n2\n3\n4\n5\n6\n7\n8\n9\n10", language, new Font("Times New Roman", Font.PLAIN, 23));
         final HmxModelHandler modelHandler = new ModelHandlerImpl(model);
@@ -72,17 +93,17 @@ public class ModelParseServiceTest {
         modelHandler.setClauseItemFontStyle(propositions.get(0).getItems().get(1), ClauseItem.Style.BOLD);
         modelHandler.setClauseItemFontStyle(propositions.get(0).getItems().get(2), ClauseItem.Style.ITALIC);
         modelHandler.setClauseItemFontStyle(propositions.get(0).getItems().get(3), ClauseItem.Style.BOLD_ITALIC);
-        final List<List<SyntacticalFunction>> functions = model.provideFunctions();
-        modelHandler.indentPropositionUnderParent(propositions.get(1), propositions.get(2), functions.get(0).get(1));
-        modelHandler.indentPropositionUnderParent(propositions.get(0), propositions.get(2), functions.get(0).get(2));
+        final List<List<AbstractSyntacticalFunctionElement>> functions = model.provideFunctions();
+        modelHandler.indentPropositionUnderParent(propositions.get(1), propositions.get(2), (SyntacticalFunction) functions.get(0).get(1));
+        modelHandler.indentPropositionUnderParent(propositions.get(0), propositions.get(2), (SyntacticalFunction) functions.get(0).get(2));
         modelHandler.mergePropositions(propositions.get(5), propositions.get(2));
-        modelHandler.indentPropositionUnderParent(propositions.get(4), propositions.get(3), functions.get(4).get(0));
+        modelHandler.indentPropositionUnderParent(propositions.get(4), propositions.get(3), (SyntacticalFunction) functions.get(4).get(0));
         modelHandler.mergePropositions(propositions.get(2), propositions.get(7));
-        modelHandler.setSyntacticalFunction(propositions.get(6), functions.get(4).get(1));
-        modelHandler.indentPropositionUnderParent(propositions.get(8), propositions.get(9), functions.get(4).get(2));
-        modelHandler.indentPropositionUnderParent(propositions.get(9), propositions.get(2), functions.get(4).get(3));
-        final Document xml = ModelParseServiceTest.parseService.parseXmlFromModel(model, Arrays.asList(model));
-        final Entry<Pericope, List<?>> parsed = ModelParseServiceTest.parseService.parseModelFromXml(xml, new File("test.hmx"));
+        modelHandler.setSyntacticalFunction(propositions.get(6), (SyntacticalFunction) functions.get(4).get(1));
+        modelHandler.indentPropositionUnderParent(propositions.get(8), propositions.get(9), (SyntacticalFunction) functions.get(4).get(2));
+        modelHandler.indentPropositionUnderParent(propositions.get(9), propositions.get(2), (SyntacticalFunction) functions.get(4).get(3));
+        final Document xml = ModelParseServiceImplTest.parseService.parseXmlFromModel(model, Arrays.asList(model));
+        final Entry<Pericope, List<?>> parsed = ModelParseServiceImplTest.parseService.parseModelFromXml(xml, new File("test.hmx"));
         this.assertPericopeEquals(model, parsed.getKey());
         Assert.assertEquals(1, parsed.getValue().size());
         Assert.assertSame(parsed.getKey(), parsed.getValue().get(0));
@@ -97,22 +118,26 @@ public class ModelParseServiceTest {
      */
     @Test
     public void testParseModelToAndFromXml_2() throws HmxException {
-        final LanguageModel language = ModelParseServiceTest.parseService.getSystemLanguageModels().get(1);
+        final LanguageModel language = ModelParseServiceImplTest.parseService.getSystemLanguageModels().get(1);
         final Pericope model = new Pericope();
         model.init("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12", language, new Font("Arial", Font.PLAIN, 17));
         final HmxModelHandler modelHandler = new ModelHandlerImpl(model);
         final List<Proposition> propositions = model.getFlatText();
-        final List<List<SyntacticalFunction>> functions = model.provideFunctions();
-        modelHandler.setSyntacticalFunction(propositions.get(0).getItems().get(0), functions.get(0).get(4));
-        modelHandler.setSyntacticalFunction(propositions.get(1).getItems().get(0), functions.get(1).get(0));
-        modelHandler.setSyntacticalFunction(propositions.get(2).getItems().get(0), functions.get(3).get(0));
-        modelHandler.setSyntacticalFunction(propositions.get(4).getItems().get(0), functions.get(4).get(2));
-        modelHandler.setSyntacticalFunction(propositions.get(5).getItems().get(0), functions.get(5).get(0).getSubFunctions().get(3));
-        modelHandler.setSyntacticalFunction(propositions.get(6).getItems().get(0), functions.get(5).get(0).getSubFunctions().get(7)
-                .getSubFunctions().get(2));
-        modelHandler.setSyntacticalFunction(propositions.get(8).getItems().get(0), functions.get(5).get(1).getSubFunctions().get(4));
-        modelHandler.setSyntacticalFunction(propositions.get(9).getItems().get(0), functions.get(5).get(1).getSubFunctions().get(7)
-                .getSubFunctions().get(5));
+        final List<List<AbstractSyntacticalFunctionElement>> functions = model.provideFunctions();
+        modelHandler.setSyntacticalFunction(propositions.get(0).getItems().get(0), (SyntacticalFunction) functions.get(0).get(4));
+        modelHandler.setSyntacticalFunction(propositions.get(1).getItems().get(0), (SyntacticalFunction) functions.get(1).get(0));
+        modelHandler.setSyntacticalFunction(propositions.get(2).getItems().get(0), (SyntacticalFunction) functions.get(3).get(0));
+        modelHandler.setSyntacticalFunction(propositions.get(4).getItems().get(0), (SyntacticalFunction) functions.get(4).get(2));
+        modelHandler.setSyntacticalFunction(propositions.get(5).getItems().get(0), (SyntacticalFunction) ((SyntacticalFunctionGroup) functions
+                .get(5).get(0)).getSubFunctions().get(3));
+        modelHandler.setSyntacticalFunction(propositions.get(6).getItems().get(0),
+                (SyntacticalFunction) ((SyntacticalFunctionGroup) ((SyntacticalFunctionGroup) functions.get(5).get(0)).getSubFunctions().get(7))
+                        .getSubFunctions().get(2));
+        modelHandler.setSyntacticalFunction(propositions.get(8).getItems().get(0), (SyntacticalFunction) ((SyntacticalFunctionGroup) functions
+                .get(5).get(1)).getSubFunctions().get(4));
+        modelHandler.setSyntacticalFunction(propositions.get(9).getItems().get(0),
+                (SyntacticalFunction) ((SyntacticalFunctionGroup) ((SyntacticalFunctionGroup) functions.get(5).get(1)).getSubFunctions().get(7))
+                        .getSubFunctions().get(5));
         modelHandler.createRelation(Arrays.asList(propositions.get(0), propositions.get(1)), new RelationTemplate(new AssociateRole("A", true),
                 null, new AssociateRole("B", false), null));
         modelHandler.createRelation(Arrays.asList(propositions.get(5), propositions.get(6)), new RelationTemplate(new AssociateRole("C", true),
@@ -124,8 +149,9 @@ public class ModelParseServiceTest {
                 new AssociateRole("F", true), new AssociateRole("F", true), new AssociateRole("F", true), null));
         modelHandler.createRelation(Arrays.asList(firstLevelRelations.get(2), propositions.get(10), propositions.get(11)), new RelationTemplate(
                 new AssociateRole("G", true), new AssociateRole("H", false), new AssociateRole("H", false), null));
-        final Document xml = ModelParseServiceTest.parseService.parseXmlFromModel(model, Arrays.asList(model));
-        final Entry<Pericope, List<?>> parsed = ModelParseServiceTest.parseService.parseModelFromXml(xml, new File("some/unexistent/path.hmx"));
+        final Document xml = ModelParseServiceImplTest.parseService.parseXmlFromModel(model, Arrays.asList(model));
+        final Entry<Pericope, List<?>> parsed =
+                ModelParseServiceImplTest.parseService.parseModelFromXml(xml, new File("some/unexistent/path.hmx"));
         this.assertPericopeEquals(model, parsed.getKey());
         Assert.assertEquals(1, parsed.getValue().size());
         Assert.assertSame(parsed.getKey(), parsed.getValue().get(0));
@@ -234,40 +260,40 @@ public class ModelParseServiceTest {
     public void testGetSystemLanguageModels() throws HmxException {
         // Build the default English language model for Greek
         final LookupLanguageModel model = new LookupLanguageModel("Greek", true);
-        model.add(Arrays.asList(new SyntacticalFunction("Subj", "Subject", false, null, null), new SyntacticalFunction("S/P", "Subject-Predicate",
-                false, null, null), new SyntacticalFunction("Voc", "Vocative", false, null, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("Pred", "Predicate", false, null, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("C", "Connector", true, null, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("Attr", "Attribute", false, null, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("GenO", "Genitive Object", false, null, null), new SyntacticalFunction("DatO",
-                "Dative Object", false, null, null), new SyntacticalFunction("AccO", "Accusative Object", false, null, null),
-                new SyntacticalFunction("PrepO", "Prepositional Object", false, null, null)));
-        final List<SyntacticalFunction> groups = new ArrayList<SyntacticalFunction>(2);
+        model.add(Arrays.asList(new SyntacticalFunction("Subj", "Subject", false, null), new SyntacticalFunction("S/P", "Subject-Predicate",
+                false, null), new SyntacticalFunction("Voc", "Vocative", false, null)));
+        model.add(Arrays.asList(new SyntacticalFunction("Pred", "Predicate", false, null)));
+        model.add(Arrays.asList(new SyntacticalFunction("C", "Connector", true, null)));
+        model.add(Arrays.asList(new SyntacticalFunction("Attr", "Attribute", false, null)));
+        model.add(Arrays.asList(new SyntacticalFunction("GenO", "Genitive Object", false, null), new SyntacticalFunction("DatO", "Dative Object",
+                false, null), new SyntacticalFunction("AccO", "Accusative Object", false, null), new SyntacticalFunction("PrepO",
+                "Prepositional Object", false, null)));
+        final List<AbstractSyntacticalFunctionElement> groups = new ArrayList<AbstractSyntacticalFunctionElement>(2);
         for (final String[] groupedType : new String[][] { new String[] { "Complement", "necessary" }, new String[] { "Adjunct", "erasable" } }) {
             final String type = groupedType[0];
             final char firstChar = type.charAt(0);
-            final List<SyntacticalFunction> subTypes = new ArrayList<SyntacticalFunction>(8);
-            subTypes.add(new SyntacticalFunction("SId" + firstChar, "Subject-Indentification-" + type, false, null, null));
-            subTypes.add(new SyntacticalFunction("SMan" + firstChar, "Subject-Manner-" + type, false, null, null));
-            subTypes.add(new SyntacticalFunction("OId" + firstChar, "Object-Indentification-" + type, false, null, null));
-            subTypes.add(new SyntacticalFunction("OMan" + firstChar, "Object-Manner-" + type, false, null, null));
-            subTypes.add(new SyntacticalFunction("Loc" + firstChar, "Locale-" + type, false, null, null));
-            subTypes.add(new SyntacticalFunction("Time" + firstChar, "Time-" + type, false, null, null));
-            subTypes.add(new SyntacticalFunction("Mod" + firstChar, "Modal-" + type, false, null, null));
+            final List<AbstractSyntacticalFunctionElement> subTypes = new ArrayList<AbstractSyntacticalFunctionElement>(8);
+            subTypes.add(new SyntacticalFunction("SId" + firstChar, "Subject-Indentification-" + type, false, null));
+            subTypes.add(new SyntacticalFunction("SMan" + firstChar, "Subject-Manner-" + type, false, null));
+            subTypes.add(new SyntacticalFunction("OId" + firstChar, "Object-Indentification-" + type, false, null));
+            subTypes.add(new SyntacticalFunction("OMan" + firstChar, "Object-Manner-" + type, false, null));
+            subTypes.add(new SyntacticalFunction("Loc" + firstChar, "Locale-" + type, false, null));
+            subTypes.add(new SyntacticalFunction("Time" + firstChar, "Time-" + type, false, null));
+            subTypes.add(new SyntacticalFunction("Mod" + firstChar, "Modal-" + type, false, null));
             final List<SyntacticalFunction> subSubTypes = new ArrayList<SyntacticalFunction>(7);
-            subSubTypes.add(new SyntacticalFunction("Caus" + firstChar, "causal", false, null, null));
-            subSubTypes.add(new SyntacticalFunction("Cond" + firstChar, "conditional", false, null, null));
-            subSubTypes.add(new SyntacticalFunction("Cons" + firstChar, "consecutiv", false, null, null));
-            subSubTypes.add(new SyntacticalFunction("Fin" + firstChar, "final", false, null, null));
-            subSubTypes.add(new SyntacticalFunction("Conc" + firstChar, "concessiv", false, null, null));
-            subSubTypes.add(new SyntacticalFunction("Inst" + firstChar, "instrumental", false, null, null));
-            subSubTypes.add(new SyntacticalFunction("Int" + firstChar, "of interest", false, null, null));
-            subTypes.add(new SyntacticalFunction("", "Causal " + type, false, null, subSubTypes));
-            groups.add(new SyntacticalFunction("", type, false, groupedType[1] + ", means\nnot requested by verb", subTypes));
+            subSubTypes.add(new SyntacticalFunction("Caus" + firstChar, "causal", false, null));
+            subSubTypes.add(new SyntacticalFunction("Cond" + firstChar, "conditional", false, null));
+            subSubTypes.add(new SyntacticalFunction("Cons" + firstChar, "consecutiv", false, null));
+            subSubTypes.add(new SyntacticalFunction("Fin" + firstChar, "final", false, null));
+            subSubTypes.add(new SyntacticalFunction("Conc" + firstChar, "concessiv", false, null));
+            subSubTypes.add(new SyntacticalFunction("Inst" + firstChar, "instrumental", false, null));
+            subSubTypes.add(new SyntacticalFunction("Int" + firstChar, "of interest", false, null));
+            subTypes.add(new SyntacticalFunctionGroup("Causal " + type, null, subSubTypes));
+            groups.add(new SyntacticalFunctionGroup(type, groupedType[1] + ", means\nnot requested by verb", subTypes));
         }
         model.add(groups);
         // parse this model from the internal xml file
-        final List<LanguageModel> systemModels = ModelParseServiceTest.parseService.getSystemLanguageModels();
+        final List<LanguageModel> systemModels = ModelParseServiceImplTest.parseService.getSystemLanguageModels();
         // the test xml file contains only this one model
         Assert.assertEquals(2, systemModels.size());
         // confirm equality of the expected and retrieved model (step by step to produce helpful test output in case of an error)
@@ -286,8 +312,8 @@ public class ModelParseServiceTest {
      */
     private void assertLanguageModelEquals(final ISyntacticalFunctionProvider expectedLanguageModel,
             final ISyntacticalFunctionProvider actualLanguageModel) {
-        final List<List<SyntacticalFunction>> expectedGroups = expectedLanguageModel.provideFunctions();
-        final List<List<SyntacticalFunction>> actualGroups = actualLanguageModel.provideFunctions();
+        final List<List<AbstractSyntacticalFunctionElement>> expectedGroups = expectedLanguageModel.provideFunctions();
+        final List<List<AbstractSyntacticalFunctionElement>> actualGroups = actualLanguageModel.provideFunctions();
         final int expectedGroupCount = expectedGroups.size();
         Assert.assertEquals("Number of defined groups differ", expectedGroupCount, actualGroups.size());
         for (int groupIndex = 0; groupIndex < expectedGroupCount; groupIndex++) {
@@ -303,14 +329,18 @@ public class ModelParseServiceTest {
      * @param actual
      *            list of {@link SyntacticalFunction}s, as they have been parsed/loaded
      */
-    private void assertFunctionGroupEquals(final List<SyntacticalFunction> expected, final List<SyntacticalFunction> actual) {
-        if (expected != null && !expected.isEmpty() && actual != null && !actual.isEmpty()) {
-            final int expectedCount = expected.size();
-            Assert.assertEquals("Number of functions differ. (" + expected + " != " + actual + ')', expectedCount, actual.size());
-            for (int functionIndex = 0; functionIndex < expectedCount; functionIndex++) {
-                this.assertFunctionGroupEquals(expected.get(functionIndex).getSubFunctions(), actual.get(functionIndex).getSubFunctions());
-                Assert.assertEquals(expected.get(functionIndex), actual.get(functionIndex));
+    private void assertFunctionGroupEquals(final List<AbstractSyntacticalFunctionElement> expected,
+            final List<AbstractSyntacticalFunctionElement> actual) {
+        final int expectedCount = expected.size();
+        Assert.assertEquals("Number of functions differ. (" + expected + " != " + actual + ')', expectedCount, actual.size());
+        for (int functionIndex = 0; functionIndex < expectedCount; functionIndex++) {
+            final AbstractSyntacticalFunctionElement expectedElement = expected.get(functionIndex);
+            final AbstractSyntacticalFunctionElement actualElement = actual.get(functionIndex);
+            if (expectedElement instanceof SyntacticalFunctionGroup && actualElement instanceof SyntacticalFunctionGroup) {
+                this.assertFunctionGroupEquals(((SyntacticalFunctionGroup) expectedElement).getSubFunctions(),
+                        ((SyntacticalFunctionGroup) actualElement).getSubFunctions());
             }
+            Assert.assertEquals(expectedElement, actualElement);
         }
         Assert.assertEquals("Lists of functions are not equal.", expected, actual);
     }
@@ -359,7 +389,7 @@ public class ModelParseServiceTest {
         model.add(Arrays.asList(new RelationTemplate(new AssociateRole("Object", true), null, new AssociateRole("Identification", false), null),
                 new RelationTemplate(new AssociateRole("Object", true), null, new AssociateRole("Description", false), null)));
         // parse this model from the internal xml file
-        final RelationModel systemModel = ModelParseServiceTest.parseService.getSystemRelationModel();
+        final RelationModel systemModel = ModelParseServiceImplTest.parseService.getSystemRelationModel();
         Assert.assertEquals(model, systemModel);
     }
 
@@ -373,12 +403,12 @@ public class ModelParseServiceTest {
      */
     @Test
     public void testParseRelationModelToAndFromXml() throws HmxException, ParserConfigurationException {
-        final RelationModel model = ModelParseServiceTest.parseService.getSystemRelationModel();
+        final RelationModel model = ModelParseServiceImplTest.parseService.getSystemRelationModel();
         final Document xml = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         xml.appendChild(xml.createElement("root"));
-        Assert.assertNull(ModelParseServiceTest.parseService.parseRelationModelFromXml(xml));
-        xml.getDocumentElement().appendChild(ModelParseServiceTest.parseService.parseXmlFromRelationModel(xml, model));
-        final RelationModel parsed = ModelParseServiceTest.parseService.parseRelationModelFromXml(xml);
+        Assert.assertNull(ModelParseServiceImplTest.parseService.parseRelationModelFromXml(xml));
+        xml.getDocumentElement().appendChild(ModelParseServiceImplTest.parseService.parseXmlFromRelationModel(xml, model));
+        final RelationModel parsed = ModelParseServiceImplTest.parseService.parseRelationModelFromXml(xml);
         Assert.assertEquals(model, parsed);
     }
 }

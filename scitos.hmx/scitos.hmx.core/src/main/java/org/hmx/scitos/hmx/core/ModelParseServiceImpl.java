@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core;
 
 import java.awt.Font;
@@ -31,11 +50,13 @@ import org.hmx.scitos.core.i18n.Translator;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.core.util.DomUtil;
 import org.hmx.scitos.domain.IModel;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.LookupLanguageModel.BackwardCompatibleFunction;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
+import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.ClauseItem.Style;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
@@ -46,6 +67,7 @@ import org.hmx.scitos.hmx.domain.model.RelationModel;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -76,6 +98,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     private static final String TAG_LANGMODEL = "LanguageModel";
     /* Additional attributes directly on a model element, if it is one of the system defaults. */
     private static final String ATT_LANGMODEL_NAME = "name";
+    private static final String ATT_LANGMODEL_FONTS = "recommended-fonts";
     private static final String ATT_LANGMODEL_LOCALE = "locale";
     private static final String ATT_LANGMODEL_NAME_COMPATIBLE = "oldName";
     private static final String ATT_LANGMODEL_ORIENTATION = ModelParseServiceImpl.ATT_ROOT_ORIENTATION;
@@ -213,11 +236,13 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
                 textOrientation = ModelParseServiceImpl.VAL_LANGMODEL_ORIENTATION_RTL;
             }
             syntacticalModelNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_ORIENTATION, textOrientation);
+            syntacticalModelNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FONTS,
+                    CollectionUtil.toString(((LanguageModel) model).getRecommendedFonts(), "; "));
         }
-        for (final List<SyntacticalFunction> singleGroup : model.provideFunctions()) {
+        for (final List<AbstractSyntacticalFunctionElement> singleGroup : model.provideFunctions()) {
             final Element groupNode = xml.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_LANGMODEL_GROUP);
-            for (final SyntacticalFunction singleFunction : singleGroup) {
-                groupNode.appendChild(this.parseXmlFromSyntacticalFunction(xml, singleFunction));
+            for (final AbstractSyntacticalFunctionElement singleFunction : singleGroup) {
+                groupNode.appendChild(this.parseXmlFromSyntacticalFunctionElement(xml, singleFunction));
             }
             syntacticalModelNode.appendChild(groupNode);
         }
@@ -225,7 +250,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     }
 
     /**
-     * Create the xml structure representing the given {@link SyntacticalFunction}. This includes potentially contained sub functions.
+     * Create the xml structure representing the given {@link AbstractSyntacticalFunctionElement}. This includes potentially contained sub functions.
      *
      * @param xml
      *            the designated xml document the element is created for
@@ -233,13 +258,13 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      *            the {@link SyntacticalFunction} to represent
      * @return the created xml element
      */
-    private Element parseXmlFromSyntacticalFunction(final Document xml, final SyntacticalFunction function) {
+    private Element parseXmlFromSyntacticalFunctionElement(final Document xml, final AbstractSyntacticalFunctionElement function) {
         final Element functionNode;
-        if (function.getSubFunctions().isEmpty()) {
+        if (function instanceof SyntacticalFunction) {
             functionNode = xml.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION);
-            functionNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FUNCTION_CODE, function.getCode());
+            functionNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FUNCTION_CODE, ((SyntacticalFunction) function).getCode());
             functionNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FUNCTION_NAME, function.getName());
-            if (function.isUnderlined()) {
+            if (((SyntacticalFunction) function).isUnderlined()) {
                 functionNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FUNCTION_STYLE,
                         ModelParseServiceImpl.VAL_LANGMODEL_FUNCTION_STYLE_UNDERLINE);
             }
@@ -249,8 +274,8 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             functionNode.setAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FUNCTIONGROUP_NAME, function.getName());
             DomUtil.setNullableAttribute(functionNode, ModelParseServiceImpl.ATT_LANGMODEL_FUNCTIONGROUP_DESCRIPTION, function.getDescription());
             // recursively build contained sub functions
-            for (final SyntacticalFunction singleFunction : function.getSubFunctions()) {
-                functionNode.appendChild(this.parseXmlFromSyntacticalFunction(xml, singleFunction));
+            for (final AbstractSyntacticalFunctionElement singleFunction : ((SyntacticalFunctionGroup) function).getSubFunctions()) {
+                functionNode.appendChild(this.parseXmlFromSyntacticalFunctionElement(xml, singleFunction));
             }
         }
         return functionNode;
@@ -482,7 +507,8 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
                             modelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_ORIENTATION));
             // remove backward compatibility information
             final LanguageModel incompatibleModel = new LanguageModel(model.getName(), model.isLeftToRightOriented());
-            for (final List<SyntacticalFunction> singleFunctionGroup : model.provideFunctions()) {
+            incompatibleModel.setRecommendedFonts(model.getRecommendedFonts());
+            for (final List<AbstractSyntacticalFunctionElement> singleFunctionGroup : model.provideFunctions()) {
                 incompatibleModel.add(this.removeBackwardCompatibilityInfo(singleFunctionGroup));
             }
             result.add(incompatibleModel);
@@ -498,11 +524,19 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      *            list of functions to copy in a minimal/non-compatible way
      * @return deep copied list
      */
-    private List<SyntacticalFunction> removeBackwardCompatibilityInfo(final List<SyntacticalFunction> possibleCompatibleFunctions) {
-        final List<SyntacticalFunction> result = new ArrayList<SyntacticalFunction>(possibleCompatibleFunctions.size());
-        for (final SyntacticalFunction singleFunction : possibleCompatibleFunctions) {
-            result.add(new SyntacticalFunction(singleFunction.getCode(), singleFunction.getName(), singleFunction.isUnderlined(), singleFunction
-                    .getDescription(), this.removeBackwardCompatibilityInfo(singleFunction.getSubFunctions())));
+    private List<AbstractSyntacticalFunctionElement> removeBackwardCompatibilityInfo(
+            final List<AbstractSyntacticalFunctionElement> possibleCompatibleFunctions) {
+        final List<AbstractSyntacticalFunctionElement> result =
+                new ArrayList<AbstractSyntacticalFunctionElement>(possibleCompatibleFunctions.size());
+        for (final AbstractSyntacticalFunctionElement singleFunction : possibleCompatibleFunctions) {
+            if (singleFunction instanceof SyntacticalFunction) {
+                result.add(new SyntacticalFunction(((SyntacticalFunction) singleFunction).getCode(), singleFunction.getName(),
+                        ((SyntacticalFunction) singleFunction).isUnderlined(), singleFunction.getDescription()));
+            } else {
+                final List<AbstractSyntacticalFunctionElement> subFunctions =
+                        this.removeBackwardCompatibilityInfo(((SyntacticalFunctionGroup) singleFunction).getSubFunctions());
+                result.add(new SyntacticalFunctionGroup(singleFunction.getName(), singleFunction.getDescription(), subFunctions));
+            }
         }
         return result;
     }
@@ -556,6 +590,28 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     }
 
     /**
+     * Parse all contained {@link LanguageModel}s from the given document.
+     * 
+     * @param xml
+     *            the document to parse the {@value #TAG_LANGMODEL} nodes from
+     * @return successfully parsed {@link LanguageModel}s
+     * @throws HmxException
+     *             could not build/retrieve a valid language model from a contained {@value #TAG_LANGMODEL} node
+     */
+    public List<LanguageModel> parseLanguageModelsFromXml(final Document xml) throws HmxException {
+        final List<Element> modelNodes = DomUtil.getChildElements(xml.getDocumentElement(), ModelParseServiceImpl.TAG_LANGMODEL);
+        final List<LanguageModel> models = new ArrayList<LanguageModel>(modelNodes.size());
+        for (final Element singleModelNode : modelNodes) {
+            final String modelName = singleModelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_NAME);
+            final String modelOrientation = singleModelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_ORIENTATION);
+            final LookupLanguageModel model = this.parseLanguageModelFromXml(singleModelNode, modelName, modelOrientation);
+            // remove lookup information by cloning
+            models.add(model.clone());
+        }
+        return models;
+    }
+
+    /**
      * Retrieve the language model represented by the given xml element.
      *
      * @param syntacticalModelNode
@@ -573,6 +629,12 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             throws HmxException {
         final LookupLanguageModel model =
                 new LookupLanguageModel(language, !ModelParseServiceImpl.VAL_ROOT_ORIENTATION_RTL.equals(textOrientation));
+        final String recommendedFonts = syntacticalModelNode.getAttribute(ATT_LANGMODEL_FONTS);
+        if (recommendedFonts.isEmpty()) {
+            model.setRecommendedFonts(Collections.<String>emptyList());
+        } else {
+            model.setRecommendedFonts(Arrays.asList(recommendedFonts.trim().split("([\\s]*[;][\\s]*)+")));
+        }
         // read model contents from given node
         for (final Element mainGroup : DomUtil.getChildElements(syntacticalModelNode, ModelParseServiceImpl.TAG_LANGMODEL_GROUP)) {
             model.add(this.parseSyntacticalFunctionsFromXml(mainGroup));
@@ -588,8 +650,8 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      *            {@link SyntacticalFunction}s
      * @return successfully parsed functions
      */
-    private List<SyntacticalFunction> parseSyntacticalFunctionsFromXml(final Element parentNode) {
-        final LinkedList<SyntacticalFunction> result = new LinkedList<SyntacticalFunction>();
+    private List<AbstractSyntacticalFunctionElement> parseSyntacticalFunctionsFromXml(final Element parentNode) {
+        final LinkedList<AbstractSyntacticalFunctionElement> result = new LinkedList<AbstractSyntacticalFunctionElement>();
         for (final Element singleFunctionNode : DomUtil.getChildElements(parentNode, ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION,
                 ModelParseServiceImpl.TAG_LANGMODEL_FUNCTIONGROUP)) {
             if (ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION.equals(singleFunctionNode.getTagName())) {
@@ -602,7 +664,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
                         DomUtil.getNullableAttribute(singleFunctionNode, ModelParseServiceImpl.ATT_LANGMODEL_FUNCTION_DESCRIPTION);
                 final String oldKey = singleFunctionNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_FUNCTION_NAME_COMPATIBLE);
                 if (oldKey.isEmpty()) {
-                    result.add(new SyntacticalFunction(code, name, underlined, description, null));
+                    result.add(new SyntacticalFunction(code, name, underlined, description));
                 } else {
                     result.add(new BackwardCompatibleFunction(oldKey, code, name, underlined, description));
                 }
@@ -611,8 +673,8 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
                 final String description =
                         DomUtil.getNullableAttribute(singleFunctionNode, ModelParseServiceImpl.ATT_LANGMODEL_FUNCTIONGROUP_DESCRIPTION);
                 // recursively collect subordinated functions in this group
-                final List<SyntacticalFunction> subFunctions = this.parseSyntacticalFunctionsFromXml(singleFunctionNode);
-                result.add(new SyntacticalFunction("", name, false, description, subFunctions));
+                final List<AbstractSyntacticalFunctionElement> subFunctions = this.parseSyntacticalFunctionsFromXml(singleFunctionNode);
+                result.add(new SyntacticalFunctionGroup(name, description, subFunctions));
             }
         }
         return result;

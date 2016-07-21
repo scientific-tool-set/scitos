@@ -91,6 +91,8 @@ entweder direkt aufeinanderfolgen oder
 auf der selben Ebene sein und
 zwischen ihnen dürfen sich keine
 gleich- oder höherwertigen Propositionen befinden</entry>
+  <entry key="Error.Preferences.Relation.MandatoryHighWeightRole">Der Rollenbezeichner darf nicht leer sein.</entry>
+  <entry key="Error.Preferences.Relation.MandatoryRoles">Die Rollenbezeichner dürfen nicht leer sein.</entry>
   <entry key="Error.SplitProposition">Teilung nicht möglich, da sich nach dem gewählten Satzglied
 keine weiteren Satzgliedern befinden.</entry>
   <entry key="Error.TooManyChecked">Es darf maximal eine andere Proposition ausgewählt sein.</entry>
@@ -129,13 +131,67 @@ keine weiteren Satzgliedern befinden.</entry>
   <entry key="Preferences.Export.SynFunction.Italic.FontColor">Syntakt. Funktion (kursiv)</entry>
   <entry key="Preferences.Export.SynFunction.Plain.FontColor">Syntakt. Funktion (normal)</entry>
   <entry key="Preferences.Export.Translation.FontColor">Übersetzungstext</entry>
+  <entry key="Preferences.OriginLanguage">HmX – Syntaktisch</entry>
+  <entry key="Preferences.OriginLanguage.ApplyChanges">Anwenden</entry>
+  <entry key="Preferences.OriginLanguage.CloneLanguage">Klone Ausgangssprache</entry>
+  <entry key="Preferences.OriginLanguage.DeleteLanguage">Lösche Ausgangssprache</entry>
+  <entry key="Preferences.OriginLanguage.DiscardChanges">Verwerfen</entry>
+  <entry key="Preferences.OriginLanguage.EditEntry">Bearbeiten</entry>
+  <entry key="Preferences.OriginLanguage.EditFunctions">Syntaktische Funktionen Bearbeiten</entry>
+  <entry key="Preferences.OriginLanguage.EditLanguages">Ausgangssprachen Bearbeiten</entry>
+  <entry key="Preferences.OriginLanguage.FunctionCount">{0} Funktion(en)</entry>
+  <entry key="Preferences.OriginLanguage.LanguageName">Name</entry>
+  <entry key="Preferences.OriginLanguage.LanguageName.Mandatory">Das Namensfeld darf nicht leer sein.</entry>
+  <entry key="Preferences.OriginLanguage.RecommendedFonts">Schriftarten (getrennt durch Semikolon)</entry>
+  <entry key="Preferences.OriginLanguage.SystemModel">{0} (Standardmodell)</entry>
+  <entry key="Preferences.OriginLanguage.TextOrientation">Textausrichtung</entry>
+  <entry key="Preferences.OriginLanguage.TextOrientation.LeftToRight">von links nach rechts</entry>
+  <entry key="Preferences.OriginLanguage.TextOrientation.RightToLeft">von rechts nach links</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Add">Füge untergeordnete Funktion hinzu</entry>
+  <entry key="Preferences.OriginLanguageFunctions.AddGroup">Füge untergeordnete Gruppe hinzu</entry>
+  <entry key="Preferences.OriginLanguageFunctions.AddTopLevelGroup">Füge übergeordnete Gruppe hinzu</entry>
+  <entry key="Preferences.OriginLanguageFunctions.MoveDown">Bewege Eintrag nach unten</entry>
+  <entry key="Preferences.OriginLanguageFunctions.MoveUp">Bewege Eintrag nach oben</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Remove">Entferne Funktion</entry>
+  <entry key="Preferences.OriginLanguageFunctions.RemoveGroup">Entferne Gruppe</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Code">Kurzform</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Code.Mandatory">Die Kurzform darf nicht leer sein.
+Sie wird in der Syntaktischen Analyse auf zugeordneten Elementen angezeigt.</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Description">Beschreibung</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Name">Funktion</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Name.Mandatory">Der Funktionsbezeichner darf nicht leer sein.
+Er wird in the Syntaktischen Analyse im entsprechenden Auswahlmenü angezeigt.</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Underline">Unterstreichen wenn ausgewählt</entry>
+  <entry key="Preferences.Relation">HmX – Semantisch</entry>
+  <entry key="Preferences.Relation.Add">Füge Beziehungstyp zu Gruppe hinzu</entry>
+  <entry key="Preferences.Relation.AddGroup">Füge Gruppe hinzu</entry>
+  <entry key="Preferences.Relation.Add.DefaultRole.HighWeight">Hochgewichtig</entry>
+  <entry key="Preferences.Relation.Add.DefaultRole.LowWeight">Niedriggewichtig</entry>
+  <entry key="Preferences.Relation.ApplyChanges">Anwenden</entry>
+  <entry key="Preferences.Relation.Description">Beschreibung</entry>
+  <entry key="Preferences.Relation.DiscardChanges">Verwerfen</entry>
+  <entry key="Preferences.Relation.EditTemplate">Bearbeiten</entry>
+  <entry key="Preferences.Relation.HighWeightOnly">Nur sich wiederholende Einzel-Rolle</entry>
+  <entry key="Preferences.Relation.HighWeightPosition">Standardreihenfolge</entry>
+  <entry key="Preferences.Relation.HighWeightPosition.First">Hochgewichtige als Erstes</entry>
+  <entry key="Preferences.Relation.HighWeightPosition.Last">Hochgewichtige als Letztes</entry>
+  <entry key="Preferences.Relation.HighWeightRole">Rolle mit hohem Gewicht</entry>
+  <entry key="Preferences.Relation.Long">Semantische Beziehungen</entry>
+  <entry key="Preferences.Relation.LowWeightRepeatable">kann sich wiederholen</entry>
+  <entry key="Preferences.Relation.LowWeightRole">Rolle mit niedrigem Gewicht</entry>
+  <entry key="Preferences.Relation.MoveUp">Bewege Eintrag nach oben</entry>
+  <entry key="Preferences.Relation.MoveDown">Bewege Eintrag nach unten</entry>
+  <entry key="Preferences.Relation.Remove">Entferne Beziehungstyp</entry>
+  <entry key="Preferences.Relation.RemoveGroup">Entferne Gruppe</entry>
+  <entry key="Preferences.Relation.RemoveGroup.Confirm">Soll die gesamte Gruppe mit allen enthaltenen Beziehungstypen entfernt werden?</entry>
   <entry key="Preferences.View.Color.Arrow">Farbe der Pfeile</entry>
   <entry key="Preferences.View.Color.Change">Ändern</entry>
   <entry key="Preferences.View.Color.CommentedBorder">Rahmenfarbe kommentierter Elemente</entry>
   <entry key="Preferences.View.Color.Relation">Farbe der Beziehungen</entry>
   <entry key="Preferences.View.Color.Transparent">Ausblenden</entry>
   <entry key="Preferences.View.IndentationWidth">Breite der Einrückungen</entry>
-  <entry key="Preferences.View.TextInput.ShowInputSettings">Beim Start der Texteingabe Einstellungen einblenden</entry>
+  <entry key="Preferences.View.TextInput">Beim Start der Texteingabe</entry>
+  <entry key="Preferences.View.TextInput.ShowSettings">Einstellungen einblenden</entry>
   <entry key="ProjectInfo.Author">Autor</entry>
   <entry key="ProjectInfo.Comment">Kommentar</entry>
   <entry key="ProjectInfo.FrameTitle">Allgemeine Projektinformationen</entry>

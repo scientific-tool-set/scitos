@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.view;
 
 import java.awt.Font;
@@ -11,10 +30,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.option.Option;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
+import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.ClauseItem.Style;
 import org.hmx.scitos.hmx.domain.model.Pericope;
@@ -23,6 +43,7 @@ import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.ContextMenuBuilder.CMenu;
 import org.hmx.scitos.view.ContextMenuBuilder.CMenuItem;
@@ -180,7 +201,7 @@ public final class ContextMenuFactory {
             final HmxMessage menuTextKey, final ICanHaveSyntacticalFunction target, final boolean indentProp) {
         final CMenu functionSubMenu = popupMenu.addMenu(menuTextKey.get());
         boolean addSeparator = false;
-        for (final List<SyntacticalFunction> singleGroup : viewReference.getModelHandler().getModel().provideFunctions()) {
+        for (final List<AbstractSyntacticalFunctionElement> singleGroup : viewReference.getModelHandler().getModel().provideFunctions()) {
             if (addSeparator) {
                 functionSubMenu.addSeparator();
             } else {
@@ -205,19 +226,19 @@ public final class ContextMenuFactory {
      *            if the proposition should be indented under checked
      */
     private static void addSyntacticalFunctionEntries(final CMenu changeFunctionMenu, final ICanHaveSyntacticalFunction target,
-            final List<SyntacticalFunction> functions, final IPericopeView viewReference, final boolean indentProp) {
-        for (final SyntacticalFunction singleFunction : functions) {
+            final List<AbstractSyntacticalFunctionElement> functions, final IPericopeView viewReference, final boolean indentProp) {
+        for (final AbstractSyntacticalFunctionElement singleFunction : functions) {
             final String description = singleFunction.getDescription();
-            if (singleFunction.isSelectable()) {
+            if (singleFunction instanceof SyntacticalFunction) {
                 final CMenuItem menuEntry = changeFunctionMenu.addItem(singleFunction.getName(), new CMenuItemAction() {
 
                     @Override
                     public void processSelectEvent() throws HmxException {
                         viewReference.submitChangesToModel();
                         if (target instanceof Proposition && indentProp) {
-                            ContextMenuFactory.indentProposition(viewReference, (Proposition) target, singleFunction);
+                            ContextMenuFactory.indentProposition(viewReference, (Proposition) target, (SyntacticalFunction) singleFunction);
                         } else {
-                            viewReference.getModelHandler().setSyntacticalFunction(target, singleFunction);
+                            viewReference.getModelHandler().setSyntacticalFunction(target, (SyntacticalFunction) singleFunction);
                         }
                     }
                 });
@@ -226,7 +247,8 @@ public final class ContextMenuFactory {
                 }
             } else {
                 final CMenu subMenu = changeFunctionMenu.addMenu(singleFunction.getName());
-                ContextMenuFactory.addSyntacticalFunctionEntries(subMenu, target, singleFunction.getSubFunctions(), viewReference, indentProp);
+                ContextMenuFactory.addSyntacticalFunctionEntries(subMenu, target, ((SyntacticalFunctionGroup) singleFunction).getSubFunctions(),
+                        viewReference, indentProp);
                 if (description != null && !description.isEmpty()) {
                     subMenu.setToolTip(description);
                 }
@@ -246,7 +268,7 @@ public final class ContextMenuFactory {
      */
     private static void addSynItemEntries(final ContextMenuBuilder popupMenu, final IPericopeView viewReference, final ClauseItem item) {
         final List<ClauseItem> itemList = item.getParent().getItems();
-        final int itemIndex = ComparisonUtil.indexOfInstance(itemList, item);
+        final int itemIndex = CollectionUtil.indexOfInstance(itemList, item);
         // merge specified clause item with its prior clause item
         if (itemIndex > 0) {
             popupMenu.addItem(HmxMessage.MENU_MERGE_ITEM_PRIOR.get(), new CMenuItemAction() {
@@ -483,12 +505,12 @@ public final class ContextMenuFactory {
         Proposition parent = ((Proposition) proposition.getParent()).getFirstPart();
         while (parent.getPartAfterArrow() != null) {
             List<Proposition> enclosed = parent.getLaterChildren();
-            if (enclosed != null && ComparisonUtil.containsInstance(enclosed, proposition)) {
+            if (enclosed != null && CollectionUtil.containsInstance(enclosed, proposition)) {
                 throw new HmxException(HmxMessage.ERROR_UNINDENT_ENCLOSED);
             }
             parent = parent.getPartAfterArrow();
             enclosed = parent.getPriorChildren();
-            if (enclosed != null && ComparisonUtil.containsInstance(enclosed, proposition)) {
+            if (enclosed != null && CollectionUtil.containsInstance(enclosed, proposition)) {
                 throw new HmxException(HmxMessage.ERROR_UNINDENT_ENCLOSED);
             }
         }
@@ -562,6 +584,19 @@ public final class ContextMenuFactory {
     }
 
     /**
+     * Build the text representing the given {@link RelationTemplate}.
+     * 
+     * @param template
+     *            the {@link RelationTemplate} to represent as text
+     * @return the representing text
+     */
+    public static String buildRelationLabel(final RelationTemplate template) {
+        final int roleCount = template.canHaveMoreThanTwoAssociates() ? 3 : 2;
+        final List<AssociateRole> roles = template.getAssociateRoles(roleCount);
+        return ContextMenuFactory.buildRelationLabel(roles, false, Option.TRANSLATION.getValueAsLocale());
+    }
+
+    /**
      * Build the text representing the {@link Relation} consisting of the given roles.
      * 
      * @param roles
@@ -574,7 +609,7 @@ public final class ContextMenuFactory {
      * @return the representing text
      */
     private static String buildRelationLabel(final List<AssociateRole> roles, final boolean onlyAlterType, final Locale localeForStringConversion) {
-        final Map<AssociateRole, AtomicInteger> occurrences = ComparisonUtil.countOccurrences(roles);
+        final Map<AssociateRole, AtomicInteger> occurrences = CollectionUtil.countOccurrences(roles);
         final StringBuilder itemLabel = new StringBuilder();
         if (!onlyAlterType && occurrences.size() == 1) {
             String roleText = roles.get(0).getRole();

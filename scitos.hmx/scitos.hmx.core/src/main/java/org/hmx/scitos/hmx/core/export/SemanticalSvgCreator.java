@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core.export;
 
 import java.awt.geom.RectangularShape;
@@ -10,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.option.Option;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxExportOption;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
@@ -402,7 +421,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         // insert upward arrows if needed
         double arrowsExtent = 0;
         if (target.getPartBeforeArrow() != null) {
-            for (int i = ComparisonUtil.indexOfInstance(flatPropositions, target.getPartBeforeArrow()) + 1; i < index; i++) {
+            for (int i = CollectionUtil.indexOfInstance(flatPropositions, target.getPartBeforeArrow()) + 1; i < index; i++) {
                 parent.appendChild(this.createArrowElement(xml, SvgConstants.VAL_ID_ARROW_UPWARD, this.model.isLeftToRightOriented()
                         ? arrowsExtent : (-arrowsExtent - this.arrowWidth), this.arrowHeight, SemanticalSvgCreator.ARROW_SCALE));
                 arrowsExtent += this.arrowWidth;
@@ -433,7 +452,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         parent.appendChild(originTextElement);
         if (target.getPartAfterArrow() != null) {
             horizontalExtent += this.horizontalSpacing / 2;
-            for (int i = ComparisonUtil.indexOfInstance(flatPropositions, target.getPartAfterArrow()) - 1; i > index; i--) {
+            for (int i = CollectionUtil.indexOfInstance(flatPropositions, target.getPartAfterArrow()) - 1; i > index; i--) {
                 parent.appendChild(this.createArrowElement(xml, SvgConstants.VAL_ID_ARROW_DOWNWARD, this.model.isLeftToRightOriented()
                         ? horizontalExtent : -(horizontalExtent + this.arrowWidth), this.arrowHeight, SemanticalSvgCreator.ARROW_SCALE));
                 horizontalExtent += this.arrowWidth;
@@ -469,7 +488,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         for (final AbstractConnectable singleAssociate : associates) {
             roles.add(singleAssociate.getRole());
         }
-        final Map<AssociateRole, AtomicInteger> occurrences = ComparisonUtil.countOccurrences(roles);
+        final Map<AssociateRole, AtomicInteger> occurrences = CollectionUtil.countOccurrences(roles);
         final Map<AssociateRole, Integer> indices = new HashMap<AssociateRole, Integer>();
         boolean insertComment = this.commentsIncluded && target.getComment() != null && !target.getComment().isEmpty();
         final StringBuffer bufferedPoints = new StringBuffer();
@@ -563,7 +582,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
      */
     private double calculateConnectY(final AbstractConnectable target, final List<Proposition> flatPropositions) {
         if (target instanceof Proposition) {
-            return this.propositionHeight / 2 + ComparisonUtil.indexOfInstance(flatPropositions, target)
+            return this.propositionHeight / 2 + CollectionUtil.indexOfInstance(flatPropositions, target)
                     * (this.propositionHeight + this.verticalSpacing / 2);
         }
         final List<AbstractConnectable> associates = ((Relation) target).getAssociates();

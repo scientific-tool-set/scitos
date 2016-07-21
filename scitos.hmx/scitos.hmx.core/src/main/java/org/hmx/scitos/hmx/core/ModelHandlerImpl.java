@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.core;
 
 import java.awt.Font;
@@ -9,7 +28,7 @@ import java.util.List;
 import org.hmx.scitos.core.AbstractModelHandler;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.domain.ModelEvent;
-import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.ICommentable;
@@ -70,8 +89,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         if (formerParent == parent.getParent()) {
             /* case: target and designated parent have the same parent */
             final List<Proposition> containingList = formerParent.getContainingList(target);
-            final int posTarget = ComparisonUtil.indexOfInstance(containingList, target);
-            final int posParent = ComparisonUtil.indexOfInstance(containingList, parent);
+            final int posTarget = CollectionUtil.indexOfInstance(containingList, target);
+            final int posParent = CollectionUtil.indexOfInstance(containingList, parent);
             if (posParent == -1 || Math.abs(posTarget - posParent) != 1) {
                 /*
                  * target and designated parent cannot be found in the same list or are unconnected
@@ -176,13 +195,13 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
          */
         final IPropositionParent parentsParent = parent.getParent();
         final List<Proposition> priorChildren = parent.getPriorChildren();
-        if (ComparisonUtil.containsInstance(priorChildren, target)) {
+        if (CollectionUtil.containsInstance(priorChildren, target)) {
             /*
              * case: target is a prior child
              */
             // removes the indentation of all other prior children before and finally the target itself
             for (final Proposition singleChild : new ArrayList<Proposition>(priorChildren).subList(0,
-                    ComparisonUtil.indexOfInstance(priorChildren, target) + 1)) {
+                    CollectionUtil.indexOfInstance(priorChildren, target) + 1)) {
                 parent.removeChildProposition(singleChild);
                 // adding child in front of its former parent in the list
                 parentsParent.insertChildPropositionBeforeFollower(singleChild, parent);
@@ -194,7 +213,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
 
         // the removing of indentations of enclosed children is impossible, make sure to regard only REAL followers
         final List<Proposition> laterChildren = parent.getLastPart().getLaterChildren();
-        if (!ComparisonUtil.containsInstance(laterChildren, target)) {
+        if (!CollectionUtil.containsInstance(laterChildren, target)) {
             /*
              * case: target is an enclosed child
              */
@@ -204,7 +223,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
          * case: target is a later child
          */
         // removes the indentation of all other later children after and finally the target itself
-        final int position = ComparisonUtil.indexOfInstance(laterChildren, target);
+        final int position = CollectionUtil.indexOfInstance(laterChildren, target);
         for (int i = laterChildren.size(); i > position; i--) {
             final Proposition singleChild = laterChildren.get(i - 1);
             parent.removeChildProposition(singleChild);
@@ -225,16 +244,16 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
          * target has to be one of the first or one of the last children
          */
         List<Proposition> children = parent.getFirstPart().getPriorChildren();
-        if (ComparisonUtil.containsInstance(children, target)) {
+        if (CollectionUtil.containsInstance(children, target)) {
             // case: target is a prior child
-            return ComparisonUtil.indexOfInstance(children, target) != 0;
+            return CollectionUtil.indexOfInstance(children, target) != 0;
         }
 
         // the removing of indentations of enclosed children is impossible, make sure to regard only REAL followers
         children = parent.getLastPart().getLaterChildren();
-        if (ComparisonUtil.containsInstance(children, target)) {
+        if (CollectionUtil.containsInstance(children, target)) {
             // case: target is a later child
-            return ComparisonUtil.indexOfInstance(children, target) != (children.size() - 1);
+            return CollectionUtil.indexOfInstance(children, target) != (children.size() - 1);
         }
         // case: target is an enclosed child
         throw new HmxException(HmxMessage.ERROR_UNINDENT_ENCLOSED);
@@ -263,7 +282,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
             return;
         }
         final List<Proposition> containingList = parent.getContainingList(propOne);
-        if (!ComparisonUtil.containsInstance(containingList, propTwo)) {
+        if (!CollectionUtil.containsInstance(containingList, propTwo)) {
             // the propositions are not in the same list of children
             throw new HmxException(HmxMessage.ERROR_MERGE_PROPS);
         }
@@ -273,7 +292,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         final Proposition firstPart;
         final Proposition secondPart;
         // make sure the propositions are in the right order
-        if (ComparisonUtil.indexOfInstance(containingList, propOne) < ComparisonUtil.indexOfInstance(containingList, propTwo)) {
+        if (CollectionUtil.indexOfInstance(containingList, propOne) < CollectionUtil.indexOfInstance(containingList, propTwo)) {
             firstPart = propOne;
             secondPart = propTwo;
         } else {
@@ -378,6 +397,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
             // prop1 and prop2 are not directly subordinated to each other
             final Proposition partAfterArrow = prop1Part.getPartAfterArrow();
             final boolean propTwoIsSingleEnclosedChild = partAfterArrow != null && prop2Part.isPriorOf(partAfterArrow);
+            final Proposition partBeforeArrow = prop2Part.getPartBeforeArrow();
             this.mergeConnectedPropositionsIntoOne(prop1Part, prop2Part);
             prop2Part.getParent().removeChildProposition(prop2Part);
             if (propTwoIsSingleEnclosedChild) {
@@ -393,10 +413,21 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
                  */
                 final Proposition prop1LastPart = prop1Part.getLastPart();
                 prop1LastPart.setPartAfterArrow(partAfterArrow);
-                if (prop1LastPart.getLaterChildren().isEmpty() && partAfterArrow.getPriorChildren().isEmpty()) {
+                if (partAfterArrow.getPriorChildren().isEmpty()) {
                     // merge those two partAfterArrows as they are connected (i.e. they have no enclosed children between them)
                     this.mergeConnectedPropositionsIntoOne(prop1LastPart, partAfterArrow);
                 }
+            } else if (partBeforeArrow != null) {
+                /*
+                 * re-instate the combined proposition as the partAfterArrow instead of the former prop2, as prop1 was an enclosed child, that was
+                 * indented under another enclosed child of prop2 and its partBeforeArrow
+                 */
+                prop1Part.getParent().removeChildProposition(prop1Part);
+                final List<Proposition> priorChildren = new ArrayList<Proposition>(prop2Part.getPriorChildren());
+                priorChildren.addAll(prop1Part.getPriorChildren());
+                prop1Part.setPriorChildren(priorChildren);
+                prop1Part.setFunction(null);
+                partBeforeArrow.setPartAfterArrow(prop1Part);
             }
         }
     }
@@ -432,7 +463,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         final Relation superOrdinated = secondPart.getSuperOrdinatedRelation();
         if (firstPart.getSuperOrdinatedRelation() == null && superOrdinated != null) {
             final List<AbstractConnectable> associates = new ArrayList<AbstractConnectable>(superOrdinated.getAssociates());
-            associates.set(ComparisonUtil.indexOfInstance(associates, secondPart), firstPart);
+            associates.set(CollectionUtil.indexOfInstance(associates, secondPart), firstPart);
             firstPart.setSuperOrdinatedRelation(superOrdinated, secondPart.getRole());
             superOrdinated.setAssociates(associates);
         } else if (superOrdinated != null) {
@@ -483,8 +514,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         final Proposition firstProposition = firstPart.getLastPart();
         final IPropositionParent parent = firstPart.getParent();
         final List<Proposition> containingList = parent.getContainingList(firstPart);
-        final int start = ComparisonUtil.indexOfInstance(containingList, firstPart);
-        final int end = ComparisonUtil.indexOfInstance(containingList, secondPart) - 1;
+        final int start = CollectionUtil.indexOfInstance(containingList, firstPart);
+        final int end = CollectionUtil.indexOfInstance(containingList, secondPart) - 1;
         // iterate all propositions on same level between them (from back to front to avoid invalid indices)
         for (int i = end; i > start; i--) {
             // convert to prior child of the secondPart (with model info)
@@ -515,10 +546,10 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
     @Override
     public void splitProposition(final Proposition target, final ClauseItem lastItemInFirstPart) throws HmxException {
         final List<ClauseItem> firstPartItems = target.getItems();
-        if (!ComparisonUtil.containsInstance(firstPartItems, lastItemInFirstPart)) {
+        if (!CollectionUtil.containsInstance(firstPartItems, lastItemInFirstPart)) {
             throw new IllegalArgumentException();
         }
-        final int lastItemIndex = ComparisonUtil.indexOfInstance(firstPartItems, lastItemInFirstPart);
+        final int lastItemIndex = CollectionUtil.indexOfInstance(firstPartItems, lastItemInFirstPart);
         if (lastItemIndex + 1 < firstPartItems.size()) {
             final List<ClauseItem> secondPartItems = new ArrayList<ClauseItem>(firstPartItems.subList(lastItemIndex + 1, firstPartItems.size()));
             // removes the duplicates of the secondPart from the firstPart
@@ -595,7 +626,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
     public void mergeClauseItemWithPrior(final ClauseItem itemTwo) throws HmxException {
         final Proposition parent = itemTwo.getParent();
         final List<ClauseItem> parentItems = parent.getItems();
-        final int itemIndex = ComparisonUtil.indexOfInstance(parentItems, itemTwo);
+        final int itemIndex = CollectionUtil.indexOfInstance(parentItems, itemTwo);
         if (itemIndex > 0) {
             this.mergeClauseItems(parentItems.get(itemIndex - 1), itemTwo);
         } else {
@@ -608,7 +639,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
     public void mergeClauseItemWithFollower(final ClauseItem itemOne) throws HmxException {
         final Proposition parent = itemOne.getParent();
         final List<ClauseItem> parentItems = parent.getItems();
-        final int itemIndex = ComparisonUtil.indexOfInstance(parentItems, itemOne);
+        final int itemIndex = CollectionUtil.indexOfInstance(parentItems, itemOne);
         if (itemIndex + 1 < parentItems.size()) {
             this.mergeClauseItems(itemOne, parentItems.get(itemIndex + 1));
         } else {

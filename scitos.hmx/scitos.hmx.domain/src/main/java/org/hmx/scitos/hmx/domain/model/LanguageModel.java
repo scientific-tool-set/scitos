@@ -1,3 +1,22 @@
+/*
+   Copyright (C) 2016 HermeneutiX.org
+
+   This file is part of SciToS.
+
+   SciToS is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   SciToS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SciToS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.hmx.scitos.hmx.domain.model;
 
 import java.awt.Font;
@@ -13,13 +32,13 @@ import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
 public class LanguageModel implements ISyntacticalFunctionProvider, Serializable, Cloneable {
 
     /** The name of this model (usually the represented language). */
-    private final String name;
+    private String name;
     /** If the represented language's text is left-to-right oriented (otherwise right-to-left). */
-    private final boolean leftToRightOriented;
+    private boolean leftToRightOriented;
     /** The recommended font names, that are supposed to be able to display the represented language properly. */
     private final List<String> recommendedFonts;
     /** The contained syntactical functions in their respective groups. */
-    private final List<List<SyntacticalFunction>> functionGroups;
+    private final List<List<AbstractSyntacticalFunctionElement>> functionGroups;
 
     /**
      * Constructor: initializing an empty model with the given name and text orientation.
@@ -33,7 +52,7 @@ public class LanguageModel implements ISyntacticalFunctionProvider, Serializable
         this.name = name;
         this.leftToRightOriented = leftToRightOriented;
         this.recommendedFonts = new LinkedList<String>();
-        this.functionGroups = new LinkedList<List<SyntacticalFunction>>();
+        this.functionGroups = new LinkedList<List<AbstractSyntacticalFunctionElement>>();
     }
 
     /**
@@ -46,12 +65,32 @@ public class LanguageModel implements ISyntacticalFunctionProvider, Serializable
     }
 
     /**
+     * Setter for the name of this model (usually the represented language).
+     *
+     * @param name
+     *            this model's name
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
      * Getter for the represented language's text orientation.
      *
      * @return if the text orientation is {@code left-to-right} (otherwise {@code right-to-left})
      */
     public boolean isLeftToRightOriented() {
         return this.leftToRightOriented;
+    }
+
+    /**
+     * Setter for the represented language's text orientation.
+     *
+     * @param leftToRightOriented
+     *            whether the text orientation is {@code left-to-right} (otherwise {@code right-to-left})
+     */
+    public void setLeftToRightOriented(final boolean leftToRightOriented) {
+        this.leftToRightOriented = leftToRightOriented;
     }
 
     /**
@@ -64,13 +103,24 @@ public class LanguageModel implements ISyntacticalFunctionProvider, Serializable
     }
 
     /**
+     * Setter for the recommended font names, that are supposed to be able to display text in the represented language properly.
+     *
+     * @param recommendedFonts
+     *            the names of recommended {@link Font}s
+     */
+    public void setRecommendedFonts(final List<String> recommendedFonts) {
+        this.recommendedFonts.clear();
+        this.recommendedFonts.addAll(recommendedFonts);
+    }
+
+    /**
      * Reset the contained syntactical function groups to the given ones.
      *
      * @param functions
      *            the syntactical function groups to set for this model (instead of any currently contained ones)
      * @see #addAll(List)
      */
-    public void reset(final List<? extends List<? extends SyntacticalFunction>> functions) {
+    public void reset(final List<? extends List<? extends AbstractSyntacticalFunctionElement>> functions) {
         this.functionGroups.clear();
         if (functions != null) {
             this.addAll(functions);
@@ -84,8 +134,8 @@ public class LanguageModel implements ISyntacticalFunctionProvider, Serializable
      *            the syntactical functions to add to this model
      * @see #add(List)
      */
-    public void addAll(final List<? extends List<? extends SyntacticalFunction>> groups) {
-        for (final List<? extends SyntacticalFunction> singleGroup : groups) {
+    public void addAll(final List<? extends List<? extends AbstractSyntacticalFunctionElement>> groups) {
+        for (final List<? extends AbstractSyntacticalFunctionElement> singleGroup : groups) {
             this.add(singleGroup);
         }
     }
@@ -96,18 +146,19 @@ public class LanguageModel implements ISyntacticalFunctionProvider, Serializable
      * @param functions
      *            the syntactical function group to add to this model
      */
-    public void add(final List<? extends SyntacticalFunction> functions) {
-        this.functionGroups.add(Collections.unmodifiableList(new ArrayList<SyntacticalFunction>(functions)));
+    public void add(final List<? extends AbstractSyntacticalFunctionElement> functions) {
+        this.functionGroups.add(Collections.unmodifiableList(new ArrayList<AbstractSyntacticalFunctionElement>(functions)));
     }
 
     @Override
-    public List<List<SyntacticalFunction>> provideFunctions() {
+    public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
         return Collections.unmodifiableList(this.functionGroups);
     }
 
     @Override
     public LanguageModel clone() {
         final LanguageModel clone = new LanguageModel(this.getName(), this.isLeftToRightOriented());
+        clone.setRecommendedFonts(this.getRecommendedFonts());
         clone.addAll(this.provideFunctions());
         return clone;
     }

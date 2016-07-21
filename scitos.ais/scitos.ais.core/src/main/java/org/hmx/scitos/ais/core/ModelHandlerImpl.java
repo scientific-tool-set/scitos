@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -96,14 +94,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         final List<TextToken> paragraphs = new LinkedList<TextToken>();
         // split text into paragraphs at line separators
         for (final String singleParagraph : text.split(ModelHandlerImpl.REGEX_PARAGRAPH_SEPARATOR)) {
-            // get rid of leading/trailing whitespaces
-            final String cleanedParagraph = singleParagraph.trim();
-            if (singleParagraph.isEmpty()) {
-                // this 'paragraph' did only consist of whitespaces and can be ignored
-                continue;
-            }
             // separate paragraph into tokens (ideally words) at whitespaces
-            final String[] texts = cleanedParagraph.split(ModelHandlerImpl.REGEX_TOKEN_SEPARATOR);
+            final String[] texts = singleParagraph.split(ModelHandlerImpl.REGEX_TOKEN_SEPARATOR);
             // tokens are stored as a double linked list (each token knows the previous and following token)
             final TextToken firstToken = new TextToken(texts[0]).setFirstTokenOfDetail(true);
             // iterate over all tokens to build that double linked list for this paragraph
@@ -207,18 +199,18 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *            the detail category to assign
      */
     private void assignDetailCategoryToContiguousTokens(final List<TextToken> tokens, final DetailCategory category) {
-        // check what sections might be affected
-        final Map<DetailCategory, AtomicInteger> affectedSections = this.collectIntersectedCategories(tokens);
         // validate affected sections (that end or start in the selected token range)
-        for (final Entry<DetailCategory, AtomicInteger> singleSection : affectedSections.entrySet()) {
-            final AtomicInteger sectionDifference = singleSection.getValue();
-            if (sectionDifference.get() > 0) {
+        for (final Entry<DetailCategory, CategoryConflictHandler> singleSection : this.collectIntersectedCategories(tokens).entrySet()) {
+            final int startsToMoveCount = singleSection.getValue().getNumberOfStartedButNotEndedConflicts();
+            if (startsToMoveCount > 0) {
                 // more sections of this category are being opened than closed in the selected tokens
                 this.moveCategorySectionStartToTheRight(tokens.get(tokens.size() - 1).getFollowingToken(), singleSection.getKey(),
-                        sectionDifference.get());
-            } else if (sectionDifference.get() < 0) {
+                        startsToMoveCount);
+            }
+            final int endsToMoveCount = singleSection.getValue().getNumberOfEndedButNotStartedConflicts();
+            if (endsToMoveCount > 0) {
                 // less sections of this category are being opened than closed in the selected tokens: move section ends to the left
-                this.moveCategorySectionEndToTheLeft(tokens.get(0).getPreviousToken(), singleSection.getKey(), sectionDifference.get() * -1);
+                this.moveCategorySectionEndToTheLeft(tokens.get(0).getPreviousToken(), singleSection.getKey(), endsToMoveCount);
             }
         }
         // replace currently assigned categories and clear start/end markers for all targeted tokens
@@ -338,28 +330,34 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         for (int leadPartIndex = 0; leadPartIndex < maxEnclosedPartIndex; leadPartIndex += 2) {
             // resolve conflicts in first selected section
             final List<TextToken> leadingSelection = parts.get(leadPartIndex);
-            for (final Entry<DetailCategory, AtomicInteger> conflict : this.collectIntersectedCategories(leadingSelection).entrySet()) {
-                if (conflict.getValue().get() > 0) {
+            for (final Entry<DetailCategory, CategoryConflictHandler> conflict : this.collectIntersectedCategories(leadingSelection).entrySet()) {
+                final int startsToMoveCount = conflict.getValue().getNumberOfStartedButNotEndedConflicts();
+                if (startsToMoveCount > 0) {
                     // more sections of this category are being opened than closed in the selected tokens
                     final TextToken firstEnclosedToken = parts.get(leadPartIndex + 1).get(0);
-                    this.moveCategorySectionStartToTheRight(firstEnclosedToken, conflict.getKey(), conflict.getValue().get());
-                } else if (leadPartIndex == 0) {
+                    this.moveCategorySectionStartToTheRight(firstEnclosedToken, conflict.getKey(), startsToMoveCount);
+                }
+                final int endsToMoveCount = conflict.getValue().getNumberOfEndedButNotStartedConflicts();
+                if (endsToMoveCount > 0 && leadPartIndex == 0) {
                     // less sections of this category are being opened than closed in the selected tokens (only apply for first selection part)
                     final TextToken lastTokenBeforeParts = leadingSelection.get(0).getPreviousToken();
-                    this.moveCategorySectionEndToTheLeft(lastTokenBeforeParts, conflict.getKey(), -1 * conflict.getValue().get());
+                    this.moveCategorySectionEndToTheLeft(lastTokenBeforeParts, conflict.getKey(), endsToMoveCount);
                 }
             }
             // resolve conflicts in last selected section
             final List<TextToken> trailingSelection = parts.get(leadPartIndex + 2);
-            for (final Entry<DetailCategory, AtomicInteger> conflict : this.collectIntersectedCategories(trailingSelection).entrySet()) {
-                if (conflict.getValue().get() < 0) {
-                    // less sections of this category are being opened than closed in the selected tokens: move section ends to the left
-                    final TextToken lastEnclosedToken = trailingSelection.get(0).getPreviousToken();
-                    this.moveCategorySectionEndToTheLeft(lastEnclosedToken, conflict.getKey(), -1 * conflict.getValue().get());
-                } else if (leadPartIndex + 1 == maxEnclosedPartIndex) {
+            for (final Entry<DetailCategory, CategoryConflictHandler> conflict : this.collectIntersectedCategories(trailingSelection).entrySet()) {
+                final int startsToMoveCount = conflict.getValue().getNumberOfStartedButNotEndedConflicts();
+                if (startsToMoveCount > 0 && leadPartIndex + 1 == maxEnclosedPartIndex) {
                     // more sections of this category are being opened than closed in the selected tokens (only apply for last selection part)
                     final TextToken firstTokenAfterParts = trailingSelection.get(trailingSelection.size() - 1).getFollowingToken();
-                    this.moveCategorySectionStartToTheRight(firstTokenAfterParts, conflict.getKey(), conflict.getValue().get());
+                    this.moveCategorySectionStartToTheRight(firstTokenAfterParts, conflict.getKey(), startsToMoveCount);
+                }
+                final int endsToMoveCount = conflict.getValue().getNumberOfEndedButNotStartedConflicts();
+                if (endsToMoveCount > 0) {
+                    // less sections of this category are being opened than closed in the selected tokens: move section ends to the left
+                    final TextToken lastEnclosedToken = trailingSelection.get(0).getPreviousToken();
+                    this.moveCategorySectionEndToTheLeft(lastEnclosedToken, conflict.getKey(), endsToMoveCount);
                 }
             }
         }
@@ -416,41 +414,35 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     private void checkValidityOfIntersectedCategoryAssignments(final List<TextToken> leadingSelection,
             final List<TextToken> enclosedUnselectedSection, final List<TextToken> trailingSelection) throws HmxException {
         // collect category assignments that need to be resolved from the leading and trailing selection
-        final Map<DetailCategory, AtomicInteger> leadingConflicts = this.collectIntersectedCategories(leadingSelection);
-        final Map<DetailCategory, AtomicInteger> trailingConflicts = this.collectIntersectedCategories(trailingSelection);
+        final Map<DetailCategory, CategoryConflictHandler> leadingConflicts = this.collectIntersectedCategories(leadingSelection);
+        final Map<DetailCategory, CategoryConflictHandler> trailingConflicts = this.collectIntersectedCategories(trailingSelection);
         // collect open category assignments from the enclosed unselected tokens
-        final Map<DetailCategory, AtomicInteger> enclosedConflicts = this.collectIntersectedCategories(enclosedUnselectedSection);
-        // also include category assignments, with neither start nor end in the enclosed section
-        DetailCategory enclosedOrphan = this.collectPossibleOrphanCategory(enclosedUnselectedSection);
-        for (final Entry<DetailCategory, AtomicInteger> singleConflict : enclosedConflicts.entrySet()) {
+        final Map<DetailCategory, CategoryConflictHandler> enclosedConflicts = this.collectIntersectedCategories(enclosedUnselectedSection);
+        for (final Entry<DetailCategory, CategoryConflictHandler> singleConflict : enclosedConflicts.entrySet()) {
             final DetailCategory conflictingDetail = singleConflict.getKey();
-            // eliminate false positive from orphan
-            final int orphanCount;
-            if (enclosedOrphan == conflictingDetail) {
-                orphanCount = 1;
-                // the orphan will be handled here, no need to treat it as a potential error later on
-                enclosedOrphan = null;
-            } else {
-                orphanCount = 0;
-            }
-            final int conflictDelta = singleConflict.getValue().get();
-            final int conflictCount = -(conflictDelta + orphanCount);
+            final int startsToMoveCount = singleConflict.getValue().getNumberOfStartedButNotEndedConflicts();
+            final int endsToMoveCount = singleConflict.getValue().getNumberOfEndedButNotStartedConflicts();
             // detail category is not starting but ending in the enclosed part
             final boolean requiredDetailStartNotMet =
-                    conflictDelta - orphanCount < 0
-                            && (!leadingConflicts.containsKey(conflictingDetail) || leadingConflicts.get(conflictingDetail).get() < conflictCount);
+                    endsToMoveCount > 0
+                            && (!leadingConflicts.containsKey(conflictingDetail) || endsToMoveCount < leadingConflicts.get(conflictingDetail)
+                                    .getNumberOfStartedButNotEndedConflicts());
             // detail category is starting but not ending in the enclosed part
             final boolean requiredDetailEndNotMet =
-                    conflictDelta + orphanCount > 0
-                            && (!trailingConflicts.containsKey(conflictingDetail) || trailingConflicts.get(conflictingDetail).get() > conflictCount);
+                    startsToMoveCount > 0
+                            && (!trailingConflicts.containsKey(conflictingDetail) || startsToMoveCount < trailingConflicts.get(conflictingDetail)
+                                    .getNumberOfEndedButNotStartedConflicts());
             if (requiredDetailStartNotMet || requiredDetailEndNotMet) {
                 // the intersected detail category cannot be resolved
                 throw new HmxException(AisMessage.ERROR_AIS_SELECTION_INVALID);
             }
         }
+        // also regard category assignments, with neither start nor end in the enclosed section
+        final DetailCategory enclosedOrphan = this.collectPossibleOrphanCategory(enclosedUnselectedSection);
         if (enclosedOrphan != null
                 && (!leadingConflicts.containsKey(enclosedOrphan) || !trailingConflicts.containsKey(enclosedOrphan)
-                        || leadingConflicts.get(enclosedOrphan).get() < 1 || trailingConflicts.get(enclosedOrphan).get() > -1)) {
+                        || leadingConflicts.get(enclosedOrphan).getNumberOfStartedButNotEndedConflicts() < 1 || trailingConflicts.get(
+                        enclosedOrphan).getNumberOfEndedButNotStartedConflicts() < 1)) {
             // the enclosed detail category could not be resolved
             throw new HmxException(AisMessage.ERROR_AIS_SELECTION_INVALID);
         }
@@ -463,30 +455,25 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *
      * @param tokenRange
      *            range of tokens to check for not-self-contained detail categories
-     * @return not-self-contained detail categories: {@code +1} for each opened detail without a close, and {@code -1} for each closed
-     *         detail without a start
+     * @return not-self-contained detail categories: {@code +1} for each opened detail without a close, and {@code -1} for each closed detail without
+     *         a start
      */
-    private Map<DetailCategory, AtomicInteger> collectIntersectedCategories(final List<TextToken> tokenRange) {
-        // only with Java 8 does every Map implement the putIfAbsent() method
-        final ConcurrentMap<DetailCategory, AtomicInteger> affectedSections = new ConcurrentHashMap<DetailCategory, AtomicInteger>();
+    private Map<DetailCategory, CategoryConflictHandler> collectIntersectedCategories(final List<TextToken> tokenRange) {
+        final Map<DetailCategory, CategoryConflictHandler> affectedSections = new HashMap<DetailCategory, CategoryConflictHandler>();
         for (final TextToken selectedToken : tokenRange) {
             // ignore null categories and single tokens that are start and stop in themselves
             if (selectedToken.getDetail() == null || selectedToken.isFirstTokenOfDetail() == selectedToken.isLastTokenOfDetail()) {
                 continue;
             }
-            affectedSections.putIfAbsent(selectedToken.getDetail(), new AtomicInteger(0));
-            if (selectedToken.isFirstTokenOfDetail()) {
-                // +1 for each opened detail
-                affectedSections.get(selectedToken.getDetail()).incrementAndGet();
-            } else {
-                // -1 for each closed detail
-                affectedSections.get(selectedToken.getDetail()).decrementAndGet();
+            if (!affectedSections.containsKey(selectedToken.getDetail())) {
+                affectedSections.put(selectedToken.getDetail(), new CategoryConflictHandler());
             }
+            affectedSections.get(selectedToken.getDetail()).addCategoryChange(selectedToken.isFirstTokenOfDetail());
         }
         // discard fully contained category assignments
-        final Iterator<AtomicInteger> resultCountIterator = affectedSections.values().iterator();
+        final Iterator<CategoryConflictHandler> resultCountIterator = affectedSections.values().iterator();
         while (resultCountIterator.hasNext()) {
-            if (resultCountIterator.next().get() == 0) {
+            if (!resultCountIterator.next().hasUnresolvedConflicts()) {
                 resultCountIterator.remove();
             }
         }
@@ -505,8 +492,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *             the token range contains a detail category that neither starts or ends there (and throwExceptionOnOrphanedToken was set to true)
      */
     private DetailCategory collectPossibleOrphanCategory(final List<TextToken> tokenRange) throws HmxException {
-        // only with Java 8 does every Map implement the putIfAbsent() method
-        final ConcurrentMap<DetailCategory, AtomicInteger> affectedSections = new ConcurrentHashMap<DetailCategory, AtomicInteger>();
+        final Map<DetailCategory, AtomicInteger> affectedSections = new HashMap<DetailCategory, AtomicInteger>();
         final Set<DetailCategory> possibleOrphans = new HashSet<DetailCategory>();
         for (final TextToken selectedToken : tokenRange) {
             if (selectedToken.getDetail() != null && !selectedToken.isFirstTokenOfDetail() && !selectedToken.isLastTokenOfDetail()
@@ -515,11 +501,13 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
             }
             // ignore null categories and single tokens that are start and stop in themselves
             if (selectedToken.getDetail() != null && selectedToken.isFirstTokenOfDetail() != selectedToken.isLastTokenOfDetail()) {
-                affectedSections.putIfAbsent(selectedToken.getDetail(), new AtomicInteger(0));
+                if (!affectedSections.containsKey(selectedToken.getDetail())) {
+                    affectedSections.put(selectedToken.getDetail(), new AtomicInteger(0));
+                }
                 if (selectedToken.isFirstTokenOfDetail()) {
                     // +1 for each opened detail
                     affectedSections.get(selectedToken.getDetail()).incrementAndGet();
-                } else {
+                } else if (selectedToken.isLastTokenOfDetail()) {
                     // -1 for each closed detail
                     affectedSections.get(selectedToken.getDetail()).decrementAndGet();
                     possibleOrphans.remove(selectedToken.getDetail());
@@ -618,8 +606,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     }
 
     /**
-     * Assign the {@code interviewsToAdd} to the given participant id, while ensuring that the {@code index} attribute of the added
-     * interviews is consistent with already assigned interviews.
+     * Assign the {@code interviewsToAdd} to the given participant id, while ensuring that the {@code index} attribute of the added interviews is
+     * consistent with already assigned interviews.
      *
      * @param previousInterviews
      *            the interviews already assigned to the given participant id
@@ -806,9 +794,6 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * @return message describing an occurred difference, or {@code null} if both interviews are equal
      */
     String validateEquality(final Interview oneInterview, final Interview otherInterview) {
-        if (oneInterview == otherInterview) {
-            return null;
-        }
         if (oneInterview.getIndex() != otherInterview.getIndex() || !oneInterview.getParticipantId().equals(otherInterview.getParticipantId())) {
             return new StringBuilder("Participant/Index does not match:    ").append(otherInterview.getParticipantId()).append(" (")
                     .append(otherInterview.getIndex()).append(')').toString();
@@ -887,6 +872,67 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         }
         if (token.isLastTokenOfDetail()) {
             builder.append('|');
+        }
+    }
+
+    /** Conflict handler class for collecting detail category sections that are being started but not ended and/or ended but not started. */
+    static class CategoryConflictHandler {
+
+        /** Registered unresolved detail category changes, i.e. started but not ended and/or ended but not started. */
+        final LinkedList<Boolean> categoryChanges = new LinkedList<Boolean>();
+
+        /**
+         * Add another start or end of a detail category to this conflict handler.
+         * 
+         * @param sectionStarted
+         *            whether the respective detail category section is starting
+         */
+        void addCategoryChange(final boolean sectionStarted) {
+            if (this.categoryChanges.isEmpty() || !this.categoryChanges.getLast().booleanValue() || sectionStarted) {
+                this.categoryChanges.add(sectionStarted);
+            } else {
+                // previous change was a section start, the current change ends that section again
+                this.categoryChanges.removeLast();
+            }
+        }
+
+        /**
+         * Check whether this handler instance contains unresolved conflicts.
+         * 
+         * @return if at least one section was started but not ended or ended but not started
+         */
+        boolean hasUnresolvedConflicts() {
+            return !this.categoryChanges.isEmpty();
+        }
+
+        /**
+         * Return the number of conflicting sections that are ending but have not been started before.
+         * 
+         * @return number of conflicting section ends
+         */
+        int getNumberOfEndedButNotStartedConflicts() {
+            int result = 0;
+            for (final Boolean singleChange : this.categoryChanges) {
+                if (!singleChange) {
+                    result++;
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Return the number of conflicting sections that are starting but not ending afterwards.
+         * 
+         * @return number of conflicting section starts
+         */
+        int getNumberOfStartedButNotEndedConflicts() {
+            int result = 0;
+            for (final Boolean singleChange : this.categoryChanges) {
+                if (singleChange) {
+                    result++;
+                }
+            }
+            return result;
         }
     }
 }

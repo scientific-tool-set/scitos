@@ -78,7 +78,7 @@ public class ModelHandlerTest {
         this.project = new AisProject("test", ModelHandlerTest.categoryModel.provide());
         this.modelHandler = new ModelHandlerImpl(this.project);
         this.interview = this.modelHandler.createInterview("Subj123");
-        this.modelHandler.setInterviewText(this.interview, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20\n \t  ");
+        this.modelHandler.setInterviewText(this.interview, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20\n  ");
         this.paragraphStartToken = this.interview.getText().get(0);
     }
 
@@ -704,29 +704,85 @@ public class ModelHandlerTest {
         final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final DetailCategory detailToBeShortened = categories.get(0);
         final DetailCategory assigned = categories.get(1);
-        final TextToken selectionStart = this.paragraphStartToken.getFollowingToken().getFollowingToken();
-        final TextToken selectionEnd = selectionStart.getFollowingToken().getFollowingToken();
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionEnd, selectionEnd.getFollowingToken()), detailToBeShortened);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(selectionStart, selectionEnd), assigned);
-        this.assertTokenState(this.paragraphStartToken, true, null, false);
-        TextToken currentToken = this.paragraphStartToken.getFollowingToken();
-        this.assertTokenState(currentToken, false, null, true);
-        currentToken = currentToken.getFollowingToken();
-        this.assertTokenState(currentToken, true, assigned, false);
-        currentToken = currentToken.getFollowingToken();
-        this.assertTokenState(currentToken, true, null, true);
-        currentToken = currentToken.getFollowingToken();
-        this.assertTokenState(currentToken, false, assigned, true);
-        currentToken = currentToken.getFollowingToken();
-        this.assertTokenState(currentToken, true, detailToBeShortened, true);
-        currentToken = currentToken.getFollowingToken();
-        this.assertTokenState(currentToken, true, null, false);
-        currentToken = currentToken.getFollowingToken();
-        do {
-            this.assertTokenState(currentToken, false, null, false);
-            currentToken = currentToken.getFollowingToken();
-        } while (currentToken.getFollowingToken() != null);
-        this.assertTokenState(currentToken, false, null, true);
+        final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(4, 6), detailToBeShortened);
+        
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(2), tokens.get(4)), assigned);
+        
+        this.assertTokenState(tokens.get(0), true, null, false);
+        this.assertTokenState(tokens.get(1), false, null, true);
+        this.assertTokenState(tokens.get(2), true, assigned, false);
+        this.assertTokenState(tokens.get(3), true, null, true);
+        this.assertTokenState(tokens.get(4), false, assigned, true);
+        this.assertTokenState(tokens.get(5), true, detailToBeShortened, true);
+        this.assertTokenState(tokens.get(6), true, null, false);
+        for (final TextToken singleToken : tokens.subList(7, 19)) {
+            this.assertTokenState(singleToken, false, null, false);
+        }
+        this.assertTokenState(tokens.get(19), false, null, true);
+    }
+
+    /**
+     * Test: assign category:<br/>
+     * origin: --aaa---------------<br/>
+     * result: -XaaX---------------
+     *
+     * @throws HmxException
+     *             internal error when assigning category
+     */
+    @Test
+    public void testAssignTwoPartMid_9() throws HmxException {
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
+        final DetailCategory detailToBeShortened = categories.get(0);
+        final DetailCategory assigned = categories.get(1);
+        final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(2, 5), detailToBeShortened);
+        
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(1), tokens.get(4)), assigned);
+        
+        this.assertTokenState(tokens.get(0), true, null, true);
+        this.assertTokenState(tokens.get(1), true, assigned, false);
+        this.assertTokenState(tokens.get(2), true, detailToBeShortened, false);
+        this.assertTokenState(tokens.get(3), false, detailToBeShortened, true);
+        this.assertTokenState(tokens.get(4), false, assigned, true);
+        this.assertTokenState(tokens.get(5), true, null, false);
+        for (final TextToken singleToken : tokens.subList(6, 19)) {
+            this.assertTokenState(singleToken, false, null, false);
+        }
+        this.assertTokenState(tokens.get(19), false, null, true);
+    }
+
+    /**
+     * Test: assign category:<br/>
+     * origin: -aaaabb-------------<br/>
+     * result: -XaaXXb-------------
+     *
+     * @throws HmxException
+     *             internal error when assigning category
+     */
+    @Test
+    public void testAssignTwoPartMid_10() throws HmxException {
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
+        final DetailCategory detailToBeShortened = categories.get(0);
+        final DetailCategory assigned = categories.get(1);
+        final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 5), detailToBeShortened);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(5, 7), detailToBeShortened);
+        
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(1), tokens.get(4), tokens.get(5)), assigned);
+        
+        this.assertTokenState(tokens.get(0), true, null, true);
+        this.assertTokenState(tokens.get(1), true, assigned, false);
+        this.assertTokenState(tokens.get(2), true, detailToBeShortened, false);
+        this.assertTokenState(tokens.get(3), false, detailToBeShortened, true);
+        this.assertTokenState(tokens.get(4), false, assigned, false);
+        this.assertTokenState(tokens.get(5), false, assigned, true);
+        this.assertTokenState(tokens.get(6), true, detailToBeShortened, true);
+        this.assertTokenState(tokens.get(7), true, null, false);
+        for (final TextToken singleToken : tokens.subList(8, 19)) {
+            this.assertTokenState(singleToken, false, null, false);
+        }
+        this.assertTokenState(tokens.get(19), false, null, true);
     }
 
     /**
@@ -738,7 +794,7 @@ public class ModelHandlerTest {
      *             expected error when assigning category
      */
     @Test(expected = HmxException.class)
-    public void testAssignTwoPartMid_9() throws HmxException {
+    public void testAssignTwoPartMid_11() throws HmxException {
         final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 6), categories.get(0));
@@ -800,6 +856,97 @@ public class ModelHandlerTest {
     }
 
     /**
+     * Test: remove assigned categories via interrupted selection:<br/>
+     * origin: -aabcc--------------<br/>
+     * result: -a-b-c--------------
+     *
+     * @throws HmxException
+     *             internal error when assigning/unassigning category
+     */
+    @Test
+    public void testUnassignInterrupted() throws HmxException {
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
+        // prepare start setup
+        final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
+        final DetailCategory detailA = categories.get(0);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 3), detailA);
+        final DetailCategory detailB = categories.get(1);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(3, 4), detailB);
+        final DetailCategory detailC = categories.get(2);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(4, 6), detailC);
+        
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(2), tokens.get(4)), null);
+        this.assertTokenState(tokens.get(0), true, null, true);
+        this.assertTokenState(tokens.get(1), true, detailA, true);
+        this.assertTokenState(tokens.get(2), true, null, true);
+        this.assertTokenState(tokens.get(3), true, detailB, true);
+        this.assertTokenState(tokens.get(4), true, null, true);
+        this.assertTokenState(tokens.get(5), true, detailC, true);
+        this.assertTokenState(tokens.get(6), true, null, false);
+        for (final TextToken singleToken : tokens.subList(7, 19)) {
+            this.assertTokenState(singleToken, false, null, false);
+        }
+        this.assertTokenState(tokens.get(19), false, null, true);
+    }
+
+    /**
+     * Test: assign category:<br/>
+     * origin: -aaabcddcb----------<br/>
+     * result: -aaXXXXXXb----------
+     *
+     * @throws HmxException
+     *             internal error when assigning category
+     */
+    @Test
+    public void testAssignIntersecting() throws HmxException {
+        final List<DetailCategory> categories = ModelHandlerTest.categoryModel.provideSelectables();
+        // prepare start setup
+        final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
+        final DetailCategory detailA = categories.get(0);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 4), detailA);
+        final DetailCategory detailB = categories.get(1);
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(4), tokens.get(9)), detailB);
+        final DetailCategory detailC = detailA;
+        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(5), tokens.get(8)), detailC);
+        final DetailCategory detailD = detailB;
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(6, 8), detailD);
+        // confirm start setup
+        this.assertTokenState(tokens.get(0), true, null, true);
+        this.assertTokenState(tokens.get(1), true, detailA, false);
+        this.assertTokenState(tokens.get(2), false, detailA, false);
+        this.assertTokenState(tokens.get(3), false, detailA, true);
+        this.assertTokenState(tokens.get(4), true, detailB, false);
+        this.assertTokenState(tokens.get(5), true, detailC, false);
+        this.assertTokenState(tokens.get(6), true, detailD, false);
+        this.assertTokenState(tokens.get(7), false, detailD, true);
+        this.assertTokenState(tokens.get(8), false, detailC, true);
+        this.assertTokenState(tokens.get(9), false, detailB, true);
+        this.assertTokenState(tokens.get(10), true, null, false);
+        for (final TextToken singleToken : tokens.subList(11, 19)) {
+            this.assertTokenState(singleToken, false, null, false);
+        }
+        this.assertTokenState(tokens.get(19), false, null, true);
+        // assign intersecting detail category
+        final DetailCategory assigned = categories.get(4);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(3, 9), assigned);
+        // confirm outcome
+        this.assertTokenState(tokens.get(0), true, null, true);
+        this.assertTokenState(tokens.get(1), true, detailA, false);
+        this.assertTokenState(tokens.get(2), false, detailA, true);
+        this.assertTokenState(tokens.get(3), true, assigned, false);
+        for (final TextToken singleToken : tokens.subList(4, 8)) {
+            this.assertTokenState(singleToken, false, assigned, false);
+        }
+        this.assertTokenState(tokens.get(8), false, assigned, true);
+        this.assertTokenState(tokens.get(9), true, detailB, true);
+        this.assertTokenState(tokens.get(10), true, null, false);
+        for (final TextToken singleToken : tokens.subList(11, 19)) {
+            this.assertTokenState(singleToken, false, null, false);
+        }
+        this.assertTokenState(tokens.get(19), false, null, true);
+    }
+
+    /**
      * Test: assign category:<br/>
      * origin: aaabb-cdddeefggg----<br/>
      * result: aXXXbXcdXXXefXgg----
@@ -813,19 +960,19 @@ public class ModelHandlerTest {
         // prepare start setup
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         final DetailCategory detailA = categories.get(0);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(0), tokens.get(1), tokens.get(2)), detailA);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(0, 3), detailA);
         final DetailCategory detailB = categories.get(1);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(3), tokens.get(4)), detailB);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(3, 5), detailB);
         final DetailCategory detailC = categories.get(2);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(6)), detailC);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(6, 7), detailC);
         final DetailCategory detailD = categories.get(3);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(7), tokens.get(8), tokens.get(9)), detailD);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(7, 10), detailD);
         final DetailCategory detailE = categories.get(4);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(10), tokens.get(11)), detailE);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(10, 12), detailE);
         final DetailCategory detailF = categories.get(5);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(12)), detailF);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(12, 13), detailF);
         final DetailCategory detailG = categories.get(6);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(13), tokens.get(14), tokens.get(15)), detailG);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(13, 16), detailG);
         // confirm start setup
         this.assertTokenState(tokens.get(0), true, detailA, false);
         this.assertTokenState(tokens.get(1), false, detailA, false);
@@ -890,19 +1037,19 @@ public class ModelHandlerTest {
         // prepare start setup
         final List<TextToken> tokens = this.getFlatTokenList(this.paragraphStartToken);
         final DetailCategory detailA = categories.get(0);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(1), tokens.get(2)), detailA);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(1, 3), detailA);
         final DetailCategory detailB = categories.get(1);
         this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(5), tokens.get(7)), detailB);
         final DetailCategory detailC = categories.get(2);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(6)), detailC);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(6, 7), detailC);
         final DetailCategory detailD = categories.get(3);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(9), tokens.get(10)), detailD);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(9, 11), detailD);
         final DetailCategory detailE = categories.get(4);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(11), tokens.get(12)), detailE);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(11, 13), detailE);
         final DetailCategory detailF = categories.get(5);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(16)), detailF);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(16, 17), detailF);
         final DetailCategory detailG = categories.get(6);
-        this.modelHandler.assignDetailCategory(this.interview, Arrays.asList(tokens.get(17)), detailG);
+        this.modelHandler.assignDetailCategory(this.interview, tokens.subList(17, 18), detailG);
         // confirm start setup
         this.assertTokenState(tokens.get(0), true, null, true);
         this.assertTokenState(tokens.get(1), true, detailA, false);

@@ -32,7 +32,7 @@ import javax.swing.tree.TreePath;
 
 import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
-import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
+import org.hmx.scitos.hmx.core.option.ILanguageOptionHandler;
 import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
@@ -60,9 +60,9 @@ final class LanguageTreeModel extends AbstractTreeTableModel {
      * Main constructor.
      * 
      * @param options
-     *            the global preferences handler managing the represented language models
+     *            the global handler managing the represented language models
      */
-    LanguageTreeModel(final HmxLanguageOption options) {
+    LanguageTreeModel(final ILanguageOptionHandler options) {
         super(new Object());
         // system-defined language models cannot be changed, i.e. no need to clone them
         final List<LanguageModel> systemModels = options.getSystemModels();
@@ -109,14 +109,17 @@ final class LanguageTreeModel extends AbstractTreeTableModel {
 
     @Override
     public boolean isCellEditable(final Object node, final int columnIndex) {
-        switch (columnIndex) {
-        case 2:
-            return true;
-        case 3:
-            return this.getRowIndexOfNode(node) >= this.systemModelCount;
-        default:
-            return false;
+        if (this.languageModels.containsKey(node)) {
+            switch (columnIndex) {
+            case 2:
+                return true;
+            case 3:
+                return this.getRowIndexOfNode(node) >= this.systemModelCount;
+            default:
+                return false;
+            }
         }
+        return false;
     }
 
     @Override

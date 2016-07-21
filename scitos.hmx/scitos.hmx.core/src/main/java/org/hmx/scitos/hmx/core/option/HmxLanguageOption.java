@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
  * Application level preferences handler for the HmX module's {@link LanguageModel}s.
  */
 @Singleton
-public final class HmxLanguageOption implements ILanguageModelProvider {
+public final class HmxLanguageOption implements ILanguageModelProvider, ILanguageOptionHandler {
 
     /** The root XML tag in the persisted options file. */
     private static final String TAG_ROOT = "Options";
@@ -107,20 +107,12 @@ public final class HmxLanguageOption implements ILanguageModelProvider {
         }
     }
 
-    /**
-     * Getter for the system defined {@link LanguageModel}s.
-     *
-     * @return the unmodifiable system default models
-     */
+    @Override
     public List<LanguageModel> getSystemModels() {
         return Collections.unmodifiableList(this.systemModels);
     }
 
-    /**
-     * Getter for the user defined {@link LanguageModel}s.
-     *
-     * @return the modifiable user models
-     */
+    @Override
     public List<LanguageModel> getUserModels() {
         return Collections.unmodifiableList(this.userModels);
     }

@@ -12,6 +12,15 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 			</plugin>
 		</plugins>
@@ -20,6 +29,12 @@
 		<dependency>
 			<groupId>org.hmx</groupId>
 			<artifactId>scitos.core</artifactId>
+		</dependency>
+		<!-- test-lib: AssertJ Swing for functional GUI testing -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-swing-junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<!-- lib: including TreeTable view component -->
 		<dependency>

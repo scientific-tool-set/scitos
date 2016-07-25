@@ -19,11 +19,14 @@
 
 package org.hmx.scitos.view.swing;
 
+import java.awt.GraphicsEnvironment;
 import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 
+import org.assertj.swing.core.Robot;
+import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.edt.GuiQuery;
 import org.assertj.swing.fixture.FrameFixture;
@@ -31,16 +34,21 @@ import org.assertj.swing.fixture.JPopupMenuFixture;
 import org.assertj.swing.fixture.JTabbedPaneFixture;
 import org.assertj.swing.fixture.JTreeFixture;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.assertj.swing.testing.AssertJSwingTestCaseTemplate;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.swing.util.ToolTipComponentMatcher;
+import org.junit.After;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * AssertJ Swing test that initializes a {@link ScitosClient} and stores the underlying [@code JFrame} in a member variable. The clean-up afterwards
  * is also taken care of.
  */
-public abstract class AbstractScitosUiTest extends AssertJSwingJUnitTestCase {
+public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate {
 
     /** The underlying swing JFrame to test. */
     protected FrameFixture frame;
@@ -49,8 +57,24 @@ public abstract class AbstractScitosUiTest extends AssertJSwingJUnitTestCase {
     /** The main view's tabbed pane component, displaying the actual module views. */
     protected JTabbedPaneFixture tabbedPane;
 
-    @Override
-    protected void onSetUp() {
+    /**
+     * Installs a {@link FailOnThreadViolationRepaintManager} to catch violations of Swing threading rules.
+     */
+    @BeforeClass
+    public static final void setUpOnce() {
+        Assume.assumeFalse("Automated UI Test cannot be executed in headless environment", GraphicsEnvironment.isHeadless());
+        FailOnThreadViolationRepaintManager.install();
+    }
+
+    /**
+     * Sets up this test's fixture, starting from creation of a new <code>{@link Robot}</code>.
+     * 
+     * @see #setUpRobot()
+     * @see #onSetUp()
+     */
+    @Before
+    public final void setUp() {
+        setUpRobot();
         // enforce the English Locale to make this test independent of the executing system's Locale
         Option.TRANSLATION.setValue(Locale.ENGLISH.toString());
         // initialize the graphical user interface
@@ -65,6 +89,15 @@ public abstract class AbstractScitosUiTest extends AssertJSwingJUnitTestCase {
         this.frame.show();
         this.projectTree = this.frame.tree("Project Tree");
         this.tabbedPane = this.frame.tabbedPane("Project View Tab Stack");
+        onSetUp();
+    }
+
+    /**
+     * Subclasses that need to set up their own test fixture in this method. This method is called as <strong>last action</strong> during
+     * {@link #setUp()}.
+     */
+    protected void onSetUp() {
+        // default: everything is already set up
     }
 
     /**
@@ -85,12 +118,31 @@ public abstract class AbstractScitosUiTest extends AssertJSwingJUnitTestCase {
         }
     }
 
-    @Override
+    /**
+     * Cleans up any resources used in this test. After calling <code>{@link #onTearDown()}</code>, this method cleans up resources used by this
+     * test's <code>{@link Robot}</code>.
+     * 
+     * @see #cleanUp()
+     * @see #onTearDown()
+     */
+    @After
+    public final void tearDown() {
+        try {
+            onTearDown();
+            this.frame = null;
+            this.projectTree = null;
+            this.tabbedPane = null;
+            Option.TRANSLATION.setValue(null);
+        } finally {
+            cleanUp();
+        }
+    }
+
+    /**
+     * Subclasses that need to clean up resources can do so in this method. This method is called as <strong>first action</strong> during
+     * {@link #tearDown()}.
+     */
     protected void onTearDown() {
-        super.onTearDown();
-        this.frame = null;
-        this.projectTree = null;
-        this.tabbedPane = null;
-        Option.TRANSLATION.setValue(null);
+        // default: nothing more to tear down
     }
 }

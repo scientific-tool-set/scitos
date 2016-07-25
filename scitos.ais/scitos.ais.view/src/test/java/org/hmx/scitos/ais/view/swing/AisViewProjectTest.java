@@ -38,7 +38,6 @@ import org.assertj.swing.core.matcher.JLabelMatcher;
 import org.assertj.swing.fixture.JLabelFixture;
 import org.assertj.swing.fixture.JOptionPaneFixture;
 import org.assertj.swing.fixture.JPanelFixture;
-import org.assertj.swing.fixture.JTableFixture;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.view.swing.components.TextTokenComponent;
 import org.hmx.scitos.core.i18n.Message;
@@ -123,14 +122,9 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
         this.assertTextTokenStates_BeforeLastRemoval(textOneTokens);
         // #9 navigate to project overview via its tab and confirm displayed results
         this.tabbedPane.selectTab(AisMessage.PROJECT_UNSAVED.get());
-        final String[] participantOneRow = new String[] { participantOne, "6", "2", "1", "1", "0", "0", "0", "1", "0", "0", "1", "0", "0" };
-        final String[] participantTwoRow = new String[] { participantTwo, "5", "2", "1", "1", "0", "0", "0", "1", "0", "0", "1", "0", "0" };
-        final JTableFixture summaryTable = this.frame.table(new OrdinalComponentMatcher<ScaledTable>(ScaledTable.class, 0, true));
-        if (participantOne.compareTo(participantTwo) >= 0) {
-            summaryTable.requireContents(new String[][] { participantOneRow, participantTwoRow });
-        } else {
-            summaryTable.requireContents(new String[][] { participantTwoRow, participantOneRow });
-        }
+        final String[] rowOne = new String[] { participantOne, "6", "2", "1", "1", "0", "0", "0", "1", "0", "0", "1", "0", "0" };
+        final String[] rowTwo = new String[] { participantTwo, "5", "2", "1", "1", "0", "0", "0", "1", "0", "0", "1", "0", "0" };
+        this.frame.table(new OrdinalComponentMatcher<ScaledTable>(ScaledTable.class, 0, true)).requireContents(new String[][] { rowOne, rowTwo });
     }
 
     /**

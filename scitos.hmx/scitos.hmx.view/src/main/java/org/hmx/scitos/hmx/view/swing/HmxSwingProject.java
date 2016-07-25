@@ -97,6 +97,9 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
 
     @Override
     public String getLabel(final Object element) {
+        if (this.savePath == null) {
+            return HmxMessage.PROJECT_UNSAVED.get();
+        }
         final String fileName = this.savePath.getName();
         if (fileName.contains(".")) {
             return fileName.substring(0, fileName.lastIndexOf('.'));

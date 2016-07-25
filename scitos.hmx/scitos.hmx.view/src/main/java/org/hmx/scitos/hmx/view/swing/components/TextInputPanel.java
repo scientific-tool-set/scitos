@@ -93,9 +93,9 @@ public final class TextInputPanel extends JPanel {
     /**
      * The selection component for the {@link #languageModels}.
      */
-    final JComboBox languageBox = new JComboBox();
+    private JComboBox languageBox;
     /** The selection component for the origin text's font type. */
-    private final JComboBox fontTypeBox = new JComboBox();
+    private JComboBox fontTypeBox;
     /** Available font types. */
     private List<String> fontFamilyNames;
     /** The selection component for setting the origin text's font size. */
@@ -350,10 +350,10 @@ public final class TextInputPanel extends JPanel {
         this.settingArea.add(this.createLanguageComboBox(), constraints);
         // initializes the combo box for choosing the origin text font type
         constraints.gridy = 1;
-        this.settingArea.add(this.createFontTypeComboBox(newProject), constraints);
+        this.settingArea.add(this.createFontTypeComboBox(), constraints);
         // initializes the slider for choosing the origin text font size
         constraints.gridy++;
-        this.settingArea.add(this.createFontSizeSlider(newProject), constraints);
+        this.settingArea.add(this.createFontSizeSlider(), constraints);
         // initializes the short hint text
         String hint = HmxMessage.TEXTINPUT_HINT.get();
         if (newProject) {
@@ -391,14 +391,14 @@ public final class TextInputPanel extends JPanel {
 
         // set default language
         final String defaultLanguage;
-        if (!newProject) {
-            defaultLanguage = this.parentView.getModel().getLanguage();
-            // } else TODO if (user setting for default language available) {
-        } else {
+        if (newProject) {
             defaultLanguage = (String) this.languageBox.getItemAt(0);
+        } else {
+            defaultLanguage = this.parentView.getModel().getLanguage();
         }
         // listener on languageBox also presets the font type and size
         this.languageBox.setSelectedItem(defaultLanguage);
+        this.setFontSelection(newProject);
         this.setOriginTextPaneOrientation();
     }
 
@@ -422,10 +422,8 @@ public final class TextInputPanel extends JPanel {
     private JPanel createLanguageComboBox() {
         final JPanel languagePanel = new JPanel();
         languagePanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.TEXTINPUT_LANGUAGE.get()));
+        this.languageBox = new JComboBox(this.languageModels.keySet().toArray(new String[this.languageModels.size()]));
         this.languageBox.setEditable(false);
-        for (final String singleModelName : this.languageModels.keySet()) {
-            this.languageBox.addItem(singleModelName);
-        }
         if (this.languageModels.size() < 2) {
             this.languageBox.setEnabled(false);
         }
@@ -434,7 +432,7 @@ public final class TextInputPanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 TextInputPanel.this.setOriginTextPaneOrientation();
-                TextInputPanel.this.setFontSelection();
+                TextInputPanel.this.setFontSelection(false);
             }
         });
         languagePanel.add(this.languageBox);
@@ -463,13 +461,12 @@ public final class TextInputPanel extends JPanel {
     /**
      * Create a {@link JPanel} containing the {@link JComboBox} for choosing the {@link Font} type of the origin text.
      *
-     * @param newProject
-     *            if this is the initial text input, else it is just adding more text to an existing project
      * @return created {@link JPanel}
      */
-    private JPanel createFontTypeComboBox(final boolean newProject) {
-        final JPanel fontTypePanel = new JPanel();
-        fontTypePanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.SETTING_FONT_TYPE.get()));
+    private JPanel createFontTypeComboBox() {
+        this.fontFamilyNames = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+        Collections.sort(this.fontFamilyNames);
+        this.fontTypeBox = new JComboBox(this.fontFamilyNames.toArray(new String[this.fontFamilyNames.size()]));
         this.fontTypeBox.setEditable(false);
         this.fontTypeBox.addActionListener(new ActionListener() {
 
@@ -478,19 +475,19 @@ public final class TextInputPanel extends JPanel {
                 TextInputPanel.this.setFontTypeAndStyle();
             }
         });
-        this.fontFamilyNames = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-        Collections.sort(this.fontFamilyNames);
-        for (final String singleFontName : this.fontFamilyNames) {
-            this.fontTypeBox.addItem(singleFontName);
-        }
+        final JPanel fontTypePanel = new JPanel();
+        fontTypePanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.SETTING_FONT_TYPE.get()));
         fontTypePanel.add(this.fontTypeBox);
         return fontTypePanel;
     }
 
     /**
      * Set the font type and size selection based on the currently chosen {@link LanguageModel}.
+     * 
+     * @param applyRecommendedFont
+     *            whether the model's current font setting should be ignored and replaced by a recommended one (if present)
      */
-    void setFontSelection() {
+    void setFontSelection(final boolean applyRecommendedFont) {
         final Object selectedEntry = this.languageBox.getSelectedItem();
         if (selectedEntry == null) {
             return;
@@ -499,20 +496,13 @@ public final class TextInputPanel extends JPanel {
         if (selectedModel == null) {
             return;
         }
-        final Font defaultFont;
-        if (this.parentView.getModel() != null) {
-            defaultFont = this.parentView.getModel().getFont();
+        final Font currentFont = this.parentView.getModel().getFont();
+        int fontIndex;
+        if (applyRecommendedFont || currentFont == null) {
+            fontIndex = -1;
         } else {
-            defaultFont = null;
+            fontIndex = this.fontFamilyNames.indexOf(currentFont.getFamily());
         }
-        String fontName;
-        if (defaultFont != null) {
-            fontName = defaultFont.getFamily();
-            // } else TODO if (selectedModel != null && user setting for the currently selected language available) {
-        } else {
-            fontName = null;
-        }
-        int fontIndex = this.fontFamilyNames.indexOf(fontName);
         if (fontIndex == -1) {
             for (final String singleFont : selectedModel.getRecommendedFonts()) {
                 if (this.fontFamilyNames.contains(singleFont)) {
@@ -525,23 +515,15 @@ public final class TextInputPanel extends JPanel {
             }
         }
         this.fontTypeBox.setSelectedIndex(fontIndex);
-        final int fontSize;
-        if (defaultFont == null) {
-            fontSize = 14;
-        } else {
-            fontSize = defaultFont.getSize();
-        }
-        this.fontSizeSlider.setValue(fontSize);
+        this.fontSizeSlider.setValue(currentFont == null ? 14 : currentFont.getSize());
     }
 
     /**
      * Create a {@link JPanel} containing the {@link JSlider} for adjusting the {@link Font} size of the origin text.
      *
-     * @param newProject
-     *            if this is the initial text input, else it is just adding more text to an existing project
      * @return created {@link JPanel}
      */
-    private JPanel createFontSizeSlider(final boolean newProject) {
+    private JPanel createFontSizeSlider() {
         final JPanel fontSizePanel = new JPanel(new GridBagLayout());
         final JLabel fontSizeDisplay = new JLabel("  ", SwingConstants.TRAILING);
         fontSizeDisplay.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 5));

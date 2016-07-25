@@ -25,7 +25,7 @@ import org.hmx.scitos.core.i18n.Translator;
 /** Enum to avoid hard coded language file keys in the acting classes. */
 public enum HmxMessage implements ILocalizableMessage {
 
-    PROJECT_NEW("Hmx.Project.New"),
+    PROJECT_UNSAVED("Hmx.Project.Unsaved"),
     /** menubar entry: File -&gt; Export to -&gt; SVG. */
     EXPORT_TYPE_SVG("Export.SVG"),
     EXPORT_CONTENT("Export.Contents"),

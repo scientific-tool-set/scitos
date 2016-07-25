@@ -46,7 +46,19 @@ public final class Translator<M extends ILocalizableMessage> {
      *            message type (to deduce the resource bundle's base name from)
      */
     public Translator(final Class<M> messageType) {
-        this.bundle = ResourceBundle.getBundle(messageType.getName(), Option.TRANSLATION.getValueAsLocale(), new XmlResourceBundleControl());
+        this(messageType, Option.TRANSLATION.getValueAsLocale());
+    }
+
+    /**
+     * Constructor for a specific {@code Locale}.
+     *
+     * @param messageType
+     *            message type (to deduce the resource bundle's base name from)
+     * @param locale
+     *            the locale to retrieve the translated messages for
+     */
+    public Translator(final Class<M> messageType, final Locale locale) {
+        this.bundle = ResourceBundle.getBundle(messageType.getName(), locale, new XmlResourceBundleControl());
     }
 
     /**

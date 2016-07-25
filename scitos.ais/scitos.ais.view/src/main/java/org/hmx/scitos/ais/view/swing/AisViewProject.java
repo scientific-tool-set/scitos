@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import javax.swing.SwingUtilities;
 
 import org.hmx.scitos.ais.core.AisModelHandler;
+import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
 import org.hmx.scitos.core.ExportOption;
@@ -300,9 +301,14 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
      */
     public void setSavePath(final File savePath) {
         this.savePath = savePath;
-        String modelLabel = savePath.getName();
-        if (modelLabel.contains(".")) {
-            modelLabel = modelLabel.substring(0, modelLabel.lastIndexOf('.'));
+        String modelLabel;
+        if (savePath == null) {
+            modelLabel = AisMessage.PROJECT_UNSAVED.get();
+        } else {
+            modelLabel = savePath.getName();
+            if (modelLabel.contains(".")) {
+                modelLabel = modelLabel.substring(0, modelLabel.lastIndexOf('.'));
+            }
         }
         this.getModelObject().setLabel(modelLabel);
     }

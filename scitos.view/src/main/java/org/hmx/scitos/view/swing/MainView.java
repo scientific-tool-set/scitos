@@ -156,6 +156,7 @@ public class MainView extends JPanel {
      *            actual tree component to initialize
      */
     private void initProjectTree(final JTree tree) {
+        tree.setName("Project Tree");
         tree.setBorder(null);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
@@ -200,6 +201,7 @@ public class MainView extends JPanel {
      *            if a generic tab should be created in order to view an empty tab folder on startup
      */
     private void initTabStack(final JTabbedPane tabPane, final boolean createWelcomeTab) {
+        tabPane.setName("Project View Tab Stack");
         tabPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
         if (createWelcomeTab) {
             // display default start view
@@ -396,14 +398,16 @@ public class MainView extends JPanel {
      */
     void selectNodeForCurrentTab() {
         final AbstractProjectView<?, ?> currentTab = this.getActiveTab();
-        if (currentTab != null && currentTab.getModel() instanceof IViewProject<?>) {
-            this.selectProjectTreeNode((IViewProject<?>) currentTab.getModel());
-        } else if (currentTab != null && currentTab.getModel() instanceof IModel<?>) {
+        if (currentTab == null) {
+            this.selectProjectTreeNode(null);
+        } else if (currentTab.getProject().getModelObject() == currentTab.getModel()) {
+            this.selectProjectTreeNode(currentTab.getProject());
+        } else if (currentTab.getModel() instanceof IModel<?>) {
             this.selectModelTreeNode((IModel<?>) currentTab.getModel());
-        } else if (currentTab != null && currentTab.getModel() instanceof String) {
+        } else if (currentTab.getModel() instanceof String) {
             this.selectModelGroupTreeNode(currentTab.getProject(), (String) currentTab.getModel());
         } else {
-            this.selectProjectTreeNode(null);
+            throw new IllegalArgumentException();
         }
     }
 
@@ -666,9 +670,8 @@ public class MainView extends JPanel {
         constraints.weightx = 1;
         constraints.weighty = 0;
         for (final Entry<FileType, ActionListener> singleFileType : this.client.createNewFileActions().entrySet()) {
-            final JButton createFileButton =
-                    new JButton(Message.MENUBAR_FILE_NEW.get() + " : " + singleFileType.getKey().getLocalizableName().get(),
-                            ScitosIcon.NEW_FILE.create());
+            final String createFileText = Message.MENUBAR_FILE_NEW.get() + " : " + singleFileType.getKey().getLocalizableName().get();
+            final JButton createFileButton = new JButton(createFileText, ScitosIcon.NEW_FILE.create());
             createFileButton.addActionListener(singleFileType.getValue());
             constraints.gridy++;
             welcomeTab.add(createFileButton, constraints);
@@ -697,10 +700,12 @@ public class MainView extends JPanel {
      *            project to add
      */
     void addProject(final IViewProject<?> project) {
-        for (final IViewProject<?> singleProject : this.openProjects) {
-            if (ComparisonUtil.isNullAwareEqual(singleProject.getSavePath(), project.getSavePath())) {
-                MessageHandler.showMessage(Message.MENUBAR_FILE_OPEN_ALREADY.get(), "", MessageHandler.MessageType.WARN);
-                return;
+        if (project.getSavePath() != null) {
+            for (final IViewProject<?> singleProject : this.openProjects) {
+                if (project.getSavePath().equals(singleProject.getSavePath())) {
+                    MessageHandler.showMessage(Message.MENUBAR_FILE_OPEN_ALREADY.get(), "", MessageHandler.MessageType.WARN);
+                    return;
+                }
             }
         }
         this.openProjects.add(project);
@@ -966,12 +971,12 @@ public class MainView extends JPanel {
         /** Main constructor, initializes look and feel coloring associated with text panes (instead of trees). */
         ScitosTreeNodeRenderer() {
             final Color selectionBackground = UIManager.getColor("TextPane.selectionBackground");
-            this.setBackgroundSelectionColor(selectionBackground == null ? Color.BLUE : new Color(selectionBackground.getRGB()));
             final Color selectionForeground = UIManager.getColor("TextPane.selectionForeground");
-            this.setTextSelectionColor(selectionForeground == null ? Color.WHITE : new Color(selectionForeground.getRGB()));
             final Color background = UIManager.getColor("TextPane.background");
-            this.setBackgroundNonSelectionColor(background == null ? Color.WHITE : new Color(background.getRGB()));
             final Color foreground = UIManager.getColor("TextPane.foreground");
+            this.setBackgroundSelectionColor(selectionBackground == null ? Color.BLUE : new Color(selectionBackground.getRGB()));
+            this.setTextSelectionColor(selectionForeground == null ? Color.WHITE : new Color(selectionForeground.getRGB()));
+            this.setBackgroundNonSelectionColor(background == null ? Color.WHITE : new Color(background.getRGB()));
             this.setTextNonSelectionColor(foreground == null ? Color.BLACK : new Color(foreground.getRGB()));
         }
 
@@ -984,17 +989,9 @@ public class MainView extends JPanel {
                 final Object nodeUserObject = ((ScitosTreeNode) node).getUserObject();
                 if (nodeUserObject instanceof IViewProject<?>
                         && ((IViewProject<?>) nodeUserObject).getModelObject() instanceof IMultiObjectModel<?, ?>) {
-                    if (isExpanded) {
-                        renderLabel.setIcon(this.multiModelProjectOpenIcon);
-                    } else {
-                        renderLabel.setIcon(this.multiModelProjectClosedIcon);
-                    }
+                    renderLabel.setIcon(isExpanded ? this.multiModelProjectOpenIcon : this.multiModelProjectClosedIcon);
                 } else if (nodeUserObject instanceof String) {
-                    if (isExpanded) {
-                        renderLabel.setIcon(this.multiModelGroupOpenIcon);
-                    } else {
-                        renderLabel.setIcon(this.multiModelGroupClosedIcon);
-                    }
+                    renderLabel.setIcon(isExpanded ? this.multiModelGroupOpenIcon : this.multiModelGroupClosedIcon);
                 } else {
                     renderLabel.setIcon(this.modelIcon);
                 }

@@ -72,5 +72,5 @@ Category assignments without a selected replacement are being discarded.</entry>
 	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Replaced With New Category</entry>
 	<entry key="Ais.Project.Export.Html">HTML File</entry>
 	<entry key="Ais.Project.Export.Ods">Spreadsheet (only Results)</entry>
-	<entry key="Ais.Project.New">Where to save the new AIS Project?</entry>
+	<entry key="Ais.Project.Unsaved">AIS Project - unsaved</entry>
 </properties>

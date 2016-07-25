@@ -63,6 +63,7 @@ public final class TextTokenComponent extends JPanel {
         this.model = model;
         this.setBorder(null);
         final ScaledLabel openBracketLabel = new ScaledLabel("(");
+        openBracketLabel.setName("Indicator: First Token of Enclosed Detail");
         openBracketLabel.setOpaque(false);
         openBracketLabel.setVisible(model.isFirstTokenOfDetail() && model.getPreviousToken() != null
                 && !model.getPreviousToken().isLastTokenOfDetail());
@@ -74,14 +75,17 @@ public final class TextTokenComponent extends JPanel {
             detailCode = model.getDetail().getCode();
         }
         this.detailLabel = new ScaledLabel(detailCode);
+        this.detailLabel.setName("Assigned Detail");
         this.detailLabel.setOpaque(false);
         this.add(this.detailLabel, BorderLayout.CENTER);
         final ScaledLabel closeBracketLabel = new ScaledLabel(")");
+        closeBracketLabel.setName("Indicator: Last Token of Enclosed Detail");
         closeBracketLabel.setOpaque(false);
         closeBracketLabel.setVisible(model.isLastTokenOfDetail() && model.getFollowingToken() != null
                 && !model.getFollowingToken().isFirstTokenOfDetail());
         this.add(closeBracketLabel, BorderLayout.LINE_END);
         this.textLabel = new ScaledLabel(model.getText(), "TextPane.font", SwingConstants.CENTER);
+        this.textLabel.setName("Text");
         this.textLabel.setOpaque(true);
         this.textLabel.setDoubleBuffered(true);
         this.applyScaledSpacing();

@@ -32,12 +32,29 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hmx</groupId>
+			<artifactId>scitos.view</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hmx</groupId>
 			<artifactId>scitos.ais.core</artifactId>
 		</dependency>
 		<!-- lib: Spreadsheet Export -->
 		<dependency>
 			<groupId>org.jopendocument</groupId>
 			<artifactId>jOpenDocument</artifactId>
+		</dependency>
+		<!-- test-lib: AssertJ Swing for functional GUI testing -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-swing-junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.thedeanda</groupId>
+		    <artifactId>lorem</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

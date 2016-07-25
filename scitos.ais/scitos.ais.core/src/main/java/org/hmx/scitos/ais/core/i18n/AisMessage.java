@@ -27,7 +27,7 @@ import org.hmx.scitos.core.i18n.Translator;
  */
 public enum AisMessage implements ILocalizableMessage {
     // general project actions
-    PROJECT_NEW("Ais.Project.New"),
+    PROJECT_UNSAVED("Ais.Project.Unsaved"),
     PROJECT_EXPORT_HTML("Ais.Project.Export.Html"),
     PROJECT_EXPORT_ODS("Ais.Project.Export.Ods"),
     PROJECT_CHANGE_CATEGORIES("Ais.Project.ChangeDetailCategories"),

@@ -140,13 +140,15 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
      *            detail category to assign (can be {@code null} to remove any current category assignments)
      */
     void assignDetailCategoryToSelectedTokens(final DetailCategory category) {
-        try {
-            this.parentView.getProject().getModelHandler().assignDetailCategory(this.getModel(), this.getSelectedTokens(), category);
-        } catch (final HmxException expected) {
-            MessageHandler.showException(expected);
+        final List<TextToken> selectedTokens = this.getSelectedTokens();
+        if (!selectedTokens.isEmpty()) {
+            try {
+                this.parentView.getProject().getModelHandler().assignDetailCategory(this.getModel(), selectedTokens, category);
+            } catch (final HmxException expected) {
+                MessageHandler.showException(expected);
+            }
         }
-        // ensure the scoring panel (still) holds the focus for consecutive keyboard events, that might contain a short cut for assigning a
-        // category
+        // ensure the scoring panel (still) holds the focus for consecutive keyboard events, that might contain a short cut for assigning a category
         this.getViewPortView().requestFocusInWindow();
     }
 

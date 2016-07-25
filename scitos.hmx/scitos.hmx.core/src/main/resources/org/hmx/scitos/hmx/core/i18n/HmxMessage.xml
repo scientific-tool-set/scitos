@@ -114,7 +114,7 @@ is allowed to be checked.</entry>
   <entry key="Export.Title">HermeneutiX Project</entry>
   <entry key="Export.Title.Author">by</entry>
   <entry key="Export.Width">Width</entry>
-  <entry key="Hmx.Project.New">Where to save the new HermeneutiX Project?</entry>
+  <entry key="Hmx.Project.Unsaved">HmX Project - unsaved</entry>
   <entry key="Preferences.Analysis.ProjectInfo.DefaultAuthor">Default Author</entry>
   <entry key="Preferences.Analysis.TextInput.DefaultOriginLanguage">Default Origin Language</entry>
   <entry key="Preferences.General">HmX – General</entry>

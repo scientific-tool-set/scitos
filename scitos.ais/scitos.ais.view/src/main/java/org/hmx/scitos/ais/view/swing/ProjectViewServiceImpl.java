@@ -35,13 +35,11 @@ import org.hmx.scitos.ais.view.swing.components.ProjectOverView;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.ContextMenuBuilder.CMenuItemAction;
-import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.service.IMultiModelProjectViewService;
 import org.hmx.scitos.view.service.IProjectViewService;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.ScitosClient;
-import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
  * Implementation of the {@link IProjectViewService} for the AIS module.
@@ -69,14 +67,10 @@ public class ProjectViewServiceImpl implements IMultiModelProjectViewService<Ais
 
     @Override
     public AisViewProject createEmptyProject() {
-        final File path = ViewUtil.getSaveDestination(this.client.getFrame(), FileType.AIS.getFileExtension(), AisMessage.PROJECT_NEW.get(), true);
-        if (path != null) {
-            final AisProject mainModel = new AisProject("", this.options.provide());
-            final AisViewProject project = new AisViewProject(this.client, new ModelHandlerImpl(mainModel), path);
-            project.setOpenTabElements(Arrays.asList(mainModel));
-            return project;
-        }
-        return null;
+        final AisProject mainModel = new AisProject("", this.options.provide());
+        final AisViewProject project = this.createProject(mainModel, null);
+        project.setOpenTabElements(Arrays.asList(mainModel));
+        return project;
     }
 
     @Override

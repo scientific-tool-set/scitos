@@ -107,6 +107,8 @@ public final class ScitosApp {
 
     /**
      * Invoke the dependency injected module loading and initialize the main client afterwards.
+     * 
+     * @return the initialized client
      *
      * @throws ClassNotFoundException
      *             invalid file type / module definition
@@ -115,7 +117,7 @@ public final class ScitosApp {
      * @throws IllegalAccessException
      *             invalid defined module class
      */
-    static void loadModulesAndShowClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    static ScitosClient loadModulesAndShowClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         // collect dependency injection modules
         final Set<Object> modules = new LinkedHashSet<Object>();
         final Set<Class<?>> initializerClasses = new LinkedHashSet<Class<?>>();
@@ -138,6 +140,7 @@ public final class ScitosApp {
         }
         // create actual view client instance
         ScitosApp.client = objectGraph.get(ScitosClient.class);
+        return ScitosApp.client;
     }
 
     /**

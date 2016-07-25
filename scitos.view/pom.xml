@@ -22,6 +22,13 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -37,8 +44,14 @@
 		</dependency>
 		<!-- lib: DesignGridLayout for arranging views -->
 		<dependency>
-		    <groupId>net.java.dev.designgridlayout</groupId>
-		    <artifactId>designgridlayout</artifactId>
+			<groupId>net.java.dev.designgridlayout</groupId>
+			<artifactId>designgridlayout</artifactId>
+		</dependency>
+		<!-- test-lib: AssertJ Swing for functional GUI testing -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-swing-junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

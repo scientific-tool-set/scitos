@@ -20,9 +20,6 @@
 package org.hmx.scitos.ais.view.swing.components;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -30,18 +27,11 @@ import java.awt.event.HierarchyListener;
 import java.io.File;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.hmx.scitos.ais.core.i18n.AisMessage;
@@ -50,17 +40,12 @@ import org.hmx.scitos.ais.view.swing.PatternAnalysisModel;
 import org.hmx.scitos.core.ExportOption.TargetFileType;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.ScitosIcon;
-import org.hmx.scitos.view.swing.ScitosApp;
 import org.hmx.scitos.view.swing.ScitosClient;
+import org.hmx.scitos.view.swing.components.ScaledTable;
 import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /** Component displaying the summed up scoring results of a whole project. */
 public final class PatternAnalysisPanel extends JPanel {
-
-    /** The alternate row color, for easier readability in the result tables. */
-    static final Color ALTERNATE_ROW_COLOR = new Color(239, 239, 239);
-    /** The minimum width of a single table column. */
-    private static final int MIN_COLUMN_WIDTH = 40;
 
     /** The associated view project, containing the interviews the displayed results are extracted from. */
     final PatternAnalysisModel model;
@@ -129,113 +114,11 @@ public final class PatternAnalysisPanel extends JPanel {
      * @return scrollable table taking up the whole view
      */
     private JScrollPane createTableFromModel(final TableModel tableModel, final boolean sortable) {
-        final JTable tableView = new JTable(tableModel) {
-
-            @Override
-            public void updateUI() {
-                super.updateUI();
-                final float scaleFactor;
-                if (ScitosApp.getClient() == null) {
-                    scaleFactor = 1f;
-                } else {
-                    scaleFactor = ScitosApp.getClient().getContentScaleFactor();
-                }
-                final Font headerFont = UIManager.getFont("TableHeader.font");
-                if (headerFont != null) {
-                    this.getTableHeader().setFont(new Font(headerFont.getAttributes()).deriveFont(headerFont.getSize2D() * scaleFactor));
-                }
-                final Font contentFont = UIManager.getFont("Table.font");
-                if (contentFont != null) {
-                    this.setFont(new Font(contentFont.getAttributes()).deriveFont(contentFont.getSize2D() * scaleFactor));
-                    this.setRowHeight(this.getRowMargin() + (int) Math.ceil(this.getFont().getSize2D() * scaleFactor));
-                }
-                PatternAnalysisPanel.this.adjustColumns(this);
-            }
-
-            @Override
-            public void createDefaultColumnsFromModel() {
-                super.createDefaultColumnsFromModel();
-                final JTable self = this;
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        PatternAnalysisPanel.this.adjustColumns(self);
-                    }
-                });
-            }
-        };
-        tableView.setBorder(null);
-        tableView.setAutoCreateColumnsFromModel(true);
-        tableView.setAutoCreateRowSorter(sortable);
-        tableView.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tableView.setRowSelectionAllowed(true);
-        tableView.setColumnSelectionAllowed(false);
+        final ScaledTable tableView = new ScaledTable(tableModel, true, sortable);
         tableView.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        final AlternateRowRenderer cellRenderer = new AlternateRowRenderer();
-        tableView.setDefaultRenderer(String.class, cellRenderer);
-        tableView.setDefaultRenderer(Long.class, cellRenderer);
         tableView.setFillsViewportHeight(true);
         final JScrollPane scrollableTable = new JScrollPane(tableView);
         scrollableTable.setBorder(null);
         return scrollableTable;
-    }
-
-    /**
-     * Adjust the widths of all columns of the given table to fit the respective column's header and contents.
-     *
-     * @param table
-     *            the table to adjust the columns for
-     */
-    void adjustColumns(final JTable table) {
-        final int columnCount = table.getColumnCount();
-        final int rowCount = table.getRowCount();
-        for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-            final TableColumn column = table.getColumnModel().getColumn(columnIndex);
-            TableCellRenderer headerRenderer = column.getHeaderRenderer();
-            if (headerRenderer == null) {
-                headerRenderer = table.getTableHeader().getDefaultRenderer();
-            }
-            final Object headerValue = column.getHeaderValue();
-            final Component headerCell = headerRenderer.getTableCellRendererComponent(table, headerValue, false, false, -1, columnIndex);
-            int columnWidth = headerCell.getPreferredSize().width;
-            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                final TableCellRenderer cellRenderer = table.getCellRenderer(rowIndex, columnIndex);
-                columnWidth = Math.max(columnWidth, table.prepareRenderer(cellRenderer, rowIndex, columnIndex).getPreferredSize().width);
-            }
-            final int preferredWidth = Math.max(PatternAnalysisPanel.MIN_COLUMN_WIDTH, columnWidth) + 4 + 2 * table.getIntercellSpacing().width;
-            column.setMaxWidth(preferredWidth + PatternAnalysisPanel.MIN_COLUMN_WIDTH / 2);
-            column.setPreferredWidth(preferredWidth);
-        }
-    }
-
-    /** Cell renderer to apply alternating row background color in order to improve the table's readability. */
-    private static final class AlternateRowRenderer extends DefaultTableCellRenderer {
-
-        /** Main constructor. */
-        AlternateRowRenderer() {
-            // nothing to setup
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus,
-                final int row, final int column) {
-            final Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (!isSelected) {
-                final Color rowBackGround;
-                if (row % 2 == 0) {
-                    rowBackGround = Color.WHITE;
-                } else {
-                    rowBackGround = PatternAnalysisPanel.ALTERNATE_ROW_COLOR;
-                }
-                component.setBackground(rowBackGround);
-            }
-            if (value instanceof Number) {
-                ((JLabel) component).setHorizontalAlignment(SwingConstants.TRAILING);
-            } else {
-                ((JLabel) component).setHorizontalAlignment(SwingConstants.LEADING);
-            }
-            return component;
-        }
     }
 }

@@ -21,7 +21,6 @@ package org.hmx.scitos.view.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
@@ -495,7 +494,7 @@ public final class ScitosClient {
         final Map<FileType, ActionListener> result = new LinkedHashMap<FileType, ActionListener>();
         for (final FileType singleType : FileType.values()) {
             if (!singleType.isSupportedByDistribution() || singleType.getLocalizableName() == null) {
-                // skip file types that are associated with modules not contained in this distribution or only exist for compatibility purposes 
+                // skip file types that are associated with modules not contained in this distribution or only exist for compatibility purposes
                 continue;
             }
             result.put(singleType, new ActionListener() {
@@ -722,11 +721,9 @@ public final class ScitosClient {
 
     /** Save the currently active project to its last used save path. */
     void save() {
-        final IViewProject<?> project = this.mainView.getActiveProject();
-        // hand over currently open tabs to allow them to be saved as well
-        this.mainView.updateOpenTabElementsForProject(project);
+        final IViewProject<?> activeProject = this.prepareForSaving();
         try {
-            if (!project.save()) {
+            if (!activeProject.save()) {
                 this.saveAs();
             }
         } catch (final HmxException ex) {
@@ -736,21 +733,29 @@ public final class ScitosClient {
 
     /** Save the current project by asking the user for the path, where to save. */
     void saveAs() {
-        final IViewProject<?> activeProject = this.mainView.getActiveProject();
-        // hand over currently open tabs to allow them to be saved as well
-        this.mainView.updateOpenTabElementsForProject(activeProject);
+        final IViewProject<?> activeProject = this.prepareForSaving();
         final File path =
                 ViewUtil.getSaveDestination(this.getFrame(), activeProject.getFileType().getFileExtension(), Message.MENUBAR_FILE_SAVE.get(), true);
         if (path != null) {
-            this.frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             try {
                 activeProject.saveAs(path);
             } catch (final HmxException ex) {
                 MessageHandler.showException(ex);
-            } finally {
-                this.frame.setCursor(null);
             }
         }
+    }
+
+    /**
+     * Determine the currently active project - the one to be saved - and update the current list of open tabs in order to allow them to be saved as
+     * part of project.
+     * 
+     * @return the currently active project
+     */
+    private IViewProject<?> prepareForSaving() {
+        final IViewProject<?> activeProject = this.mainView.getActiveProject();
+        // hand over currently open tabs to allow them to be saved as well
+        this.mainView.updateOpenTabElementsForProject(activeProject);
+        return activeProject;
     }
 
     /** Enable or disable the menu entries for 'Save', 'Save To', 'Undo', and 'Redo' depending on the currently open tab's state. */

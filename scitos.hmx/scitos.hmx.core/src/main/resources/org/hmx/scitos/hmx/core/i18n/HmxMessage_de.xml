@@ -113,7 +113,7 @@ keine weiteren Satzgliedern befinden.</entry>
   <entry key="Export.Title">HermeneutiX Projekt</entry>
   <entry key="Export.Title.Author">von</entry>
   <entry key="Export.Width">Breite</entry>
-  <entry key="Hmx.Project.New">Wo soll das neue HermeneutiX Projekt gespeichert werden?</entry>
+  <entry key="Hmx.Project.Unsaved">HmX Projekt - ungespeichert</entry>
   <entry key="Preferences.Analysis.ProjectInfo.DefaultAuthor">Standard-Autor</entry>
   <entry key="Preferences.Analysis.TextInput.DefaultOriginLanguage">Standard-Ausgangssprache</entry>
   <entry key="Preferences.General">HmX – Allgemein</entry>

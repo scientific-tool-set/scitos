@@ -75,5 +75,5 @@ Zugeordnete Kategorien ohne Entsprechung im neuen Modell werden verworfen!</entr
 	<entry key="Ais.Project.ChangeDetailCategories.ReplacingCategory">Ersetzt durch neue Kategorie</entry>
 	<entry key="Ais.Project.Export.Html">HTML-Datei</entry>
 	<entry key="Ais.Project.Export.Ods">ODS-Datei (Ergebnistabellen)</entry>
-	<entry key="Ais.Project.New">Wo soll das neue AIS Projekt gespeichert werden?</entry>
+	<entry key="Ais.Project.Unsaved">AIS Projekt - ungespeichert</entry>
 </properties>

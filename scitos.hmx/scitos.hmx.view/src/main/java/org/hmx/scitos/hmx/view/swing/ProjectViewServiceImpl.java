@@ -75,11 +75,7 @@ public class ProjectViewServiceImpl implements IProjectViewService<HmxSwingProje
 
     @Override
     public HmxSwingProject createEmptyProject() {
-        final File path = ViewUtil.getSaveDestination(this.client.getFrame(), FileType.HMX.getFileExtension(), HmxMessage.PROJECT_NEW.get(), true);
-        if (path != null) {
-            return this.createProject(new Pericope(), path);
-        }
-        return null;
+        return this.createProject(new Pericope(), null);
     }
 
     @Override

@@ -33,7 +33,6 @@ import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.fixture.JPopupMenuFixture;
 import org.assertj.swing.fixture.JTabbedPaneFixture;
 import org.assertj.swing.fixture.JTreeFixture;
-import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.assertj.swing.testing.AssertJSwingTestCaseTemplate;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;

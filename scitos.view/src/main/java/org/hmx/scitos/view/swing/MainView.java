@@ -71,7 +71,6 @@ import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.domain.IMultiObjectModel;
 import org.hmx.scitos.domain.util.CollectionUtil;
-import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;

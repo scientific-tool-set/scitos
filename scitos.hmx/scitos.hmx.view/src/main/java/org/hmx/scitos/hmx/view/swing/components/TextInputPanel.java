@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -114,6 +115,10 @@ public final class TextInputPanel extends JPanel {
      * The {@link #originTextPane}'s undo manager.
      */
     UndoManager undoManager;
+    /**
+     * Flag indicating whether this panel is used for initializing a {@link Pericope} - i.e. not just for prepending/appending additional text.
+     */
+    private final boolean replaceCurrentText;
 
     /**
      * Constructor.
@@ -121,14 +126,16 @@ public final class TextInputPanel extends JPanel {
      * @param parentView
      *            the super ordinated main view representing the associated HermeneutiX project, in which this view is referred to a
      *            {@code text-input mode}
+     * @param replaceCurrentText
+     *            whether this panel is used for initializing a {@link Pericope} - i.e. not just for prepending/appending additional text.
      * @param languageModelProvider
      *            provider of all selectable {@link LanguageModel}s
      */
-    public TextInputPanel(final SingleProjectView parentView, final ILanguageModelProvider languageModelProvider) {
+    public TextInputPanel(final SingleProjectView parentView, final boolean replaceCurrentText, final ILanguageModelProvider languageModelProvider) {
         super(new GridBagLayout());
         this.parentView = parentView;
-        final boolean newProject = parentView.getModel().getText().isEmpty();
-        if (newProject) {
+        this.replaceCurrentText = replaceCurrentText;
+        if (this.replaceCurrentText) {
             this.languageModels = languageModelProvider.provideLanguageModels();
             this.buttons = new JButton[] { new JButton(HmxMessage.TEXTINPUT_START_BUTTON.get()) };
             this.buttons[0].addActionListener(new ActionListener() {
@@ -178,26 +185,46 @@ public final class TextInputPanel extends JPanel {
 
         this.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         // create the topic label at the top left
-        this.initTopicLabel(newProject);
+        this.initTopicLabel();
         // create the text area for entering the origin text
         this.initOriginTextPane(this.buttons[0].getPreferredSize().height);
         // create the button to switch between visible and invisible settings
         this.initShowOrHideSettingsButton();
         // creating the setting area
-        this.initSettingArea(newProject);
+        this.initSettingArea();
         // set default setting visibility
         this.manageSettingVisibility();
+        if (this.replaceCurrentText) {
+            final StringBuilder textBuilder = new StringBuilder(512);
+            for (final Proposition singleProposition : this.parentView.getModel().getFlatText()) {
+                final Iterator<ClauseItem> clauseItems = singleProposition.getItems().iterator();
+                textBuilder.append(clauseItems.next().getOriginText());
+                while (clauseItems.hasNext()) {
+                    textBuilder.append("    ").append(clauseItems.next().getOriginText());
+                }
+                textBuilder.append('\n');
+            }
+            this.originTextPane.setText(textBuilder.toString().trim());
+        }
         this.originTextPane.requestFocus();
     }
 
     /**
-     * Initialize the topic label at the top left position.
-     *
-     * @param newProject
-     *            if this is the initial text input, else it is just adding more text to an existing project
+     * Ensure all currently displayed changes are represented as such in the underlying model objects - in order to be able to save the current state.
      */
-    private void initTopicLabel(final boolean newProject) {
-        final HmxMessage topicKey = newProject ? HmxMessage.TEXTINPUT_TOPIC : HmxMessage.TEXTINPUT_TOPIC_ADD_PROPOSITIONS;
+    public void submitChangesToModel() {
+        if (this.replaceCurrentText) {
+            // apply the default selected language model and font selection (to actually allow something to be saved this early)
+            this.parentView.getModel().init(this.getPropositionTexts(), this.getLanguageModelSelection(), this.getFontSelection());
+        }
+        // if we are currently adding text to an existing model, the unchanged model will be saved
+    }
+
+    /**
+     * Initialize the topic label at the top left position.
+     */
+    private void initTopicLabel() {
+        final HmxMessage topicKey = this.replaceCurrentText ? HmxMessage.TEXTINPUT_TOPIC : HmxMessage.TEXTINPUT_TOPIC_ADD_PROPOSITIONS;
         final JLabel topicLabel = new JLabel(topicKey.get());
         topicLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 10));
         final GridBagConstraints constraints = new GridBagConstraints();
@@ -260,6 +287,7 @@ public final class TextInputPanel extends JPanel {
             }
 
             private void manageMenuStatus() {
+                TextInputPanel.this.parentView.getProject().setSaved(false);
                 TextInputPanel.this.parentView.getProject().manageMenuOptions();
             }
         };
@@ -335,11 +363,8 @@ public final class TextInputPanel extends JPanel {
 
     /**
      * Initialize the setting side bar to the right of the button to set its visibility.
-     *
-     * @param newProject
-     *            if this is the initial text input, else it is just adding more text to an existing project
      */
-    private void initSettingArea(final boolean newProject) {
+    private void initSettingArea() {
         this.settingArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 8, 0));
         // initializes the combo box for choosing the origin language
         final GridBagConstraints constraints = new GridBagConstraints();
@@ -356,7 +381,7 @@ public final class TextInputPanel extends JPanel {
         this.settingArea.add(this.createFontSizeSlider(), constraints);
         // initializes the short hint text
         String hint = HmxMessage.TEXTINPUT_HINT.get();
-        if (newProject) {
+        if (this.replaceCurrentText) {
             hint += "\n\n\n" + HmxMessage.TEXTINPUT_WARNING.get();
         }
         final JTextArea hintArea = new JTextArea(hint);
@@ -390,15 +415,13 @@ public final class TextInputPanel extends JPanel {
         this.add(this.settingArea, rightConstraints);
 
         // set default language
-        final String defaultLanguage;
-        if (newProject) {
+        String defaultLanguage = this.parentView.getModel().getLanguage();
+        if (defaultLanguage == null) {
             defaultLanguage = (String) this.languageBox.getItemAt(0);
-        } else {
-            defaultLanguage = this.parentView.getModel().getLanguage();
         }
         // listener on languageBox also presets the font type and size
         this.languageBox.setSelectedItem(defaultLanguage);
-        this.setFontSelection(newProject);
+        this.setFontSelection();
         this.setOriginTextPaneOrientation();
     }
 
@@ -432,7 +455,8 @@ public final class TextInputPanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 TextInputPanel.this.setOriginTextPaneOrientation();
-                TextInputPanel.this.setFontSelection(false);
+                TextInputPanel.this.setFontSelection();
+                TextInputPanel.this.parentView.getProject().setSaved(false);
             }
         });
         languagePanel.add(this.languageBox);
@@ -473,6 +497,7 @@ public final class TextInputPanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 TextInputPanel.this.setFontTypeAndStyle();
+                TextInputPanel.this.parentView.getProject().setSaved(false);
             }
         });
         final JPanel fontTypePanel = new JPanel();
@@ -483,11 +508,8 @@ public final class TextInputPanel extends JPanel {
 
     /**
      * Set the font type and size selection based on the currently chosen {@link LanguageModel}.
-     * 
-     * @param applyRecommendedFont
-     *            whether the model's current font setting should be ignored and replaced by a recommended one (if present)
      */
-    void setFontSelection(final boolean applyRecommendedFont) {
+    void setFontSelection() {
         final Object selectedEntry = this.languageBox.getSelectedItem();
         if (selectedEntry == null) {
             return;
@@ -498,7 +520,7 @@ public final class TextInputPanel extends JPanel {
         }
         final Font currentFont = this.parentView.getModel().getFont();
         int fontIndex;
-        if (applyRecommendedFont || currentFont == null) {
+        if (currentFont == null) {
             fontIndex = -1;
         } else {
             fontIndex = this.fontFamilyNames.indexOf(currentFont.getFamily());
@@ -537,6 +559,7 @@ public final class TextInputPanel extends JPanel {
             public void stateChanged(final ChangeEvent event) {
                 fontSizeDisplay.setText(String.valueOf(TextInputPanel.this.fontSizeSlider.getValue()));
                 TextInputPanel.this.setFontTypeAndStyle();
+                TextInputPanel.this.parentView.getProject().setSaved(false);
             }
         });
         final GridBagConstraints horizontalSpan = new GridBagConstraints();
@@ -559,14 +582,31 @@ public final class TextInputPanel extends JPanel {
      */
     void startAnalysis() {
         if (this.containsText()) {
-            final Object selectedEntry = this.languageBox.getSelectedItem();
-            if (selectedEntry != null) {
-                final LanguageModel selectedModel = this.languageModels.get(selectedEntry);
-                this.parentView.startAnalysis(this.getPropositionTexts(), selectedModel, new Font(this.fontTypeBox.getSelectedItem().toString(),
-                        Font.PLAIN, this.fontSizeSlider.getValue()));
+            final LanguageModel selectedModel = this.getLanguageModelSelection();
+            // the value could be null if no language model could be loaded (neither system defined nor user defined ones) on initialization
+            if (selectedModel != null) {
+                this.parentView.startAnalysis(this.getPropositionTexts(), selectedModel, this.getFontSelection());
             }
         }
         // if the originTextArea is empty, do nothing
+    }
+
+    /**
+     * Get the currently selected {@link LanguageModel} from the associated selection component.
+     * 
+     * @return selected language model
+     */
+    private LanguageModel getLanguageModelSelection() {
+        return this.languageModels.get(this.languageBox.getSelectedItem());
+    }
+
+    /**
+     * Get the currently selected origin text {@link Font} – as specified by the chosen font type and the size slider's current value.
+     * 
+     * @return the currently defined
+     */
+    private Font getFontSelection() {
+        return new Font(this.fontTypeBox.getSelectedItem().toString(), Font.PLAIN, this.fontSizeSlider.getValue());
     }
 
     /**

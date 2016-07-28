@@ -401,7 +401,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
             final UUID entryToSwitchWith = entrySiblings.set(indexToSwitchWith, entry);
             entrySiblings.set(index, entryToSwitchWith);
         }
-        this.modelSupport.firePathChanged(parentPath);
+        this.modelSupport.fireTreeStructureChanged(parentPath);
     }
 
     /**

@@ -77,12 +77,6 @@ public enum HmxMessage implements ILocalizableMessage {
     TEXTINPUT_BEFORE_BUTTON("TextInput.AddText.Before"),
     /** text input view: button to add new propositions behind current text. */
     TEXTINPUT_BEHIND_BUTTON("TextInput.AddText.Behind"),
-    /** confirmation question: proceed closing of new project in setup mode. */
-    TEXTINPUT_QUIT_QUESTION("TextInput.Quit.DiscardInputQuestion"),
-    /**
-     * title of the {@link #TEXTINPUT_QUIT_QUESTION} dialog.
-     */
-    TEXTINPUT_QUIT_TITLE("TextInput.Quit.DiscardInputTitle"),
 
     /**
      * title of the popup behind the {@link #MENUBAR_PROJECTINFO} entry.
@@ -210,6 +204,7 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_GENERAL_INPUT_SHOW_SETTINGS("Preferences.View.TextInput.ShowSettings"),
     PREFERENCES_GENERAL_AUTHOR("Preferences.Analysis.ProjectInfo.DefaultAuthor"),
     PREFERENCES_GENERAL_LANGUAGE("Preferences.Analysis.TextInput.DefaultOriginLanguage"),
+    PREFERENCES_EDITINPROGRESS("Preferences.EditInProgress"),
 
     PREFERENCES_EXPORT("Preferences.Export"),
     PREFERENCES_EXPORT_ELEMENTCOLOR("Preferences.Export.Color"),
@@ -275,6 +270,7 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_LANGUAGEFUNCTIONS_NAME("Preferences.OriginLanguageFunctions.Name"),
     PREFERENCES_LANGUAGEFUNCTIONS_NAME_MANDATORY("Preferences.OriginLanguageFunctions.Name.Mandatory"),
     PREFERENCES_LANGUAGEFUNCTIONS_CODE("Preferences.OriginLanguageFunctions.Code"),
+    PREFERENCES_LANGUAGEFUNCTIONS_CODE_UNIQUE("Preferences.OriginLanguageFunctions.Code.Unique"),
     PREFERENCES_LANGUAGEFUNCTIONS_CODE_MANDATORY("Preferences.OriginLanguageFunctions.Code.Mandatory"),
     PREFERENCES_LANGUAGEFUNCTIONS_UNDERLINE("Preferences.OriginLanguageFunctions.Underline"),
     PREFERENCES_LANGUAGEFUNCTIONS_DESCRIPTION("Preferences.OriginLanguageFunctions.Description");

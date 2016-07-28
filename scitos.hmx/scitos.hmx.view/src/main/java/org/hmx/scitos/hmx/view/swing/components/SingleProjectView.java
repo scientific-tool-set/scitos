@@ -38,10 +38,12 @@ import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.hmx.core.ILanguageModelProvider;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
+import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
+import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.hmx.view.swing.HmxSwingProject;
 import org.hmx.scitos.hmx.view.swing.elements.ProjectInfoDialog;
 import org.hmx.scitos.view.ScitosIcon;
@@ -98,13 +100,41 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         super(project, project.getModelObject(), new BorderLayout());
         this.relationProvider = relationProvider;
         this.modelParseProvider = modelParseProvider;
-        if (this.getModel().getText().isEmpty()) {
-            this.activeView = new TextInputPanel(this, languageModelProvider);
-        } else {
+        if (this.containsAnalysisData()) {
             this.undoManager = new UndoManager<Pericope>(this.getModel());
             this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
+        } else {
+            this.activeView = new TextInputPanel(this, true, languageModelProvider);
         }
         this.add(this.activeView);
+    }
+
+    /**
+     * Check whether the current model contains any analysis related data - i.e. if information would be lost if the current model was displayed in a
+     * {@link TextInputPanel} rather than a {@link CombinedAnalysesPanel}.
+     * 
+     * @return if any information besides the origin text is present
+     */
+    boolean containsAnalysisData() {
+        if (!this.getModel().getFlatRelations().isEmpty()) {
+            // the semantical analysis has already been started
+            return true;
+        }
+        // we only have to check the top level propositions, if there is any non-top-level one we return true anyway
+        for (final Proposition singleProposition : this.getModel().getText()) {
+            if (!singleProposition.getPriorChildren().isEmpty() || !singleProposition.getLaterChildren().isEmpty()
+                    || singleProposition.getPartAfterArrow() != null || singleProposition.getLabel() != null
+                    || singleProposition.getSemTranslation() != null || singleProposition.getSynTranslation() != null
+                    || singleProposition.getComment() != null) {
+                return true;
+            }
+            for (final ClauseItem singleItem : singleProposition) {
+                if (singleItem.getFunction() != null || singleItem.getFontStyle() != ClauseItem.Style.PLAIN || singleItem.getComment() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -155,7 +185,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         if (this.activeView instanceof CombinedAnalysesPanel) {
             this.submitChangesToModel();
             this.remove(this.activeView);
-            this.activeView = new TextInputPanel(this, null);
+            this.activeView = new TextInputPanel(this, false, null);
             this.add(this.activeView);
             this.revalidate();
             this.manageMenuOptions();
@@ -212,8 +242,10 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
     @Override
     public void submitChangesToModel() {
-        if (this.activeView instanceof CombinedAnalysesPanel) {
-            ((CombinedAnalysesPanel) this.activeView).submitChangesToModel();
+        if (this.activeView instanceof IPericopeView) {
+            ((IPericopeView) this.activeView).submitChangesToModel();
+        } else if (this.activeView instanceof TextInputPanel) {
+            ((TextInputPanel) this.activeView).submitChangesToModel();
         }
     }
 

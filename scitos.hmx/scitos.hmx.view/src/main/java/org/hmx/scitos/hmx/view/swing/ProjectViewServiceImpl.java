@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.hmx.core.ModelHandlerImpl;
-import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
 import org.hmx.scitos.hmx.core.option.HmxRelationOption;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
@@ -33,11 +32,9 @@ import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.RelationModel;
 import org.hmx.scitos.hmx.view.swing.components.SingleProjectView;
 import org.hmx.scitos.view.ContextMenuBuilder;
-import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.service.IProjectViewService;
 import org.hmx.scitos.view.swing.ScitosClient;
-import org.hmx.scitos.view.swing.util.ViewUtil;
 
 /**
  * Implementation of the {@link IProjectViewService} for the AIS module.

@@ -117,7 +117,7 @@ is allowed to be checked.</entry>
   <entry key="Hmx.Project.Unsaved">HmX Project - unsaved</entry>
   <entry key="Preferences.Analysis.ProjectInfo.DefaultAuthor">Default Author</entry>
   <entry key="Preferences.Analysis.TextInput.DefaultOriginLanguage">Default Origin Language</entry>
-  <entry key="Preferences.General">HmX – General</entry>
+  <entry key="Preferences.EditInProgress">Cannot submit changes as there is a pending edit operation.</entry>
   <entry key="Preferences.Export">HmX – Export</entry>
   <entry key="Preferences.Export.Color">Element Colors</entry>
   <entry key="Preferences.Export.Font">Non-Origin Text Font</entry>
@@ -132,6 +132,7 @@ is allowed to be checked.</entry>
   <entry key="Preferences.Export.SynFunction.Italic.FontColor">Syntactical Function (italic)</entry>
   <entry key="Preferences.Export.SynFunction.Plain.FontColor">Syntactical Function (plain)</entry>
   <entry key="Preferences.Export.Translation.FontColor">Translation Text</entry>
+  <entry key="Preferences.General">HmX – General</entry>
   <entry key="Preferences.OriginLanguage">HmX – Languages</entry>
   <entry key="Preferences.OriginLanguage.ApplyChanges">Apply Changes</entry>
   <entry key="Preferences.OriginLanguage.CloneLanguage">Clone Language Model</entry>
@@ -154,6 +155,8 @@ is allowed to be checked.</entry>
   <entry key="Preferences.OriginLanguageFunctions.Code">Code</entry>
   <entry key="Preferences.OriginLanguageFunctions.Code.Mandatory">The Code cannot be empty.
 It is being displayed as representation of a selected function in the Syntactical Analysis.</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Code.Unique">The Code values for syntactical functions in a single language must be unique.
+''{0}'' contains at least one pair of duplicate Code values.</entry>
   <entry key="Preferences.OriginLanguageFunctions.Description">Description</entry>
   <entry key="Preferences.OriginLanguageFunctions.MoveDown">Move Entry Down</entry>
   <entry key="Preferences.OriginLanguageFunctions.MoveUp">Move Entry Up</entry>
@@ -210,8 +213,6 @@ All text parts divided by tabs will be treated as single clause items.
 
 Set the origin language:
 Only clause item functions deposited for the chosen language will be available in the syntactical analysis.</entry>
-  <entry key="TextInput.Quit.DiscardInputQuestion">Do you really want to discard your input?</entry>
-  <entry key="TextInput.Quit.DiscardInputTitle">Discard Input?</entry>
   <entry key="TextInput.Settings.Hide">Hide</entry>
   <entry key="TextInput.Settings.OriginLanguage">Origin Language</entry>
   <entry key="TextInput.Settings.Show">Show</entry>

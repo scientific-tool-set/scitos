@@ -216,11 +216,6 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
 
     @Override
     public boolean prepareForClosing() {
-        if (this.getModelObject().getText().isEmpty()) {
-            return MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(HmxMessage.TEXTINPUT_QUIT_QUESTION.get(),
-                    HmxMessage.TEXTINPUT_QUIT_TITLE.get());
-        }
-        // if the project is in analysis mode it is possible to save
         if (!this.isSaved()) {
             final String dialogTitle = Message.PROJECT_CLOSE.get() + " - " + this.getTitle();
             final MessageHandler.Choice choice = MessageHandler.showYesNoCancelDialog(Message.PROJECT_CLOSE_QUESTION.get(), dialogTitle);

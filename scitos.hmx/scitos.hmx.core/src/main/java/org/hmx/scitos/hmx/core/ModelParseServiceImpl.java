@@ -476,14 +476,14 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         newPericope.addNewPropositions(text, false);
 
         final Element connectablesTree = DomUtil.getChildElement(pericopeNode, ModelParseServiceImpl.TAG_RELATION_SUB_TREE);
-        if (connectablesTree != null) {
+        if (connectablesTree != null && !text.isEmpty()) {
             // gets a list of all Propositions contained in the pericope in order of appearence
             final Deque<Proposition> propositionsInOrder = new LinkedList<Proposition>();
             Proposition nextProposition = newPericope.getPropositionAt(0);
-            do {
+            while (nextProposition != null) {
                 propositionsInOrder.addLast(nextProposition);
                 nextProposition = nextProposition.getFollowingConnectableProposition();
-            } while (nextProposition != null);
+            }
             for (final Element topLevelConnectable : DomUtil.getChildElements(connectablesTree, ModelParseServiceImpl.TAG_CONNECTABLE)) {
                 this.parseConnectableFromXml(topLevelConnectable, propositionsInOrder, compatibleRoleTranslator);
             }

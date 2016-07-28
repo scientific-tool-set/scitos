@@ -116,7 +116,8 @@ keine weiteren Satzgliedern befinden.</entry>
   <entry key="Hmx.Project.Unsaved">HmX Projekt - ungespeichert</entry>
   <entry key="Preferences.Analysis.ProjectInfo.DefaultAuthor">Standard-Autor</entry>
   <entry key="Preferences.Analysis.TextInput.DefaultOriginLanguage">Standard-Ausgangssprache</entry>
-  <entry key="Preferences.General">HmX – Allgemein</entry>
+  <entry key="Preferences.EditInProgress">Änderungen können nicht übernommen werden,
+da der aktuelle Bearbeitungsvorgang noch nicht abgeschlossen ist.</entry>
   <entry key="Preferences.Export">HmX – Export</entry>
   <entry key="Preferences.Export.Color">Elementfarben</entry>
   <entry key="Preferences.Export.Font">Schrift für nicht-ausgangssprachliche Texte</entry>
@@ -131,6 +132,7 @@ keine weiteren Satzgliedern befinden.</entry>
   <entry key="Preferences.Export.SynFunction.Italic.FontColor">Syntakt. Funktion (kursiv)</entry>
   <entry key="Preferences.Export.SynFunction.Plain.FontColor">Syntakt. Funktion (normal)</entry>
   <entry key="Preferences.Export.Translation.FontColor">Übersetzungstext</entry>
+  <entry key="Preferences.General">HmX – Allgemein</entry>
   <entry key="Preferences.OriginLanguage">HmX – Syntaktisch</entry>
   <entry key="Preferences.OriginLanguage.ApplyChanges">Anwenden</entry>
   <entry key="Preferences.OriginLanguage.CloneLanguage">Klone Ausgangssprache</entry>
@@ -157,6 +159,8 @@ keine weiteren Satzgliedern befinden.</entry>
   <entry key="Preferences.OriginLanguageFunctions.Code">Kurzform</entry>
   <entry key="Preferences.OriginLanguageFunctions.Code.Mandatory">Die Kurzform darf nicht leer sein.
 Sie wird in der Syntaktischen Analyse auf zugeordneten Elementen angezeigt.</entry>
+  <entry key="Preferences.OriginLanguageFunctions.Code.Unique">Die Kurzform syntaktischer Funktionen innerhalb einer Sprache muss eindeutig sein.
+''{0}'' enthält mindestens ein Paar doppelter Kurzformen.</entry>
   <entry key="Preferences.OriginLanguageFunctions.Description">Beschreibung</entry>
   <entry key="Preferences.OriginLanguageFunctions.Name">Funktion</entry>
   <entry key="Preferences.OriginLanguageFunctions.Name.Mandatory">Der Funktionsbezeichner darf nicht leer sein.
@@ -209,8 +213,6 @@ Jeder innerhalb einer Zeile durch Tabs getrennte Textabschnitt, wird im Weiteren
 
 Stellen Sie die Ausgangssprache ein:
 In der syntaktischen Analyse können nur Satzgliedfunktionen ausgewählt werden, die für die jeweilige Sprache hinterlegt sind.</entry>
-  <entry key="TextInput.Quit.DiscardInputQuestion">Sollen die bisherigen Eingaben wirklich verworfen werden?</entry>
-  <entry key="TextInput.Quit.DiscardInputTitle">Eingaben verwerfen?</entry>
   <entry key="TextInput.Settings.Hide">Ausblenden</entry>
   <entry key="TextInput.Settings.OriginLanguage">Ausgangssprache</entry>
   <entry key="TextInput.Settings.Show">Einblenden</entry>

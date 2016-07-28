@@ -21,6 +21,7 @@ package org.hmx.scitos.hmx.view.swing.option;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -89,6 +90,8 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
     private final JCheckBox underlineBox = new JCheckBox(HmxMessage.PREFERENCES_LANGUAGEFUNCTIONS_UNDERLINE.get());
     /** Form input for the optional description/tooltip text associated with a function/group (maximum of 512 characters length). */
     private final JTextArea descriptionArea = new JTextArea(new Validation(512));
+    /** Registered external listeners for changes to the language model. */
+    private final List<ActionListener> actionListeners = new ArrayList<ActionListener>(1);
 
     /** Constructor. */
     public SynFunctionConfigPanel() {
@@ -137,6 +140,37 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
         return this.nameInput.isEnabled();
     }
 
+    /**
+     * Register the given listener to be notified whenever the displayed language model changed.
+     * 
+     * @param listener
+     *            the listener to notify
+     */
+    public void addActionListener(final ActionListener listener) {
+        this.actionListeners.add(listener);
+    }
+
+    /**
+     * Unregister the given listener from notifications regarding changes to the displayed language model.
+     * 
+     * @param listener
+     *            the listener to no longer notify
+     * @return whether the listener was registered before and has been removed successfully
+     */
+    public boolean removeActionListener(final ActionListener listener) {
+        return this.actionListeners.remove(listener);
+    }
+
+    /**
+     * Notify all registered action listeners of a change to the displayed language model (i.e. a function/group was added/changed/moved/removed).
+     */
+    void triggerActionListeners() {
+        final ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "");
+        for (final ActionListener singleListener : this.actionListeners) {
+            singleListener.actionPerformed(event);
+        }
+    }
+
     /** Initialize the tree table with its columns. */
     private void initTable() {
         this.treeTable.setTableHeader(null);
@@ -156,6 +190,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
                 final TreePath newPath = SynFunctionConfigPanel.this.functionModel.addSynFunctionRow(parentGroupPath);
                 SynFunctionConfigPanel.this.treeTable.setSelectedPath(newPath);
                 SynFunctionConfigPanel.this.handleFormAvailability(ActionMode.FUNCTION);
+                SynFunctionConfigPanel.this.triggerActionListeners();
             }
         });
         // Button: add function group to group (empty for function entries)
@@ -168,7 +203,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
                 final TreePath newPath = SynFunctionConfigPanel.this.functionModel.addGroupRow(parentGroupPath);
                 SynFunctionConfigPanel.this.treeTable.setSelectedPath(newPath);
                 SynFunctionConfigPanel.this.handleFormAvailability(ActionMode.FUNCTION_GROUP);
-
+                SynFunctionConfigPanel.this.triggerActionListeners();
             }
         });
         // Button: move function/group up
@@ -177,8 +212,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
                 final int clickedRowIndex = Integer.valueOf(actionEvent.getActionCommand()).intValue();
-                final TreePath entryPath = SynFunctionConfigPanel.this.treeTable.getPathForRow(clickedRowIndex);
-                SynFunctionConfigPanel.this.functionModel.moveEntry(entryPath, false);
+                SynFunctionConfigPanel.this.moveEntry(clickedRowIndex, false);
             }
         });
         // Button: move function/group down
@@ -187,8 +221,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
                 final int clickedRowIndex = Integer.valueOf(actionEvent.getActionCommand()).intValue();
-                final TreePath entryPath = SynFunctionConfigPanel.this.treeTable.getPathForRow(clickedRowIndex);
-                SynFunctionConfigPanel.this.functionModel.moveEntry(entryPath, true);
+                SynFunctionConfigPanel.this.moveEntry(clickedRowIndex, true);
             }
         });
         // Button: remove function/group
@@ -199,11 +232,31 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
                 final int clickedRowIndex = Integer.valueOf(actionEvent.getActionCommand()).intValue();
                 final TreePath entryPath = SynFunctionConfigPanel.this.treeTable.getPathForRow(clickedRowIndex);
                 SynFunctionConfigPanel.this.functionModel.removeEntry(entryPath);
+                SynFunctionConfigPanel.this.triggerActionListeners();
             }
         });
         this.treeTable.applyRowHeight(deleteColumn, "");
         this.treeTable.expandAll();
         this.treeTable.setVisibleRowCount(3);
+    }
+
+    /**
+     * Move the group or entry at the designated path up or down by own step.
+     * 
+     * @param rowIndex
+     *            index of the relation template group or entry row to move
+     * @param moveDown
+     *            whether the group or entry should be moved down; otherwise moved up
+     */
+    void moveEntry(final int rowIndex, final boolean moveDown) {
+        final TreePath targetPath = this.treeTable.getPathForRow(rowIndex);
+        // determine those paths under the same parent that are currently expanded
+        final List<TreePath> expandedSiblings = this.treeTable.getExpandedChildren(targetPath.getParentPath());
+        // actually move the indicated element
+        this.functionModel.moveEntry(targetPath, moveDown);
+        // reset the expanded state of the targetPath's siblings
+        this.treeTable.expandPaths(expandedSiblings);
+        this.triggerActionListeners();
     }
 
     /** Initialize all the possible interactions with buttons and other components. */
@@ -224,6 +277,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
                 SynFunctionConfigPanel.this.treeTable.expandPath(newEntry);
                 SynFunctionConfigPanel.this.treeTable.setSelectedPath(newEntry);
                 SynFunctionConfigPanel.this.handleFormAvailability(ActionMode.TABLE);
+                SynFunctionConfigPanel.this.triggerActionListeners();
             }
         });
         this.editTableSelectionButton.addActionListener(new ActionListener() {
@@ -293,6 +347,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
             }
             this.functionModel.updatedRow(this.treeTable.getSelectedPath());
             this.handleFormAvailability(ActionMode.TABLE);
+            this.triggerActionListeners();
         }
     }
 

@@ -201,7 +201,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
         final List<Relation> result = new LinkedList<Relation>();
         // get the first Proposition
         AbstractConnectable currentFocus = this.getPropositionAt(0);
-        do {
+        while (currentFocus != null) {
             // get the highest relation over the current focused Proposition
             while (currentFocus.getSuperOrdinatedRelation() != null) {
                 currentFocus = currentFocus.getSuperOrdinatedRelation();
@@ -211,7 +211,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
             }
             // iterate whole pericope
             currentFocus = currentFocus.getFollowingConnectableProposition();
-        } while (currentFocus != null);
+        }
         return result;
     }
 
@@ -240,7 +240,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return the language of the origin text
      */
     public String getLanguage() {
-        return this.languageModel.getName();
+        return this.languageModel == null ? null : this.languageModel.getName();
     }
 
     /**
@@ -249,12 +249,13 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return if the text orientation is {@code left-to-right} (otherwise {@code right-to-left})
      */
     public boolean isLeftToRightOriented() {
-        return this.languageModel.isLeftToRightOriented();
+        return this.languageModel == null || this.languageModel.isLeftToRightOriented();
     }
 
     @Override
     public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
-        return this.languageModel.provideFunctions();
+        return this.languageModel == null ? Collections.<List<AbstractSyntacticalFunctionElement>>emptyList() : this.languageModel
+                .provideFunctions();
     }
 
     /**
@@ -379,10 +380,13 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @see #indexOfProposition(Proposition)
      */
     public Proposition getPropositionAt(final int index) {
+        if (this.text.isEmpty()) {
+            return null;
+        }
         // get the first Proposition
         Proposition proposition = this.text.get(0);
         List<Proposition> priorChildren = proposition.getPriorChildren();
-        while (priorChildren != null && !priorChildren.isEmpty()) {
+        while (!priorChildren.isEmpty()) {
             proposition = priorChildren.get(0);
             priorChildren = proposition.getPriorChildren();
         }

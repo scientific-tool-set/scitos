@@ -21,7 +21,10 @@ package org.hmx.scitos.hmx.view.swing.option;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,8 +34,13 @@ import net.java.dev.designgridlayout.IHideable;
 
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
+import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
 import org.hmx.scitos.view.ScitosIcon;
+import org.hmx.scitos.view.swing.MessageHandler;
+import org.hmx.scitos.view.swing.MessageHandler.MessageType;
 import org.hmx.scitos.view.swing.option.AbstractOptionPanel;
 
 /**
@@ -85,8 +93,6 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
             public void actionPerformed(final ActionEvent event) {
                 languagePanelRow.forceShow();
                 switchToLanguagesRow.hide();
-                HmxLanguageOptionPanel.this.languagePanel.getSelectedModel().reset(HmxLanguageOptionPanel.this.functionPanel.provideFunctions());
-                HmxLanguageOptionPanel.this.languagePanel.fireSelectedModelRowUpdated();
                 switchToFunctionsRow.forceShow();
                 functionPanelRow.hide();
             }
@@ -97,6 +103,14 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
             public void actionPerformed(final ActionEvent event) {
                 switchToFunctionsButton.setEnabled(!HmxLanguageOptionPanel.this.languagePanel.isInEditMode()
                         && HmxLanguageOptionPanel.this.languagePanel.isSelectedModelUserDefined());
+            }
+        });
+        this.functionPanel.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                HmxLanguageOptionPanel.this.languagePanel.getSelectedModel().reset(HmxLanguageOptionPanel.this.functionPanel.provideFunctions());
+                HmxLanguageOptionPanel.this.languagePanel.fireSelectedModelRowUpdated();
             }
         });
     }
@@ -114,7 +128,47 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
 
     @Override
     public boolean areChosenSettingsValid() {
-        return !this.languagePanel.isInEditMode() && !this.functionPanel.isInEditMode();
+        if (this.languagePanel.isInEditMode() || this.functionPanel.isInEditMode()) {
+            MessageHandler.showMessage(HmxMessage.PREFERENCES_EDITINPROGRESS.get(), HmxMessage.PREFERENCES_LANGUAGE.get(), MessageType.INFO);
+            return false;
+        }
+        for (final LanguageModel singleModel : this.languagePanel.getUserModels()) {
+            final Set<String> codes = new HashSet<String>();
+            for (final List<AbstractSyntacticalFunctionElement> singleTopLevelGroup : singleModel.provideFunctions()) {
+                if (this.containsDuplicateFunctionCode(singleTopLevelGroup, codes)) {
+                    final String message = MessageFormat.format(HmxMessage.PREFERENCES_LANGUAGEFUNCTIONS_CODE_UNIQUE.get(), singleModel.getName());
+                    MessageHandler.showMessage(message, HmxMessage.PREFERENCES_LANGUAGE.get(), MessageType.WARN);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Recursively determine whether two {@link SyntacticalFunction} elements are configured to have the same {@code code} value.
+     * 
+     * @param functionElements
+     *            the {@link SyntacticalFunction} and {@link SyntacticalFunctionGroup} elements to recursively check
+     * @param codes
+     *            collection of already configured {@code code} values to add the checked values to
+     * @return if the {@code codes} collection already contained an encountered {@link SyntacticalFunction}'s {@code code} value
+     */
+    private boolean containsDuplicateFunctionCode(final List<AbstractSyntacticalFunctionElement> functionElements, final Set<String> codes) {
+        for (final AbstractSyntacticalFunctionElement singleElement : functionElements) {
+            if (singleElement instanceof SyntacticalFunction) {
+                // try to add code to duplicate-preventing set
+                if (!codes.add(((SyntacticalFunction) singleElement).getCode())) {
+                    // adding the code to the set didn't change it, i.e. the set already contained this code
+                    return true;
+                }
+            } else if (singleElement instanceof SyntacticalFunctionGroup
+                    && this.containsDuplicateFunctionCode(((SyntacticalFunctionGroup) singleElement).getSubFunctions(), codes)) {
+                // feed back the duplicate found in a contained syntactical function element
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

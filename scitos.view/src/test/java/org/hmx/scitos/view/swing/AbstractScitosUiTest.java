@@ -26,10 +26,12 @@ import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 
 import org.assertj.swing.core.Robot;
+import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.edt.GuiQuery;
 import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JPopupMenuFixture;
 import org.assertj.swing.fixture.JTabbedPaneFixture;
 import org.assertj.swing.fixture.JTreeFixture;
@@ -106,14 +108,22 @@ public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate 
      *            designated file type
      */
     protected void createNewFile(final FileType type) {
-        // click on the 'create new file' button in the main tool bar
-        this.frame.toolBar().button(new ToolTipComponentMatcher<JButton>(JButton.class, Message.MENUBAR_FILE_NEW.get(), true)).click();
-        // check whether a popup is being shown
-        final JPopupMenu shownPopup = this.robot().findActivePopupMenu();
-        // we're done if no show popup has been opened
-        if (shownPopup != null) {
-            // more than one module offering a 'create new file' feature is active, i.e. select the respective entry in the displayed popup
-            new JPopupMenuFixture(this.robot(), shownPopup).menuItem(type.getLocalizableName().get()).click();
+        // check if the Welcome tab with its dedicated 'New File' buttons is visible
+        final JButton welcomeTabNewButton =
+                this.robot().finder().find(JButtonMatcher.withText(Message.MENUBAR_FILE_NEW.get() + " : " + type.getLocalizableName().get()));
+        if (welcomeTabNewButton.isVisible()) {
+            // click on the dedicated 'New File' button
+            new JButtonFixture(this.robot(), welcomeTabNewButton).click();
+        } else {
+            // click on the 'create new file' button in the main tool bar
+            this.frame.toolBar().button(new ToolTipComponentMatcher<JButton>(JButton.class, Message.MENUBAR_FILE_NEW.get(), true)).click();
+            // check whether a popup is being shown
+            final JPopupMenu shownPopup = this.robot().findActivePopupMenu();
+            // we're done if no show popup has been opened
+            if (shownPopup != null) {
+                // more than one module offering a 'create new file' feature is active, i.e. select the respective entry in the displayed popup
+                new JPopupMenuFixture(this.robot(), shownPopup).menuItem(type.getLocalizableName().get()).click();
+            }
         }
     }
 

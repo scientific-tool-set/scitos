@@ -1,6 +1,6 @@
  SciToS - Scientific Tool Set
 
- Copyright (C) 2015 HermeneutiX.org
+ Copyright (C) 2015-2016 HermeneutiX.org
  Licensed under the GNU General Public License Version 3 (GPLv3)
 
 ------------------------------------------------------------------------------
@@ -9,6 +9,11 @@ Included are materials, which are licensed separately:
 
 - library 'Dagger' by 'Square, Inc.' – dependency injection framework
     http://square.github.io/dagger/
+  License: Apache License, Version 2.0
+    http://www.apache.org/licenses/LICENSE-2.0
+
+- library 'DesignGridLayout' by Jason Aaron Osgood and Jean-Francois Poilpret – alternative form UI layout
+    https://designgridlayout.java.net/
   License: Apache License, Version 2.0
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -32,7 +37,9 @@ Included are materials, which are licensed separately:
 
 - 'ButtonTabComponent' class for closable tabs – e.g. in the main view
    Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
-  
+
+
+
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:

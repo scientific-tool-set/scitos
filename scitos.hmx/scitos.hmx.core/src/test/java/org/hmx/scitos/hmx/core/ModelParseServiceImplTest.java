@@ -52,6 +52,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Test for the {@link ModelParseServiceImpl} class.
@@ -248,6 +249,34 @@ public class ModelParseServiceImplTest {
             actualText = actual;
         }
         Assert.assertEquals(errorMessage, expectedText, actualText);
+    }
+
+    /**
+     * Test: of the {@code parseXmlFromLanguageModel()} and {@code parseLanguageModelsFromXml()} methods.
+     *
+     * @throws HmxException
+     *             failed to retrieve the system {@link LanguageModel}s, or parsing to/from xml structure failed
+     * @throws ParserConfigurationException
+     *             failed to initialize in-memory XML document
+     */
+    @Test
+    public void testParseLanguageModelToAndFromXml() throws HmxException, ParserConfigurationException {
+        final List<LanguageModel> systemModels = ModelParseServiceImplTest.parseService.getSystemLanguageModels();
+
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        final Document xml = factory.newDocumentBuilder().newDocument();
+        final Element root = (Element) xml.appendChild(xml.createElement("TestRoot"));
+        for (final LanguageModel model : systemModels) {
+            root.appendChild(ModelParseServiceImplTest.parseService.parseXmlFromLanguageModel(xml, model));
+        }
+        final List<LanguageModel> parsedModels = ModelParseServiceImplTest.parseService.parseLanguageModelsFromXml(xml);
+
+        final int modelCount = systemModels.size();
+        Assert.assertEquals(modelCount, parsedModels.size());
+        for (int i = 0; i < modelCount; i++) {
+            this.assertLanguageModelEquals(systemModels.get(i), parsedModels.get(i));
+        }
     }
 
     /**

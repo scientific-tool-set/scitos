@@ -20,14 +20,12 @@
 package org.hmx.scitos.ais.view.swing;
 
 import java.awt.Component;
-import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
@@ -45,7 +43,6 @@ import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.swing.AbstractScitosUiTest;
 import org.hmx.scitos.view.swing.components.ScaledTable;
 import org.hmx.scitos.view.swing.util.OrdinalComponentMatcher;
-import org.hmx.scitos.view.swing.util.ToolTipComponentMatcher;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -54,12 +51,6 @@ import com.thedeanda.lorem.LoremIpsum;
 
 /** UI test for a simple AIS project workflow. */
 public class AisViewProjectTest extends AbstractScitosUiTest {
-
-    /**
-     * The default modifier key mask (on most systems {@link InputEvent#CTRL_DOWN_MASK}, e.g. on Mac OS X {@link InputEvent#META_DOWN_MASK} i.e. the
-     * command button).
-     */
-    private final int menuShortcutMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     /**
      * Test for a simple AIS project workflow with the following steps:
@@ -103,7 +94,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
         // #4 assign and unassign detail categories via mouse (i.e. mouse selection and clicking on tool bar buttons)
         this.assignDetailsToFirstInterview(textOneTokens);
         // #5 add an interview for another participant
-        this.frame.toolBar().button(new ToolTipComponentMatcher<JButton>(JButton.class, AisMessage.INTERVIEW_NEW.get(), true)).click();
+        this.getToolBarButtonByToolTip(AisMessage.INTERVIEW_NEW).click();
         participantIdDialog = this.frame.optionPane().requireMessage(AisMessage.INTERVIEW_NEW_PARTICIPANTID.get());
         final String participantTwo = textGenerator.getNameMale();
         participantIdDialog.textBox().setText(participantTwo);
@@ -118,7 +109,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
         // #8 navigate back to the first interview via the project tree and undo the last action
         this.projectTree.clickPath(AisMessage.PROJECT_UNSAVED.get() + '/' + participantOne);
         // detail assignment: I1 - E3 -(I2 - ..I2)- ..E3 - ..E3
-        this.frame.toolBar().button(new ToolTipComponentMatcher<JButton>(JButton.class, Message.MENUBAR_EDIT_UNDO.get(), true)).click();
+        this.getUndoToolBarButton().click();
         this.assertTextTokenStates_BeforeLastRemoval(textOneTokens);
         // #9 navigate to project overview via its tab and confirm displayed results
         this.tabbedPane.selectTab(AisMessage.PROJECT_UNSAVED.get());
@@ -130,7 +121,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
     /**
      * Assign and unassign detail categories via mouse (i.e. mouse selection and clicking on tool bar buttons). The resulting detail assignments
      * should represent the following structure: {@code Int1 Ext3 (Int2 ..Int2 __) ..Ext3}
-     * 
+     *
      * @param tokenTexts
      *            texts of the interview's tokens
      */
@@ -169,7 +160,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
     /**
      * Assign and unassign detail categories via keyboard shortcuts (i.e. selection via arrow keys and assigning details via shortcuts). The resulting
      * detail assignments should represent the following structure: {@code Int1 Ext3 (Int2 ..Int2 __) ..Ext3}
-     * 
+     *
      * @param tokenTexts
      *            texts of the interview's tokens
      */
@@ -211,7 +202,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
 
     /**
      * Getter for the text label on the component representing the n-th text token.
-     * 
+     *
      * @param ordinal
      *            index of the designated text token (component)
      * @return the {@code TextTokenComponent}'s text label's fixture
@@ -223,7 +214,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
     /**
      * Assert the final states of the currently visible interview's text tokens equals the following detail structure:
      * {@code Int1 Ext3 (Int2 ..Int2) ..Ext3 ..Ext3}
-     * 
+     *
      * @param tokenTexts
      *            expected texts of the individual tokens
      */
@@ -241,7 +232,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
     /**
      * Assert the final states of the currently visible interview's text tokens equals the following detail structure:
      * {@code Int1 Ext3 (Int2 ..Int2 __) ..Ext3}
-     * 
+     *
      * @param tokenTexts
      *            expected texts of the individual tokens
      */
@@ -258,7 +249,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
 
     /**
      * Getter for components representing text tokens (including their potentially assigned detail category).
-     * 
+     *
      * @return {@code TextTokenComponent} fixtures
      */
     private List<JPanelFixture> getTextTokenComponents() {
@@ -272,7 +263,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
 
     /**
      * Assert a single text token component's properties, without expecting any opening or closing brackets.
-     * 
+     *
      * @param textTokenComponent
      *            the text token component to assert
      * @param text
@@ -286,7 +277,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
 
     /**
      * Assert a single text token component's properties.
-     * 
+     *
      * @param textTokenComponent
      *            the text token component to assert
      * @param text

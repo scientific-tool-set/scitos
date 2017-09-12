@@ -19,7 +19,9 @@
 
 package org.hmx.scitos.view.swing;
 
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.util.Locale;
 
 import javax.swing.JButton;
@@ -36,6 +38,7 @@ import org.assertj.swing.fixture.JPopupMenuFixture;
 import org.assertj.swing.fixture.JTabbedPaneFixture;
 import org.assertj.swing.fixture.JTreeFixture;
 import org.assertj.swing.testing.AssertJSwingTestCaseTemplate;
+import org.hmx.scitos.core.i18n.ILocalizableMessage;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.view.FileType;
@@ -50,6 +53,12 @@ import org.junit.BeforeClass;
  * is also taken care of.
  */
 public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate {
+
+    /**
+     * The default modifier key mask (on most systems {@link InputEvent#CTRL_DOWN_MASK}, e.g. on Mac OS X {@link InputEvent#META_DOWN_MASK} i.e. the
+     * command button).
+     */
+    protected final int menuShortcutMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     /** The underlying swing JFrame to test. */
     protected FrameFixture frame;
@@ -69,7 +78,7 @@ public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate 
 
     /**
      * Sets up this test's fixture, starting from creation of a new <code>{@link Robot}</code>.
-     * 
+     *
      * @see #setUpRobot()
      * @see #onSetUp()
      */
@@ -88,6 +97,7 @@ public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate 
         });
         this.frame = new FrameFixture(this.robot(), client.getFrame());
         this.frame.show();
+        this.frame.resizeTo(new Dimension(1000, 700));
         this.projectTree = this.frame.tree("Project Tree");
         this.tabbedPane = this.frame.tabbedPane("Project View Tab Stack");
         onSetUp();
@@ -102,21 +112,21 @@ public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate 
     }
 
     /**
-     * Create a new file via the main tool bar's respective button (and potentially displayed popup menu).
-     * 
+     * Create a new file via the welcome tab (if currently displayed) or the main tool bar's respective button (and potentially displayed popup menu).
+     *
      * @param type
      *            designated file type
      */
     protected void createNewFile(final FileType type) {
         // check if the Welcome tab with its dedicated 'New File' buttons is visible
-        final JButton welcomeTabNewButton =
-                this.robot().finder().find(JButtonMatcher.withText(Message.MENUBAR_FILE_NEW.get() + " : " + type.getLocalizableName().get()));
+        final JButton welcomeTabNewButton = this.robot().finder()
+                .find(JButtonMatcher.withText(Message.MENUBAR_FILE_NEW.get() + " : " + type.getLocalizableName().get()));
         if (welcomeTabNewButton.isVisible()) {
             // click on the dedicated 'New File' button
             new JButtonFixture(this.robot(), welcomeTabNewButton).click();
         } else {
             // click on the 'create new file' button in the main tool bar
-            this.frame.toolBar().button(new ToolTipComponentMatcher<JButton>(JButton.class, Message.MENUBAR_FILE_NEW.get(), true)).click();
+            this.getToolBarButtonByToolTip(Message.MENUBAR_FILE_NEW).click();
             // check whether a popup is being shown
             final JPopupMenu shownPopup = this.robot().findActivePopupMenu();
             // we're done if no show popup has been opened
@@ -128,9 +138,51 @@ public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate 
     }
 
     /**
+     * Find the button with the given text label anywhere in the window.
+     *
+     * @param buttonText
+     *            text label of the button to find
+     * @return the matched button
+     */
+    protected final JButtonFixture getButtonByText(ILocalizableMessage buttonText) {
+        final JButtonMatcher matcher = JButtonMatcher.withText(buttonText.get());
+        return this.frame.button(matcher);
+    }
+
+    /**
+     * Find the button on the main tool bar with the given tool tip (as it's assumed to have no label, but an icon and a tool tip).
+     *
+     * @param buttonToolTip
+     *            tool tip of the button to find
+     * @return the matched tool bar button
+     */
+    protected final JButtonFixture getToolBarButtonByToolTip(ILocalizableMessage buttonToolTip) {
+        final ToolTipComponentMatcher<JButton> matcher = new ToolTipComponentMatcher<JButton>(JButton.class, buttonToolTip.get(), true);
+        return this.frame.toolBar().button(matcher);
+    }
+
+    /**
+     * Find the "Undo" button in the main tool bar.
+     *
+     * @return the "Undo" tool bar button for reverting the latest performed action/change
+     */
+    protected final JButtonFixture getUndoToolBarButton() {
+        return this.getToolBarButtonByToolTip(Message.MENUBAR_EDIT_UNDO);
+    }
+
+    /**
+     * Find the "Redo" button in the main tool bar.
+     *
+     * @return the "Redo" tool bar button for restoring the last action/change reverted via "Undo"
+     */
+    protected final JButtonFixture getRedoToolBarButton() {
+        return this.getToolBarButtonByToolTip(Message.MENUBAR_EDIT_REDO);
+    }
+
+    /**
      * Cleans up any resources used in this test. After calling <code>{@link #onTearDown()}</code>, this method cleans up resources used by this
      * test's <code>{@link Robot}</code>.
-     * 
+     *
      * @see #cleanUp()
      * @see #onTearDown()
      */

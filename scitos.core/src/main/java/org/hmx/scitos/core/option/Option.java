@@ -39,9 +39,9 @@ public enum Option implements IOptionSetting {
     /** For usability: last directory used for saving. */
     WORKDIR("WorkDir", null),
     /** For usability: window width in the last session. */
-    WINDOW_WIDTH("Window.Width", "800"),
+    WINDOW_WIDTH("Window.Width", "1000"),
     /** For usability: window height in the last session. */
-    WINDOW_HEIGHT("Window.Height", "600"),
+    WINDOW_HEIGHT("Window.Height", "700"),
     /** For usability: left border of the window in the last session. */
     WINDOW_X_LOCATION("Window.PosX", "0"),
     /** For usability: top border of the window in the last session. */

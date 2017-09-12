@@ -22,8 +22,6 @@ package org.hmx.scitos.hmx.view.swing.elements;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public final class SynProposition extends AbstractProposition {
 
     /**
      * Constructor.
-     * 
+     *
      * @param viewReference
      *            the containing view, providing access to higher functions
      * @param represented
@@ -131,6 +129,19 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
+     * Create a {@link Dimension} for the indentation by settings its width regarding to the width of the view representation of the
+     * {@code partBeforeArrow}.
+     *
+     * @param partBeforeArrow
+     *            view representation of the {@code partBeforeArrow}
+     * @return {@link Dimension} representing the indentation
+     */
+    private static Dimension createIndentationAfterArrow(final SynProposition partBeforeArrow) {
+        return new Dimension(partBeforeArrow.getIndentationArea().getPreferredSize().width
+                + partBeforeArrow.getLeftArrows().getPreferredSize().width + partBeforeArrow.getItemArea().getPreferredSize().width, 1);
+    }
+
+    /**
      * Initialize the {@link JLabel} in the indentation area for displaying its indentation function and an expanding {@link JPanel} on the right to
      * make sure it is always at the left side of its parent and the explicit syntactical functionality by inserting the contained {@link SynItem}s,
      * adding a listener to the translation field and activating the comment listener.
@@ -157,34 +168,19 @@ public final class SynProposition extends AbstractProposition {
         rightSpacing.gridx = 1;
         rightSpacing.gridy = 0;
         this.add(new JPanel(), rightSpacing);
-        this.getTranslationField().addFocusListener(new FocusAdapter() {
-
-            @Override
-            public void focusLost(final FocusEvent event) {
-                final String translationText = SynProposition.this.getTranslationField().getText();
-                if (!ComparisonUtil.isNullOrEmptyAwareEqual(translationText, SynProposition.this.getRepresented().getSynTranslation())) {
-                    // only transfer if necessary
-                    SynProposition.this.getModelHandler().setSynTranslation(SynProposition.this.getRepresented(), translationText);
-                }
-            }
-        });
         for (final ClauseItem singleItem : this.getRepresented()) {
             this.insertItem(singleItem);
         }
         this.refreshComment();
     }
 
-    /**
-     * Create a {@link Dimension} for the indentation by settings its width regarding to the width of the view representation of the
-     * {@code partBeforeArrow}.
-     *
-     * @param partBeforeArrow
-     *            view representation of the {@code partBeforeArrow}
-     * @return {@link Dimension} representing the indentation
-     */
-    private static Dimension createIndentationAfterArrow(final SynProposition partBeforeArrow) {
-        return new Dimension(partBeforeArrow.getIndentationArea().getPreferredSize().width
-                + partBeforeArrow.getLeftArrows().getPreferredSize().width + partBeforeArrow.getItemArea().getPreferredSize().width, 1);
+    @Override
+    protected void submitTranslationChanges() {
+        final String translationText = this.getTranslationField().getText();
+        // only transfer if necessary
+        if (!ComparisonUtil.isNullOrEmptyAwareEqual(translationText, this.getRepresented().getSynTranslation())) {
+            this.getModelHandler().setSynTranslation(this.getRepresented(), translationText);
+        }
     }
 
     /**
@@ -213,7 +209,7 @@ public final class SynProposition extends AbstractProposition {
 
     /**
      * Getter for the contained {@link SynItem}s.
-     * 
+     *
      * @return displayed {@link SynItem}s
      */
     public List<SynItem> getItems() {
@@ -247,18 +243,6 @@ public final class SynProposition extends AbstractProposition {
     public void refreshTranslation() {
         this.getTranslationField().setText(this.getRepresented().getSynTranslation());
         super.refreshTranslation();
-    }
-
-    /**
-     * Update the tool tip info containing the comment text to match its value in the represented {@link Proposition}.
-     */
-    public void refreshComment() {
-        final String comment = this.getRepresented().getComment();
-        if (comment == null || comment.isEmpty()) {
-            this.setToolTipText(null);
-        } else {
-            this.setToolTipText(comment);
-        }
     }
 
     @Override

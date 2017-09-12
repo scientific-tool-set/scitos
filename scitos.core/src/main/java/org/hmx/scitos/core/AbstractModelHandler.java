@@ -36,7 +36,7 @@ import org.hmx.scitos.domain.util.CollectionUtil;
 public abstract class AbstractModelHandler<M extends IModel<M>> implements IModelHandler<M> {
 
     /** The managed model object. */
-    private final M model;
+    private M model;
     /** The listeners that are notified when a model change occurs. */
     private final List<ModelChangeListener> listeners;
 
@@ -54,6 +54,10 @@ public abstract class AbstractModelHandler<M extends IModel<M>> implements IMode
     @Override
     public M getModel() {
         return this.model;
+    }
+
+    protected void setModel(final M model) {
+        this.model = model;
     }
 
     @Override

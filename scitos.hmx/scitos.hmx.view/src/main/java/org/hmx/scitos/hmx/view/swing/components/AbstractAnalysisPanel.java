@@ -81,6 +81,11 @@ abstract class AbstractAnalysisPanel extends JPanel {
     public abstract void repaintPericope();
 
     /**
+     * Ensure that any pending changes have been submitted to the model handler for proper processing.
+     */
+    public abstract void submitChangesToModel();
+
+    /**
      * Getter for the {@link ModelChangeListener} handling updates of this panel.
      *
      * @return the associated model listener

@@ -63,6 +63,7 @@ import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
+import org.hmx.scitos.view.swing.IUndoManagedView;
 import org.hmx.scitos.view.swing.components.ScaledTextPane;
 import org.hmx.scitos.view.swing.util.VTextIcon;
 
@@ -70,7 +71,7 @@ import org.hmx.scitos.view.swing.util.VTextIcon;
  * View offering the possibility to insert a text to analyze, which is referred to as the {@code origin text} in the HermeneutiX project. The user
  * chooses the language model (text orientation and applicable syntactical functions) and {@link Font} for the origin text.
  */
-public final class TextInputPanel extends JPanel {
+public final class TextInputPanel extends JPanel implements IUndoManagedView {
 
     /** The default font type to select if none is elsewhere configured/preset. */
     private static final String DEFAULT_FONT = "Times New Roman";
@@ -94,9 +95,9 @@ public final class TextInputPanel extends JPanel {
     /**
      * The selection component for the {@link #languageModels}.
      */
-    private JComboBox languageBox;
+    private JComboBox<String> languageBox;
     /** The selection component for the origin text's font type. */
-    private JComboBox fontTypeBox;
+    private JComboBox<String> fontTypeBox;
     /** Available font types. */
     private List<String> fontFamilyNames;
     /** The selection component for setting the origin text's font size. */
@@ -212,12 +213,18 @@ public final class TextInputPanel extends JPanel {
     /**
      * Ensure all currently displayed changes are represented as such in the underlying model objects - in order to be able to save the current state.
      */
+    @Override
     public void submitChangesToModel() {
         if (this.replaceCurrentText) {
             // apply the default selected language model and font selection (to actually allow something to be saved this early)
             this.parentView.getModel().init(this.getPropositionTexts(), this.getLanguageModelSelection(), this.getFontSelection());
         }
         // if we are currently adding text to an existing model, the unchanged model will be saved
+    }
+
+    @Override
+    public void refresh() {
+        // nothing to refresh here
     }
 
     /**
@@ -243,6 +250,7 @@ public final class TextInputPanel extends JPanel {
      */
     private void initOriginTextPane(final int bottomInset) {
         this.originTextPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.originTextPane.setName("Origin Text Input");
         final MutableAttributeSet attributes = this.originTextPane.getInputAttributes();
         StyleConstants.setLineSpacing(attributes, 1.5f);
         final StyledDocument document = this.originTextPane.getStyledDocument();
@@ -263,7 +271,9 @@ public final class TextInputPanel extends JPanel {
         this.initUndoRedoOption();
     }
 
-    /** Enable the undo-/redo-option for the origin text area. */
+    /**
+     * Enable the undo-/redo-option for the origin text area.
+     */
     private void initUndoRedoOption() {
         // manage undo / redo
         this.undoManager = new UndoManager() {
@@ -301,6 +311,7 @@ public final class TextInputPanel extends JPanel {
      *
      * @return undo possible
      */
+    @Override
     public boolean canUndo() {
         return this.undoManager.canUndo();
     }
@@ -310,11 +321,15 @@ public final class TextInputPanel extends JPanel {
      *
      * @return redo possible
      */
+    @Override
     public boolean canRedo() {
         return this.undoManager.canRedo();
     }
 
-    /** Execute rollback of the last change in the origin text area. */
+    /**
+     * Execute rollback of the last change in the origin text area.
+     */
+    @Override
     public void undo() {
         // avoid exception
         if (this.canUndo()) {
@@ -325,6 +340,7 @@ public final class TextInputPanel extends JPanel {
     /**
      * Revert the last {@link #undo()} call in the origin text area.
      */
+    @Override
     public void redo() {
         // avoid exception
         if (this.canRedo()) {
@@ -332,7 +348,9 @@ public final class TextInputPanel extends JPanel {
         }
     }
 
-    /** Initialize the button for toggling the setting sidebar's visibility on the right side. */
+    /**
+     * Initialize the button for toggling the setting sidebar's visibility on the right side.
+     */
     private void initShowOrHideSettingsButton() {
         // increase the font size for the showOrHideSettingsButton by 2
         final Font defaultFont = this.showOrHideSettingsButton.getFont();
@@ -417,7 +435,7 @@ public final class TextInputPanel extends JPanel {
         // set default language
         String defaultLanguage = this.parentView.getModel().getLanguage();
         if (defaultLanguage == null) {
-            defaultLanguage = (String) this.languageBox.getItemAt(0);
+            defaultLanguage = this.languageBox.getItemAt(0);
         }
         // listener on languageBox also presets the font type and size
         this.languageBox.setSelectedItem(defaultLanguage);
@@ -443,9 +461,8 @@ public final class TextInputPanel extends JPanel {
      * @return created {@link JPanel}
      */
     private JPanel createLanguageComboBox() {
-        final JPanel languagePanel = new JPanel();
-        languagePanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.TEXTINPUT_LANGUAGE.get()));
-        this.languageBox = new JComboBox(this.languageModels.keySet().toArray(new String[this.languageModels.size()]));
+        this.languageBox = new JComboBox<String>(this.languageModels.keySet().toArray(new String[this.languageModels.size()]));
+        this.languageBox.setName("Language Selection");
         this.languageBox.setEditable(false);
         if (this.languageModels.size() < 2) {
             this.languageBox.setEnabled(false);
@@ -459,6 +476,8 @@ public final class TextInputPanel extends JPanel {
                 TextInputPanel.this.parentView.getProject().setSaved(false);
             }
         });
+        final JPanel languagePanel = new JPanel();
+        languagePanel.setBorder(BorderFactory.createTitledBorder(HmxMessage.TEXTINPUT_LANGUAGE.get()));
         languagePanel.add(this.languageBox);
         return languagePanel;
     }
@@ -468,16 +487,11 @@ public final class TextInputPanel extends JPanel {
      */
     void setOriginTextPaneOrientation() {
         final ComponentOrientation orientation;
-        final Object selectedEntry = this.languageBox.getSelectedItem();
-        if (selectedEntry == null) {
+        final LanguageModel selectedModel = this.getLanguageModelSelection();
+        if (selectedModel == null || selectedModel.isLeftToRightOriented()) {
             orientation = ComponentOrientation.LEFT_TO_RIGHT;
         } else {
-            final LanguageModel selectedModel = this.languageModels.get(selectedEntry);
-            if (selectedModel == null || selectedModel.isLeftToRightOriented()) {
-                orientation = ComponentOrientation.LEFT_TO_RIGHT;
-            } else {
-                orientation = ComponentOrientation.RIGHT_TO_LEFT;
-            }
+            orientation = ComponentOrientation.RIGHT_TO_LEFT;
         }
         this.originTextPane.setComponentOrientation(orientation);
     }
@@ -490,7 +504,8 @@ public final class TextInputPanel extends JPanel {
     private JPanel createFontTypeComboBox() {
         this.fontFamilyNames = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         Collections.sort(this.fontFamilyNames);
-        this.fontTypeBox = new JComboBox(this.fontFamilyNames.toArray(new String[this.fontFamilyNames.size()]));
+        this.fontTypeBox = new JComboBox<String>(this.fontFamilyNames.toArray(new String[this.fontFamilyNames.size()]));
+        this.fontTypeBox.setName("Font Type Selection");
         this.fontTypeBox.setEditable(false);
         this.fontTypeBox.addActionListener(new ActionListener() {
 
@@ -510,11 +525,7 @@ public final class TextInputPanel extends JPanel {
      * Set the font type and size selection based on the currently chosen {@link LanguageModel}.
      */
     void setFontSelection() {
-        final Object selectedEntry = this.languageBox.getSelectedItem();
-        if (selectedEntry == null) {
-            return;
-        }
-        final LanguageModel selectedModel = this.languageModels.get(selectedEntry);
+        final LanguageModel selectedModel = this.getLanguageModelSelection();
         if (selectedModel == null) {
             return;
         }
@@ -593,16 +604,18 @@ public final class TextInputPanel extends JPanel {
 
     /**
      * Get the currently selected {@link LanguageModel} from the associated selection component.
-     * 
+     *
      * @return selected language model
      */
     private LanguageModel getLanguageModelSelection() {
-        return this.languageModels.get(this.languageBox.getSelectedItem());
+        final Object languageName = this.languageBox.getSelectedItem();
+        final LanguageModel selectedModel = languageName == null ? null : this.languageModels.get(languageName.toString());
+        return selectedModel;
     }
 
     /**
      * Get the currently selected origin text {@link Font} – as specified by the chosen font type and the size slider's current value.
-     * 
+     *
      * @return the currently defined
      */
     private Font getFontSelection() {
@@ -611,7 +624,7 @@ public final class TextInputPanel extends JPanel {
 
     /**
      * Add the inserted origin text to the associated {@link Pericope}.
-     * 
+     *
      * @param inFront
      *            if the additional {@link Proposition}s should be added as the leading contents in the {@link Pericope}; otherwise they will be
      *            appended as trailing addition
@@ -625,7 +638,7 @@ public final class TextInputPanel extends JPanel {
 
     /**
      * Check if the {@link #originTextPane} contains any text to be interpreted as {@link Proposition}s.
-     * 
+     *
      * @return if the origin text pane contains valid input text
      */
     public boolean containsText() {
@@ -633,9 +646,8 @@ public final class TextInputPanel extends JPanel {
     }
 
     /**
-     * Retrieve the text from the {@link #originTextPane}, cleaning up multiple whitespaces and split it into {@link Proposition}s at line separators.
-     * Occurrences of four or more spaces will be replaced by tabstops, which in turn are later used to split a single {@link Proposition} into
-     * multiple {@link ClauseItem}s.
+     * Retrieve the text from the {@link #originTextPane}, cleaning up multiple whitespaces. Occurrences of four or more spaces will be replaced by
+     * tabstops, which in turn are later used to split a single {@link Proposition} into multiple {@link ClauseItem}s.
      *
      * @return inserted origin text
      */
@@ -646,7 +658,6 @@ public final class TextInputPanel extends JPanel {
         rawText = rawText.replaceAll("    +", "\t");
         // reduce each remaining substring with multiple whitespaces to one
         rawText = rawText.replaceAll("  +", " ");
-        // split at line separators to get single strings for each proposition
         return rawText;
     }
 }

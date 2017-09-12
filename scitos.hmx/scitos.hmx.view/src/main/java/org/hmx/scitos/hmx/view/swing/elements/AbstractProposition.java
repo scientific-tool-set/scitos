@@ -138,16 +138,18 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 1;
+        this.checkBox.setName("Check Box");
         this.contentPane.add(this.checkBox, constraints);
         this.contentPane.add(this.checkBoxDummy, constraints);
         // labelField
+        this.labelField.setName("Label Input");
         this.labelField.setColumns(Proposition.MAX_LABEL_LENGTH - 1);
         this.labelField.setDocument(new Validation(Proposition.MAX_LABEL_LENGTH));
         this.labelField.addFocusListener(new FocusAdapter() {
 
             @Override
             public void focusLost(final FocusEvent event) {
-                AbstractProposition.this.lostFocusOnLabel();
+                AbstractProposition.this.submitLabelChanges();
             }
         });
         this.refreshLabelText();
@@ -163,15 +165,28 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * Deal with a label text which lost the focus and might have been changed.
+     * Ensure that any pending changes (e.g. in the label or translation field) are being submitted to the model handler.
      */
-    final void lostFocusOnLabel() {
+    public void submitChangesToModel() {
+        this.submitLabelChanges();
+        this.submitTranslationChanges();
+    }
+
+    /**
+     * Ensure that any changes in the label field are submitted to the model.
+     */
+    final void submitLabelChanges() {
         // only transfer if necessary
         final String labelText = this.labelField.getText();
         if (!ComparisonUtil.isNullOrEmptyAwareEqual(this.represented.getLabel(), labelText)) {
             this.getModelHandler().setLabelText(this.represented, labelText);
         }
     }
+
+    /**
+     * Ensure that any changes in the translation field are submitted to the model.
+     */
+    protected abstract void submitTranslationChanges();
 
     /**
      * Getter for the associated {@link HmxModelHandler} implementation.
@@ -217,9 +232,16 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     /**
      * Initialize the bottom right part of the {@link Proposition} containing the text field for the translation.
      */
-    private final void initTranslationArea() {
+    private void initTranslationArea() {
+        this.translationField.setName("Translation Input");
         this.translationField.setDocument(new Validation(Proposition.MAX_TRANSLATION_LENGTH));
         this.refreshTranslation();
+        this.translationField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(final FocusEvent event) {
+                AbstractProposition.this.submitTranslationChanges();
+            }
+        });
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weighty = 1;
@@ -231,7 +253,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the identifier's input field.
-     * 
+     *
      * @return label field
      */
     protected final JTextField getLabelField() {
@@ -240,7 +262,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the placeholder realizing the indentation of the {@link Proposition} contents.
-     * 
+     *
      * @return indentation area
      */
     protected final JPanel getIndentationArea() {
@@ -249,7 +271,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the placeholder for upward pointing arrows referring to a {@code partBeforeArrow} of the represented {@link Proposition} (part).
-     * 
+     *
      * @return left arrow stack
      */
     protected final ArrowStack getLeftArrows() {
@@ -268,7 +290,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the origin text container, which is displayed differently in the syntactical and semantical analysis.
-     * 
+     *
      * @return item area containing the origin text
      */
     protected final JPanel getItemArea() {
@@ -277,7 +299,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the placeholder for downward pointing arrows referring to a {@code partAfterArrow} of the represented {@link Proposition} (part).
-     * 
+     *
      * @return right arrow stack
      */
     protected final ArrowStack getRightArrows() {
@@ -296,7 +318,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the translation input field.
-     * 
+     *
      * @return translation field
      */
     protected final JTextField getTranslationField() {
@@ -305,7 +327,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
 
     /**
      * Getter for the represented {@link Proposition}.
-     * 
+     *
      * @return represented model element
      */
     @Override
@@ -338,6 +360,18 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         this.contentPane.setSize(this.contentPane.getPreferredSize());
         // make sure it is still displayed
         this.itemArea.validate();
+    }
+
+    /**
+     * resets the tool tip info containing the comment text regarding its value in the represented {@link Proposition}.
+     */
+    public void refreshComment() {
+        final String comment = this.getRepresented().getComment();
+        if (comment == null || comment.isEmpty()) {
+            this.setToolTipText(null);
+        } else {
+            this.setToolTipText(comment);
+        }
     }
 
     @Override

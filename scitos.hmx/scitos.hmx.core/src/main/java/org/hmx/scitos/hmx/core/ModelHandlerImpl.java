@@ -59,6 +59,12 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
     }
 
     @Override
+    public void resetModel(final Pericope model) {
+        this.setModel(model);
+        this.notifyListeners(this.getModel(), false);
+    }
+
+    @Override
     public void setMetaData(final String title, final String author, final String comment, final String originTextFontFamily,
             final int originTextFontSize) {
         this.getModel().setTitle(title);
@@ -155,7 +161,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
     /**
      * Check if the {@link Proposition}s in the given order, have no {@link Proposition}s between them that are on the same or higher level. This
      * ignores the scenario where both {@link Proposition}s have the same parent or one of the two is the parent (or parent's parent...) of the other.
-     * 
+     *
      * @param propOne
      *            leading {@link Proposition} to check
      * @param propTwo
@@ -352,7 +358,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
      * Merge the given {@link Proposition}s by appending the {@code secondPart} to the {@code firstPart} WITHOUT REMOVING the {@code secondPart} from
      * its parent, which needs to be called separately. This method assumes both {@link Proposition}s being adjacent to one another and preserves any
      * (other) child {@link Proposition}s and handles potentially affected {@link Proposition} parts or enclosed children.
-     * 
+     *
      * @param prop1Part
      *            leading {@link Proposition} to receive the other {@link Proposition}'s {@link ClauseItem}s, translations, and child
      *            {@link Proposition}s
@@ -473,7 +479,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
 
     /**
      * Combine the two texts by separating them with the given character. If one of the texts is {@code null}, the other one is returned.
-     * 
+     *
      * @param textOne
      *            leading text to be merged
      * @param textTwo

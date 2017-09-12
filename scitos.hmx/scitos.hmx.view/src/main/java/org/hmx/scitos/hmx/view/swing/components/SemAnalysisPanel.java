@@ -175,7 +175,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
 
     /**
      * Hide/show the associate roles on the {@link Relation} column at the given index.
-     * 
+     *
      * @param level
      *            single relation level to fold/unfold (targets all levels, when is {@code -1})
      * @param fold
@@ -388,20 +388,26 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
         }
     }
 
+    @Override
+    public void submitChangesToModel() {
+        // only the propositions might have any pending changes (e.g. the label and translation fields)
+        if (this.propositionList != null) {
+            for (final SemProposition singleProposition : this.propositionList) {
+                singleProposition.submitChangesToModel();
+            }
+        }
+    }
+
     /**
      * Expose a mutable copy of the internal list of displayed {@link SemProposition}s.
-     * 
+     *
      * @return list containing all {@link Proposition} components in this view
      */
     public List<SemProposition> getPropositionList() {
         if (this.propositionList == null) {
             return null;
         }
-        final List<SemProposition> val = new ArrayList<SemProposition>();
-        for (final SemProposition singleViewProposition : this.propositionList) {
-            val.add(singleViewProposition);
-        }
-        return val;
+        return new ArrayList<SemProposition>(this.propositionList);
     }
 
     /**
@@ -413,9 +419,8 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
         int max = 0;
         for (final SemProposition singleProposition : this.propositionList) {
             Relation singleSuperordinated = singleProposition.getRepresented().getSuperOrdinatedRelation();
-            int depth = 0;
-            while (singleSuperordinated != null) {
-                depth++;
+            int depth;
+            for (depth = 0; singleSuperordinated != null; depth++) {
                 singleSuperordinated = singleSuperordinated.getSuperOrdinatedRelation();
             }
             max = Math.max(max, depth);
@@ -425,7 +430,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
 
     /**
      * Expose a mutable copy of the mapping of displayed {@link Relation} and their respective components.
-     * 
+     *
      * @return map containing all relations and their representations
      */
     public Map<Relation, SemRelation> getRelationMap() {

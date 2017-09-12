@@ -200,6 +200,14 @@ public final class SynAnalysisPanel extends AbstractAnalysisPanel {
         }
     }
 
+    @Override
+    public void submitChangesToModel() {
+        // only the propositions might have any pending changes (e.g. the label and translation fields)
+        for (final SynProposition singleProposition : this.propositionList) {
+            singleProposition.submitChangesToModel();
+        }
+    }
+
     /**
      * Collect all checked {@link Proposition}s in the displayed syntactical analysis.
      *
@@ -220,7 +228,7 @@ public final class SynAnalysisPanel extends AbstractAnalysisPanel {
 
     /**
      * Getter for the complete list of all displayed {@link Proposition}s in the correct (i.e. text) order.
-     * 
+     *
      * @return list of all displayed {@link SynProposition}s
      */
     public List<SynProposition> getPropositionList() {

@@ -26,9 +26,10 @@ import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.view.swing.elements.AbstractCommentable;
+import org.hmx.scitos.view.swing.IUndoManagedView;
 
 /** Generic interface of a user view regardless of its actual implementation. */
-public interface IPericopeView extends ISemanticalRelationProvider {
+public interface IPericopeView extends ISemanticalRelationProvider, IUndoManagedView {
 
     /**
      * Getter for the model handler, responsible for all actual model changes and manager of any model change events.
@@ -36,9 +37,6 @@ public interface IPericopeView extends ISemanticalRelationProvider {
      * @return the associated model handler instance
      */
     HmxModelHandler getModelHandler();
-
-    /** Ensure all pending changes are completed before any new model changes are being applied. */
-    void submitChangesToModel();
 
     /**
      * Collect the list of selected {@link Proposition}s in the syntactical analysis, if it is currently active (i.e. displayed).

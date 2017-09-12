@@ -32,7 +32,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.hmx.scitos.core.HmxException;
-import org.hmx.scitos.core.UndoManager;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.hmx.core.ILanguageModelProvider;
@@ -49,6 +48,7 @@ import org.hmx.scitos.hmx.view.swing.elements.ProjectInfoDialog;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.service.IModelParseServiceProvider;
 import org.hmx.scitos.view.swing.AbstractProjectView;
+import org.hmx.scitos.view.swing.IUndoManagedView;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.MessageHandler.MessageType;
 import org.hmx.scitos.view.swing.util.ViewUtil;
@@ -64,12 +64,10 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     private final ISemanticalRelationProvider relationProvider;
     /** Service provider for saving and exporting the represented project/model to files. */
     private final IModelParseServiceProvider modelParseProvider;
-    /** The undo manager for the whole model. */
-    private UndoManager<Pericope> undoManager;
     /**
      * The currently active view component. This is either the {@link TextInputPanel} or {@link CombinedAnalysesPanel}.
      */
-    JPanel activeView;
+    IUndoManagedView activeView;
     /**
      * View specific Edit menu item for adding more {@link Proposition}s to this project which is already in progress (i.e. in analysis mode).
      */
@@ -101,21 +99,20 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         this.relationProvider = relationProvider;
         this.modelParseProvider = modelParseProvider;
         if (this.containsAnalysisData()) {
-            this.undoManager = new UndoManager<Pericope>(this.getModel());
             this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
         } else {
             this.activeView = new TextInputPanel(this, true, languageModelProvider);
         }
-        this.add(this.activeView);
+        this.add((JPanel) this.activeView);
     }
 
     /**
      * Check whether the current model contains any analysis related data - i.e. if information would be lost if the current model was displayed in a
      * {@link TextInputPanel} rather than a {@link CombinedAnalysesPanel}.
-     * 
+     *
      * @return if any information besides the origin text is present
      */
-    boolean containsAnalysisData() {
+    final boolean containsAnalysisData() {
         if (!this.getModel().getFlatRelations().isEmpty()) {
             // the semantical analysis has already been started
             return true;
@@ -150,7 +147,6 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
      */
     public void startAnalysis(final String originText, final LanguageModel originLanguage, final Font originTextFont) {
         this.getModel().init(originText, originLanguage, originTextFont);
-        this.undoManager = new UndoManager<Pericope>(this.getModel());
         this.goToAnalysisView();
         new ProjectInfoDialog(this.getProject(), false).setVisible(true);
     }
@@ -172,9 +168,9 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     /** Switch from the text-input mode to the analysis mode. If this is already in analysis mode, this method does nothing. */
     void goToAnalysisView() {
         if (this.activeView instanceof TextInputPanel) {
-            this.remove(this.activeView);
+            this.remove((TextInputPanel) this.activeView);
             this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
-            this.add(this.activeView);
+            this.add((CombinedAnalysesPanel) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
         }
@@ -184,9 +180,9 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     void goToTextInputView() {
         if (this.activeView instanceof CombinedAnalysesPanel) {
             this.submitChangesToModel();
-            this.remove(this.activeView);
+            this.remove((CombinedAnalysesPanel) this.activeView);
             this.activeView = new TextInputPanel(this, false, null);
-            this.add(this.activeView);
+            this.add((TextInputPanel) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
         }
@@ -207,10 +203,10 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
                 MessageHandler.showMessage(HmxMessage.ERROR_MERGE_NOT_A_PERICOPE.get(), Message.ERROR.get(), MessageType.ERROR);
                 return;
             }
-            final int optionIndex =
-                    MessageHandler.showOptionDialog(HmxMessage.MENUBAR_PROJECT_MERGE_POSITION.get(), HmxMessage.MENUBAR_PROJECT_MERGE.get(),
-                            new String[] { HmxMessage.MENUBAR_PROJECT_MERGE_INFRONT.get(), HmxMessage.MENUBAR_PROJECT_MERGE_BEHIND.get(),
-                                    Message.CANCEL.get() }, 1);
+            final int optionIndex = MessageHandler.showOptionDialog(HmxMessage.MENUBAR_PROJECT_MERGE_POSITION.get(),
+                    HmxMessage.MENUBAR_PROJECT_MERGE.get(),
+                    new String[] { HmxMessage.MENUBAR_PROJECT_MERGE_INFRONT.get(), HmxMessage.MENUBAR_PROJECT_MERGE_BEHIND.get(),
+                        Message.CANCEL.get() }, 1);
             if (optionIndex == 0 || optionIndex == 1) {
                 // TODO allow user to merge language models instead of rejecting any differing ones
                 this.getProject().getModelHandler().mergeWithOtherPericope((Pericope) modelToMergeWith.getKey(), optionIndex == 0);
@@ -235,55 +231,32 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
     @Override
     public void refresh() {
-        if (this.activeView instanceof CombinedAnalysesPanel) {
-            ((CombinedAnalysesPanel) this.activeView).refresh();
-        }
+        this.activeView.refresh();
     }
 
     @Override
     public void submitChangesToModel() {
-        if (this.activeView instanceof IPericopeView) {
-            ((IPericopeView) this.activeView).submitChangesToModel();
-        } else if (this.activeView instanceof TextInputPanel) {
-            ((TextInputPanel) this.activeView).submitChangesToModel();
-        }
+        this.activeView.submitChangesToModel();
     }
 
     @Override
     public boolean canUndo() {
-        if (this.activeView instanceof TextInputPanel) {
-            return ((TextInputPanel) this.activeView).canUndo();
-        }
-        if (this.undoManager == null) {
-            return false;
-        }
-        return this.undoManager.canUndo();
+        return this.activeView.canUndo();
     }
 
     @Override
     public boolean canRedo() {
-        if (this.activeView instanceof TextInputPanel) {
-            return ((TextInputPanel) this.activeView).canRedo();
-        }
-        return this.undoManager.canRedo();
+        return this.activeView.canRedo();
     }
 
     @Override
     public void undo() {
-        if (this.activeView instanceof TextInputPanel) {
-            ((TextInputPanel) this.activeView).undo();
-        } else {
-            this.undoManager.undo();
-        }
+        this.activeView.undo();
     }
 
     @Override
     public void redo() {
-        if (this.activeView instanceof TextInputPanel) {
-            ((TextInputPanel) this.activeView).redo();
-        } else {
-            this.undoManager.redo();
-        }
+        this.activeView.redo();
     }
 
     @Override
@@ -301,10 +274,10 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (SingleProjectView.this.activeView instanceof CombinedAnalysesPanel
+                if (SingleProjectView.this.activeView instanceof IPericopeView
                         && MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(HmxMessage.MENUBAR_ORIGINTEXT_REMOVE_CONFIRM.get(),
                                 HmxMessage.MENUBAR_ORIGINTEXT_REMOVE.get())) {
-                    final List<Proposition> selection = ((CombinedAnalysesPanel) SingleProjectView.this.activeView).getSelectedPropositions(null);
+                    final List<Proposition> selection = ((IPericopeView) SingleProjectView.this.activeView).getSelectedPropositions(null);
                     try {
                         SingleProjectView.this.getProject().getModelHandler().removePropositions(selection);
                     } catch (final HmxException expected) {

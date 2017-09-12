@@ -36,6 +36,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import org.hmx.scitos.core.UndoManager;
+import org.hmx.scitos.domain.ModelChangeListener;
+import org.hmx.scitos.domain.ModelEvent;
 
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.HmxModelHandler;
@@ -55,7 +60,7 @@ import org.hmx.scitos.view.swing.util.VTextIcon;
 /**
  * The view representation of a {@link Pericope} in the analysis mode – containing both the syntactical and semantical analysis.
  */
-public final class CombinedAnalysesPanel extends JPanel implements IPericopeView {
+public final class CombinedAnalysesPanel extends JPanel implements IPericopeView, ModelChangeListener {
 
     /** The represented project's model handler instance. */
     private final HmxModelHandler modelHandler;
@@ -63,6 +68,10 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
      * The provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus.
      */
     private final ISemanticalRelationProvider relationProvider;
+    /** The undo manager for the whole model. */
+    private final UndoManager<Pericope> undoManager;
+    /** Flag indicating that an un-do or re-do operation is currently in progress. */
+    private boolean undoInProgress = false;
 
     /** The button to switch between the syntactical and semantical analysis. */
     private final JButton switchButton;
@@ -78,13 +87,11 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
     private final SemAnalysisPanel semAnalysisView;
     /** The view component representing the syntactical analysis. */
     private final SynAnalysisPanel synAnalysisView;
-    /** The input area at the bottom of the view, allowing the display and modification of a selected element's comment. */
+    /**
+     * The input area at the bottom of the view, allowing the display and modification of a selected element's comment.
+     */
     private final JTextPane commentArea;
 
-    /**
-     * The currently active analysis: either {@link #semAnalysisView} or {@link #synAnalysisView}.
-     */
-    private JPanel activeAnalysisView;
     /**
      * The most recently selected commentable model element currently associated with the {@link #commentArea}.
      */
@@ -92,7 +99,7 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
 
     /**
      * Constructor.
-     * 
+     *
      * @param modelHandler
      *            the represented project's model handler instance
      * @param relationProvider
@@ -102,12 +109,58 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         super(new GridBagLayout());
         this.modelHandler = modelHandler;
         this.relationProvider = relationProvider;
+        this.undoManager = new UndoManager<Pericope>(this.modelHandler.getModel());
+        this.addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(final AncestorEvent event) {
+                // ensure logging of model change events by the UndoManager
+                modelHandler.addModelChangeListener(CombinedAnalysesPanel.this);
+            }
+
+            @Override
+            public void ancestorRemoved(final AncestorEvent event) {
+                /*
+                 * unregister UndoManager as long as nothing is shown (nothing can be changed); this is to avoid multiple of these listeners if the
+                 * respective tabs are being closed and re-opened repeatedly
+                 */
+                modelHandler.removeModelChangeListener(CombinedAnalysesPanel.this);
+            }
+
+            @Override
+            public void ancestorMoved(final AncestorEvent event) {
+                // we don't care about any movement
+            }
+        });
+
         this.setBorder(null);
         // initialize the commentArea to be reachable by commentable components
         this.commentArea = new ScaledTextPane();
         // build the analysis views representing the pericope
         this.semAnalysisView = new SemAnalysisPanel(this);
         this.synAnalysisView = new SynAnalysisPanel(this);
+
+        this.switchButton = new JButton() {
+
+            @Override
+            public void updateUI() {
+                super.updateUI();
+                this.setFont(UIManager.getFont("Button.font"));
+            }
+        };
+        // initialize the possible button icons
+        this.semButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SEMANTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
+        this.synButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SYNTACTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
+
+        // default: always start with the syntactical analysis
+        this.switchButton.setIcon(this.semButtonIcon);
+        this.initView();
+        this.synAnalysisView.activate();
+    }
+
+    /**
+     * Initialize the whole layout.
+     */
+    private void initView() {
         // arrange the analysis views and the button for switching between them
         final JPanel topArea = new JPanel(new GridBagLayout());
 
@@ -120,14 +173,6 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         doubleSpan.gridy = 0;
         topArea.add(this.semAnalysisView, doubleSpan);
         // add the button for switching between the analysis to the mid
-        this.switchButton = new JButton() {
-
-            @Override
-            public void updateUI() {
-                super.updateUI();
-                this.setFont(UIManager.getFont("Button.font"));
-            }
-        };
         this.switchButton.addActionListener(new ActionListener() {
 
             @Override
@@ -142,12 +187,6 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         constraints.gridy = 0;
         topArea.add(this.switchButton, constraints);
 
-        // initialize the possible button icons
-        this.semButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SEMANTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
-        this.synButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SYNTACTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
-
-        // default: always start with the syntactical analysis
-        this.switchButton.setIcon(this.semButtonIcon);
         // add the syntactical analysis to the right
         doubleSpan.gridx = 2;
         doubleSpan.gridy = 0;
@@ -173,38 +212,43 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         splitArea.setBorder(null);
         splitArea.setResizeWeight(1);
         this.add(splitArea, doubleSpan);
+    }
 
-        // default: always start with the syntactical analysis
-        this.synAnalysisView.activate();
-        this.activeAnalysisView = this.synAnalysisView;
+    @Override
+    public void modelChanged(final ModelEvent<?> event) {
+        // ignore change event thrown by the own undo/redo action
+        if (!this.undoInProgress) {
+            this.undoManager.undoableEditHappened(this.modelHandler.getModel());
+        }
     }
 
     /**
      * Change the active analysis view by setting their visibility to make sure that only one analysis view is visible; and clear the shown comment.
      */
     void changeActiveAnalysisView() {
+        // clear comment area
+        this.handleSelectedCommentable(null);
         // make sure only one analysis view is visible at the end
-        if (this.activeAnalysisView == this.semAnalysisView) {
-            this.activeAnalysisView = this.synAnalysisView;
+        if (this.semAnalysisView.isShowing()) {
             this.synAnalysisView.activate();
             this.semAnalysisView.deactivate();
             this.switchButton.setIcon(this.semButtonIcon);
         } else {
-            this.activeAnalysisView = this.semAnalysisView;
             this.semAnalysisView.activate();
             this.synAnalysisView.deactivate();
             this.switchButton.setIcon(this.synButtonIcon);
         }
-        // clear comment area
-        this.commentArea.setText(null);
     }
 
     @Override
     public List<AbstractConnectable> getSelectedConnectables(final AbstractConnectable defaultSelected) {
-        if (this.semAnalysisView.isVisible()) {
+        if (this.semAnalysisView.isShowing()) {
             return this.semAnalysisView.getChecked(defaultSelected);
         }
-        return defaultSelected == null ? Collections.<AbstractConnectable>emptyList() : Collections.singletonList(defaultSelected);
+        if (defaultSelected == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(defaultSelected);
     }
 
     @Override
@@ -212,7 +256,10 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         if (this.synAnalysisView.isVisible()) {
             return this.synAnalysisView.getChecked(defaultSelected);
         }
-        return defaultSelected == null ? Collections.<Proposition>emptyList() : Collections.singletonList(defaultSelected);
+        if (defaultSelected == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(defaultSelected);
     }
 
     @Override
@@ -246,17 +293,70 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
 
     @Override
     public void submitChangesToModel() {
+        final AbstractAnalysisPanel activeAnalysisView = this.getActiveAnalysisView();
+        if (activeAnalysisView != null) {
+            activeAnalysisView.submitChangesToModel();
+        }
+        // also take care of any newly entered comment specifically
         this.handleSelectedCommentable(null);
     }
 
     /**
      * Fully rebuild the currently displayed representation of the {@link Pericope}.
      */
+    @Override
     public void refresh() {
+        final AbstractAnalysisPanel activeAnalysisView = this.getActiveAnalysisView();
+        if (activeAnalysisView != null) {
+            activeAnalysisView.repaintPericope();
+        }
+    }
+
+    /**
+     * Determine the currently active analysis view (either {@link #synAnalysisView} or {@link #semAnalysisView}).
+     *
+     * @return currently active/displayed analysisView
+     */
+    private AbstractAnalysisPanel getActiveAnalysisView() {
         if (this.synAnalysisView.isShowing()) {
-            this.synAnalysisView.repaintPericope();
-        } else if (this.semAnalysisView.isShowing()) {
-            this.semAnalysisView.repaintPericope();
+            return this.synAnalysisView;
+        }
+        if (this.semAnalysisView.isShowing()) {
+            return this.semAnalysisView;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean canUndo() {
+        return this.undoManager.canUndo();
+    }
+
+    @Override
+    public boolean canRedo() {
+        return this.undoManager.canRedo();
+    }
+
+    @Override
+    public void undo() {
+        // ensure that the any pending change is being reverted instead of the previously submit one
+        this.submitChangesToModel();
+        this.undoInProgress = true;
+        try {
+            this.getModelHandler().resetModel(this.undoManager.undo());
+        } finally {
+            this.undoInProgress = false;
+        }
+    }
+
+    @Override
+    public void redo() {
+        // ignore any potentially pending change here (otherwise "Redo" might not be allowed anymore)
+        this.undoInProgress = true;
+        try {
+            this.getModelHandler().resetModel(this.undoManager.redo());
+        } finally {
+            this.undoInProgress = false;
         }
     }
 

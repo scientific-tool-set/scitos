@@ -40,6 +40,13 @@ import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
 public interface HmxModelHandler extends IModelHandler<Pericope> {
 
     /**
+     * Replace the managed model object with the given one, e.g. for use in an undo or redo action.
+     *
+     * @param model new managed model object
+     */
+    void resetModel(Pericope model);
+
+    /**
      * Set the title, author, and comment of the whole managed model, as well as the font used for the origin text.
      *
      * @param title

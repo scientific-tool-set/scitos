@@ -19,9 +19,6 @@
 
 package org.hmx.scitos.hmx.view.swing.elements;
 
-import java.awt.Font;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -30,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 
 import org.hmx.scitos.domain.util.CollectionUtil;
+import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
@@ -53,7 +51,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
 
     /**
      * Constructor: for an element on the specified {@link SemAnalysisPanel} representing the designated {@link Proposition}.
-     * 
+     *
      * @param viewReference
      *            the view providing access to the project's model handler and handling the comments on model elements
      * @param semPanel
@@ -64,14 +62,20 @@ public final class SemProposition extends AbstractProposition implements IConnec
     public SemProposition(final IPericopeView viewReference, final SemAnalysisPanel semPanel, final Proposition represented) {
         super(viewReference.getModelHandler(), represented);
         this.semArea = semPanel;
-        this.init();
+
+        this.originText.setFont(this.getModelHandler().getModel().getFont());
+        this.originText.setEditable(false);
+        this.originText.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+                BorderFactory.createEmptyBorder(2, 5, 2, 5)));
+        this.refreshOriginText();
+        this.getItemArea().add(this.originText);
+        this.refreshComment();
+
         // indent partAfterArrow
         if (represented.getPartBeforeArrow() != null) {
             this.getIndentationArea().setPreferredSize(AbstractProposition.createIndentation(1));
         }
-        if (represented.getSuperOrdinatedRelation() != null) {
-            this.setCheckBoxVisible(false);
-        }
+        this.setCheckBoxVisible(represented.getSuperOrdinatedRelation() == null);
         this.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -90,31 +94,13 @@ public final class SemProposition extends AbstractProposition implements IConnec
         });
     }
 
-    /**
-     * Initialize the explicit semantical functionality by adding a listener to the translation field, activating the comment listener and inserting
-     * the {@link JTextField} for the origin text with the specified {@link Font}.
-     */
-    private void init() {
-        this.getTranslationField().addFocusListener(new FocusAdapter() {
-
-            @Override
-            public void focusLost(final FocusEvent event) {
-                // only transfer if necessary
-                final String translationText = SemProposition.this.getTranslationField().getText();
-                final String storedTranslation = SemProposition.this.getRepresented().getSemTranslation();
-                if (((translationText != null && !translationText.isEmpty()) || (storedTranslation != null && storedTranslation.isEmpty()))
-                        && ((translationText == null) || (!translationText.equals(storedTranslation)))) {
-                    SemProposition.this.getModelHandler().setSemTranslation(SemProposition.this.getRepresented(), translationText);
-                }
-            }
-        });
-        this.originText.setFont(this.getModelHandler().getModel().getFont());
-        this.originText.setEditable(false);
-        this.originText.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
-                BorderFactory.createEmptyBorder(2, 5, 2, 5)));
-        this.refreshOriginText();
-        this.getItemArea().add(this.originText);
-        this.refreshComment();
+    @Override
+    protected void submitTranslationChanges() {
+        final String translationText = this.getTranslationField().getText();
+        // only transfer if necessary
+        if (!ComparisonUtil.isNullOrEmptyAwareEqual(translationText, this.getRepresented().getSemTranslation())) {
+            this.getModelHandler().setSemTranslation(this.getRepresented(), translationText);
+        }
     }
 
     @Override
@@ -125,7 +111,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
 
     /**
      * Getter for the represented {@link Proposition}'s origin text.
-     * 
+     *
      * @return displayed origin text
      */
     public String getOriginText() {
@@ -138,7 +124,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
     public void refreshOriginText() {
         final StringBuffer text = new StringBuffer(" ");
         for (final ClauseItem singleItem : this.getRepresented()) {
-            text.append(singleItem.getOriginText() + ' ');
+            text.append(singleItem.getOriginText()).append(' ');
         }
         this.originText.setText(text.toString());
         this.originText.setSize(this.originText.getPreferredSize());
@@ -158,18 +144,6 @@ public final class SemProposition extends AbstractProposition implements IConnec
     public void refreshTranslation() {
         this.getTranslationField().setText(this.getRepresented().getSemTranslation());
         super.refreshTranslation();
-    }
-
-    /**
-     * resets the tool tip info containing the comment text regarding its value in the represented {@link Proposition}.
-     */
-    public void refreshComment() {
-        final String comment = this.getRepresented().getComment();
-        if (comment == null || comment.isEmpty()) {
-            this.setToolTipText(null);
-        } else {
-            this.setToolTipText(comment);
-        }
     }
 
     @Override

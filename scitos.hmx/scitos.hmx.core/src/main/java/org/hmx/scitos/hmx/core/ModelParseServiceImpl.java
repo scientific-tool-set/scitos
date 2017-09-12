@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -519,7 +519,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     /**
      * Create a copy of the given list of {@link SyntacticalFunction}s, ensuring the absence of any additional data only related to the backwards
      * compatibility for reading the former (standalone) HermeneutiX files.
-     * 
+     *
      * @param possibleCompatibleFunctions
      *            list of functions to copy in a minimal/non-compatible way
      * @return deep copied list
@@ -576,7 +576,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             }
         }
         final String userLanguage = Option.TRANSLATION.getValueAsLocale().getLanguage();
-        final Map<String, Element> availableModels = new HashMap<String, Element>();
+        final Map<String, Element> availableModels = new TreeMap<String, Element>();
         for (final Element modelNode : systemModelNodes) {
             // get the user language independent name of this model
             final String compatibleName = modelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_NAME_COMPATIBLE);
@@ -591,7 +591,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
 
     /**
      * Parse all contained {@link LanguageModel}s from the given document.
-     * 
+     *
      * @param xml
      *            the document to parse the {@value #TAG_LANGMODEL} nodes from
      * @return successfully parsed {@link LanguageModel}s

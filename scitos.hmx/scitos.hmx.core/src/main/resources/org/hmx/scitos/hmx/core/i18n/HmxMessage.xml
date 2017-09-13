@@ -59,6 +59,8 @@ Continue?</entry>
 are being removed from this project.
 Continue?</entry>
   <entry key="Client.MenuBar.Edit.ProjectInfo">Edit Project Info</entry>
+  <entry key="Client.MenuBar.View.TogglePropositionLabels">Hide/Show Proposition Labels</entry>
+  <entry key="Client.MenuBar.View.TogglePropositionTranslations">Hide/Show Proposition Translations</entry>
   <entry key="Error.CreateRelation.AtLeastTwoChecked">At least one other element needs to be checked.</entry>
   <entry key="Error.CreateRelation.MoreThenTwoChecked">The chosen relation cannot be created
 with more then two associates.</entry>
@@ -194,7 +196,10 @@ It is being displayed as entry in the Syntactical Analysis' context menus.</entr
   <entry key="Preferences.View.Color.Relation">Relation Color</entry>
   <entry key="Preferences.View.Color.Transparent">Invisible</entry>
   <entry key="Preferences.View.IndentationWidth">Indentation Width</entry>
-  <entry key="Preferences.View.TextInput">On Start of new Analysis</entry>
+  <entry key="Preferences.View.Propositions">On Propositions in Analysis View</entry>
+  <entry key="Preferences.View.Propositions.ShowLabels">Show labels</entry>
+  <entry key="Preferences.View.Propositions.ShowTranslations">Show translations</entry>
+  <entry key="Preferences.View.TextInput">On Text Input View for new Analysis</entry>
   <entry key="Preferences.View.TextInput.ShowSettings">Show settings</entry>
   <entry key="ProjectInfo.Author">Author</entry>
   <entry key="ProjectInfo.Comment">Comment</entry>

@@ -45,6 +45,7 @@ import org.hmx.scitos.domain.ModelEvent;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.HmxModelHandler;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
+import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
@@ -92,6 +93,14 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
      */
     private final JTextPane commentArea;
 
+    /**
+     * Flag indicating whether the label fields of propositions should be displayed or not.
+     */
+    private boolean showingPropositionLabels = HmxGeneralOption.SHOW_PROPOSITION_LABELS.getValueAsBoolean();
+    /**
+     * Flag indicating whether the translation fields of propositions should be displayed or not.
+     */
+    private boolean showingPropositionTranslations = HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS.getValueAsBoolean();
     /**
      * The most recently selected commentable model element currently associated with the {@link #commentArea}.
      */
@@ -310,6 +319,36 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         if (activeAnalysisView != null) {
             activeAnalysisView.repaintPericope();
         }
+    }
+
+    @Override
+    public boolean isShowingPropositionLabels() {
+        return this.showingPropositionLabels;
+    }
+
+    @Override
+    public boolean isShowingPropositionTranslations() {
+        return this.showingPropositionTranslations;
+    }
+
+    /**
+     * Toggle the visibility of the label fields for all propositions. This causes a full rebuild of the displayed Pericope.
+     *
+     * @see #refresh()
+     */
+    public void togglePropositionLabelVisibility() {
+        this.showingPropositionLabels = !this.showingPropositionLabels;
+        this.refresh();
+    }
+
+    /**
+     * Toggle the visibility of the translation fields for all propositions. This causes a full rebuild of the displayed Pericope.
+     *
+     * @see #refresh()
+     */
+    public void togglePropositionTranslationVisibility() {
+        this.showingPropositionTranslations = !this.showingPropositionTranslations;
+        this.refresh();
     }
 
     /**

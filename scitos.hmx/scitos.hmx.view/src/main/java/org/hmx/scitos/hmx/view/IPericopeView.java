@@ -39,6 +39,20 @@ public interface IPericopeView extends ISemanticalRelationProvider, IUndoManaged
     HmxModelHandler getModelHandler();
 
     /**
+     * Getter for the view preference whether the label fields of propositions should be displayed or not.
+     *
+     * @return whether to displayed proposition label fields
+     */
+    boolean isShowingPropositionLabels();
+
+    /**
+     * Getter for the view preference whether the translation fields of propositions should be displayed or not.
+     *
+     * @return whether to displayed proposition translation fields
+     */
+    boolean isShowingPropositionTranslations();
+
+    /**
      * Collect the list of selected {@link Proposition}s in the syntactical analysis, if it is currently active (i.e. displayed).
      *
      * @param selectedProposition

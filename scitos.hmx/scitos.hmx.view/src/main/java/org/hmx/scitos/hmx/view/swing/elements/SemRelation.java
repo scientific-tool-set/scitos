@@ -75,13 +75,15 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     /** The text fields displaying the respective roles of the sub ordinated associates. */
     private final List<JTextField> roleFields;
     /** The color of the relation lines. */
-    private final Color color;
+    private final Color color = HmxGeneralOption.RELATION_COLOR.getValueAsColor();
     /**
      * The represented model {@link Relation}.
      */
     private final Relation represented;
     /** The origin language of the current analysis is aligned from left to right. */
     private final boolean leftAligned;
+    /** Whether the role labels should be shown above the relation lines. Otherwise, they will be shown on top of the lines (i.e. hiding them). */
+    private final boolean showRoleAboveLine;
     /**
      * check box to select this {@link SemRelation}.
      */
@@ -103,7 +105,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
 
     /**
      * Constructor.
-     * 
+     *
      * @param viewReference
      *            the view providing access to the project's model handler and handling the comments on model elements
      * @param semArea
@@ -120,6 +122,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         this.represented = represented;
         this.leftAligned = viewReference.getModelHandler().getModel().isLeftToRightOriented();
         final List<AbstractConnectable> modelAssociates = represented.getAssociates();
+        this.showRoleAboveLine = viewReference.isShowingPropositionTranslations();
         this.viewAssociates = new ArrayList<IConnectable<?>>(modelAssociates.size());
         for (final AbstractConnectable singleAssociate : modelAssociates) {
             this.viewAssociates.add(SemControl.getRepresentative(semArea, singleAssociate));
@@ -133,11 +136,17 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         } else {
             final int associateCount = modelAssociates.size();
             this.roleFields = new ArrayList<JTextField>(associateCount);
+            final Border outsideBorder;
+            if (this.showRoleAboveLine) {
+                outsideBorder = BorderFactory.createLoweredBevelBorder();
+            } else {
+                outsideBorder = BorderFactory.createLineBorder(this.color, 1);
+            }
+            final Border fieldBorder = BorderFactory.createCompoundBorder(outsideBorder, BorderFactory.createEmptyBorder(2, 2, 2, 2));
             for (int i = 0; i < associateCount; i++) {
                 final JTextField roleField = new ScaledTextField();
                 roleField.setEditable(false);
-                roleField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(),
-                        BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+                roleField.setBorder(fieldBorder);
                 this.roleFields.add(roleField);
                 this.add(roleField);
             }
@@ -173,7 +182,6 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
                 }
             }
         });
-        this.color = HmxGeneralOption.RELATION_COLOR.getValueAsColor();
         this.setPreferredSize(new Dimension(this.calculateWidth(), this.getPreferredSize().height));
     }
 
@@ -261,7 +269,14 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
                 if (!this.leftAligned) {
                     fieldX = startX - (2 + (3 * SemRelation.HALF_LINE_THICKNESS) + fieldWidth);
                 }
-                final int fieldY = horizontalLines.get(i) - fieldHeight - 2 - SemRelation.HALF_LINE_THICKNESS;
+                int fieldY = horizontalLines.get(i);
+                if (this.showRoleAboveLine) {
+                    // ensure the field is shown above the line with spacing of 2px
+                    fieldY -= fieldHeight + SemRelation.HALF_LINE_THICKNESS + 2;
+                } else {
+                    // display the field directly over the line (half above/half below)
+                    fieldY -= fieldHeight / 2;
+                }
                 roleField.setBounds(fieldX, fieldY, fieldWidth, fieldHeight);
             }
         }
@@ -311,7 +326,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
 
     /**
      * Check if the semantical roles are currently hidden/invisible.
-     * 
+     *
      * @return if the semantical roles are hidden
      */
     public boolean isFolded() {
@@ -342,7 +357,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     /**
      * Getter for top most vertical position contained in the represented {@link Relation} subtree. This is the index of the first contained
      * {@link Proposition} in the {@link Pericope} {@code + 0.5} (e.g. {@code 0.5}, {@code 1.5}, {@code 2.5}, ...).
-     * 
+     *
      * @return point to connect of the first contained {@link SemProposition}
      */
     public double getFirstGridY() {
@@ -352,7 +367,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     /**
      * Getter for bottom most vertical position contained in the represented {@link Relation} subtree. This is the index of the last contained
      * {@link Proposition} in the {@link Pericope} {@code + 0.5} (e.g. {@code 1.5}, {@code 2.5}, {@code 3.5}, ...).
-     * 
+     *
      * @return point to connect of the last contained {@link SemProposition}
      */
     public double getLastGridY() {

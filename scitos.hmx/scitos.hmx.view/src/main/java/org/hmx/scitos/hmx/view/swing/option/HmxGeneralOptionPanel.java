@@ -65,9 +65,15 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
      */
     final JPanel commentedBorderColorSample = new JPanel();
     /**
-     * Selection component for the width of a single indentation of a {@link Proposition} ({@link HmxGeneralOption#INDENTATION_WIDTH}).
+     * Checkbox to determine whether the proposition labels should be visible by default in the analysis views
+     * ({@link HmxGeneralOption#SHOW_PROPOSITION_LABELS}).
      */
-    final JSlider indentationSizeSlider = new JSlider(30, 200);
+    private final JCheckBox showLabels = new JCheckBox(HmxMessage.PREFERENCES_GENERAL_PROPOSITIONS_SHOW_LABELS.get());
+    /**
+     * Checkbox to determine whether the proposition translations should be visible by default in the analysis views
+     * ({@link HmxGeneralOption#SHOW_PROPOSITION_TRANSLATIONs}).
+     */
+    private final JCheckBox showTranslations = new JCheckBox(HmxMessage.PREFERENCES_GENERAL_PROPOSITIONS_SHOW_TRANSLATIONS.get());
     /**
      * Checkbox to determine if the settings area should be visible by default for new projects ({@link HmxGeneralOption#SHOW_SETTINGS}).
      */
@@ -76,6 +82,10 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
      * Input field for the default value for a new project's author ({@link HmxGeneralOption#AUTHOR}).
      */
     private final JTextField authorField = new JTextField(new Validation(100), null, 0);
+    /**
+     * Selection component for the width of a single indentation of a {@link Proposition} ({@link HmxGeneralOption#INDENTATION_WIDTH}).
+     */
+    final JSlider indentationSizeSlider = new JSlider(30, 200);
 
     /**
      * Constructor.
@@ -98,7 +108,11 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
                 .grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR.get()))
                 .add(this.initColorPanel(this.commentedBorderColorSample, HmxMessage.PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR,
                         HmxGeneralOption.COMMENTED_BORDER_COLOR, false));
+        this.showLabels.setSelected(HmxGeneralOption.SHOW_PROPOSITION_LABELS.getValueAsBoolean());
+        this.showTranslations.setSelected(HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS.getValueAsBoolean());
         this.showSettings.setSelected(HmxGeneralOption.SHOW_SETTINGS.getValueAsBoolean());
+        generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_PROPOSITIONS.get())).add(this.showLabels);
+        generalOptionsLayout.row().grid().add(this.showTranslations);
         generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_INPUT.get())).add(this.showSettings);
         generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_AUTHOR.get())).add(this.authorField);
         this.indentationSizeSlider.setPreferredSize(new Dimension(this.indentationSizeSlider.getMaximum(), this.indentationSizeSlider
@@ -153,9 +167,11 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
         this.addChosenSetting(HmxGeneralOption.ARROW_COLOR, ConversionUtil.toString(this.arrowColorSample.getBackground()));
         this.addChosenSetting(HmxGeneralOption.RELATION_COLOR, ConversionUtil.toString(this.relationColorSample.getBackground()));
         this.addChosenSetting(HmxGeneralOption.COMMENTED_BORDER_COLOR, ConversionUtil.toString(this.commentedBorderColorSample.getBackground()));
-        this.addChosenSetting(HmxGeneralOption.INDENTATION_WIDTH, Integer.toString(this.indentationSizeSlider.getValue()));
+        this.addChosenSetting(HmxGeneralOption.SHOW_PROPOSITION_LABELS, String.valueOf(this.showLabels.isSelected()));
+        this.addChosenSetting(HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS, String.valueOf(this.showTranslations.isSelected()));
         this.addChosenSetting(HmxGeneralOption.SHOW_SETTINGS, String.valueOf(this.showSettings.isSelected()));
         this.addChosenSetting(HmxGeneralOption.AUTHOR, this.authorField.getText());
+        this.addChosenSetting(HmxGeneralOption.INDENTATION_WIDTH, Integer.toString(this.indentationSizeSlider.getValue()));
     }
 
     @Override

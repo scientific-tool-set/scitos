@@ -103,14 +103,19 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      *            the responsible model handler implementation realizing any model changes
      * @param represented
      *            represented {@link Proposition} to set
+     * @param showLabel
+     *            whether the label field should be shown
+     * @param showTranslation
+     *            whether the translation field should be shown
      */
-    protected AbstractProposition(final HmxModelHandler modelHandler, final Proposition represented) {
+    protected AbstractProposition(final HmxModelHandler modelHandler, final Proposition represented, final boolean showLabel,
+            final boolean showTranslation) {
         super(new GridBagLayout());
         this.modelHandler = modelHandler;
         this.represented = represented;
         final boolean leftAligned = modelHandler.getModel().isLeftToRightOriented();
-        this.defaultBorderCommented =
-                BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(), BorderFactory.createCompoundBorder(
+        this.defaultBorderCommented = BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(),
+                BorderFactory.createCompoundBorder(
                         BorderFactory.createMatteBorder(2, leftAligned ? 1 : 0, 2, leftAligned ? 0 : 1,
                                 HmxGeneralOption.COMMENTED_BORDER_COLOR.getValueAsColor()),
                         BorderFactory.createEmptyBorder(0, leftAligned ? 1 : 2, 4, leftAligned ? 2 : 1)));
@@ -120,9 +125,13 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         this.itemArea.setComponentOrientation(orientation);
         this.leftArrows = new ArrowStack(true, 0);
         this.rightArrows = new ArrowStack(false, 0);
-        this.initCheckboxAndLabel();
+        this.initCheckboxAndLabel(showLabel);
         this.initOriginTextArea();
-        this.initTranslationArea();
+        if (showTranslation) {
+            this.initTranslationArea();
+        } else {
+            this.translationField.setVisible(false);
+        }
         this.add(this.contentPane);
         this.setDefaultBorder();
     }
@@ -130,8 +139,11 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     /**
      * Initialize the left part of the {@link AbstractProposition} containing the {@link JCheckBox}, the label {@link JTextField} and an expanding
      * {@link JPanel} for the indentations in the syntactical analysis view.
+     *
+     * @param showLabel
+     *            whether the label field should be shown
      */
-    private void initCheckboxAndLabel() {
+    private void initCheckboxAndLabel(final boolean showLabel) {
         // checkBox
         this.checkBoxDummy.setPreferredSize(this.checkBox.getPreferredSize());
         this.setCheckBoxVisible(this.represented.getPartBeforeArrow() == null);
@@ -142,19 +154,23 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         this.contentPane.add(this.checkBox, constraints);
         this.contentPane.add(this.checkBoxDummy, constraints);
         // labelField
-        this.labelField.setName("Label Input");
-        this.labelField.setColumns(Proposition.MAX_LABEL_LENGTH - 1);
-        this.labelField.setDocument(new Validation(Proposition.MAX_LABEL_LENGTH));
-        this.labelField.addFocusListener(new FocusAdapter() {
+        if (showLabel) {
+            this.labelField.setName("Label Input");
+            this.labelField.setColumns(Proposition.MAX_LABEL_LENGTH - 1);
+            this.labelField.setDocument(new Validation(Proposition.MAX_LABEL_LENGTH));
+            this.labelField.addFocusListener(new FocusAdapter() {
 
-            @Override
-            public void focusLost(final FocusEvent event) {
-                AbstractProposition.this.submitLabelChanges();
-            }
-        });
-        this.refreshLabelText();
-        constraints.gridx = 1;
-        this.contentPane.add(this.labelField, constraints);
+                @Override
+                public void focusLost(final FocusEvent event) {
+                    AbstractProposition.this.submitLabelChanges();
+                }
+            });
+            this.refreshLabelText();
+            constraints.gridx = 1;
+            this.contentPane.add(this.labelField, constraints);
+        } else {
+            this.labelField.setVisible(false);
+        }
         // indentationArea
         constraints.fill = GridBagConstraints.VERTICAL;
         constraints.weighty = 1;
@@ -168,8 +184,12 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      * Ensure that any pending changes (e.g. in the label or translation field) are being submitted to the model handler.
      */
     public void submitChangesToModel() {
-        this.submitLabelChanges();
-        this.submitTranslationChanges();
+        if (this.labelField.isVisible()) {
+            this.submitLabelChanges();
+        }
+        if (this.translationField.isVisible()) {
+            this.submitTranslationChanges();
+        }
     }
 
     /**
@@ -339,7 +359,9 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      * Update the displayed identifier text to match the value in the represented {@link Proposition}.
      */
     public final void refreshLabelText() {
-        this.labelField.setText(this.represented.getLabel());
+        if (this.labelField.isVisible()) {
+            this.labelField.setText(this.represented.getLabel());
+        }
     }
 
     /**
@@ -347,19 +369,21 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      * Override and use this method in extending class to refresh and fit the changed translation text.
      */
     protected void refreshTranslation() {
-        // if the translation text wants more space, it gets more
-        final Dimension preferred = this.translationField.getPreferredSize();
-        final int itemAreaWidth = this.itemArea.getSize().width;
-        if (preferred.width > itemAreaWidth) {
-            // enlarge the translation field
-            this.translationField.setSize(preferred);
-        } else {
-            this.translationField.setSize(new Dimension(itemAreaWidth, preferred.height));
+        if (this.translationField.isVisible()) {
+            // if the translation text wants more space, it gets more
+            final Dimension preferred = this.translationField.getPreferredSize();
+            final int itemAreaWidth = this.itemArea.getSize().width;
+            if (preferred.width > itemAreaWidth) {
+                // enlarge the translation field
+                this.translationField.setSize(preferred);
+            } else {
+                this.translationField.setSize(new Dimension(itemAreaWidth, preferred.height));
+            }
+            // enlarge the containing proposition
+            this.contentPane.setSize(this.contentPane.getPreferredSize());
+            // make sure it is still displayed
+            this.itemArea.validate();
         }
-        // enlarge the containing proposition
-        this.contentPane.setSize(this.contentPane.getPreferredSize());
-        // make sure it is still displayed
-        this.itemArea.validate();
     }
 
     /**

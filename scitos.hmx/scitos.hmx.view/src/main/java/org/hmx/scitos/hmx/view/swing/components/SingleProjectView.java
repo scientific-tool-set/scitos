@@ -20,6 +20,7 @@
 package org.hmx.scitos.hmx.view.swing.components;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
@@ -80,6 +80,14 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
      * View specific Edit menu item for adding the contents of another project to this one which is already in progress (i.e. in analysis mode).
      */
     private JMenuItem mergeProjectItem;
+    /**
+     * View specific View menu item for hiding/showing the labels of propositions in the analysis view.
+     */
+    private JMenuItem toggleLabelsItem;
+    /**
+     * View specific View menu item for hiding/showing the translations of propositions in the analysis view.
+     */
+    private JMenuItem toggleTranslationsItem;
 
     /**
      * Constructor.
@@ -103,7 +111,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         } else {
             this.activeView = new TextInputPanel(this, true, languageModelProvider);
         }
-        this.add((JPanel) this.activeView);
+        this.add((Component) this.activeView);
     }
 
     /**
@@ -168,9 +176,9 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     /** Switch from the text-input mode to the analysis mode. If this is already in analysis mode, this method does nothing. */
     void goToAnalysisView() {
         if (this.activeView instanceof TextInputPanel) {
-            this.remove((TextInputPanel) this.activeView);
+            this.remove((Component) this.activeView);
             this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
-            this.add((CombinedAnalysesPanel) this.activeView);
+            this.add((Component) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
         }
@@ -180,9 +188,9 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     void goToTextInputView() {
         if (this.activeView instanceof CombinedAnalysesPanel) {
             this.submitChangesToModel();
-            this.remove((CombinedAnalysesPanel) this.activeView);
+            this.remove((Component) this.activeView);
             this.activeView = new TextInputPanel(this, false, null);
-            this.add((TextInputPanel) this.activeView);
+            this.add((Component) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
         }
@@ -221,11 +229,17 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         // handle general menu options
         this.getProject().manageMenuOptions();
         // handle view specific options
+        final boolean inAnalysisMode = this.activeView instanceof CombinedAnalysesPanel;
         if (this.addTextItem != null) {
-            final boolean inAnalysisMode = this.activeView instanceof CombinedAnalysesPanel;
+            // avoid NullPointer if Edit menu items have not been created yet
             this.addTextItem.setEnabled(inAnalysisMode);
             this.removeTextItem.setEnabled(inAnalysisMode);
             this.mergeProjectItem.setEnabled(inAnalysisMode);
+        }
+        if (this.toggleLabelsItem != null) {
+            // avoid NullPointer if View menu items have not been created yet
+            this.toggleLabelsItem.setEnabled(inAnalysisMode);
+            this.toggleTranslationsItem.setEnabled(inAnalysisMode);
         }
     }
 
@@ -307,13 +321,22 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         return Arrays.asList(this.addTextItem, this.removeTextItem, this.mergeProjectItem, null, projectInfoItem);
     }
 
-    // @Override
-    // public List<JMenuItem> createViewMenuItems() {
-    // TODO add menu item to hide/show translation input fields
-    // }
-
-    // @Override
-    // public List<Component> createToolBarItems() {
-    // TODO add tool bar item to hide/show translation input fields
-    // }
+    @Override
+    public List<JMenuItem> createViewMenuItems() {
+        this.toggleLabelsItem = new JMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get(), ScitosIcon.ATTRIBUTES_DISPLAY.create());
+        this.toggleLabelsItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                ((CombinedAnalysesPanel) SingleProjectView.this.activeView).togglePropositionLabelVisibility();
+            }
+        });
+        this.toggleTranslationsItem = new JMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get(), ScitosIcon.HORIZONTAL_RULE.create());
+        this.toggleTranslationsItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                ((CombinedAnalysesPanel) SingleProjectView.this.activeView).togglePropositionTranslationVisibility();
+            }
+        });
+        return Arrays.asList(this.toggleLabelsItem, this.toggleTranslationsItem);
+    }
 }

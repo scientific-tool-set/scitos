@@ -56,6 +56,10 @@ public enum HmxMessage implements ILocalizableMessage {
     MENUBAR_PROJECT_MERGE_INFRONT("Client.MenuBar.Edit.MergeProjects.InFront"),
     /** answer: insert content of project to merge with behind current text. */
     MENUBAR_PROJECT_MERGE_BEHIND("Client.MenuBar.Edit.MergeProjects.Behind"),
+    /** menubar entry: View -&gt; Hide/Show Proposition Labels. */
+    MENUBAR_TOGGLE_PROPOSITION_LABELS("Client.MenuBar.View.TogglePropositionLabels"),
+    /** menubar entry: View -&gt; Hide/Show Proposition Translations. */
+    MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS("Client.MenuBar.View.TogglePropositionTranslations"),
 
     /** in the new-project-setup: the hint label over the main text input. */
     TEXTINPUT_TOPIC("TextInput.Topic"),
@@ -200,6 +204,9 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_GENERAL_RELATION_COLOR("Preferences.View.Color.Relation"),
     PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR("Preferences.View.Color.CommentedBorder"),
     PREFERENCES_GENERAL_INDENTATION("Preferences.View.IndentationWidth"),
+    PREFERENCES_GENERAL_PROPOSITIONS("Preferences.View.Propositions"),
+    PREFERENCES_GENERAL_PROPOSITIONS_SHOW_LABELS("Preferences.View.Propositions.ShowLabels"),
+    PREFERENCES_GENERAL_PROPOSITIONS_SHOW_TRANSLATIONS("Preferences.View.Propositions.ShowTranslations"),
     PREFERENCES_GENERAL_INPUT("Preferences.View.TextInput"),
     PREFERENCES_GENERAL_INPUT_SHOW_SETTINGS("Preferences.View.TextInput.ShowSettings"),
     PREFERENCES_GENERAL_AUTHOR("Preferences.Analysis.ProjectInfo.DefaultAuthor"),
@@ -243,7 +250,7 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_RELATION_LOW_WEIGHT_ROLE("Preferences.Relation.LowWeightRole"),
     PREFERENCES_RELATION_LOW_WEIGHT_REPEAT("Preferences.Relation.LowWeightRepeatable"),
     PREFERENCES_RELATION_TOOLTIP("Preferences.Relation.Description"),
-    
+
     PREFERENCES_LANGUAGE("Preferences.OriginLanguage"),
     PREFERENCES_LANGUAGE_EDIT("Preferences.OriginLanguage.EditEntry"),
     PREFERENCES_LANGUAGE_APPLY("Preferences.OriginLanguage.ApplyChanges"),

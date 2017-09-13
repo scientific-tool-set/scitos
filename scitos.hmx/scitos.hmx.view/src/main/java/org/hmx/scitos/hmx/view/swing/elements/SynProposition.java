@@ -64,7 +64,8 @@ public final class SynProposition extends AbstractProposition {
      *            represented {@link Proposition} to set
      */
     private SynProposition(final IPericopeView viewReference, final Proposition represented) {
-        super(viewReference.getModelHandler(), represented);
+        super(viewReference.getModelHandler(), represented, viewReference.isShowingPropositionLabels(),
+                viewReference.isShowingPropositionTranslations());
         this.viewReference = viewReference;
         this.init();
         this.addMouseListener(new MouseAdapter() {

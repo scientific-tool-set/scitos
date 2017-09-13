@@ -48,7 +48,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 public final class FontChooser extends JPanel {
 
     /** The drop down component to select the font family from. */
-    private final JComboBox fontTypeBox;
+    private final JComboBox<String> fontTypeBox;
     /** The slider component to adjust the font size with. */
     final JSlider fontSizeSlider = new JSlider(8, 64);
     /** The (editable) sample text area to show case the current font selection on. */
@@ -60,7 +60,7 @@ public final class FontChooser extends JPanel {
     public FontChooser() {
         final String[] fontFamilyNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         Arrays.sort(fontFamilyNames);
-        this.fontTypeBox = new JComboBox(fontFamilyNames);
+        this.fontTypeBox = new JComboBox<String>(fontFamilyNames);
         AutoCompleteDecorator.decorate(this.fontTypeBox);
         this.fontTypeBox.addActionListener(new ActionListener() {
 

@@ -57,6 +57,8 @@ Wollen Sie wirklich fortfahren?</entry>
   <entry key="Client.MenuBar.Edit.OriginText.Remove">Ausgewählte Propositionen Entfernen</entry>
   <entry key="Client.MenuBar.Edit.OriginText.Remove.Confirm">Soll(en) die ausgewählte(n) Proposition(en) wirklich gelöscht werden?</entry>
   <entry key="Client.MenuBar.Edit.ProjectInfo">Projektinformationen</entry>
+  <entry key="Client.MenuBar.View.TogglePropositionLabels">Propositionsbezeichner: Aus-/Einblenden</entry>
+  <entry key="Client.MenuBar.View.TogglePropositionTranslations">Propositionsübersetzungen: Aus-/Einblenden</entry>
   <entry key="Error.CreateRelation.AtLeastTwoChecked">Es müssen mindestens zwei Elemente
 (über ihre CheckBoxen) ausgewählt sein.</entry>
   <entry key="Error.CreateRelation.MoreThenTwoChecked">Die gewählte Beziehung kann
@@ -194,6 +196,9 @@ Er wird in the Syntaktischen Analyse im entsprechenden Auswahlmenü angezeigt.</
   <entry key="Preferences.View.Color.Relation">Farbe der Beziehungen</entry>
   <entry key="Preferences.View.Color.Transparent">Ausblenden</entry>
   <entry key="Preferences.View.IndentationWidth">Breite der Einrückungen</entry>
+  <entry key="Preferences.View.Propositions">Auf Propositionen in Analyse-Ansicht</entry>
+  <entry key="Preferences.View.Propositions.ShowLabels">Kurzbezeichnerfelder einblenden</entry>
+  <entry key="Preferences.View.Propositions.ShowTranslations">Übersetzungsfelder einblenden</entry>
   <entry key="Preferences.View.TextInput">Beim Start der Texteingabe</entry>
   <entry key="Preferences.View.TextInput.ShowSettings">Einstellungen einblenden</entry>
   <entry key="ProjectInfo.Author">Autor</entry>

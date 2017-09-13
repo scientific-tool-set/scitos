@@ -82,7 +82,11 @@ public enum ScitosIcon {
     /** Icon: remove entry e.g. in category tree table. **/
     DELETE("/icons/fatcow/cross.png"),
     /** Icon: model entry e.g. in category tree table. **/
-    CATEGORY("/icons/fatcow/clipboard_invoice.png");
+    CATEGORY("/icons/fatcow/clipboard_invoice.png"),
+    /** Icon: attributes list. */
+    ATTRIBUTES_DISPLAY("/icons/fatcow/attributes_display.png"),
+    /** Icon: horizontal rule below (text) block. */
+    HORIZONTAL_RULE("/icons/fatcow/horizontal_rule.png");
 
     /** Location of the represented icon in the classpath. */
     private final String resourcePath;

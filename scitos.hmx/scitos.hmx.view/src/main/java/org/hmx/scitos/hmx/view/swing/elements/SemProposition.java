@@ -60,7 +60,8 @@ public final class SemProposition extends AbstractProposition implements IConnec
      *            model {@link Proposition} to represent/display
      */
     public SemProposition(final IPericopeView viewReference, final SemAnalysisPanel semPanel, final Proposition represented) {
-        super(viewReference.getModelHandler(), represented);
+        super(viewReference.getModelHandler(), represented, viewReference.isShowingPropositionLabels(),
+                viewReference.isShowingPropositionTranslations());
         this.semArea = semPanel;
 
         this.originText.setFont(this.getModelHandler().getModel().getFont());

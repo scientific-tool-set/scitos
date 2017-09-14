@@ -71,6 +71,7 @@ abstract class AbstractAnalysisPanel extends JPanel {
      * Remove the {@link #getModelChangeListener() ModelChangeListener} from the associated project and make this panel invisible.
      */
     public void deactivate() {
+        this.submitChangesToModel();
         this.setVisible(false);
         this.getViewReference().getModelHandler().removeModelChangeListener(this.getModelChangeListener());
     }

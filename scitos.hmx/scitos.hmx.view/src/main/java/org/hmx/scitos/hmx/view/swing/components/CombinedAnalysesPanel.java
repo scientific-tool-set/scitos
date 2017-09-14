@@ -156,6 +156,7 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
                 this.setFont(UIManager.getFont("Button.font"));
             }
         };
+        this.switchButton.setName("Switch Analysis Button");
         // initialize the possible button icons
         this.semButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SEMANTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
         this.synButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SYNTACTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);

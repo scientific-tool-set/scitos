@@ -242,7 +242,9 @@ public final class SynProposition extends AbstractProposition {
      */
     @Override
     public void refreshTranslation() {
-        this.getTranslationField().setText(this.getRepresented().getSynTranslation());
+        if (this.getTranslationField() != null) {
+            this.getTranslationField().setText(this.getRepresented().getSynTranslation());
+        }
         super.refreshTranslation();
     }
 

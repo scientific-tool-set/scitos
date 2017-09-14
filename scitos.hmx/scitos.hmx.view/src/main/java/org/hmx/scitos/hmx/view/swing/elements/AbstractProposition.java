@@ -69,7 +69,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     /** The actual container of the components this element is comprised of. This abstraction layer allows it being resized as needed. */
     private final JPanel contentPane = new JPanel(new GridBagLayout());
     /** The input field for the (up to five characters) identifier. */
-    private final JTextField labelField = new ScaledTextField();
+    private final JTextField labelField;
     /**
      * The placeholder realizing the indentation of the {@link Proposition} contents.
      */
@@ -85,7 +85,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      */
     private final ArrowStack rightArrows;
     /** The input field for the translation text related to the respective analysis (either syntactical or semantical). */
-    private final JTextField translationField = new ScaledTextField();
+    private final JTextField translationField;
     /**
      * The view element allowing this {@link Proposition} to be selected for any more complex operations involving multiple model elements.
      */
@@ -125,12 +125,18 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         this.itemArea.setComponentOrientation(orientation);
         this.leftArrows = new ArrowStack(true, 0);
         this.rightArrows = new ArrowStack(false, 0);
+        if (showLabel) {
+            this.labelField = new ScaledTextField();
+        } else {
+            this.labelField = null;
+        }
         this.initCheckboxAndLabel(showLabel);
         this.initOriginTextArea();
         if (showTranslation) {
+            this.translationField = new ScaledTextField();
             this.initTranslationArea();
         } else {
-            this.translationField.setVisible(false);
+            this.translationField = null;
         }
         this.add(this.contentPane);
         this.setDefaultBorder();
@@ -168,8 +174,6 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
             this.refreshLabelText();
             constraints.gridx = 1;
             this.contentPane.add(this.labelField, constraints);
-        } else {
-            this.labelField.setVisible(false);
         }
         // indentationArea
         constraints.fill = GridBagConstraints.VERTICAL;
@@ -184,10 +188,10 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      * Ensure that any pending changes (e.g. in the label or translation field) are being submitted to the model handler.
      */
     public void submitChangesToModel() {
-        if (this.labelField.isVisible()) {
+        if (this.labelField != null) {
             this.submitLabelChanges();
         }
-        if (this.translationField.isVisible()) {
+        if (this.translationField != null) {
             this.submitTranslationChanges();
         }
     }
@@ -274,7 +278,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     /**
      * Getter for the identifier's input field.
      *
-     * @return label field
+     * @return label field (can be {@code null})
      */
     protected final JTextField getLabelField() {
         return this.labelField;
@@ -339,7 +343,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     /**
      * Getter for the translation input field.
      *
-     * @return translation field
+     * @return translation field (can be {@code null})
      */
     protected final JTextField getTranslationField() {
         return this.translationField;
@@ -359,7 +363,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      * Update the displayed identifier text to match the value in the represented {@link Proposition}.
      */
     public final void refreshLabelText() {
-        if (this.labelField.isVisible()) {
+        if (this.labelField != null) {
             this.labelField.setText(this.represented.getLabel());
         }
     }
@@ -369,7 +373,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      * Override and use this method in extending class to refresh and fit the changed translation text.
      */
     protected void refreshTranslation() {
-        if (this.translationField.isVisible()) {
+        if (this.translationField != null) {
             // if the translation text wants more space, it gets more
             final Dimension preferred = this.translationField.getPreferredSize();
             final int itemAreaWidth = this.itemArea.getSize().width;
@@ -455,12 +459,16 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     @Override
     public synchronized void addMouseListener(final MouseListener listener) {
         super.addMouseListener(listener);
-        this.labelField.addMouseListener(listener);
+        if (this.labelField != null) {
+            this.labelField.addMouseListener(listener);
+        }
         this.indentationArea.addMouseListener(listener);
         this.leftArrows.addMouseListener(listener);
         this.itemArea.addMouseListener(listener);
         this.rightArrows.addMouseListener(listener);
-        this.translationField.addMouseListener(listener);
+        if (this.translationField != null) {
+            this.translationField.addMouseListener(listener);
+        }
     }
 
     /**
@@ -469,12 +477,16 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     @Override
     public synchronized void setToolTipText(final String toolTip) {
         super.setToolTipText(toolTip);
-        this.labelField.setToolTipText(toolTip);
+        if (this.labelField != null) {
+            this.labelField.setToolTipText(toolTip);
+        }
         this.indentationArea.setToolTipText(toolTip);
         this.leftArrows.setToolTipText(toolTip);
         this.itemArea.setToolTipText(toolTip);
         this.rightArrows.setToolTipText(toolTip);
-        this.translationField.setToolTipText(toolTip);
+        if (this.translationField != null) {
+            this.translationField.setToolTipText(toolTip);
+        }
     }
 
     /**

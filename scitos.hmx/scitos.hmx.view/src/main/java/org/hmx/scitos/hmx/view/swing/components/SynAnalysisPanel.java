@@ -101,6 +101,12 @@ public final class SynAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     @Override
+    public void deactivate() {
+        super.deactivate();
+        this.propositionList = null;
+    }
+
+    @Override
     public void repaintPericope() {
         // remember vertical position
         final int verticalPosition = this.scrollPane.getVerticalScrollBar().getValue();
@@ -203,8 +209,10 @@ public final class SynAnalysisPanel extends AbstractAnalysisPanel {
     @Override
     public void submitChangesToModel() {
         // only the propositions might have any pending changes (e.g. the label and translation fields)
-        for (final SynProposition singleProposition : this.propositionList) {
-            singleProposition.submitChangesToModel();
+        if (this.propositionList != null) {
+            for (final SynProposition singleProposition : this.propositionList) {
+                singleProposition.submitChangesToModel();
+            }
         }
     }
 

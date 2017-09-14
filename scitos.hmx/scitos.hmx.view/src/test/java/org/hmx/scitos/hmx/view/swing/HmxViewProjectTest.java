@@ -19,6 +19,7 @@
 
 package org.hmx.scitos.hmx.view.swing;
 
+import org.assertj.swing.exception.ComponentLookupException;
 import org.assertj.swing.fixture.JPanelFixture;
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.view.FileType;
@@ -29,7 +30,9 @@ import org.junit.Test;
 import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
+import org.hmx.scitos.hmx.view.swing.elements.SemProposition;
 import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
+import org.junit.Assert;
 
 /** UI test for a simple HermeneutiX project workflow. */
 public class HmxViewProjectTest extends AbstractScitosUiTest {
@@ -116,6 +119,78 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
         this.getSynPropositionLabelInput(0).requireText("L");
     }
 
+    /**
+     * Test of the visibility toggles for labels and translations with the following steps:
+     * <ol>
+     * <li>create a new/empty HermeneutiX project</li>
+     * <li>enter a single character as origin text</li>
+     * <li>start analysis</li>
+     * <li>ignore project info input dialog</li>
+     * <li>enter single character as translation for first Proposition</li>
+     * <li>hide proposition translations</li>
+     * <li>enter single character as label for first Proposition</li>
+     * <li>switch to Semantical Analysis</li>
+     * <li>enter other character in label input</li>
+     * <li>hide proposition labels</li>
+     * <li>show proposition translations</li>
+     * <li>switch back to Syntactical Analysis</li>
+     * <li>show proposition labels</li>
+     * </ol>
+     */
+    @Test
+    public void testVisibilityToggles() {
+        // #1 create a new/empty HermeneutiX project
+        this.createNewFile(FileType.HMX);
+        this.projectTree.requireSelection(HmxMessage.PROJECT_UNSAVED.get());
+        // #2 enter a single character as origin text
+        final JTextComponentFixture originTextPane = this.frame.textBox("Origin Text Input").enterText("X");
+        // #3 start analysis
+        this.getButtonByText(HmxMessage.TEXTINPUT_START_BUTTON).click();
+        // #4 ignore project info input dialog
+        this.getButtonByText(Message.CANCEL).click();
+        // #5 enter single character as translation for first Proposition
+        this.getSynPropositionTranslationInput(0).enterText("T");
+        // #6 hide proposition translations
+        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get()).click();
+        try {
+            this.getSynPropositionTranslationInput(0);
+            Assert.fail("The proposition's translation field should not be displayed.");
+        } catch (final ComponentLookupException ex) {
+            // the translation field is supposed to not be there
+        }
+        // #7 enter single character as label for first Proposition
+        this.getSynPropositionLabelInput(0).enterText("1");
+        // #8 switch to Semantical Analysis
+        this.getSwitchAnalysisButton().click();
+        this.getSemPropositionLabelInput(0).requireText("1");
+        try {
+            this.getSemPropositionTranslationInput(0);
+            Assert.fail("The proposition's translation field should not be displayed.");
+        } catch (final ComponentLookupException ex) {
+            // the translation field is supposed to not be there
+        }
+        // #9 enter other character in label input
+        this.getSemPropositionLabelInput(0).deleteText().enterText("2");
+        // #10 hide proposition labels
+        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get()).click();
+        try {
+            this.getSemPropositionLabelInput(0);
+            Assert.fail("The proposition's label field should not be displayed.");
+        } catch (final ComponentLookupException ex) {
+            // the label field is supposed to not be there
+        }
+        // #11 show proposition translations
+        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get()).click();
+        this.getSemPropositionTranslationInput(0).requireEmpty();
+        // #12 switch back to Syntactical Analysis
+        this.getSwitchAnalysisButton().click();
+        this.getSynPropositionTranslationInput(0).requireText("T");
+
+        // #13 show proposition labels
+        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get()).click();
+        this.getSynPropositionLabelInput(0).requireText("2");
+    }
+
     private JPanelFixture getSynProposition(final int index) {
         return this.frame.panel(new OrdinalComponentMatcher<SynProposition>(SynProposition.class, index, true));
     }
@@ -126,5 +201,21 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
 
     private JTextComponentFixture getSynPropositionLabelInput(final int Index) {
         return this.getSynProposition(Index).textBox("Label Input");
+    }
+
+    private JPanelFixture getSemProposition(final int index) {
+        return this.frame.panel(new OrdinalComponentMatcher<SemProposition>(SemProposition.class, index, true));
+    }
+
+    private JTextComponentFixture getSemPropositionTranslationInput(final int Index) {
+        return this.getSemProposition(Index).textBox("Translation Input");
+    }
+
+    private JTextComponentFixture getSemPropositionLabelInput(final int Index) {
+        return this.getSemProposition(Index).textBox("Label Input");
+    }
+
+    private JButtonFixture getSwitchAnalysisButton() {
+        return this.frame.button("Switch Analysis Button");
     }
 }

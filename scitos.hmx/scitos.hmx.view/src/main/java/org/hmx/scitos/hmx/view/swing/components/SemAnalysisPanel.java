@@ -214,6 +214,13 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     }
 
     @Override
+    public void deactivate() {
+        super.deactivate();
+        this.propositionList = null;
+        this.relationMap = null;
+    }
+
+    @Override
     public void repaintPericope() {
         // remember vertical position
         final int verticalPosition = this.scrollPane.getVerticalScrollBar().getValue();
@@ -250,13 +257,13 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.FIRST_LINE_START;
         constraints.gridx = Math.max(1, this.levels);
-        for (int i = 0; i < this.propositionList.size(); i++) {
-            constraints.gridy = i;
-            final SemProposition singleProposition = this.propositionList.get(i);
+        constraints.gridy = 0;
+        for (final SemProposition singleProposition : this.propositionList) {
             if (singleProposition.getRepresented().getSuperOrdinatedRelation() != null) {
                 singleProposition.setCheckBoxVisible(false);
             }
             this.contentArea.add(singleProposition, constraints);
+            constraints.gridy++;
         }
     }
 

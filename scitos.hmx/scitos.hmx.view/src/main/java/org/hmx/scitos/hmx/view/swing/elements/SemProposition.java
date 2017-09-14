@@ -143,7 +143,9 @@ public final class SemProposition extends AbstractProposition implements IConnec
      */
     @Override
     public void refreshTranslation() {
-        this.getTranslationField().setText(this.getRepresented().getSemTranslation());
+        if (this.getTranslationField() != null) {
+            this.getTranslationField().setText(this.getRepresented().getSemTranslation());
+        }
         super.refreshTranslation();
     }
 

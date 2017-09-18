@@ -358,7 +358,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         // insert clause items including origin text, functions, comments
         final double originTextExtent = this.insertOriginText(xml, indentedContent, flatPropositions, targetIndex);
         // insert translation
-        final String translationText = target.getSynTranslation();
+        final String translationText = target.getSemTranslation();
         double translationTextExtent;
         if (translationText == null || translationText.isEmpty()) {
             translationTextExtent = 0;

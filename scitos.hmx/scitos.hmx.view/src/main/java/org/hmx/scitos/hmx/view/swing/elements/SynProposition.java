@@ -43,7 +43,7 @@ import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.util.VTextIcon;
 
 /**
- * Extension of the {@link AbstractProposition} with a {@link SynItem}s in the top right area to display the contained {@link ClauseItem}s and their
+ * Extension of the {@link AbstractProposition} with a {@link ViewClauseItem}s in the top right area to display the contained {@link ClauseItem}s and their
  * included origin text.
  */
 public final class SynProposition extends AbstractProposition {
@@ -53,7 +53,7 @@ public final class SynProposition extends AbstractProposition {
     /** label displaying the syntactical indentation function. */
     private final JLabel functionLabel = new ScaledLabel(" ");
     /** view representation of the contained clause items. */
-    private final List<SynItem> items = new LinkedList<SynItem>();
+    private final List<ViewClauseItem> items = new LinkedList<ViewClauseItem>();
 
     /**
      * Constructor.
@@ -64,8 +64,8 @@ public final class SynProposition extends AbstractProposition {
      *            represented {@link Proposition} to set
      */
     private SynProposition(final IPericopeView viewReference, final Proposition represented) {
-        super(viewReference.getModelHandler(), represented, viewReference.isShowingPropositionLabels(),
-                viewReference.isShowingPropositionTranslations());
+        super(viewReference.getModelHandler(), represented, viewReference.getViewSettings().isShowingPropositionLabels(),
+                viewReference.getViewSettings().isShowingSyntacticTranslations());
         this.viewReference = viewReference;
         this.init();
         this.addMouseListener(new MouseAdapter() {
@@ -144,7 +144,7 @@ public final class SynProposition extends AbstractProposition {
 
     /**
      * Initialize the {@link JLabel} in the indentation area for displaying its indentation function and an expanding {@link JPanel} on the right to
-     * make sure it is always at the left side of its parent and the explicit syntactical functionality by inserting the contained {@link SynItem}s,
+     * make sure it is always at the left side of its parent and the explicit syntactical functionality by inserting the contained {@link ViewClauseItem}s,
      * adding a listener to the translation field and activating the comment listener.
      */
     private void init() {
@@ -185,36 +185,36 @@ public final class SynProposition extends AbstractProposition {
     }
 
     /**
-     * Insert the specified {@link ClauseItem} at the end of the displayed {@link SynItem}s.
+     * Insert the specified {@link ClauseItem} at the end of the displayed {@link ViewClauseItem}s.
      *
      * @param item
      *            {@link ClauseItem} to insert
      */
     public void insertItem(final ClauseItem item) {
-        final SynItem singleItem = new SynItem(this.viewReference, item);
+        final ViewClauseItem singleItem = new ViewClauseItem(this.viewReference, item);
         this.items.add(singleItem);
         this.getItemArea().add(singleItem);
     }
 
     /**
-     * Remove the specified {@link SynItem} from the displayed item area.
+     * Remove the specified {@link ViewClauseItem} from the displayed item area.
      *
      * @param target
-     *            {@link SynItem} to remove
+     *            {@link ViewClauseItem} to remove
      */
-    public void removeItem(final SynItem target) {
+    public void removeItem(final ViewClauseItem target) {
         target.setVisible(false);
         this.items.remove(target);
         this.getItemArea().remove(target);
     }
 
     /**
-     * Getter for the contained {@link SynItem}s.
+     * Getter for the contained {@link ViewClauseItem}s.
      *
-     * @return displayed {@link SynItem}s
+     * @return displayed {@link ViewClauseItem}s
      */
-    public List<SynItem> getItems() {
-        return new ArrayList<SynItem>(this.items);
+    public List<ViewClauseItem> getItems() {
+        return new ArrayList<ViewClauseItem>(this.items);
     }
 
     /**
@@ -253,7 +253,7 @@ public final class SynProposition extends AbstractProposition {
         super.setDefaultBorder();
         if (this.items != null) {
             this.getItemArea().revalidate();
-            for (final SynItem singleItem : this.getItems()) {
+            for (final ViewClauseItem singleItem : this.getItems()) {
                 singleItem.revalidate();
             }
         }

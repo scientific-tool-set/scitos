@@ -32,7 +32,7 @@ import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.view.swing.elements.IConnectable;
 import org.hmx.scitos.hmx.view.swing.elements.SemProposition;
-import org.hmx.scitos.hmx.view.swing.elements.SemRelation;
+import org.hmx.scitos.hmx.view.swing.elements.ViewRelation;
 
 /**
  * Listener for the {@link SemAnalysisPanel} to react on changed model elements.
@@ -101,13 +101,13 @@ public final class SemControl implements ModelChangeListener {
     }
 
     /**
-     * Get the view representation ({@link SemProposition}/{@link SemRelation}) of the specified model object ({@link Proposition}/{@link Relation}).
+     * Get the view representation ({@link SemProposition}/{@link ViewRelation}) of the specified model object ({@link Proposition}/{@link Relation}).
      *
      * @param semArea
      *            analysis view to search in
      * @param target
      *            {@link Proposition}/{@link Relation} to look for
-     * @return view component ({@link SemProposition}/ {@link SemRelation}) representing target
+     * @return view component ({@link SemProposition}/ {@link ViewRelation}) representing target
      */
     public static IConnectable<?> getRepresentative(final SemAnalysisPanel semArea, final AbstractConnectable target) {
         if (target instanceof Proposition) {
@@ -147,9 +147,9 @@ public final class SemControl implements ModelChangeListener {
      *            analysis view to search in
      * @param target
      *            {@link Relation} to look for
-     * @return {@link SemRelation} representing target
+     * @return {@link ViewRelation} representing target
      */
-    public static SemRelation getRepresentative(final SemAnalysisPanel semArea, final Relation target) {
+    public static ViewRelation getRepresentative(final SemAnalysisPanel semArea, final Relation target) {
         return semArea.getRelationMap().get(target);
     }
 }

@@ -28,7 +28,7 @@ import org.hmx.scitos.domain.ModelEvent;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
-import org.hmx.scitos.hmx.view.swing.elements.SynItem;
+import org.hmx.scitos.hmx.view.swing.elements.ViewClauseItem;
 import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
 
 /**
@@ -98,7 +98,7 @@ public final class SynControl implements ModelChangeListener {
         representative.refreshTranslation();
         representative.refreshComment();
         // remove all items in view
-        for (final SynItem singleViewItem : representative.getItems()) {
+        for (final ViewClauseItem singleViewItem : representative.getItems()) {
             representative.removeItem(singleViewItem);
         }
         // reinsert all items in view
@@ -114,12 +114,9 @@ public final class SynControl implements ModelChangeListener {
      *            {@link ClauseItem} to refresh in view
      */
     void refreshClauseItem(final ClauseItem target) {
-        final SynItem representative = SynControl.getRepresentative(this.synArea, target);
+        final ViewClauseItem representative = SynControl.getRepresentative(this.synArea, target);
         if (representative != null) {
-            representative.refreshFontStyle();
-            representative.refreshFunction();
-            representative.refreshOriginText();
-            representative.refreshComment();
+            representative.refresh();
         }
     }
 
@@ -151,12 +148,12 @@ public final class SynControl implements ModelChangeListener {
      *            syntactical analysis view containing the searched representation
      * @param target
      *            {@link ClauseItem} to look for
-     * @return {@link SynItem} representing the {@code target}
+     * @return {@link ViewClauseItem} representing the {@code target}
      */
-    public static SynItem getRepresentative(final SynAnalysisPanel synArea, final ClauseItem target) {
+    public static ViewClauseItem getRepresentative(final SynAnalysisPanel synArea, final ClauseItem target) {
         final SynProposition parentRepresentative = SynControl.getRepresentative(synArea, target.getParent());
         if (parentRepresentative != null) {
-            for (final SynItem singleViewItem : parentRepresentative.getItems()) {
+            for (final ViewClauseItem singleViewItem : parentRepresentative.getItems()) {
                 if (target == singleViewItem.getRepresented()) {
                     return singleViewItem;
                 }

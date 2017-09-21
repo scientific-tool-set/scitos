@@ -65,6 +65,10 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     /** Service provider for saving and exporting the represented project/model to files. */
     private final IModelParseServiceProvider modelParseProvider;
     /**
+     * User settings determining what parts of the model should be displayed
+     */
+    private final AnalysisViewSettings viewSettings = new AnalysisViewSettings();
+    /**
      * The currently active view component. This is either the {@link TextInputPanel} or {@link CombinedAnalysesPanel}.
      */
     IUndoManagedView activeView;
@@ -107,7 +111,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         this.relationProvider = relationProvider;
         this.modelParseProvider = modelParseProvider;
         if (this.containsAnalysisData()) {
-            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
+            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
         } else {
             this.activeView = new TextInputPanel(this, true, languageModelProvider);
         }
@@ -177,7 +181,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     void goToAnalysisView() {
         if (this.activeView instanceof TextInputPanel) {
             this.remove((Component) this.activeView);
-            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
+            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
             this.add((Component) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
@@ -327,16 +331,37 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         this.toggleLabelsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                ((CombinedAnalysesPanel) SingleProjectView.this.activeView).togglePropositionLabelVisibility();
+                SingleProjectView.this.togglePropositionLabelVisibility();
             }
         });
         this.toggleTranslationsItem = new JMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get(), ScitosIcon.HORIZONTAL_RULE.create());
         this.toggleTranslationsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                ((CombinedAnalysesPanel) SingleProjectView.this.activeView).togglePropositionTranslationVisibility();
+                SingleProjectView.this.togglePropositionTranslationVisibility();
             }
         });
         return Arrays.asList(this.toggleLabelsItem, this.toggleTranslationsItem);
+    }
+
+    /**
+     * Toggle the visibility of the label fields for all propositions. This causes a full rebuild of the displayed Pericope.
+     *
+     * @see #refresh()
+     */
+    void togglePropositionLabelVisibility() {
+        this.viewSettings.setShowingPropositionLabels(!this.viewSettings.isShowingPropositionLabels());
+        this.refresh();
+    }
+
+    /**
+     * Toggle the visibility of the translation fields for all propositions. This causes a full rebuild of the displayed Pericope.
+     *
+     * @see #refresh()
+     */
+    void togglePropositionTranslationVisibility() {
+        this.viewSettings.setShowingSyntacticTranslations(!this.viewSettings.isShowingSyntacticTranslations());
+        this.viewSettings.setShowingSemanticTranslations(!this.viewSettings.isShowingSemanticTranslations());
+        this.refresh();
     }
 }

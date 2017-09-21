@@ -94,13 +94,9 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
     private final JTextPane commentArea;
 
     /**
-     * Flag indicating whether the label fields of propositions should be displayed or not.
+     * User settings what parts of the model to display.
      */
-    private boolean showingPropositionLabels = HmxGeneralOption.SHOW_PROPOSITION_LABELS.getValueAsBoolean();
-    /**
-     * Flag indicating whether the translation fields of propositions should be displayed or not.
-     */
-    private boolean showingPropositionTranslations = HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS.getValueAsBoolean();
+    private final IAnalysisViewSettings viewSettings;
     /**
      * The most recently selected commentable model element currently associated with the {@link #commentArea}.
      */
@@ -114,10 +110,12 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
      * @param relationProvider
      *            the provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus
      */
-    public CombinedAnalysesPanel(final HmxModelHandler modelHandler, final ISemanticalRelationProvider relationProvider) {
+    public CombinedAnalysesPanel(final HmxModelHandler modelHandler, final ISemanticalRelationProvider relationProvider,
+            final IAnalysisViewSettings viewSettings) {
         super(new GridBagLayout());
         this.modelHandler = modelHandler;
         this.relationProvider = relationProvider;
+        this.viewSettings = viewSettings;
         this.undoManager = new UndoManager<Pericope>(this.modelHandler.getModel());
         this.addAncestorListener(new AncestorListener() {
             @Override
@@ -225,6 +223,11 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
     }
 
     @Override
+    public IAnalysisViewSettings getViewSettings() {
+        return this.viewSettings;
+    }
+
+    @Override
     public void modelChanged(final ModelEvent<?> event) {
         // ignore change event thrown by the own undo/redo action
         if (!this.undoInProgress) {
@@ -320,36 +323,6 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         if (activeAnalysisView != null) {
             activeAnalysisView.repaintPericope();
         }
-    }
-
-    @Override
-    public boolean isShowingPropositionLabels() {
-        return this.showingPropositionLabels;
-    }
-
-    @Override
-    public boolean isShowingPropositionTranslations() {
-        return this.showingPropositionTranslations;
-    }
-
-    /**
-     * Toggle the visibility of the label fields for all propositions. This causes a full rebuild of the displayed Pericope.
-     *
-     * @see #refresh()
-     */
-    public void togglePropositionLabelVisibility() {
-        this.showingPropositionLabels = !this.showingPropositionLabels;
-        this.refresh();
-    }
-
-    /**
-     * Toggle the visibility of the translation fields for all propositions. This causes a full rebuild of the displayed Pericope.
-     *
-     * @see #refresh()
-     */
-    public void togglePropositionTranslationVisibility() {
-        this.showingPropositionTranslations = !this.showingPropositionTranslations;
-        this.refresh();
     }
 
     /**

@@ -55,8 +55,8 @@ import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.hmx.view.swing.elements.IConnectable;
 import org.hmx.scitos.hmx.view.swing.elements.SemProposition;
-import org.hmx.scitos.hmx.view.swing.elements.SemRelation;
-import org.hmx.scitos.hmx.view.swing.elements.SemRelationExtender;
+import org.hmx.scitos.hmx.view.swing.elements.ViewRelation;
+import org.hmx.scitos.hmx.view.swing.elements.ViewRelationExtender;
 
 /**
  * Semantical analysis view displaying the semantical structured analysis consisting of {@link Proposition}s and {@link Relation}s. This is
@@ -100,7 +100,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
     /**
      * Complete mapping of {@link Relation}s to their representing view components.
      */
-    private Map<Relation, SemRelation> relationMap;
+    private Map<Relation, ViewRelation> relationMap;
 
     /**
      * Constructor.
@@ -271,7 +271,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
      * Build the {@link #relationMap} and display it; assuming the already created {@link #propositionList}.
      */
     private void displayRelations() {
-        this.relationMap = new HashMap<Relation, SemRelation>();
+        this.relationMap = new HashMap<Relation, ViewRelation>();
         SemProposition singleProposition = this.propositionList.get(0);
         while (singleProposition != null) {
             Relation singleRelation = singleProposition.getRepresented().getSuperOrdinatedRelation();
@@ -310,7 +310,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
                 this.insertRelationTree((Relation) singleAssociate);
             }
         }
-        final SemRelation viewRepresentative = new SemRelation(this.getViewReference(), this, relation, this.foldedLevels);
+        final ViewRelation viewRepresentative = new ViewRelation(this.getViewReference(), this, relation, this.foldedLevels);
         // insert the relation itself in the map
         this.relationMap.put(relation, viewRepresentative);
         // build constraints
@@ -336,7 +336,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
             constraints.gridy = (int) (connectY - 0.5);
             while (depth > associateRepresentative.getDepth()) {
                 constraints.gridx = this.levels - depth;
-                this.contentArea.add(new SemRelationExtender(), constraints);
+                this.contentArea.add(new ViewRelationExtender(), constraints);
                 depth--;
             }
         }
@@ -440,11 +440,11 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
      *
      * @return map containing all relations and their representations
      */
-    public Map<Relation, SemRelation> getRelationMap() {
+    public Map<Relation, ViewRelation> getRelationMap() {
         if (this.relationMap == null) {
             return null;
         }
-        return new HashMap<Relation, SemRelation>(this.relationMap);
+        return new HashMap<Relation, ViewRelation>(this.relationMap);
     }
 
     /**

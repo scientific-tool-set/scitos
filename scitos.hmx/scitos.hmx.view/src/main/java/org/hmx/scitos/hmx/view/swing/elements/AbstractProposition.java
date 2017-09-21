@@ -21,7 +21,6 @@ package org.hmx.scitos.hmx.view.swing.elements;
 
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
@@ -32,14 +31,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.HmxModelHandler;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.Proposition;
-import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
 import org.hmx.scitos.view.swing.util.Validation;
 
@@ -77,13 +74,13 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
     /**
      * The placeholder for upward pointing arrows referring to a {@code partBeforeArrow} of the represented {@link Proposition} (part).
      */
-    private final ArrowStack leftArrows;
+    private final ArrowStackLabel leftArrows;
     /** The container for the origin text, which is displayed differently in the syntactical and semantical analysis. */
     private final JPanel itemArea = new JPanel();
     /**
      * The placeholder for downward pointing arrows referring to a {@code partAfterArrow} of the represented {@link Proposition} (part).
      */
-    private final ArrowStack rightArrows;
+    private final ArrowStackLabel rightArrows;
     /** The input field for the translation text related to the respective analysis (either syntactical or semantical). */
     private final JTextField translationField;
     /**
@@ -123,8 +120,8 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         this.setComponentOrientation(orientation);
         this.contentPane.setComponentOrientation(orientation);
         this.itemArea.setComponentOrientation(orientation);
-        this.leftArrows = new ArrowStack(true, 0);
-        this.rightArrows = new ArrowStack(false, 0);
+        this.leftArrows = new ArrowStackLabel(true, 0);
+        this.rightArrows = new ArrowStackLabel(false, 0);
         if (showLabel) {
             this.labelField = new ScaledTextField();
         } else {
@@ -298,7 +295,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      *
      * @return left arrow stack
      */
-    protected final ArrowStack getLeftArrows() {
+    protected final ArrowStackLabel getLeftArrows() {
         return this.leftArrows;
     }
 
@@ -326,7 +323,7 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
      *
      * @return right arrow stack
      */
-    protected final ArrowStack getRightArrows() {
+    protected final ArrowStackLabel getRightArrows() {
         return this.rightArrows;
     }
 
@@ -486,77 +483,6 @@ abstract class AbstractProposition extends AbstractCommentable<Proposition> impl
         this.rightArrows.setToolTipText(toolTip);
         if (this.translationField != null) {
             this.translationField.setToolTipText(toolTip);
-        }
-    }
-
-    /**
-     * A stack of arrows pointing up or down to indicate the connection of two {@link Proposition} parts with enclosed children.
-     */
-    protected static final class ArrowStack extends ScaledLabel {
-
-        /** The base font size to apply – will be scaled with global setting. */
-        private static final int BASE_ARROW_FONT_SIZE = 20;
-
-        /** If the displayed arrows are pointing from bottom to top; else top to bottom. */
-        private final boolean upward;
-        /** The current number of arrows being displayed. */
-        private int arrowCount = 0;
-
-        /**
-         * Constructor.
-         *
-         * @param pointsUp
-         *            flag if the arrows should point upwards
-         * @param count
-         *            number of arrows to display
-         */
-        ArrowStack(final boolean pointsUp, final int count) {
-            super(ArrowStack.buildArrowString(pointsUp, count), SwingConstants.CENTER);
-            this.upward = pointsUp;
-            this.setFont(new Font("Times New Roman", Font.BOLD, ArrowStack.BASE_ARROW_FONT_SIZE));
-            this.setForeground(HmxGeneralOption.ARROW_COLOR.getValueAsColor());
-            this.setArrowCount(count);
-        }
-
-        /**
-         * Setter for the number of displayed arrows.
-         *
-         * @param count
-         *            number of displayed arrows to set
-         */
-        void setArrowCount(final int count) {
-            if (this.arrowCount != count) {
-                this.arrowCount = count;
-                if (count == 0) {
-                    this.setVisible(false);
-                    this.setText("");
-                } else {
-                    this.setText(ArrowStack.buildArrowString(this.upward, count));
-                    this.setSize(this.getPreferredSize());
-                    this.setVisible(true);
-                }
-            }
-        }
-
-        /**
-         * Construct a string with the given number of arrows pointing in the indicating direction.
-         *
-         * @param pointsUp
-         *            if the arrows should point upwards, otherwise downwards
-         * @param arrowCount
-         *            number arrows to include
-         * @return string of unicode arrows
-         */
-        private static String buildArrowString(final boolean pointsUp, final int arrowCount) {
-            if (arrowCount < 1) {
-                return "";
-            }
-            final char singleArrow = pointsUp ? '\u2191' : '\u2193';
-            final StringBuffer arrows = new StringBuffer(arrowCount);
-            for (int i = 0; i < arrowCount; i++) {
-                arrows.append(singleArrow);
-            }
-            return arrows.toString();
         }
     }
 }

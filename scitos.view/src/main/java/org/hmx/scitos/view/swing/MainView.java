@@ -965,7 +965,7 @@ public class MainView extends JPanel {
         /** Icon to display for main model group node in collapsed state. */
         private final Icon multiModelGroupClosedIcon = ScitosIcon.FOLDER_CLOSED.create();
         /** Icon to display for model element. */
-        private final Icon modelIcon = ScitosIcon.MODEL_ELEMENT.create();
+        private final Icon modelIcon = ScitosIcon.CLIPBOARD.create();
 
         /** Main constructor, initializes look and feel coloring associated with text panes (instead of trees). */
         ScitosTreeNodeRenderer() {

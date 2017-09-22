@@ -649,18 +649,18 @@ public final class ScitosClient {
     private void setViewSpecificMenuItems(final JMenu targetMenu, final int fixedLeadingItemCount, final Collection<JMenuItem> menuItems) {
         if (targetMenu.getMenuComponentCount() > fixedLeadingItemCount) {
             // remove old view specific edit menu items
-            final List<Component> oldEditMenuItems = Arrays.asList(targetMenu.getMenuComponents());
-            for (final Component oldEditMenuItem : oldEditMenuItems.subList(fixedLeadingItemCount, oldEditMenuItems.size())) {
-                targetMenu.remove(oldEditMenuItem);
+            final List<Component> oldMenuItems = Arrays.asList(targetMenu.getMenuComponents());
+            for (final Component oldMenuItem : oldMenuItems.subList(fixedLeadingItemCount, oldMenuItems.size())) {
+                targetMenu.remove(oldMenuItem);
             }
         }
         if (!menuItems.isEmpty()) {
             targetMenu.addSeparator();
-            for (final JMenuItem newEditMenuItem : menuItems) {
-                if (newEditMenuItem == null) {
+            for (final JMenuItem newMenuItem : menuItems) {
+                if (newMenuItem == null) {
                     targetMenu.addSeparator();
                 } else {
-                    targetMenu.add(newEditMenuItem);
+                    targetMenu.add(newMenuItem);
                 }
             }
         }
@@ -748,7 +748,7 @@ public final class ScitosClient {
     /**
      * Determine the currently active project - the one to be saved - and update the current list of open tabs in order to allow them to be saved as
      * part of project.
-     * 
+     *
      * @return the currently active project
      */
     private IViewProject<?> prepareForSaving() {

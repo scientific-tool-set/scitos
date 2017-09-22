@@ -85,7 +85,7 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
     /**
      * check box to select this {@link ViewRelation}.
      */
-    private final JCheckBox checkBox = new JCheckBox();
+    private final JCheckBox checkBox;
     /** The depth in the relation tree of the current analysis. */
     private final int depth;
     /**
@@ -125,7 +125,10 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
         }
         this.depth = represented.getTreeDepth();
         if (represented.getSuperOrdinatedRelation() == null) {
+            this.checkBox = new JCheckBox();
             this.add(this.checkBox);
+        } else {
+            this.checkBox = null;
         }
         if (foldedLevels.contains(this.depth)) {
             this.roleFields = null;
@@ -203,26 +206,24 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
         final int gridHeight = (int) (this.lastGridY - this.firstGridY) + 1;
         final int height = this.getSize().height;
         final double partY = height / (double) gridHeight;
-        int startX;
-        if (this.represented.getSuperOrdinatedRelation() == null) {
+        final int startX;
+        if (this.checkBox != null) {
             final Dimension boxSize = this.checkBox.getPreferredSize();
             int posX;
             if (this.leftAligned) {
                 posX = ViewRelation.HALF_LINE_THICKNESS;
-                startX = (boxSize.width + (2 * ViewRelation.HALF_LINE_THICKNESS));
+                startX = boxSize.width + (2 * ViewRelation.HALF_LINE_THICKNESS);
             } else {
                 posX = this.getSize().width - (boxSize.width + ViewRelation.HALF_LINE_THICKNESS);
                 startX = this.getSize().width - (boxSize.width + (2 * ViewRelation.HALF_LINE_THICKNESS));
             }
             // insert check box
-            this.checkBox.setBounds(posX, (int) (((this.connectY - (this.firstGridY - 0.5)) * partY) - (boxSize.height / 2.)), boxSize.width,
-                    boxSize.height);
+            final int posY = (int) (((this.connectY - (this.firstGridY - 0.5)) * partY) - (boxSize.height / 2.));
+            this.checkBox.setBounds(posX, posY, boxSize.width, boxSize.height);
+        } else if (this.leftAligned) {
+            startX = 0;
         } else {
-            if (this.leftAligned) {
-                startX = 0;
-            } else {
-                startX = this.getSize().width;
-            }
+            startX = this.getSize().width;
         }
         final int topBorder = ViewRelation.COMMENT_BORDER.getBorderInsets(this).top;
         final int lineLeftEnd;
@@ -303,11 +304,6 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
     @Override
     public Relation getRepresented() {
         return this.represented;
-    }
-
-    @Override
-    public void setCheckBoxVisible(final boolean val) {
-        this.checkBox.setVisible(val);
     }
 
     @Override

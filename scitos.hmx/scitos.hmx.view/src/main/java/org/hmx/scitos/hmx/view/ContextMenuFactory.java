@@ -142,7 +142,9 @@ public final class ContextMenuFactory {
      */
     public static ContextMenuBuilder createRelationPopup(final IPericopeView viewReference, final Relation selectedRelation) {
         final ContextMenuBuilder created = new ContextMenuBuilder();
-        ContextMenuFactory.addCreateOrAlterRelationEntry(created, viewReference, selectedRelation, false);
+        if (selectedRelation.getSuperOrdinatedRelation() == null) {
+            ContextMenuFactory.addCreateOrAlterRelationEntry(created, viewReference, selectedRelation, false);
+        }
         created.addItem(HmxMessage.MENU_ROTATE_RELATION_ROLES.get(), new CMenuItemAction() {
 
             @Override
@@ -363,16 +365,16 @@ public final class ContextMenuFactory {
      */
     private static void addPropositionEntries(final ContextMenuBuilder popupMenu, final IPericopeView viewReference,
             final Proposition proposition) {
-        // merge propositions
-        popupMenu.addItem(HmxMessage.MENU_MERGE_CHECKED_PROP.get(), new CMenuItemAction() {
-
-            @Override
-            public void processSelectEvent() throws HmxException {
-                viewReference.submitChangesToModel();
-                ContextMenuFactory.mergePropositions(viewReference, proposition);
-            }
-        });
         if (viewReference.getViewSettings().isShowingPropositionIndentations()) {
+            // merge propositions
+            popupMenu.addItem(HmxMessage.MENU_MERGE_CHECKED_PROP.get(), new CMenuItemAction() {
+
+                @Override
+                public void processSelectEvent() throws HmxException {
+                    viewReference.submitChangesToModel();
+                    ContextMenuFactory.mergePropositions(viewReference, proposition);
+                }
+            });
             // indent proposition under parent
             ContextMenuFactory.addFunctionChangeEntry(popupMenu, viewReference, HmxMessage.MENU_INDENT_PROP, proposition, true);
             // change function of indented proposition
@@ -390,7 +392,10 @@ public final class ContextMenuFactory {
                 });
             }
         }
-        if (viewReference.getViewSettings().isShowingRelations()) {
+        if (viewReference.getViewSettings().isShowingRelations() && proposition.getSuperOrdinatedRelation() == null) {
+            if (!popupMenu.isEmpty()) {
+                popupMenu.addSeparator();
+            }
             ContextMenuFactory.addCreateOrAlterRelationEntry(popupMenu, viewReference, proposition, false);
         }
     }
@@ -407,14 +412,16 @@ public final class ContextMenuFactory {
      */
     private static void addResetStandalonePropositionEntry(final ContextMenuBuilder popup, final IPericopeView viewReference,
             final Proposition proposition) {
-        popup.addItem(HmxMessage.MENU_RESET_PROP_PART.get(), new CMenuItemAction() {
+        if (viewReference.getViewSettings().isShowingPropositionIndentations()) {
+            popup.addItem(HmxMessage.MENU_RESET_PROP_PART.get(), new CMenuItemAction() {
 
-            @Override
-            public void processSelectEvent() throws HmxException {
-                viewReference.submitChangesToModel();
-                viewReference.getModelHandler().resetStandaloneStateOfPartAfterArrow(proposition);
-            }
-        });
+                @Override
+                public void processSelectEvent() throws HmxException {
+                    viewReference.submitChangesToModel();
+                    viewReference.getModelHandler().resetStandaloneStateOfPartAfterArrow(proposition);
+                }
+            });
+        }
     }
 
     /**

@@ -70,11 +70,6 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
      */
     private final JCheckBox showLabels = new JCheckBox(HmxMessage.PREFERENCES_GENERAL_PROPOSITIONS_SHOW_LABELS.get());
     /**
-     * Checkbox to determine whether the proposition translations should be visible by default in the analysis views
-     * ({@link HmxGeneralOption#SHOW_PROPOSITION_TRANSLATIONs}).
-     */
-    private final JCheckBox showTranslations = new JCheckBox(HmxMessage.PREFERENCES_GENERAL_PROPOSITIONS_SHOW_TRANSLATIONS.get());
-    /**
      * Checkbox to determine if the settings area should be visible by default for new projects ({@link HmxGeneralOption#SHOW_SETTINGS}).
      */
     private final JCheckBox showSettings = new JCheckBox(HmxMessage.PREFERENCES_GENERAL_INPUT_SHOW_SETTINGS.get());
@@ -109,10 +104,8 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
                 .add(this.initColorPanel(this.commentedBorderColorSample, HmxMessage.PREFERENCES_GENERAL_COMMENTED_BORDER_COLOR,
                         HmxGeneralOption.COMMENTED_BORDER_COLOR, false));
         this.showLabels.setSelected(HmxGeneralOption.SHOW_PROPOSITION_LABELS.getValueAsBoolean());
-        this.showTranslations.setSelected(HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS.getValueAsBoolean());
         this.showSettings.setSelected(HmxGeneralOption.SHOW_SETTINGS.getValueAsBoolean());
         generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_PROPOSITIONS.get())).add(this.showLabels);
-        generalOptionsLayout.row().grid().add(this.showTranslations);
         generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_INPUT.get())).add(this.showSettings);
         generalOptionsLayout.row().grid(new JLabel(HmxMessage.PREFERENCES_GENERAL_AUTHOR.get())).add(this.authorField);
         this.indentationSizeSlider.setPreferredSize(new Dimension(this.indentationSizeSlider.getMaximum(), this.indentationSizeSlider
@@ -168,7 +161,6 @@ public final class HmxGeneralOptionPanel extends AbstractSimpleOptionPanel<HmxGe
         this.addChosenSetting(HmxGeneralOption.RELATION_COLOR, ConversionUtil.toString(this.relationColorSample.getBackground()));
         this.addChosenSetting(HmxGeneralOption.COMMENTED_BORDER_COLOR, ConversionUtil.toString(this.commentedBorderColorSample.getBackground()));
         this.addChosenSetting(HmxGeneralOption.SHOW_PROPOSITION_LABELS, String.valueOf(this.showLabels.isSelected()));
-        this.addChosenSetting(HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS, String.valueOf(this.showTranslations.isSelected()));
         this.addChosenSetting(HmxGeneralOption.SHOW_SETTINGS, String.valueOf(this.showSettings.isSelected()));
         this.addChosenSetting(HmxGeneralOption.AUTHOR, this.authorField.getText());
         this.addChosenSetting(HmxGeneralOption.INDENTATION_WIDTH, Integer.toString(this.indentationSizeSlider.getValue()));

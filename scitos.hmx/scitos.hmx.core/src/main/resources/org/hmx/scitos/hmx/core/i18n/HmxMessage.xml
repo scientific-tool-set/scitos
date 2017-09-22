@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<!-- 
+<!--
    Copyright (C) 2015 HermeneutiX.org
-   
+
    This file is part of SciToS.
 
    SciToS is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 -->
 <properties>
   <entry key="Analysis.CommentTopic">Insert the Comment for the lowered Element here</entry>
-  <entry key="Analysis.Semantical">Go To Semantical</entry>
   <entry key="Analysis.Semantical.AlterRelationType">Alter relation type</entry>
   <entry key="Analysis.Semantical.CreateRelation">Create Relation with checked Elements</entry>
   <entry key="Analysis.Semantical.RelationFolding.FoldAll">Hide all Roles</entry>
@@ -29,7 +28,6 @@
   <entry key="Analysis.Semantical.RelationFolding.UnfoldLevel">Display Roles in this Column</entry>
   <entry key="Analysis.Semantical.RemoveRelation">Remove Relation</entry>
   <entry key="Analysis.Semantical.RotateAssociateRoles">Switch Roles</entry>
-  <entry key="Analysis.Syntactical">Go To Syntactical</entry>
   <entry key="Analysis.Syntactical.ChangeItemFunction">Change Clause Item Function</entry>
   <entry key="Analysis.Syntactical.ChangePropositionFunction">Change Indentation Function</entry>
   <entry key="Analysis.Syntactical.HighlightItem">Highlight Clause Item</entry>
@@ -59,8 +57,15 @@ Continue?</entry>
 are being removed from this project.
 Continue?</entry>
   <entry key="Client.MenuBar.Edit.ProjectInfo">Edit Project Info</entry>
+  <entry key="Client.MenuBar.View.ToggleClauseItems">Hide/Show Clause Items</entry>
+  <entry key="Client.MenuBar.View.TogglePropositionIndentations">Hide/Show Proposition Indentations</entry>
   <entry key="Client.MenuBar.View.TogglePropositionLabels">Hide/Show Proposition Labels</entry>
-  <entry key="Client.MenuBar.View.TogglePropositionTranslations">Hide/Show Proposition Translations</entry>
+  <entry key="Client.MenuBar.View.ToggleRelations">Hide/Show Relations</entry>
+  <entry key="Client.MenuBar.View.ToggleSemanticTranslations">Hide/Show Semantic Translations</entry>
+  <entry key="Client.MenuBar.View.ToggleSyntacticTranslations">Hide/Show Syntactic Translations</entry>
+  <entry key="Client.ToolBar.ViewPreset.AllDetails">View: All Details</entry>
+  <entry key="Client.ToolBar.ViewPreset.SemanticalAnalysis">View: Semantical Analysis</entry>
+  <entry key="Client.ToolBar.ViewPreset.SyntacticalAnalysis">View: Syntactical Analysis</entry>
   <entry key="Error.CreateRelation.AtLeastTwoChecked">At least one other element needs to be checked.</entry>
   <entry key="Error.CreateRelation.MoreThenTwoChecked">The chosen relation cannot be created
 with more then two associates.</entry>
@@ -198,7 +203,6 @@ It is being displayed as entry in the Syntactical Analysis' context menus.</entr
   <entry key="Preferences.View.IndentationWidth">Indentation Width</entry>
   <entry key="Preferences.View.Propositions">On Propositions in Analysis View</entry>
   <entry key="Preferences.View.Propositions.ShowLabels">Show labels</entry>
-  <entry key="Preferences.View.Propositions.ShowTranslations">Show translations</entry>
   <entry key="Preferences.View.TextInput">On Text Input View for new Analysis</entry>
   <entry key="Preferences.View.TextInput.ShowSettings">Show settings</entry>
   <entry key="ProjectInfo.Author">Author</entry>

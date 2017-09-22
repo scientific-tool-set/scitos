@@ -40,14 +40,6 @@ public interface IConnectable<T extends AbstractConnectable> extends ICheckable 
     T getRepresented();
 
     /**
-     * Toggle the integrated check box's visibility on/off.
-     *
-     * @param visible
-     *            if the check box should be visible
-     */
-    void setCheckBoxVisible(final boolean visible);
-
-    /**
      * Getter for the number of {@link Relation} levels between the represented model element and the underlying {@link Proposition}s. If the
      * represented model element is a {@link Proposition}, this returns {@code 0}.
      *

@@ -45,7 +45,6 @@ import org.hmx.scitos.domain.ModelEvent;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.HmxModelHandler;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
-import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
@@ -157,8 +156,8 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
         };
         this.switchButton.setName("Switch Analysis Button");
         // initialize the possible button icons
-        this.semButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SEMANTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
-        this.synButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_SYNTACTICAL_BUTTON.get(), VTextIcon.Rotate.NONE);
+        this.semButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_PRESET_SEMANTICAL.get(), VTextIcon.Rotate.NONE);
+        this.synButtonIcon = new VTextIcon(this.switchButton, HmxMessage.ANALYSIS_PRESET_SYNTACTICAL.get(), VTextIcon.Rotate.NONE);
 
         // default: always start with the syntactical analysis
         this.switchButton.setIcon(this.semButtonIcon);

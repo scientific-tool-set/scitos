@@ -68,7 +68,6 @@ import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.hmx.view.swing.elements.AbstractCommentable;
 import org.hmx.scitos.hmx.view.swing.elements.IConnectable;
-import org.hmx.scitos.hmx.view.swing.elements.ViewClauseItem;
 import org.hmx.scitos.hmx.view.swing.elements.ViewRelation;
 import org.hmx.scitos.hmx.view.swing.elements.ViewProposition;
 import org.hmx.scitos.hmx.view.swing.elements.ViewRelationExtender;
@@ -113,9 +112,13 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         }
     };
     /**
-     * Additional panels ensuring the trailing alignment of the propositions while relations are being displayed.
+     * Additional panel ensuring the trailing alignment of the propositions while relations are shown.
      */
-    private final JPanel[] relationSpacings = new JPanel[] { new JPanel(null), new JPanel(null) };
+    private final JPanel leftContentSpacing = new JPanel(null);
+    /**
+     * Additional panel ensuring the leading alignment of the propositions while relations are hidden.
+     */
+    private final JPanel rightContentSpacing = new JPanel(null);
     /**
      * The input area at the bottom of the view, allowing the display and modification of a selected element's comment.
      */
@@ -156,12 +159,26 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         this.modelHandler = modelHandler;
         this.relationProvider = relationProvider;
         this.viewSettings = viewSettings;
-        this.undoManager = new UndoManager<Pericope>(this.modelHandler.getModel());
+        this.undoManager = new UndoManager<Pericope>(modelHandler.getModel());
+
+        this.scrollPane = this.initScrollableContent();
+        // initialize the commentArea to be reachable by commentable components
+        this.commentArea = new ScaledTextPane();
+
+        final JSplitPane splitArea = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.scrollPane, this.initCommentPanel());
+        splitArea.setBorder(null);
+        splitArea.setResizeWeight(1);
+        this.add(splitArea);
+        this.setBorder(null);
+
+        this.refresh();
         this.addAncestorListener(new AncestorListener() {
             @Override
             public void ancestorAdded(final AncestorEvent event) {
                 // ensure logging of model change events by the UndoManager
                 modelHandler.addModelChangeListener(AnalysisPanel.this);
+                // reset size of comment area on every tab change; TODO handle this more elegantly in the future
+                splitArea.setDividerLocation(-1);
             }
 
             @Override
@@ -178,18 +195,6 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
                 // we don't care about any movement
             }
         });
-
-        this.setBorder(null);
-        this.scrollPane = this.initScrollableContent();
-        // initialize the commentArea to be reachable by commentable components
-        this.commentArea = new ScaledTextPane();
-
-        final JSplitPane splitArea = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.scrollPane, this.initCommentPanel());
-        splitArea.setBorder(null);
-        splitArea.setResizeWeight(1);
-        this.add(splitArea);
-
-        this.refresh();
     }
 
     /**
@@ -209,21 +214,24 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         background.add(this.contentArea, mainConstraints);
         // make sure it is always at the top
         final GridBagConstraints bottomSpace = new GridBagConstraints();
-        bottomSpace.fill = GridBagConstraints.VERTICAL;
         bottomSpace.weighty = 1;
         bottomSpace.gridx = 1;
         bottomSpace.gridy = 1;
         background.add(new JPanel(null), bottomSpace);
+        final GridBagConstraints rightSpace = new GridBagConstraints();
+        rightSpace.weightx = 1;
+        rightSpace.gridx = 2;
+        rightSpace.gridy = 0;
+        background.add(this.rightContentSpacing, rightSpace);
         // wrap the headers to get equal behavior
         final JPanel headerView = new JPanel(new GridBagLayout());
         // make sure it is always on the right
         final GridBagConstraints leftSpace = new GridBagConstraints();
-        leftSpace.fill = GridBagConstraints.HORIZONTAL;
         leftSpace.weightx = 1;
         leftSpace.gridx = 0;
         leftSpace.gridy = 0;
-        background.add(this.relationSpacings[0], leftSpace);
-        headerView.add(this.relationSpacings[1], leftSpace);
+        background.add(this.leftContentSpacing, leftSpace);
+        headerView.add(new JPanel(null), leftSpace);
         headerView.add(this.contentHeaders, mainConstraints);
         headerView.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         final ComponentOrientation orientation;
@@ -238,6 +246,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         this.contentHeaders.setComponentOrientation(orientation);
 
         final JScrollPane scrollablePane = new JScrollPane(background);
+        scrollablePane.setBorder(null);
         scrollablePane.setColumnHeaderView(headerView);
         scrollablePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         return scrollablePane;
@@ -284,7 +293,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
     public void modelChanged(final ModelEvent<?> event) {
         // ignore change event thrown by the own undo/redo action
         if (!this.undoInProgress) {
-            this.undoManager.undoableEditHappened(this.modelHandler.getModel());
+            this.undoManager.undoableEditHappened(this.getModelHandler().getModel());
         }
         // deal with different kinds of targets and event types
         final Object target = event.getTarget();
@@ -292,25 +301,16 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
 
             @Override
             public void run() {
-                final ViewProposition proposition;
                 if (target instanceof ClauseItem) {
-                    proposition = AnalysisPanel.this.getRepresentative(((ClauseItem) target).getParent());
-                    if (proposition != null) {
-                        for (final ViewClauseItem singleItem : proposition.getItems()) {
-                            if (singleItem.getRepresented() == target) {
-                                singleItem.refresh();
-                                return;
-                            }
-                        }
+                    final ViewProposition targetParent = AnalysisPanel.this.getRepresentative(((ClauseItem) target).getParent());
+                    if (targetParent != null) {
+                        targetParent.refreshClauseItem((ClauseItem) target);
+                        return;
                     }
-                } else if (target instanceof Proposition) {
-                    proposition = AnalysisPanel.this.getRepresentative((Proposition) target);
-                } else {
-                    proposition = null;
+                } else if (target instanceof Proposition && AnalysisPanel.this.getRepresentative((Proposition) target).refresh()) {
+                    return;
                 }
-                if (proposition == null || !proposition.refresh()) {
-                    AnalysisPanel.this.refresh();
-                }
+                AnalysisPanel.this.refresh();
             }
         });
     }
@@ -318,34 +318,38 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
     /**
      * Fully rebuild the displayed representation of the current {@link Pericope}.
      */
+    @Override
     public void refresh() {
-        final boolean showingRelations = this.viewSettings.isShowingRelations();
-        this.relationSpacings[0].setVisible(showingRelations);
-        this.relationSpacings[1].setVisible(showingRelations);
         // remember vertical position
         final int verticalPosition = this.scrollPane.getVerticalScrollBar().getValue();
         // clear view
         this.submitChangesToModel();
-        this.scrollPane.setVisible(false);
+        this.setVisible(false);
+        final boolean showingRelations = this.viewSettings.isShowingRelations();
+        this.leftContentSpacing.setVisible(showingRelations);
+        this.rightContentSpacing.setVisible(!showingRelations);
         this.contentArea.removeAll();
         // get the currently used origin text font
         this.propositionList = new ArrayList<ViewProposition>();
         // fill the propositionList
         int propositionIndexOffset = 0;
-        for (final Proposition singleTopLevelProposition : this.modelHandler.getModel().getText()) {
+        for (final Proposition singleTopLevelProposition : this.getModelHandler().getModel().getText()) {
             propositionIndexOffset = this.addViewPropositionToList(singleTopLevelProposition, propositionIndexOffset, 0);
         }
-        this.levels = this.calculateLevels();
         // show pericope
+        this.levels = this.calculateLevels();
         this.displayPropositions();
-        this.displayRelations();
+        this.relationMap = new HashMap<Relation, ViewRelation>();
+        if (this.viewSettings.isShowingRelations()) {
+            this.displayRelations();
+        }
         this.resetHeaders();
         // reset vertical position
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                AnalysisPanel.this.scrollPane.setVisible(true);
+                AnalysisPanel.this.setVisible(true);
                 AnalysisPanel.this.scrollPane.getVerticalScrollBar().setValue(verticalPosition);
             }
         });
@@ -357,13 +361,9 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
     private void displayPropositions() {
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.FIRST_LINE_START;
-        if (!this.getViewSettings().isShowingRelations()) {
-            constraints.weightx = 1;
-        }
         constraints.gridx = Math.max(1, this.levels);
         constraints.gridy = 0;
         for (final ViewProposition singleProposition : this.propositionList) {
-            singleProposition.setCheckBoxVisible(singleProposition.getRepresented().getSuperOrdinatedRelation() == null);
             this.contentArea.add(singleProposition, constraints);
             constraints.gridy++;
         }
@@ -373,7 +373,6 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
      * Build the {@link #relationMap} and display it; assuming the already created {@link #propositionList}.
      */
     private void displayRelations() {
-        this.relationMap = new HashMap<Relation, ViewRelation>();
         ViewProposition singleProposition = this.propositionList.get(0);
         while (singleProposition != null) {
             Relation singleRelation = singleProposition.getRepresented().getSuperOrdinatedRelation();
@@ -491,7 +490,11 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
             int arrowCount = listSize - beforeArrowPos;
             // ignore partAfterArrows
             for (int i = beforeArrowPos + 1; i < listSize; i++) {
-                if (this.propositionList.get(i).getRepresented().getPartBeforeArrow() != null) {
+                final Proposition enclosedProposition = this.propositionList.get(i).getRepresented();
+                if (enclosedProposition == proposition) {
+                    break;
+                }
+                if (enclosedProposition.getPartBeforeArrow() != null) {
                     arrowCount--;
                 }
             }
@@ -666,21 +669,24 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
     void resetHeaders() {
         // remove old headers
         this.contentHeaders.removeAll();
-        if (this.levels < 2) {
-            // no relations mean no headers
-            this.contentHeaders.setVisible(false);
+        // no relations mean no headers
+        final boolean showHeaders = this.levels > 1 && this.viewSettings.isShowingRelations();
+        this.contentHeaders.setVisible(showHeaders);
+        if (!showHeaders) {
             return;
         }
-        this.contentHeaders.setVisible(true);
         // calculate width of each column
         final Map<Integer, Integer> maxColumnSize = new HashMap<Integer, Integer>();
         final GridBagLayout contentLayout = (GridBagLayout) this.contentArea.getLayout();
         // check each component for its width and determine maximum per column
         for (final Component singleComponent : this.contentArea.getComponents()) {
             final int column = contentLayout.getConstraints(singleComponent).gridx;
-            int columnSize = singleComponent.getPreferredSize().width;
+            final int componentWidth = singleComponent.getPreferredSize().width;
+            final int columnSize;
             if (maxColumnSize.containsKey(column)) {
-                columnSize = Math.max(columnSize, maxColumnSize.get(column));
+                columnSize = Math.max(componentWidth, maxColumnSize.get(column));
+            } else {
+                columnSize = componentWidth;
             }
             maxColumnSize.put(column, columnSize);
         }

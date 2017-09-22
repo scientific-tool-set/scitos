@@ -19,7 +19,6 @@
 
 package org.hmx.scitos.hmx.view.swing.elements;
 
-import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -30,7 +29,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,6 +36,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import org.hmx.scitos.domain.util.ComparisonUtil;
@@ -96,8 +95,12 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
     private final ArrowStackLabel leftArrows;
     /** The container for the origin text. */
     private final JPanel itemArea = new JPanel();
+    /**
+     * The single text field displaying the concatenated origin text of all {@link ClauseItem}s of the represented {@link Proposition}.
+     */
+    private final JTextField originText;
     /** View representation of the contained clause items. */
-    private final List<ViewClauseItem> items = new LinkedList<ViewClauseItem>();
+    private final List<ViewClauseItem> items;
     /**
      * The placeholder for downward pointing arrows referring to a {@code partAfterArrow} of the represented {@link Proposition} (part).
      */
@@ -110,11 +113,6 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
      * The view element allowing this {@link Proposition} to be selected for any more complex operations involving multiple model elements.
      */
     private final JCheckBox checkBox = new JCheckBox();
-    /**
-     * The view element replacing the {@link #checkBox} if the represented {@link Proposition} is not eligible for being part of any more complex
-     * operations.
-     */
-    private final JPanel checkBoxDummy = new JPanel();
 
     /**
      * Create a {@link SynProposition} representing the given {@link Proposition} on the specified indentation {@code level}.
@@ -171,8 +169,9 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
      * @return {@link Dimension} representing the indentation
      */
     private static Dimension createIndentationAfterArrow(final ViewProposition partBeforeArrow) {
-        return new Dimension(partBeforeArrow.indentationArea.getPreferredSize().width
-                + partBeforeArrow.leftArrows.getPreferredSize().width + partBeforeArrow.itemArea.getPreferredSize().width, 1);
+        final int partBeforeArrowIndentation = partBeforeArrow.indentationArea == null ? 0 : partBeforeArrow.indentationArea.getPreferredSize().width;
+        return new Dimension(partBeforeArrowIndentation + partBeforeArrow.leftArrows.getPreferredSize().width
+                + partBeforeArrow.itemArea.getPreferredSize().width, 1);
     }
 
     /**
@@ -199,22 +198,44 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         this.itemArea.setComponentOrientation(orientation);
         this.leftArrows = new ArrowStackLabel(true, 0);
         this.rightArrows = new ArrowStackLabel(false, 0);
-        this.initCheckbox();
+
         final IAnalysisViewSettings viewSettings = viewReference.getViewSettings();
+        final GridBagConstraints checkBoxConstraints = new GridBagConstraints();
+        checkBoxConstraints.gridx = 0;
+        checkBoxConstraints.gridy = 1;
+        if (this.represented.getPartBeforeArrow() == null && (viewSettings.isShowingPropositionIndentations()
+                || viewSettings.isShowingRelations() && this.represented.getSuperOrdinatedRelation() == null)) {
+            this.checkBox.setName("Check Box");
+            this.contentPane.add(this.checkBox, checkBoxConstraints);
+        } else {
+            final JPanel checkBoxDummy = new JPanel(null);
+            checkBoxDummy.setPreferredSize(this.checkBox.getPreferredSize());
+            this.contentPane.add(checkBoxDummy, checkBoxConstraints);
+        }
+
         this.labelField = this.initLabel(viewSettings);
         this.indentationArea = this.initIndentationArea(viewSettings);
         this.functionLabel = this.initFunctionLabel();
+        if (viewSettings.isShowingClauseItems()) {
+            this.originText = null;
+            this.items = new LinkedList<ViewClauseItem>();
+        } else {
+            this.originText = new ScaledTextField();
+            this.items = null;
+        }
         this.initOriginTextArea();
         this.synTranslationField = this.initSynTranslationField(viewSettings);
         this.semTranslationField = this.initSemTranslationField(viewSettings);
         this.add(this.contentPane);
         // create expanding panel on the right side of the proposition
-        final GridBagConstraints rightSpacing = new GridBagConstraints();
-        rightSpacing.fill = GridBagConstraints.HORIZONTAL;
-        rightSpacing.weightx = 1;
-        rightSpacing.gridx = 1;
-        rightSpacing.gridy = 0;
-        this.add(new JPanel(), rightSpacing);
+        final GridBagConstraints rightSpacingConstraints = new GridBagConstraints();
+        rightSpacingConstraints.fill = GridBagConstraints.HORIZONTAL;
+        rightSpacingConstraints.weightx = 1;
+        rightSpacingConstraints.gridx = 1;
+        rightSpacingConstraints.gridy = 0;
+        final JPanel rightSpacing = new JPanel(null);
+        rightSpacing.setPreferredSize(new Dimension(1, 1));
+        this.add(rightSpacing, rightSpacingConstraints);
         this.setDefaultBorder();
         this.refresh();
         this.addMouseListener(new MouseAdapter() {
@@ -234,25 +255,12 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
                     } else {
                         contextMenu = ContextMenuFactory.createPropositionAfterArrowPopup(viewReference, represented);
                     }
-                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
+                    if (!contextMenu.isEmpty()) {
+                        ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
+                    }
                 }
             }
         });
-    }
-
-    /**
-     * Initialize the {@link JCheckBox} and its placeholder.
-     */
-    private void initCheckbox() {
-        // checkBox
-        this.checkBoxDummy.setPreferredSize(this.checkBox.getPreferredSize());
-        this.setCheckBoxVisible(this.represented.getPartBeforeArrow() == null);
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        this.checkBox.setName("Check Box");
-        this.contentPane.add(this.checkBox, constraints);
-        this.contentPane.add(this.checkBoxDummy, constraints);
     }
 
     /**
@@ -320,12 +328,11 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         } else {
             label = new ScaledLabel(" ");
             final GridBagConstraints spacing = new GridBagConstraints();
-            spacing.fill = GridBagConstraints.HORIZONTAL;
             spacing.weightx = 1;
-            this.indentationArea.add(new JPanel(), spacing);
+            this.indentationArea.add(new JPanel(null), spacing);
             final int border = (ViewProposition.createIndentation(1).width - this.functionLabel.getPreferredSize().width) / 2;
             final GridBagConstraints verticalSpan = new GridBagConstraints();
-            verticalSpan.fill = GridBagConstraints.VERTICAL;
+            verticalSpan.anchor = GridBagConstraints.BASELINE_TRAILING;
             verticalSpan.weighty = 1;
             verticalSpan.insets = new Insets(0, border, 0, border);
             this.indentationArea.add(label, verticalSpan);
@@ -338,31 +345,47 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
      * side of it.
      */
     private void initOriginTextArea() {
-        // leftArrows
-        final GridBagConstraints arrowConstraints = new GridBagConstraints();
-        arrowConstraints.anchor = GridBagConstraints.CENTER;
-        arrowConstraints.gridx = 3;
-        arrowConstraints.gridy = 0;
-        arrowConstraints.gridheight = 2;
-        this.contentPane.add(this.leftArrows, arrowConstraints);
+        if (this.represented.getPartBeforeArrow() != null) {
+            // leftArrows
+            final GridBagConstraints arrowConstraints = new GridBagConstraints();
+            arrowConstraints.anchor = GridBagConstraints.CENTER;
+            arrowConstraints.gridx = 3;
+            arrowConstraints.gridy = 0;
+            arrowConstraints.gridheight = 2;
+            this.contentPane.add(this.leftArrows, arrowConstraints);
+        }
         // itemArea
+        if (this.originText != null) {
+            this.originText.setFont(this.viewReference.getModelHandler().getModel().getFont());
+            this.originText.setEditable(false);
+            this.originText.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+                    BorderFactory.createEmptyBorder(2, 5, 2, 5)));
+            this.itemArea.add(this.originText);
+        }
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 4;
         constraints.gridy = 0;
         constraints.gridheight = 2;
         this.contentPane.add(this.itemArea, constraints);
-        // rightArrows
-        arrowConstraints.gridx = 5;
-        this.contentPane.add(this.rightArrows, arrowConstraints);
-        // just to make sure rightArrows are behind the itemArea in case of an
-        // expanded translation field
-        final GridBagConstraints rightSpacing = new GridBagConstraints();
-        rightSpacing.fill = GridBagConstraints.HORIZONTAL;
-        rightSpacing.weightx = 1;
-        rightSpacing.gridx = 6;
-        rightSpacing.gridy = 0;
-        rightSpacing.gridheight = 2;
-        this.contentPane.add(new JPanel(), rightSpacing);
+        if (this.represented.getPartAfterArrow() != null) {
+            // rightArrows
+            final GridBagConstraints arrowConstraints = new GridBagConstraints();
+            arrowConstraints.anchor = GridBagConstraints.CENTER;
+            arrowConstraints.gridx = 5;
+            arrowConstraints.gridy = 0;
+            arrowConstraints.gridheight = 2;
+            this.contentPane.add(this.rightArrows, arrowConstraints);
+        }
+        // just to make sure rightArrows are behind the itemArea in case of an expanded translation field
+        final GridBagConstraints rightSpacingConstraints = new GridBagConstraints();
+        rightSpacingConstraints.fill = GridBagConstraints.HORIZONTAL;
+        rightSpacingConstraints.weightx = 1;
+        rightSpacingConstraints.gridx = 6;
+        rightSpacingConstraints.gridy = 0;
+        rightSpacingConstraints.gridheight = 2;
+        final JPanel rightSpacing = new JPanel(null);
+        rightSpacing.setPreferredSize(new Dimension(1, 1));
+        this.contentPane.add(rightSpacing, rightSpacingConstraints);
     }
 
     /**
@@ -507,39 +530,42 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
      * @return whether the update was successful, otherwise a proper rebuild is required
      */
     public boolean refresh() {
-        if (this.refreshFunction()) {
-            return false;
-        }
         this.refreshLabelText();
+        this.refreshFunction();
         this.refreshTranslation();
         this.refreshComment();
-        for (Component singleItem : this.itemArea.getComponents()) {
-            singleItem.setVisible(false);
-        }
-        this.itemArea.removeAll();
-        this.items.clear();
-        for (ClauseItem item : this.represented.getItems()) {
-            this.insertItem(item);
+        if (this.originText == null) {
+            this.itemArea.removeAll();
+            this.items.clear();
+            for (final ClauseItem item : this.represented.getItems()) {
+                final ViewClauseItem singleItem = new ViewClauseItem(this.viewReference, item);
+                this.items.add(singleItem);
+                this.itemArea.add(singleItem);
+            }
+        } else {
+            final StringBuffer text = new StringBuffer(" ");
+            for (final ClauseItem singleItem : this.getRepresented()) {
+                text.append(singleItem.getOriginText()).append(' ');
+            }
+            this.originText.setText(text.toString());
+            this.originText.setSize(this.originText.getPreferredSize());
         }
         return true;
     }
 
     /**
      * Update the indentation function (in relation to the parent {@link Proposition}) to match the represented {@link Proposition}'s function value.
-     *
-     * @return if a {@code repaint()} is neccessary
      */
-    boolean refreshFunction() {
+    void refreshFunction() {
         final SyntacticalFunction function = this.getRepresented().getFunction();
         if (this.functionLabel == null || !(this.getRepresented().getParent() instanceof Proposition) || function == null) {
-            return false;
+            return;
         }
         if (this.functionLabel.getIcon() == null) {
             this.functionLabel.setIcon(new VTextIcon(this.functionLabel, function.getCode(), VTextIcon.Rotate.NONE));
         } else {
             ((VTextIcon) this.functionLabel.getIcon()).setLabel(function.getCode());
         }
-        return true;
     }
 
     /**
@@ -602,34 +628,19 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * Insert the specified {@link ClauseItem} at the end of the displayed {@link ViewClauseItem}s.
+     * Update the view representation of the given {@link ClauseItem}.
      *
-     * @param item {@link ClauseItem} to insert
+     * @param target model element to update representation of
      */
-    public void insertItem(final ClauseItem item) {
-        final ViewClauseItem singleItem = new ViewClauseItem(this.viewReference, item);
-        this.items.add(singleItem);
-        this.itemArea.add(singleItem);
-    }
-
-    /**
-     * Remove the specified {@link ViewClauseItem} from the displayed item area.
-     *
-     * @param target {@link ViewClauseItem} to remove
-     */
-    public void removeItem(final ViewClauseItem target) {
-        target.setVisible(false);
-        this.items.remove(target);
-        this.itemArea.remove(target);
-    }
-
-    /**
-     * Getter for the contained {@link ViewClauseItem}s.
-     *
-     * @return displayed {@link ViewClauseItem}s
-     */
-    public List<ViewClauseItem> getItems() {
-        return new ArrayList<ViewClauseItem>(this.items);
+    public void refreshClauseItem(final ClauseItem target) {
+        if (this.items != null) {
+            for (final ViewClauseItem singleItem : this.items) {
+                if (singleItem.getRepresented() == target) {
+                    singleItem.refresh();
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -640,12 +651,6 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
     @Override
     public void setNotChecked() {
         this.checkBox.setSelected(false);
-    }
-
-    @Override
-    public void setCheckBoxVisible(final boolean visible) {
-        this.checkBox.setVisible(visible);
-        this.checkBoxDummy.setVisible(!visible);
     }
 
     @Override
@@ -704,6 +709,9 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         }
         this.leftArrows.addMouseListener(listener);
         this.itemArea.addMouseListener(listener);
+        if (this.originText != null) {
+            this.originText.addMouseListener(listener);
+        }
         this.rightArrows.addMouseListener(listener);
         if (this.synTranslationField != null) {
             this.synTranslationField.addMouseListener(listener);
@@ -729,6 +737,9 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         }
         this.leftArrows.setToolTipText(toolTip);
         this.itemArea.setToolTipText(toolTip);
+        if (this.originText != null) {
+            this.originText.setToolTipText(toolTip);
+        }
         this.rightArrows.setToolTipText(toolTip);
         if (this.synTranslationField != null) {
             this.synTranslationField.setToolTipText(toolTip);

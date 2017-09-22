@@ -28,70 +28,59 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
 
     /** Toggle: label fields of propositions. */
     private boolean showingPropositionLabels;
+    /** Toggle: syntactic functions of propositions to other propositions. */
+    private boolean showingPropositionIndentations;
+    /** Toggle: semantic relations over propositions. */
+    private boolean showingRelations;
     /** Toggle: individual clause items in propositions. */
     private boolean showingClauseItems;
     /** Toggle: syntactic translation fields of propositions. */
     private boolean showingSyntacticTranslations;
     /** Toggle: semantic translation fields of propositions. */
     private boolean showingSemanticTranslations;
-    /** Toggle: syntactic functions of propositions to other propositions. */
-    private boolean showingPropositionIndentations;
-    /** Toggle: semantic relations over propositions. */
-    private boolean showingRelations;
 
     /**
      * Constructor: defaulting the view toggles to the "Syntactical Analysis" preset.
      */
     AnalysisViewSettings() {
         this.showingPropositionLabels = HmxGeneralOption.SHOW_PROPOSITION_LABELS.getValueAsBoolean();
-        this.showingSyntacticTranslations = HmxGeneralOption.SHOW_PROPOSITION_TRANSLATIONS.getValueAsBoolean();
-        this.switchToSyntacticalAnalysis();
     }
 
     /**
      * Show individual clause items and indentation functions of propostions, but hide relations and semantical translations.
+     *
+     * @param preset view settings to apply (ignoring the label visibility if the given preset is
+     * @return self reference
      */
-    final void switchToSyntacticalAnalysis() {
-        this.showingClauseItems = true;
-        this.showingSyntacticTranslations = this.showingSyntacticTranslations || this.showingSemanticTranslations;
-        this.showingSemanticTranslations = false;
-        this.showingPropositionIndentations = true;
-        this.showingRelations = false;
+    final AnalysisViewSettings applyViewPreset(final IAnalysisViewSettings preset) {
+        // the presets for the syntactical and semantical analyses should preserve the current label visibility
+        if (preset != IAnalysisViewSettings.SYNTACTICAL_ANALYSIS && preset != IAnalysisViewSettings.SEMANTICAL_ANALYSIS) {
+            this.setShowingPropositionLabels(preset.isShowingPropositionLabels());
+        }
+        this.setShowingPropositionIndentations(preset.isShowingPropositionIndentations());
+        this.setShowingRelations(preset.isShowingRelations());
+        this.setShowingClauseItems(preset.isShowingClauseItems());
+        this.setShowingSyntacticTranslations(preset.isShowingSyntacticTranslations());
+        this.setShowingSemanticTranslations(preset.isShowingSemanticTranslations());
+        return this;
     }
 
     /**
-     * Show relations, but hide individual clause items and indentation functions of propositions.
+     * Check whether this collection of settings represents the given preset.
+     *
+     * @param preset settings preset to compare with
+     * @return whether this matches the given preset
      */
-    final void switchToSemanticalAnalysis() {
-        this.showingClauseItems = false;
-        this.showingSyntacticTranslations = false;
-        this.showingSemanticTranslations = this.showingSyntacticTranslations || this.showingSemanticTranslations;
-        this.showingPropositionIndentations = false;
-        this.showingRelations = true;
-    }
-
-    /**
-     * Show everything.
-     */
-    final void showAll() {
-        this.showingPropositionLabels = true;
-        this.showingClauseItems = true;
-        this.showingSyntacticTranslations = true;
-        this.showingSemanticTranslations = true;
-        this.showingPropositionIndentations = true;
-        this.showingRelations = true;
-    }
-
-    /**
-     * Hide everything but the origin text of each proposition.
-     */
-    final void hideAll() {
-        this.showingPropositionLabels = false;
-        this.showingClauseItems = false;
-        this.showingSyntacticTranslations = false;
-        this.showingSemanticTranslations = false;
-        this.showingPropositionIndentations = false;
-        this.showingRelations = false;
+    final boolean matchesPreset(final IAnalysisViewSettings preset) {
+        final boolean matchingLabelVisibility = this.isShowingPropositionLabels() == preset.isShowingPropositionLabels()
+                || preset == IAnalysisViewSettings.SYNTACTICAL_ANALYSIS || preset == IAnalysisViewSettings.SEMANTICAL_ANALYSIS;
+        final boolean result = matchingLabelVisibility
+                && this.isShowingPropositionIndentations() == preset.isShowingPropositionIndentations()
+                && this.isShowingRelations() == preset.isShowingRelations()
+                && this.isShowingClauseItems() == preset.isShowingClauseItems()
+                && this.isShowingSyntacticTranslations() == preset.isShowingSyntacticTranslations()
+                && this.isShowingSemanticTranslations() == preset.isShowingSemanticTranslations();
+        return result;
     }
 
     @Override
@@ -103,9 +92,11 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
      * Set view toggle for the label fields of propositions.
      *
      * @param show whether the label fields of propositions should be shown
+     * @return the given view toggle value
      */
-    public void setShowingPropositionLabels(final boolean show) {
+    public boolean setShowingPropositionLabels(final boolean show) {
         this.showingPropositionLabels = show;
+        return show;
     }
 
     @Override
@@ -117,9 +108,11 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
      * Set view toggle for the individual clause items in propositions.
      *
      * @param show whether the individual clause items in propositions should be shown
+     * @return the given view toggle value
      */
-    public void setShowingClauseItems(final boolean show) {
+    public boolean setShowingClauseItems(final boolean show) {
         this.showingClauseItems = show;
+        return show;
     }
 
     @Override
@@ -131,9 +124,11 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
      * Set view toggle for the syntactic translation fields of propositions.
      *
      * @param show whether the syntactic translation fields of propositions should be shown
+     * @return the given view toggle value
      */
-    public void setShowingSyntacticTranslations(final boolean show) {
+    public boolean setShowingSyntacticTranslations(final boolean show) {
         this.showingSyntacticTranslations = show;
+        return show;
     }
 
     @Override
@@ -145,9 +140,11 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
      * Set view toggle for the semantic translation fields of propositions.
      *
      * @param show whether the semantic translation fields of propositions should be shown
+     * @return the given view toggle value
      */
-    public void setShowingSemanticTranslations(final boolean show) {
+    public boolean setShowingSemanticTranslations(final boolean show) {
         this.showingSemanticTranslations = show;
+        return show;
     }
 
     @Override
@@ -159,9 +156,11 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
      * Set view toggle for the syntactic functions of propositions to other propositions.
      *
      * @param show whether the syntactic functions of propostiions to other propositions should be shown
+     * @return the given view toggle value
      */
-    public void setShowingPropositionIndentations(final boolean show) {
+    public boolean setShowingPropositionIndentations(final boolean show) {
         this.showingPropositionIndentations = show;
+        return show;
     }
 
     @Override
@@ -173,8 +172,10 @@ class AnalysisViewSettings implements IAnalysisViewSettings {
      * Set view toggle for the semantic relations over propositions.
      *
      * @param show whether the semantic relations over propositions should be shown
+     * @return the given view toggle value
      */
-    public void setShowingRelations(final boolean show) {
+    public boolean setShowingRelations(final boolean show) {
         this.showingRelations = show;
+        return show;
     }
 }

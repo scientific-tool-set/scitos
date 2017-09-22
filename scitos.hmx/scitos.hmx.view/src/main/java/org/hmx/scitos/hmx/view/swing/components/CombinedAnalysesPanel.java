@@ -109,6 +109,7 @@ public final class CombinedAnalysesPanel extends JPanel implements IPericopeView
      *            the represented project's model handler instance
      * @param relationProvider
      *            the provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus
+     * @param viewSettings user settings
      */
     public CombinedAnalysesPanel(final HmxModelHandler modelHandler, final ISemanticalRelationProvider relationProvider,
             final IAnalysisViewSettings viewSettings) {

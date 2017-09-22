@@ -46,9 +46,7 @@ import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
-import org.hmx.scitos.hmx.view.IPericopeView;
-import org.hmx.scitos.hmx.view.swing.components.SemAnalysisPanel;
-import org.hmx.scitos.hmx.view.swing.components.SemControl;
+import org.hmx.scitos.hmx.view.swing.components.AnalysisPanel;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
@@ -68,8 +66,8 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
     private final Border defaultBorder;
     /** Colored, raised bevel border, when not selected and with assigned comment. */
     private final Border defaultCommentedBorder;
-    /** The semantical analysis this is displayed in. */
-    final SemAnalysisPanel semArea;
+    /** The analysis view this is displayed in. */
+    final AnalysisPanel analysisPanel;
     /** The view representations of the sub ordinated associates. */
     private final List<IConnectable<?>> viewAssociates;
     /** The text fields displaying the respective roles of the sub ordinated associates. */
@@ -106,27 +104,24 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
     /**
      * Constructor.
      *
-     * @param viewReference
-     *            the view providing access to the project's model handler and handling the comments on model elements
-     * @param semArea
-     *            semantical analysis view to be contained in
+     * @param analysisPanel
+     *            analysis view to be contained in
      * @param represented
      *            model {@link Relation} to display
      * @param foldedLevels
      *            levels to suppress display of semantic roles on
      */
-    public ViewRelation(final IPericopeView viewReference, final SemAnalysisPanel semArea, final Relation represented,
-            final Collection<Integer> foldedLevels) {
+    public ViewRelation(final AnalysisPanel analysisPanel, final Relation represented, final Collection<Integer> foldedLevels) {
         super(null);
-        this.semArea = semArea;
+        this.analysisPanel = analysisPanel;
         this.represented = represented;
-        this.leftAligned = viewReference.getModelHandler().getModel().isLeftToRightOriented();
+        this.leftAligned = analysisPanel.getModelHandler().getModel().isLeftToRightOriented();
         final List<AbstractConnectable> modelAssociates = represented.getAssociates();
-        this.showRoleAboveLine = viewReference.getViewSettings().isShowingSemanticTranslations()
-                || viewReference.getViewSettings().isShowingSyntacticTranslations();
+        this.showRoleAboveLine = analysisPanel.getViewSettings().isShowingSemanticTranslations()
+                || analysisPanel.getViewSettings().isShowingSyntacticTranslations();
         this.viewAssociates = new ArrayList<IConnectable<?>>(modelAssociates.size());
         for (final AbstractConnectable singleAssociate : modelAssociates) {
-            this.viewAssociates.add(SemControl.getRepresentative(semArea, singleAssociate));
+            this.viewAssociates.add(this.analysisPanel.getRepresentative(singleAssociate));
         }
         this.depth = represented.getTreeDepth();
         if (represented.getSuperOrdinatedRelation() == null) {
@@ -152,8 +147,8 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
                 this.add(roleField);
             }
         }
-        this.firstGridY = SemControl.getRepresentative(semArea, represented.getFirstPropositionContained()).getConnectY();
-        this.lastGridY = SemControl.getRepresentative(semArea, represented.getLastPropositionContained()).getConnectY();
+        this.firstGridY = this.analysisPanel.getRepresentative(represented.getFirstPropositionContained()).getConnectY();
+        this.lastGridY = this.analysisPanel.getRepresentative(represented.getLastPropositionContained()).getConnectY();
         this.refreshRoles();
         this.setToolTipText(represented.getComment());
         this.defaultBorder =
@@ -171,14 +166,14 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
 
             @Override
             public void mousePressed(final MouseEvent event) {
-                viewReference.handleSelectedCommentable(ViewRelation.this);
+                analysisPanel.handleSelectedCommentable(ViewRelation.this);
                 this.mouseReleased(event);
             }
 
             @Override
             public void mouseReleased(final MouseEvent event) {
                 if (event.isPopupTrigger()) {
-                    final ContextMenuBuilder contextMenu = ContextMenuFactory.createSemRelationPopup(viewReference, represented);
+                    final ContextMenuBuilder contextMenu = ContextMenuFactory.createRelationPopup(analysisPanel, represented);
                     ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
                 }
             }

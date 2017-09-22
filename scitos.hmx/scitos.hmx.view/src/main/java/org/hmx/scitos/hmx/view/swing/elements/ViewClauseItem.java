@@ -95,18 +95,29 @@ public final class ViewClauseItem extends AbstractCommentable<ClauseItem> {
         this.setDefaultBorder();
         this.initOriginTextPane();
         this.initFunctionLabel();
-        this.refreshFontStyle();
-        // initialize the comment showing listener for the item
+        this.refresh();
         this.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mousePressed(final MouseEvent event) {
                 viewReference.handleSelectedCommentable(ViewClauseItem.this);
+                this.mouseReleased(event);
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent event) {
+                if (event.isPopupTrigger()) {
+                    final ClauseItem item = ViewClauseItem.this.getRepresented();
+                    final ContextMenuBuilder contextMenu;
+                    if (item.getParent().getPartBeforeArrow() == null) {
+                        contextMenu = ContextMenuFactory.createClauseItemPopup(ViewClauseItem.this.viewReference, item);
+                    } else {
+                        contextMenu = ContextMenuFactory.createClauseItemAfterArrowPopup(ViewClauseItem.this.viewReference, item);
+                    }
+                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
+                }
             }
         });
-        // initialize the popup menu and its listener for the item
-        this.refreshPopup();
-        this.refreshComment();
     }
 
     /** Initialize the origin text pane on the top. */
@@ -136,45 +147,14 @@ public final class ViewClauseItem extends AbstractCommentable<ClauseItem> {
         this.add(this.functionLabel, constraints);
     }
 
-    /**
-     * Create and enable the {@link JPopupMenu}.
-     */
-    private void refreshPopup() {
-        if (this.popupListener != null) {
-            // remove the old popup listener
-            this.removeMouseListener(this.popupListener);
-        }
-        // create new popup menu and its referring listener
-        this.popupListener = new MouseAdapter() {
-
-            @Override
-            public void mousePressed(final MouseEvent event) {
-                if (event.isPopupTrigger()) {
-                    final ClauseItem item = ViewClauseItem.this.getRepresented();
-                    final ContextMenuBuilder contextMenu;
-                    if (item.getParent().getPartBeforeArrow() == null) {
-                        contextMenu = ContextMenuFactory.createSynItemPopup(ViewClauseItem.this.viewReference, item);
-                    } else {
-                        contextMenu = ContextMenuFactory.createSynItemAfterArrowPopup(ViewClauseItem.this.viewReference, item);
-                    }
-                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
-                }
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent event) {
-                this.mousePressed(event);
-            }
-        };
-        // add the popup menu and its listener
-        this.addMouseListener(this.popupListener);
-    }
-
     @Override
     public ClauseItem getRepresented() {
         return this.represented;
     }
 
+    /**
+     * Update the displayed data and style according to the (potentially changed) state of the represented {@link ClauseItem}.
+     */
     public void refresh() {
         this.refreshFontStyle();
         this.refreshOriginText();
@@ -206,7 +186,6 @@ public final class ViewClauseItem extends AbstractCommentable<ClauseItem> {
      */
     void refreshOriginText() {
         this.originTextPane.setText(this.represented.getOriginText());
-        this.refreshPopup();
     }
 
     /**
@@ -235,7 +214,7 @@ public final class ViewClauseItem extends AbstractCommentable<ClauseItem> {
         final boolean containsComment = this.represented.getComment() != null && !this.represented.getComment().trim().isEmpty();
         this.setBorder(containsComment ? this.defaultBorderCommented : ViewClauseItem.DEFAULT_BORDER);
         if (this.getParent() != null) {
-            ((JComponent) this.getParent()).revalidate();
+            this.getParent().revalidate();
         }
     }
 

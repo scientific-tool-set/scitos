@@ -43,8 +43,8 @@ import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.util.VTextIcon;
 
 /**
- * Extension of the {@link AbstractProposition} with a {@link ViewClauseItem}s in the top right area to display the contained {@link ClauseItem}s and their
- * included origin text.
+ * Extension of the {@link AbstractProposition} with a {@link ViewClauseItem}s in the top right area to display the contained {@link ClauseItem}s and
+ * their included origin text.
  */
 public final class SynProposition extends AbstractProposition {
 
@@ -81,9 +81,9 @@ public final class SynProposition extends AbstractProposition {
                 if (event.isPopupTrigger()) {
                     final ContextMenuBuilder contextMenu;
                     if (SynProposition.this.getRepresented().getPartBeforeArrow() == null) {
-                        contextMenu = ContextMenuFactory.createSynPropositionPopup(viewReference, represented);
+                        contextMenu = ContextMenuFactory.createPropositionPopup(viewReference, represented);
                     } else {
-                        contextMenu = ContextMenuFactory.createSynPropositionAfterArrowPopup(viewReference, represented);
+                        contextMenu = ContextMenuFactory.createPropositionAfterArrowPopup(viewReference, represented);
                     }
                     ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
                 }
@@ -144,8 +144,8 @@ public final class SynProposition extends AbstractProposition {
 
     /**
      * Initialize the {@link JLabel} in the indentation area for displaying its indentation function and an expanding {@link JPanel} on the right to
-     * make sure it is always at the left side of its parent and the explicit syntactical functionality by inserting the contained {@link ViewClauseItem}s,
-     * adding a listener to the translation field and activating the comment listener.
+     * make sure it is always at the left side of its parent and the explicit syntactical functionality by inserting the contained
+     * {@link ViewClauseItem}s, adding a listener to the translation field and activating the comment listener.
      */
     private void init() {
         final SyntacticalFunction function = this.getRepresented().getFunction();

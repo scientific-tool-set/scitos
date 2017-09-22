@@ -196,7 +196,7 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
     }
 
     private JTextComponentFixture getSynPropositionTranslationInput(final int Index) {
-        return this.getSynProposition(Index).textBox("Translation Input");
+        return this.getSynProposition(Index).textBox("Syn Translation Input");
     }
 
     private JTextComponentFixture getSynPropositionLabelInput(final int Index) {
@@ -208,7 +208,7 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
     }
 
     private JTextComponentFixture getSemPropositionTranslationInput(final int Index) {
-        return this.getSemProposition(Index).textBox("Translation Input");
+        return this.getSemProposition(Index).textBox("Sem Translation Input");
     }
 
     private JTextComponentFixture getSemPropositionLabelInput(final int Index) {

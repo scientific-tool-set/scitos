@@ -310,7 +310,7 @@ public final class SemAnalysisPanel extends AbstractAnalysisPanel {
                 this.insertRelationTree((Relation) singleAssociate);
             }
         }
-        final ViewRelation viewRepresentative = new ViewRelation(this.getViewReference(), this, relation, this.foldedLevels);
+        final ViewRelation viewRepresentative = null;//new ViewRelation(this.getViewReference(), this, relation, this.foldedLevels);
         // insert the relation itself in the map
         this.relationMap.put(relation, viewRepresentative);
         // build constraints

@@ -29,6 +29,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,13 +47,13 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.hmx.scitos.core.UndoManager;
 
 import org.hmx.scitos.domain.ModelChangeListener;
 import org.hmx.scitos.domain.ModelEvent;
+import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.HmxModelHandler;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
@@ -70,6 +71,7 @@ import org.hmx.scitos.hmx.view.swing.elements.IConnectable;
 import org.hmx.scitos.hmx.view.swing.elements.ViewClauseItem;
 import org.hmx.scitos.hmx.view.swing.elements.ViewRelation;
 import org.hmx.scitos.hmx.view.swing.elements.ViewProposition;
+import org.hmx.scitos.hmx.view.swing.elements.ViewRelationExtender;
 import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.components.ScaledTextPane;
 
@@ -144,10 +146,9 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
     /**
      * Constructor.
      *
-     * @param modelHandler
-     *            the represented project's model handler instance
-     * @param relationProvider
-     *            the provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus
+     * @param modelHandler the represented project's model handler instance
+     * @param relationProvider the provider of available semantical {@link RelationTemplate}s, to be offered via the elements' context menus
+     * @param viewSettings user settings determining what parts to show
      */
     protected AnalysisPanel(final HmxModelHandler modelHandler, final ISemanticalRelationProvider relationProvider,
             final IAnalysisViewSettings viewSettings) {
@@ -186,15 +187,15 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         final JSplitPane splitArea = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.scrollPane, this.initCommentPanel());
         splitArea.setBorder(null);
         splitArea.setResizeWeight(1);
-        final GridBagConstraints doubleSpan = new GridBagConstraints();
-        doubleSpan.fill = GridBagConstraints.BOTH;
-        doubleSpan.gridx = 0;
-        doubleSpan.gridy = 1;
-        this.add(splitArea, doubleSpan);
+        this.add(splitArea);
+
+        this.refresh();
     }
 
     /**
      * Initialize the whole layout.
+     *
+     * @return the created scroll pane
      */
     private JScrollPane initScrollableContent() {
         // make the whole analysis view scrollable
@@ -221,10 +222,10 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         leftSpace.weightx = 1;
         leftSpace.gridx = 0;
         leftSpace.gridy = 0;
-        background.add(relationSpacings[0], leftSpace);
-        headerView.add(relationSpacings[1], leftSpace);
+        background.add(this.relationSpacings[0], leftSpace);
+        headerView.add(this.relationSpacings[1], leftSpace);
         headerView.add(this.contentHeaders, mainConstraints);
-        headerView.setBorder(new MatteBorder(0, 0, 1, 0, Color.BLACK));
+        headerView.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         final ComponentOrientation orientation;
         if (this.getModelHandler().getModel().isLeftToRightOriented()) {
             orientation = ComponentOrientation.LEFT_TO_RIGHT;
@@ -239,10 +240,14 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         final JScrollPane scrollablePane = new JScrollPane(background);
         scrollablePane.setColumnHeaderView(headerView);
         scrollablePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        this.add(scrollablePane);
         return scrollablePane;
     }
 
+    /**
+     * Initialize the comment area at the bottom.
+     *
+     * @return panel containing the scrollable comment text area
+     */
     private JPanel initCommentPanel() {
         // add the comment area for both views
         final JPanel commentPanel = new JPanel(new GridBagLayout());
@@ -256,6 +261,8 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         scrollableComment.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         final GridBagConstraints doubleSpan = new GridBagConstraints();
         doubleSpan.fill = GridBagConstraints.BOTH;
+        doubleSpan.weightx = 1;
+        doubleSpan.weighty = 1;
         doubleSpan.gridx = 0;
         doubleSpan.gridy = 1;
         commentPanel.add(scrollableComment, doubleSpan);
@@ -315,6 +322,198 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         final boolean showingRelations = this.viewSettings.isShowingRelations();
         this.relationSpacings[0].setVisible(showingRelations);
         this.relationSpacings[1].setVisible(showingRelations);
+        // remember vertical position
+        final int verticalPosition = this.scrollPane.getVerticalScrollBar().getValue();
+        // clear view
+        this.submitChangesToModel();
+        this.scrollPane.setVisible(false);
+        this.contentArea.removeAll();
+        // get the currently used origin text font
+        this.propositionList = new ArrayList<ViewProposition>();
+        // fill the propositionList
+        int propositionIndexOffset = 0;
+        for (final Proposition singleTopLevelProposition : this.modelHandler.getModel().getText()) {
+            propositionIndexOffset = this.addViewPropositionToList(singleTopLevelProposition, propositionIndexOffset, 0);
+        }
+        this.levels = this.calculateLevels();
+        // show pericope
+        this.displayPropositions();
+        this.displayRelations();
+        this.resetHeaders();
+        // reset vertical position
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                AnalysisPanel.this.scrollPane.setVisible(true);
+                AnalysisPanel.this.scrollPane.getVerticalScrollBar().setValue(verticalPosition);
+            }
+        });
+    }
+
+    /**
+     * Transfer the {@link ViewProposition}s contained in the {@link #propositionList} to the displayed view.
+     */
+    private void displayPropositions() {
+        final GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+        if (!this.getViewSettings().isShowingRelations()) {
+            constraints.weightx = 1;
+        }
+        constraints.gridx = Math.max(1, this.levels);
+        constraints.gridy = 0;
+        for (final ViewProposition singleProposition : this.propositionList) {
+            singleProposition.setCheckBoxVisible(singleProposition.getRepresented().getSuperOrdinatedRelation() == null);
+            this.contentArea.add(singleProposition, constraints);
+            constraints.gridy++;
+        }
+    }
+
+    /**
+     * Build the {@link #relationMap} and display it; assuming the already created {@link #propositionList}.
+     */
+    private void displayRelations() {
+        this.relationMap = new HashMap<Relation, ViewRelation>();
+        ViewProposition singleProposition = this.propositionList.get(0);
+        while (singleProposition != null) {
+            Relation singleRelation = singleProposition.getRepresented().getSuperOrdinatedRelation();
+            final Proposition follower;
+            if (singleRelation == null) {
+                follower = singleProposition.getRepresented().getFollowingConnectableProposition();
+            } else {
+                // get the highest relation over the singleProposition
+                while (singleRelation.getSuperOrdinatedRelation() != null) {
+                    singleRelation = singleRelation.getSuperOrdinatedRelation();
+                }
+                // add highest and all of its subordinated relations in map
+                this.insertRelationTree(singleRelation);
+                follower = singleRelation.getLastPropositionContained().getFollowingConnectableProposition();
+            }
+            if (follower == null) {
+                break;
+            }
+            singleProposition = this.getRepresentative(follower);
+        }
+    }
+
+    /**
+     * Display the specified {@link Relation} and all of its subordinated {@link AbstractConnectable}s.
+     *
+     * @param relation
+     *            {@link Relation} to display
+     */
+    private void insertRelationTree(final Relation relation) {
+        // insert all subordinated relations first
+        for (final AbstractConnectable singleAssociate : relation) {
+            if (singleAssociate instanceof Relation) {
+                this.insertRelationTree((Relation) singleAssociate);
+            }
+        }
+        final ViewRelation viewRepresentative = new ViewRelation(this, relation, this.foldedLevels);
+        // insert the relation itself in the map
+        this.relationMap.put(relation, viewRepresentative);
+        // build constraints
+        final GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridheight = (int) (viewRepresentative.getLastGridY() - viewRepresentative.getFirstGridY() + 1);
+        constraints.gridx = this.levels - viewRepresentative.getDepth();
+        constraints.gridy = (int) (viewRepresentative.getFirstGridY() - 0.5);
+        // display
+        this.contentArea.add(viewRepresentative, constraints);
+        viewRepresentative.setVisible(false);
+        viewRepresentative.setVisible(true);
+        // extend lines if there is a gap between relation and its associates
+        for (final AbstractConnectable singleAssociate : relation) {
+            int depth = viewRepresentative.getDepth() - 1;
+            final IConnectable<?> associateRepresentative = this.getRepresentative(singleAssociate);
+            final double connectY = associateRepresentative.getConnectY();
+            if ((connectY % 1) == 0) {
+                constraints.gridheight = 2;
+            } else {
+                constraints.gridheight = 1;
+            }
+            constraints.gridy = (int) (connectY - 0.5);
+            while (depth > associateRepresentative.getDepth()) {
+                constraints.gridx = this.levels - depth;
+                this.contentArea.add(new ViewRelationExtender(), constraints);
+                depth--;
+            }
+        }
+    }
+
+    /**
+     * Calculate the maximum number of super ordinated {@link Relation}s.
+     *
+     * @return calculated maximum level
+     */
+    private int calculateLevels() {
+        int max = 0;
+        for (final ViewProposition singleProposition : this.propositionList) {
+            Relation singleSuperordinated = singleProposition.getRepresented().getSuperOrdinatedRelation();
+            int depth;
+            for (depth = 0; singleSuperordinated != null; depth++) {
+                singleSuperordinated = singleSuperordinated.getSuperOrdinatedRelation();
+            }
+            max = Math.max(max, depth);
+        }
+        return (max + 1);
+    }
+
+    /**
+     * Add the specified {@link Proposition} to the list of {@link ViewProposition}s WITHOUT adding it to the view.
+     *
+     * @param proposition {@link Proposition} to add to list
+     * @param offset next free proposition index
+     * @param level level of nested indentation of the given proposition towards the top-level propositions (which are on level 0)
+     * @return new {@code offset}, i.e. the highest now occupied proposition index + 1
+     */
+    private int addViewPropositionToList(final Proposition proposition, final int offset, final int level) {
+        // first: add all prior children
+        final List<Proposition> priorChildren = proposition.getPriorChildren();
+        int propositionOffset = offset;
+        if (priorChildren != null) {
+            for (final Proposition singlePriorChild : priorChildren) {
+                propositionOffset = this.addViewPropositionToList(singlePriorChild, propositionOffset, level + 1);
+            }
+        }
+        // second: add the proposition itself
+        final Proposition partBeforeArrow = proposition.getPartBeforeArrow();
+        final ViewProposition viewProposition;
+        if (partBeforeArrow == null) {
+            viewProposition = ViewProposition.createSynPropositionByLevel(this, proposition, propositionOffset, level);
+        } else {
+            final ViewProposition viewPartBeforeArrow = this.getRepresentative(partBeforeArrow);
+            viewProposition = ViewProposition.createSynPropositionByPartBeforeArrow(this, proposition, propositionOffset, viewPartBeforeArrow);
+            // show arrows
+            final int listSize = this.propositionList.size();
+            final int beforeArrowPos = CollectionUtil.indexOfInstance(this.propositionList, viewPartBeforeArrow);
+            // count number of arrows to set
+            int arrowCount = listSize - beforeArrowPos;
+            // ignore partAfterArrows
+            for (int i = beforeArrowPos + 1; i < listSize; i++) {
+                if (this.propositionList.get(i).getRepresented().getPartBeforeArrow() != null) {
+                    arrowCount--;
+                }
+            }
+            // show arrows in part before arrow and target
+            viewPartBeforeArrow.setRightArrowCount(arrowCount);
+            viewProposition.setLeftArrowCount(arrowCount);
+        }
+        propositionOffset++;
+        this.propositionList.add(viewProposition);
+        // third: add all later children
+        final List<Proposition> laterChildren = proposition.getLaterChildren();
+        if (laterChildren != null) {
+            for (final Proposition singleLaterChild : laterChildren) {
+                propositionOffset = this.addViewPropositionToList(singleLaterChild, propositionOffset, level + 1);
+            }
+        }
+        // finally: add the part after arrow
+        final Proposition partAfterArrow = proposition.getPartAfterArrow();
+        if (partAfterArrow != null) {
+            propositionOffset = this.addViewPropositionToList(partAfterArrow, propositionOffset, level);
+        }
+        return propositionOffset;
     }
 
     @Override
@@ -359,7 +558,13 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         return list;
     }
 
-    IConnectable<?> getRepresentative(AbstractConnectable target) {
+    /**
+     * Find the view representation of the given connectable (i.e. proposition or relation).
+     *
+     * @param target model element
+     * @return view representation
+     */
+    public IConnectable<?> getRepresentative(final AbstractConnectable target) {
         if (target instanceof Proposition) {
             return this.getRepresentative((Proposition) target);
         } else if (target instanceof Relation) {
@@ -369,7 +574,13 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         throw new IllegalArgumentException();
     }
 
-    ViewProposition getRepresentative(Proposition target) {
+    /**
+     * Find the view representation of the given proposition.
+     *
+     * @param target model element
+     * @return view representation
+     */
+    ViewProposition getRepresentative(final Proposition target) {
         for (final ViewProposition singleProposition : this.propositionList) {
             if (singleProposition.getRepresented() == target) {
                 return singleProposition;
@@ -378,7 +589,13 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         return null;
     }
 
-    ViewRelation getRepresentative(Relation target) {
+    /**
+     * Find the view representation of the given relation.
+     *
+     * @param target model element
+     * @return view representation
+     */
+    ViewRelation getRepresentative(final Relation target) {
         return this.relationMap.get(target);
     }
 
@@ -446,7 +663,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
     }
 
     /** Make sure the headers for expanding/collapsing the relations (hide/show roles) are present and sized properly. */
-    public void resetHeaders() {
+    void resetHeaders() {
         // remove old headers
         this.contentHeaders.removeAll();
         if (this.levels < 2) {

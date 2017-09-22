@@ -27,6 +27,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,8 +45,11 @@ import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.view.ContextMenuFactory;
 import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.hmx.view.swing.components.IAnalysisViewSettings;
+import org.hmx.scitos.view.ContextMenuBuilder;
+import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
 import org.hmx.scitos.view.swing.components.ScaledLabel;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
 import org.hmx.scitos.view.swing.util.VTextIcon;
@@ -197,31 +202,46 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         this.initCheckbox();
         final IAnalysisViewSettings viewSettings = viewReference.getViewSettings();
         this.labelField = this.initLabel(viewSettings);
-        this.refreshLabelText();
         this.indentationArea = this.initIndentationArea(viewSettings);
         this.functionLabel = this.initFunctionLabel();
-        this.refreshFunction();
         this.initOriginTextArea();
         this.synTranslationField = this.initSynTranslationField(viewSettings);
         this.semTranslationField = this.initSemTranslationField(viewSettings);
-        this.refreshTranslation();
         this.add(this.contentPane);
-        if (!viewSettings.isShowingRelations()) {
-            // create expanding panel on the right side of the proposition
-            final GridBagConstraints rightSpacing = new GridBagConstraints();
-            rightSpacing.fill = GridBagConstraints.HORIZONTAL;
-            rightSpacing.weightx = 1;
-            rightSpacing.gridx = 1;
-            rightSpacing.gridy = 0;
-            this.add(new JPanel(), rightSpacing);
-        }
+        // create expanding panel on the right side of the proposition
+        final GridBagConstraints rightSpacing = new GridBagConstraints();
+        rightSpacing.fill = GridBagConstraints.HORIZONTAL;
+        rightSpacing.weightx = 1;
+        rightSpacing.gridx = 1;
+        rightSpacing.gridy = 0;
+        this.add(new JPanel(), rightSpacing);
         this.setDefaultBorder();
+        this.refresh();
+        this.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(final MouseEvent event) {
+                viewReference.handleSelectedCommentable(ViewProposition.this);
+                this.mouseReleased(event);
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent event) {
+                if (event.isPopupTrigger()) {
+                    final ContextMenuBuilder contextMenu;
+                    if (ViewProposition.this.getRepresented().getPartBeforeArrow() == null) {
+                        contextMenu = ContextMenuFactory.createPropositionPopup(viewReference, represented);
+                    } else {
+                        contextMenu = ContextMenuFactory.createPropositionAfterArrowPopup(viewReference, represented);
+                    }
+                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
+                }
+            }
+        });
     }
 
     /**
      * Initialize the {@link JCheckBox} and its placeholder.
-     *
-     * @param viewSettings settings to apply
      */
     private void initCheckbox() {
         // checkBox
@@ -278,7 +298,7 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
             final GridBagConstraints constraints = new GridBagConstraints();
             constraints.fill = GridBagConstraints.VERTICAL;
             constraints.weighty = 1;
-            constraints.gridheight = 3;
+            constraints.gridheight = 4;
             constraints.gridx = 2;
             constraints.gridy = 0;
             this.contentPane.add(indentationAreaPanel, constraints);
@@ -288,6 +308,11 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         return indentationAreaPanel;
     }
 
+    /**
+     * Add a label representing the syntactical indentation function of the represented proposition, if any.
+     *
+     * @return created label (can be {@code null})
+     */
     private ScaledLabel initFunctionLabel() {
         final ScaledLabel label;
         if (this.indentationArea == null || !(this.getRepresented().getParent() instanceof Proposition)) {
@@ -360,7 +385,6 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
             });
             final GridBagConstraints constraints = new GridBagConstraints();
             constraints.fill = GridBagConstraints.HORIZONTAL;
-            constraints.weighty = 1;
             constraints.gridwidth = 4;
             constraints.gridx = 3;
             constraints.gridy = 2;
@@ -379,7 +403,7 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
      */
     private ScaledTextField initSemTranslationField(final IAnalysisViewSettings viewSettings) {
         final ScaledTextField translationField;
-        if (viewSettings.isShowingSyntacticTranslations()) {
+        if (viewSettings.isShowingSemanticTranslations()) {
             translationField = new ScaledTextField();
             translationField.setName("Sem Translation Input");
             translationField.setDocument(new Validation(Proposition.MAX_TRANSLATION_LENGTH));
@@ -391,7 +415,6 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
             });
             final GridBagConstraints constraints = new GridBagConstraints();
             constraints.fill = GridBagConstraints.HORIZONTAL;
-            constraints.weighty = 1;
             constraints.gridwidth = 4;
             constraints.gridx = 3;
             constraints.gridy = 3;
@@ -553,7 +576,7 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         }
         // if the translation text wants more space, it gets more
         final int translationFieldPreference = Math.max(preferredSynFieldSize.width, preferredSemFieldSize.width);
-        final int translationFieldWidth = Math.max(translationFieldPreference, this.itemArea.getSize().width);
+        final int translationFieldWidth = Math.max(translationFieldPreference, this.itemArea.getPreferredSize().width);
         if (this.synTranslationField != null) {
             this.synTranslationField.setSize(translationFieldWidth, preferredSynFieldSize.height);
         }
@@ -646,6 +669,11 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         this.setContentBorder(ViewProposition.COMMENT_BORDER);
     }
 
+    /**
+     * Apply the given border any ensure that any contained {@link ViewClauseItem}s are still properly shown.
+     *
+     * @param border border to apply
+     */
     private void setContentBorder(final Border border) {
         this.contentPane.setBorder(border);
         // without these visibility changes the item area may disappear
@@ -671,7 +699,9 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         if (this.labelField != null) {
             this.labelField.addMouseListener(listener);
         }
-        this.indentationArea.addMouseListener(listener);
+        if (this.indentationArea != null) {
+            this.indentationArea.addMouseListener(listener);
+        }
         this.leftArrows.addMouseListener(listener);
         this.itemArea.addMouseListener(listener);
         this.rightArrows.addMouseListener(listener);
@@ -694,7 +724,9 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         if (this.labelField != null) {
             this.labelField.setToolTipText(toolTip);
         }
-        this.indentationArea.setToolTipText(toolTip);
+        if (this.indentationArea != null) {
+            this.indentationArea.setToolTipText(toolTip);
+        }
         this.leftArrows.setToolTipText(toolTip);
         this.itemArea.setToolTipText(toolTip);
         this.rightArrows.setToolTipText(toolTip);

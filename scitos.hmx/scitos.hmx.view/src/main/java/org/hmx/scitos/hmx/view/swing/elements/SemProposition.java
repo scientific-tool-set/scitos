@@ -88,7 +88,7 @@ public final class SemProposition extends AbstractProposition implements IConnec
             @Override
             public void mouseReleased(final MouseEvent event) {
                 if (event.isPopupTrigger()) {
-                    final ContextMenuBuilder contextMenu = ContextMenuFactory.createSemPropositionPopup(viewReference, represented);
+                    final ContextMenuBuilder contextMenu = ContextMenuFactory.createPropositionPopup(viewReference, represented);
                     ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
                 }
             }

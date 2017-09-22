@@ -65,11 +65,11 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     /** Service provider for saving and exporting the represented project/model to files. */
     private final IModelParseServiceProvider modelParseProvider;
     /**
-     * User settings determining what parts of the model should be displayed
+     * User settings determining what parts of the model should be displayed.
      */
     private final AnalysisViewSettings viewSettings = new AnalysisViewSettings();
     /**
-     * The currently active view component. This is either the {@link TextInputPanel} or {@link CombinedAnalysesPanel}.
+     * The currently active view component. This is either the {@link TextInputPanel} or {@link AnalysisPanel}.
      */
     IUndoManagedView activeView;
     /**
@@ -111,7 +111,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         this.relationProvider = relationProvider;
         this.modelParseProvider = modelParseProvider;
         if (this.containsAnalysisData()) {
-            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
+            this.activeView = new AnalysisPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
         } else {
             this.activeView = new TextInputPanel(this, true, languageModelProvider);
         }
@@ -120,7 +120,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
     /**
      * Check whether the current model contains any analysis related data - i.e. if information would be lost if the current model was displayed in a
-     * {@link TextInputPanel} rather than a {@link CombinedAnalysesPanel}.
+     * {@link TextInputPanel} rather than a {@link AnalysisPanel}.
      *
      * @return if any information besides the origin text is present
      */
@@ -181,7 +181,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     void goToAnalysisView() {
         if (this.activeView instanceof TextInputPanel) {
             this.remove((Component) this.activeView);
-            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
+            this.activeView = new AnalysisPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
             this.add((Component) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
@@ -190,7 +190,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
     /** Switch from the analysis mode to the text-input mode. If this is already in text-input mode, this method does nothing. */
     void goToTextInputView() {
-        if (this.activeView instanceof CombinedAnalysesPanel) {
+        if (this.activeView instanceof AnalysisPanel) {
             this.submitChangesToModel();
             this.remove((Component) this.activeView);
             this.activeView = new TextInputPanel(this, false, null);
@@ -233,7 +233,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         // handle general menu options
         this.getProject().manageMenuOptions();
         // handle view specific options
-        final boolean inAnalysisMode = this.activeView instanceof CombinedAnalysesPanel;
+        final boolean inAnalysisMode = this.activeView instanceof AnalysisPanel;
         if (this.addTextItem != null) {
             // avoid NullPointer if Edit menu items have not been created yet
             this.addTextItem.setEnabled(inAnalysisMode);
@@ -318,7 +318,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final boolean alreadyInProgress = SingleProjectView.this.activeView instanceof CombinedAnalysesPanel;
+                final boolean alreadyInProgress = SingleProjectView.this.activeView instanceof AnalysisPanel;
                 new ProjectInfoDialog(SingleProjectView.this.getProject(), alreadyInProgress).setVisible(true);
             }
         });

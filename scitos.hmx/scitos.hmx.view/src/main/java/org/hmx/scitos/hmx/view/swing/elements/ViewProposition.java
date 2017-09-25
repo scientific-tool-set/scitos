@@ -330,7 +330,7 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
             final GridBagConstraints spacing = new GridBagConstraints();
             spacing.weightx = 1;
             this.indentationArea.add(new JPanel(null), spacing);
-            final int border = (ViewProposition.createIndentation(1).width - this.functionLabel.getPreferredSize().width) / 2;
+            final int border = (ViewProposition.createIndentation(1).width - label.getPreferredSize().width) / 2;
             final GridBagConstraints verticalSpan = new GridBagConstraints();
             verticalSpan.anchor = GridBagConstraints.BASELINE_TRAILING;
             verticalSpan.weighty = 1;

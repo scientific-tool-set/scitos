@@ -326,10 +326,13 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         if (this.indentationArea == null || !(this.getRepresented().getParent() instanceof Proposition)) {
             label = null;
         } else {
-            label = new ScaledLabel(" ");
             final GridBagConstraints spacing = new GridBagConstraints();
             spacing.weightx = 1;
             this.indentationArea.add(new JPanel(null), spacing);
+
+            label = new ScaledLabel(" ");
+            final SyntacticalFunction function = this.getRepresented().getFunction();
+            label.setIcon(new VTextIcon(label, function == null ? " " : function.getCode(), VTextIcon.Rotate.NONE));
             final int border = (ViewProposition.createIndentation(1).width - label.getPreferredSize().width) / 2;
             final GridBagConstraints verticalSpan = new GridBagConstraints();
             verticalSpan.anchor = GridBagConstraints.BASELINE_TRAILING;
@@ -554,26 +557,21 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
     }
 
     /**
-     * Update the indentation function (in relation to the parent {@link Proposition}) to match the represented {@link Proposition}'s function value.
-     */
-    void refreshFunction() {
-        final SyntacticalFunction function = this.getRepresented().getFunction();
-        if (this.functionLabel == null || !(this.getRepresented().getParent() instanceof Proposition) || function == null) {
-            return;
-        }
-        if (this.functionLabel.getIcon() == null) {
-            this.functionLabel.setIcon(new VTextIcon(this.functionLabel, function.getCode(), VTextIcon.Rotate.NONE));
-        } else {
-            ((VTextIcon) this.functionLabel.getIcon()).setLabel(function.getCode());
-        }
-    }
-
-    /**
      * Update the displayed identifier text to match the value in the represented {@link Proposition}.
      */
     void refreshLabelText() {
         if (this.labelField != null) {
             this.labelField.setText(this.represented.getLabel());
+        }
+    }
+
+    /**
+     * Update the indentation function (in relation to the parent {@link Proposition}) to match the represented {@link Proposition}'s function value.
+     */
+    void refreshFunction() {
+        if (this.functionLabel != null && this.getRepresented().getParent() instanceof Proposition) {
+            final SyntacticalFunction function = this.getRepresented().getFunction();
+            ((VTextIcon) this.functionLabel.getIcon()).setLabel(function == null ? " " : function.getCode());
         }
     }
 

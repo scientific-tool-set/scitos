@@ -484,18 +484,17 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
             final ViewProposition viewPartBeforeArrow = this.getRepresentative(partBeforeArrow);
             viewProposition = ViewProposition.createSynPropositionByPartBeforeArrow(this, proposition, propositionOffset, viewPartBeforeArrow);
             // show arrows
-            final int listSize = this.propositionList.size();
             final int beforeArrowPos = CollectionUtil.indexOfInstance(this.propositionList, viewPartBeforeArrow);
+            final List<ViewProposition> propositionsAfterPriorPart = this.propositionList.subList(beforeArrowPos + 1, this.propositionList.size());
             // count number of arrows to set
-            int arrowCount = listSize - beforeArrowPos;
+            int arrowCount = 0;
             // ignore partAfterArrows
-            for (int i = beforeArrowPos + 1; i < listSize; i++) {
-                final Proposition enclosedProposition = this.propositionList.get(i).getRepresented();
-                if (enclosedProposition == proposition) {
+            for (final ViewProposition enclosedProposition : propositionsAfterPriorPart) {
+                if (enclosedProposition == viewProposition) {
                     break;
                 }
-                if (enclosedProposition.getPartBeforeArrow() != null) {
-                    arrowCount--;
+                if (enclosedProposition.getRepresented().getPartBeforeArrow() == null) {
+                    arrowCount++;
                 }
             }
             // show arrows in part before arrow and target

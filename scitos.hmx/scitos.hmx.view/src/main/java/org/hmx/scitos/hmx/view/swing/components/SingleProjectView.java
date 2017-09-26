@@ -429,7 +429,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     @Override
     public List<Component> createToolBarItems() {
         this.allViewDetailsToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SHOW_ALL.get(), ScitosIcon.ATTRIBUTES_DISPLAY.create());
-        this.allViewDetailsToolBarItem.setFocusable(false);
+        this.allViewDetailsToolBarItem.setName("Preset: All");
         this.allViewDetailsToolBarItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -437,7 +437,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
             }
         });
         this.syntacticalAnalysisToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SYNTACTICAL.get(), ScitosIcon.GRID.create());
-        this.syntacticalAnalysisToolBarItem.setFocusable(false);
+        this.syntacticalAnalysisToolBarItem.setName("Preset: Syntactical");
         this.syntacticalAnalysisToolBarItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -445,7 +445,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
             }
         });
         this.semanticalAnalysisToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SEMANTICAL.get(), ScitosIcon.RELATIONS.create());
-        this.semanticalAnalysisToolBarItem.setFocusable(false);
+        this.semanticalAnalysisToolBarItem.setName("Preset: Semantical");
         this.semanticalAnalysisToolBarItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {

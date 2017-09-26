@@ -71,12 +71,12 @@ public final class ContextMenuFactory {
      *            designated popup owner
      * @return created popup
      */
-    public static ContextMenuBuilder createSynItemPopup(final IPericopeView viewReference, final ClauseItem selectedItem) {
+    public static ContextMenuBuilder createClauseItemPopup(final IPericopeView viewReference, final ClauseItem selectedItem) {
         final ContextMenuBuilder created = new ContextMenuBuilder();
         ContextMenuFactory.addFunctionChangeEntry(created, viewReference, HmxMessage.MENU_CHANGE_ITEM_FUNCTION, selectedItem, false);
         created.addSeparator();
-        ContextMenuFactory.addSynItemEntries(created, viewReference, selectedItem);
-        ContextMenuFactory.addSynPropositionEntries(created, viewReference, selectedItem.getParent());
+        ContextMenuFactory.addClauseItemEntries(created, viewReference, selectedItem);
+        ContextMenuFactory.addPropositionEntries(created, viewReference, selectedItem.getParent());
         return created;
     }
 
@@ -90,11 +90,11 @@ public final class ContextMenuFactory {
      *            designated popup owner
      * @return created popup
      */
-    public static ContextMenuBuilder createSynItemAfterArrowPopup(final IPericopeView viewReference, final ClauseItem selectedItem) {
+    public static ContextMenuBuilder createClauseItemAfterArrowPopup(final IPericopeView viewReference, final ClauseItem selectedItem) {
         final ContextMenuBuilder created = new ContextMenuBuilder();
         ContextMenuFactory.addFunctionChangeEntry(created, viewReference, HmxMessage.MENU_CHANGE_ITEM_FUNCTION, selectedItem, false);
         created.addSeparator();
-        ContextMenuFactory.addSynItemEntries(created, viewReference, selectedItem);
+        ContextMenuFactory.addClauseItemEntries(created, viewReference, selectedItem);
         created.addSeparator();
         ContextMenuFactory.addResetStandalonePropositionEntry(created, viewReference, selectedItem.getParent());
         return created;
@@ -109,9 +109,9 @@ public final class ContextMenuFactory {
      *            designated popup owner
      * @return created popup
      */
-    public static ContextMenuBuilder createSynPropositionPopup(final IPericopeView viewReference, final Proposition selectedProposition) {
+    public static ContextMenuBuilder createPropositionPopup(final IPericopeView viewReference, final Proposition selectedProposition) {
         final ContextMenuBuilder created = new ContextMenuBuilder();
-        ContextMenuFactory.addSynPropositionEntries(created, viewReference, selectedProposition);
+        ContextMenuFactory.addPropositionEntries(created, viewReference, selectedProposition);
         return created;
     }
 
@@ -124,24 +124,9 @@ public final class ContextMenuFactory {
      *            designated popup owner
      * @return created popup
      */
-    public static ContextMenuBuilder createSynPropositionAfterArrowPopup(final IPericopeView viewReference, final Proposition selectedProposition) {
+    public static ContextMenuBuilder createPropositionAfterArrowPopup(final IPericopeView viewReference, final Proposition selectedProposition) {
         final ContextMenuBuilder created = new ContextMenuBuilder();
         ContextMenuFactory.addResetStandalonePropositionEntry(created, viewReference, selectedProposition);
-        return created;
-    }
-
-    /**
-     * Create a {@link ContextMenuBuilder} with only one entry to create a {@link Relation} over the clicked {@link Proposition}.
-     *
-     * @param viewReference
-     *            the view the request for this context menu originated from
-     * @param selectedConnectable
-     *            designated popup owner
-     * @return created popup
-     */
-    public static ContextMenuBuilder createSemPropositionPopup(final IPericopeView viewReference, final AbstractConnectable selectedConnectable) {
-        final ContextMenuBuilder created = new ContextMenuBuilder();
-        ContextMenuFactory.addCreateOrAlterRelationEntry(created, viewReference, selectedConnectable, false);
         return created;
     }
 
@@ -155,9 +140,11 @@ public final class ContextMenuFactory {
      *            designated popup owner
      * @return created popup
      */
-    public static ContextMenuBuilder createSemRelationPopup(final IPericopeView viewReference, final Relation selectedRelation) {
+    public static ContextMenuBuilder createRelationPopup(final IPericopeView viewReference, final Relation selectedRelation) {
         final ContextMenuBuilder created = new ContextMenuBuilder();
-        ContextMenuFactory.addCreateOrAlterRelationEntry(created, viewReference, selectedRelation, false);
+        if (selectedRelation.getSuperOrdinatedRelation() == null) {
+            ContextMenuFactory.addCreateOrAlterRelationEntry(created, viewReference, selectedRelation, false);
+        }
         created.addItem(HmxMessage.MENU_ROTATE_RELATION_ROLES.get(), new CMenuItemAction() {
 
             @Override
@@ -266,7 +253,7 @@ public final class ContextMenuFactory {
      * @param item
      *            {@link ClauseItem} to be changed
      */
-    private static void addSynItemEntries(final ContextMenuBuilder popupMenu, final IPericopeView viewReference, final ClauseItem item) {
+    private static void addClauseItemEntries(final ContextMenuBuilder popupMenu, final IPericopeView viewReference, final ClauseItem item) {
         final List<ClauseItem> itemList = item.getParent().getItems();
         final int itemIndex = CollectionUtil.indexOfInstance(itemList, item);
         // merge specified clause item with its prior clause item
@@ -318,7 +305,7 @@ public final class ContextMenuFactory {
                 partBuffer.append(' ');
             }
         }
-        ContextMenuFactory.addHighlightSynItemEntry(popupMenu, viewReference, item);
+        ContextMenuFactory.addHighlightClauseItemEntry(popupMenu, viewReference, item);
         popupMenu.addSeparator();
 
         if (isNotLastItemInParent) {
@@ -344,7 +331,7 @@ public final class ContextMenuFactory {
      * @param item
      *            {@link ClauseItem} to be highlighted
      */
-    private static void addHighlightSynItemEntry(final ContextMenuBuilder popupMenu, final IPericopeView viewReference, final ClauseItem item) {
+    private static void addHighlightClauseItemEntry(final ContextMenuBuilder popupMenu, final IPericopeView viewReference, final ClauseItem item) {
         final CMenu highlightEntry = popupMenu.addMenu(HmxMessage.MENU_HIGHLIGHT_ITEM.get());
         // set PLAIN
         final Map<Style, HmxMessage> styles = new LinkedHashMap<Style, HmxMessage>();
@@ -376,32 +363,40 @@ public final class ContextMenuFactory {
      * @param proposition
      *            view represenation of the {@link Proposition} to be changed
      */
-    private static void addSynPropositionEntries(final ContextMenuBuilder popupMenu, final IPericopeView viewReference,
+    private static void addPropositionEntries(final ContextMenuBuilder popupMenu, final IPericopeView viewReference,
             final Proposition proposition) {
-        // merge propositions
-        popupMenu.addItem(HmxMessage.MENU_MERGE_CHECKED_PROP.get(), new CMenuItemAction() {
-
-            @Override
-            public void processSelectEvent() throws HmxException {
-                viewReference.submitChangesToModel();
-                ContextMenuFactory.mergeSynPropositions(viewReference, proposition);
-            }
-        });
-        // indent proposition under parent
-        ContextMenuFactory.addFunctionChangeEntry(popupMenu, viewReference, HmxMessage.MENU_INDENT_PROP, proposition, true);
-        // change function of indented proposition
-        if (proposition.getParent() instanceof Proposition) {
-            popupMenu.addSeparator();
-            ContextMenuFactory.addFunctionChangeEntry(popupMenu, viewReference, HmxMessage.MENU_CHANGE_PROP_FUNCTION, proposition, false);
-            // remove an indentation
-            popupMenu.addItem(HmxMessage.MENU_UNINDENT_PROP.get(), new CMenuItemAction() {
+        if (viewReference.getViewSettings().isShowingPropositionIndentations()) {
+            // merge propositions
+            popupMenu.addItem(HmxMessage.MENU_MERGE_CHECKED_PROP.get(), new CMenuItemAction() {
 
                 @Override
                 public void processSelectEvent() throws HmxException {
                     viewReference.submitChangesToModel();
-                    ContextMenuFactory.removeOneIndentation(viewReference, proposition);
+                    ContextMenuFactory.mergePropositions(viewReference, proposition);
                 }
             });
+            // indent proposition under parent
+            ContextMenuFactory.addFunctionChangeEntry(popupMenu, viewReference, HmxMessage.MENU_INDENT_PROP, proposition, true);
+            // change function of indented proposition
+            if (proposition.getParent() instanceof Proposition) {
+                popupMenu.addSeparator();
+                ContextMenuFactory.addFunctionChangeEntry(popupMenu, viewReference, HmxMessage.MENU_CHANGE_PROP_FUNCTION, proposition, false);
+                // remove an indentation
+                popupMenu.addItem(HmxMessage.MENU_UNINDENT_PROP.get(), new CMenuItemAction() {
+
+                    @Override
+                    public void processSelectEvent() throws HmxException {
+                        viewReference.submitChangesToModel();
+                        ContextMenuFactory.removeOneIndentation(viewReference, proposition);
+                    }
+                });
+            }
+        }
+        if (viewReference.getViewSettings().isShowingRelations() && proposition.getSuperOrdinatedRelation() == null) {
+            if (!popupMenu.isEmpty()) {
+                popupMenu.addSeparator();
+            }
+            ContextMenuFactory.addCreateOrAlterRelationEntry(popupMenu, viewReference, proposition, false);
         }
     }
 
@@ -417,14 +412,16 @@ public final class ContextMenuFactory {
      */
     private static void addResetStandalonePropositionEntry(final ContextMenuBuilder popup, final IPericopeView viewReference,
             final Proposition proposition) {
-        popup.addItem(HmxMessage.MENU_RESET_PROP_PART.get(), new CMenuItemAction() {
+        if (viewReference.getViewSettings().isShowingPropositionIndentations()) {
+            popup.addItem(HmxMessage.MENU_RESET_PROP_PART.get(), new CMenuItemAction() {
 
-            @Override
-            public void processSelectEvent() throws HmxException {
-                viewReference.submitChangesToModel();
-                viewReference.getModelHandler().resetStandaloneStateOfPartAfterArrow(proposition);
-            }
-        });
+                @Override
+                public void processSelectEvent() throws HmxException {
+                    viewReference.submitChangesToModel();
+                    viewReference.getModelHandler().resetStandaloneStateOfPartAfterArrow(proposition);
+                }
+            });
+        }
     }
 
     /**
@@ -437,7 +434,7 @@ public final class ContextMenuFactory {
      * @throws HmxException
      *             invalid user input
      */
-    static void mergeSynPropositions(final IPericopeView viewReference, final Proposition selectedProposition) throws HmxException {
+    static void mergePropositions(final IPericopeView viewReference, final Proposition selectedProposition) throws HmxException {
         // get all checked propositions on the syntactical analysis panel
         final List<Proposition> checked = viewReference.getSelectedPropositions(selectedProposition);
         final int size = checked.size();
@@ -524,7 +521,7 @@ public final class ContextMenuFactory {
     /**
      * Add a submenu to the given {@link ContextMenuBuilder} for creating a {@link Relation} over the selected associates including the given one or
      * for altering the type of given {@link Relation}.
-     * 
+     *
      * @param popup
      *            the context menu to add the created submenu to
      * @param viewReference
@@ -585,7 +582,7 @@ public final class ContextMenuFactory {
 
     /**
      * Build the text representing the given {@link RelationTemplate}.
-     * 
+     *
      * @param template
      *            the {@link RelationTemplate} to represent as text
      * @return the representing text
@@ -598,7 +595,7 @@ public final class ContextMenuFactory {
 
     /**
      * Build the text representing the {@link Relation} consisting of the given roles.
-     * 
+     *
      * @param roles
      *            the associate roles the represented {@link Relation} is comprised of
      * @param onlyAlterType
@@ -638,7 +635,7 @@ public final class ContextMenuFactory {
                         if (index == null) {
                             index = 1;
                         } else {
-                            index = index + 1;
+                            index++;
                         }
                         itemLabel.append(index);
                         indices.put(singleRole, index);

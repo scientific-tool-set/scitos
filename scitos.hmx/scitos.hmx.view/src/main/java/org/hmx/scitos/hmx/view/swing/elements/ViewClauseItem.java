@@ -52,7 +52,7 @@ import org.hmx.scitos.view.swing.components.ScaledTextPane;
  * view representation of a {@link ClauseItem} in the syntactical analysis view consisting of a non-editable {@link JTextPane} for the origin text on
  * the top and a label displaying the current selected function on the bottom.
  */
-public final class SynItem extends AbstractCommentable<ClauseItem> {
+public final class ViewClauseItem extends AbstractCommentable<ClauseItem> {
 
     /** etched border, when not selected. */
     private static final Border DEFAULT_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
@@ -86,7 +86,7 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
      * @param represented
      *            model element to represent/display
      */
-    protected SynItem(final IPericopeView viewReference, final ClauseItem represented) {
+    protected ViewClauseItem(final IPericopeView viewReference, final ClauseItem represented) {
         super(new GridBagLayout());
         this.viewReference = viewReference;
         this.represented = represented;
@@ -95,18 +95,29 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
         this.setDefaultBorder();
         this.initOriginTextPane();
         this.initFunctionLabel();
-        this.refreshFontStyle();
-        // initialize the comment showing listener for the item
+        this.refresh();
         this.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mousePressed(final MouseEvent event) {
-                viewReference.handleSelectedCommentable(SynItem.this);
+                viewReference.handleSelectedCommentable(ViewClauseItem.this);
+                this.mouseReleased(event);
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent event) {
+                if (event.isPopupTrigger()) {
+                    final ClauseItem item = ViewClauseItem.this.getRepresented();
+                    final ContextMenuBuilder contextMenu;
+                    if (item.getParent().getPartBeforeArrow() == null) {
+                        contextMenu = ContextMenuFactory.createClauseItemPopup(ViewClauseItem.this.viewReference, item);
+                    } else {
+                        contextMenu = ContextMenuFactory.createClauseItemAfterArrowPopup(ViewClauseItem.this.viewReference, item);
+                    }
+                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
+                }
             }
         });
-        // initialize the popup menu and its listener for the item
-        this.refreshPopup();
-        this.refreshComment();
     }
 
     /** Initialize the origin text pane on the top. */
@@ -136,49 +147,25 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
         this.add(this.functionLabel, constraints);
     }
 
-    /**
-     * Create and enable the {@link JPopupMenu}.
-     */
-    private void refreshPopup() {
-        if (this.popupListener != null) {
-            // remove the old popup listener
-            this.removeMouseListener(this.popupListener);
-        }
-        // create new popup menu and its referring listener
-        this.popupListener = new MouseAdapter() {
-
-            @Override
-            public void mousePressed(final MouseEvent event) {
-                if (event.isPopupTrigger()) {
-                    final ClauseItem item = SynItem.this.getRepresented();
-                    final ContextMenuBuilder contextMenu;
-                    if (item.getParent().getPartBeforeArrow() == null) {
-                        contextMenu = ContextMenuFactory.createSynItemPopup(SynItem.this.viewReference, item);
-                    } else {
-                        contextMenu = ContextMenuFactory.createSynItemAfterArrowPopup(SynItem.this.viewReference, item);
-                    }
-                    ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
-                }
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent event) {
-                this.mousePressed(event);
-            }
-        };
-        // add the popup menu and its listener
-        this.addMouseListener(this.popupListener);
-    }
-
     @Override
     public ClauseItem getRepresented() {
         return this.represented;
     }
 
     /**
+     * Update the displayed data and style according to the (potentially changed) state of the represented {@link ClauseItem}.
+     */
+    public void refresh() {
+        this.refreshFontStyle();
+        this.refreshOriginText();
+        this.refreshFunction();
+        this.refreshComment();
+    }
+
+    /**
      * Update the displayed {@link SyntacticalFunction} to match the current value in the represented {@link ClauseItem}.
      */
-    public void refreshFunction() {
+    void refreshFunction() {
         final SyntacticalFunction function = this.represented.getFunction();
         final String functionName;
         final boolean underline;
@@ -190,31 +177,30 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
             underline = function.isUnderlined();
         }
         this.functionLabel.setText(functionName);
-        SynItem.setTextPaneUnderlined(this.originTextPane, underline);
+        ViewClauseItem.setTextPaneUnderlined(this.originTextPane, underline);
         this.functionLabel.setSize(this.functionLabel.getPreferredSize());
     }
 
     /**
      * Update the displayed origin text to match the current value in the represented {@link ClauseItem}.
      */
-    public void refreshOriginText() {
+    void refreshOriginText() {
         this.originTextPane.setText(this.represented.getOriginText());
-        this.refreshPopup();
     }
 
     /**
      * Update the displayed {@link Font} style to match the current setting in the represented {@link ClauseItem}.
      */
-    public void refreshFontStyle() {
+    void refreshFontStyle() {
         final Style style = this.represented.getFontStyle();
-        SynItem.setTextPaneFontStyle(this.originTextPane, style);
+        ViewClauseItem.setTextPaneFontStyle(this.originTextPane, style);
         this.functionLabel.setFont(this.functionLabel.getFont().deriveFont(ContextMenuFactory.getFontStyleValue(style)));
     }
 
     /**
      * Reset the tool tip info containing the comment text to match the value in the represented {@link ClauseItem}.
      */
-    public void refreshComment() {
+    void refreshComment() {
         final String comment = this.getRepresented().getComment();
         if (comment == null || comment.isEmpty()) {
             this.setToolTipText(null);
@@ -226,15 +212,15 @@ public final class SynItem extends AbstractCommentable<ClauseItem> {
     @Override
     public void setDefaultBorder() {
         final boolean containsComment = this.represented.getComment() != null && !this.represented.getComment().trim().isEmpty();
-        this.setBorder(containsComment ? this.defaultBorderCommented : SynItem.DEFAULT_BORDER);
+        this.setBorder(containsComment ? this.defaultBorderCommented : ViewClauseItem.DEFAULT_BORDER);
         if (this.getParent() != null) {
-            ((JComponent) this.getParent()).revalidate();
+            this.getParent().revalidate();
         }
     }
 
     @Override
     public void setCommentBorder() {
-        this.setBorder(SynItem.COMMENT_BORDER);
+        this.setBorder(ViewClauseItem.COMMENT_BORDER);
     }
 
     @Override

@@ -28,8 +28,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.JToggleButton;
 
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
@@ -62,10 +63,16 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
      * Provider of available {@link RelationTemplate}s to be created/applied in the semantical analysis.
      */
     private final ISemanticalRelationProvider relationProvider;
-    /** Service provider for saving and exporting the represented project/model to files. */
+    /**
+     * Service provider for saving and exporting the represented project/model to files.
+     */
     private final IModelParseServiceProvider modelParseProvider;
     /**
-     * The currently active view component. This is either the {@link TextInputPanel} or {@link CombinedAnalysesPanel}.
+     * User settings determining what parts of the model should be displayed.
+     */
+    private final AnalysisViewSettings viewSettings = new AnalysisViewSettings().applyViewPreset(IAnalysisViewSettings.SYNTACTICAL_ANALYSIS);
+    /**
+     * The currently active view component. This is either the {@link TextInputPanel} or {@link AnalysisPanel}.
      */
     IUndoManagedView activeView;
     /**
@@ -80,26 +87,32 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
      * View specific Edit menu item for adding the contents of another project to this one which is already in progress (i.e. in analysis mode).
      */
     private JMenuItem mergeProjectItem;
-    /**
-     * View specific View menu item for hiding/showing the labels of propositions in the analysis view.
-     */
-    private JMenuItem toggleLabelsItem;
-    /**
-     * View specific View menu item for hiding/showing the translations of propositions in the analysis view.
-     */
-    private JMenuItem toggleTranslationsItem;
+    /** View specific View menu item for toggling the visibility of proposition labels. */
+    private JCheckBoxMenuItem viewPropositionLabelMenuItem;
+    /** View specific View menu item for toggling the visibility of proposition indentations. */
+    private JCheckBoxMenuItem viewPropositionIndentationMenuItem;
+    /** View specific View menu item for toggling the visibility of relations. */
+    private JCheckBoxMenuItem viewRelationMenuItem;
+    /** View specific View menu item for toggling the visibility of individual clause items. */
+    private JCheckBoxMenuItem viewClauseItemMenuItem;
+    /** View specific View menu item for toggling the visibility of syntactic proposition translations. */
+    private JCheckBoxMenuItem viewSyntacticTranslationMenuItem;
+    /** View specific View menu item for toggling the visibility of semantic proposition translations. */
+    private JCheckBoxMenuItem viewSemanticTranslationMenuItem;
+    /** View specific tool bar toggle button for view preset "Show All Details". */
+    private JToggleButton allViewDetailsToolBarItem;
+    /** View specific tool bar toggle button for view preset "Syntactical Analysis". */
+    private JToggleButton syntacticalAnalysisToolBarItem;
+    /** View specific tool bar toggle button for view preset "Semantical Analysis". */
+    private JToggleButton semanticalAnalysisToolBarItem;
 
     /**
      * Constructor.
      *
-     * @param project
-     *            the represented view project
-     * @param languageModelProvider
-     *            provider of available {@link LanguageModel}s to be selected when the represented project is setup initially
-     * @param relationProvider
-     *            provider of available {@link RelationTemplate}s to be created/applied in the semantical analysis
-     * @param modelParseProvider
-     *            service provider for saving and exporting the represented project/model to files
+     * @param project the represented view project
+     * @param languageModelProvider provider of available {@link LanguageModel}s to be selected when the represented project is setup initially
+     * @param relationProvider provider of available {@link RelationTemplate}s to be created/applied in the semantical analysis
+     * @param modelParseProvider service provider for saving and exporting the represented project/model to files
      */
     public SingleProjectView(final HmxSwingProject project, final ILanguageModelProvider languageModelProvider,
             final ISemanticalRelationProvider relationProvider, final IModelParseServiceProvider modelParseProvider) {
@@ -107,7 +120,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         this.relationProvider = relationProvider;
         this.modelParseProvider = modelParseProvider;
         if (this.containsAnalysisData()) {
-            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
+            this.activeView = new AnalysisPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
         } else {
             this.activeView = new TextInputPanel(this, true, languageModelProvider);
         }
@@ -116,7 +129,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
     /**
      * Check whether the current model contains any analysis related data - i.e. if information would be lost if the current model was displayed in a
-     * {@link TextInputPanel} rather than a {@link CombinedAnalysesPanel}.
+     * {@link TextInputPanel} rather than a {@link AnalysisPanel}.
      *
      * @return if any information besides the origin text is present
      */
@@ -145,13 +158,9 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     /**
      * Initialize the analysis by referring to the chosen origin language and {@link Font}, opening the analysis view with the syntactical analysis.
      *
-     * @param originText
-     *            the user input that should be interpreted as the {@link Proposition}s to be analyzed
-     * @param originLanguage
-     *            the user selected language model associated with the {@code originText}, determining its text orientation and the applicable
-     *            functions in the syntactical analysis
-     * @param originTextFont
-     *            the user defined font to display the {@code originText} with
+     * @param originText the user input that should be interpreted as the {@link Proposition}s to be analyzed
+     * @param originLanguage the user selected language model associated with the {@code originText}, determining orientation and available functions
+     * @param originTextFont the user defined font to display the {@code originText} with
      */
     public void startAnalysis(final String originText, final LanguageModel originLanguage, final Font originTextFont) {
         this.getModel().init(originText, originLanguage, originTextFont);
@@ -162,11 +171,8 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     /**
      * Prepend/append the given {@code originText} to the represented {@link Pericope}.
      *
-     * @param originText
-     *            the user input that should be interpreted as the {@link Proposition}s to be added
-     * @param inFront
-     *            if the new {@link Proposition}s should be inserted as the first in this {@link Pericope}; otherwise they will be appended as the
-     *            last
+     * @param originText the user input that should be interpreted as the {@link Proposition}s to be added
+     * @param inFront if the new {@link Proposition}s should be inserted as the first in this {@link Pericope}; otherwise they will be appended
      */
     public void addNewPropositions(final String originText, final boolean inFront) {
         this.getProject().getModelHandler().addNewPropositions(originText, inFront);
@@ -177,7 +183,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     void goToAnalysisView() {
         if (this.activeView instanceof TextInputPanel) {
             this.remove((Component) this.activeView);
-            this.activeView = new CombinedAnalysesPanel(this.getProject().getModelHandler(), this.relationProvider);
+            this.activeView = new AnalysisPanel(this.getProject().getModelHandler(), this.relationProvider, this.viewSettings);
             this.add((Component) this.activeView);
             this.revalidate();
             this.manageMenuOptions();
@@ -186,7 +192,7 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
 
     /** Switch from the analysis mode to the text-input mode. If this is already in text-input mode, this method does nothing. */
     void goToTextInputView() {
-        if (this.activeView instanceof CombinedAnalysesPanel) {
+        if (this.activeView instanceof AnalysisPanel) {
             this.submitChangesToModel();
             this.remove((Component) this.activeView);
             this.activeView = new TextInputPanel(this, false, null);
@@ -224,22 +230,69 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         }
     }
 
-    /** Ensure the menu options' availability based on the current state of the represented project. */
+    /**
+     * Ensure the menu options' availability based on the current state of the represented project.
+     */
     private void manageMenuOptions() {
         // handle general menu options
         this.getProject().manageMenuOptions();
-        // handle view specific options
-        final boolean inAnalysisMode = this.activeView instanceof CombinedAnalysesPanel;
+        // handle view specific menu options
+        this.manageEditMenuOptions();
+        this.manageViewMenuOptions();
+        this.manageToolBarItems();
+    }
+
+    /**
+     * Ensure the availability of the view specific "Edit" menu options depending on the currently active view.
+     */
+    private void manageEditMenuOptions() {
+        // avoid NullPointer if Edit menu items have not been created yet
         if (this.addTextItem != null) {
-            // avoid NullPointer if Edit menu items have not been created yet
+            final boolean inAnalysisMode = this.activeView instanceof AnalysisPanel;
             this.addTextItem.setEnabled(inAnalysisMode);
             this.removeTextItem.setEnabled(inAnalysisMode);
             this.mergeProjectItem.setEnabled(inAnalysisMode);
         }
-        if (this.toggleLabelsItem != null) {
-            // avoid NullPointer if View menu items have not been created yet
-            this.toggleLabelsItem.setEnabled(inAnalysisMode);
-            this.toggleTranslationsItem.setEnabled(inAnalysisMode);
+    }
+
+    /**
+     * Ensure the availability of the view specific "View" menu options depending on the currently active view.
+     */
+    private void manageViewMenuOptions() {
+        // avoid NullPointer if View menu items have not been created yet
+        if (this.viewPropositionLabelMenuItem != null) {
+            final boolean inAnalysisMode = this.activeView instanceof AnalysisPanel;
+            this.viewPropositionLabelMenuItem.setEnabled(inAnalysisMode);
+            this.viewPropositionLabelMenuItem.setSelected(inAnalysisMode && this.viewSettings.isShowingPropositionLabels());
+            this.viewPropositionIndentationMenuItem.setEnabled(inAnalysisMode);
+            this.viewPropositionIndentationMenuItem.setSelected(inAnalysisMode && this.viewSettings.isShowingPropositionIndentations());
+            this.viewRelationMenuItem.setEnabled(inAnalysisMode);
+            this.viewRelationMenuItem.setSelected(inAnalysisMode && this.viewSettings.isShowingRelations());
+            this.viewClauseItemMenuItem.setEnabled(inAnalysisMode);
+            this.viewClauseItemMenuItem.setSelected(inAnalysisMode && this.viewSettings.isShowingClauseItems());
+            this.viewSyntacticTranslationMenuItem.setEnabled(inAnalysisMode);
+            this.viewSyntacticTranslationMenuItem.setSelected(inAnalysisMode && this.viewSettings.isShowingSyntacticTranslations());
+            this.viewSemanticTranslationMenuItem.setEnabled(inAnalysisMode);
+            this.viewSemanticTranslationMenuItem.setSelected(inAnalysisMode && this.viewSettings.isShowingSemanticTranslations());
+        }
+    }
+
+    /**
+     * Ensure the availability of the view specific tool bar items depending on the currently active view.
+     */
+    private void manageToolBarItems() {
+        // avoid NullPointer if Edit menu items have not been created yet
+        if (this.allViewDetailsToolBarItem != null) {
+            final boolean inAnalysisMode = this.activeView instanceof AnalysisPanel;
+            this.allViewDetailsToolBarItem.setEnabled(inAnalysisMode);
+            this.allViewDetailsToolBarItem.setSelected(inAnalysisMode
+                    && this.viewSettings.matchesPreset(IAnalysisViewSettings.SHOW_ALL));
+            this.syntacticalAnalysisToolBarItem.setEnabled(inAnalysisMode);
+            this.syntacticalAnalysisToolBarItem.setSelected(inAnalysisMode
+                    && this.viewSettings.matchesPreset(IAnalysisViewSettings.SYNTACTICAL_ANALYSIS));
+            this.semanticalAnalysisToolBarItem.setEnabled(inAnalysisMode);
+            this.semanticalAnalysisToolBarItem.setSelected(inAnalysisMode
+                    && this.viewSettings.matchesPreset(IAnalysisViewSettings.SEMANTICAL_ANALYSIS));
         }
     }
 
@@ -277,7 +330,6 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     public List<JMenuItem> createEditMenuItems() {
         this.addTextItem = new JMenuItem(HmxMessage.MENUBAR_ORIGINTEXT_ADD.get(), ScitosIcon.ADD.create());
         this.addTextItem.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(final ActionEvent event) {
                 SingleProjectView.this.goToTextInputView();
@@ -285,7 +337,6 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         });
         this.removeTextItem = new JMenuItem(HmxMessage.MENUBAR_ORIGINTEXT_REMOVE.get(), ScitosIcon.DELETE.create());
         this.removeTextItem.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if (SingleProjectView.this.activeView instanceof IPericopeView
@@ -303,40 +354,193 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         });
         this.mergeProjectItem = new JMenuItem(HmxMessage.MENUBAR_PROJECT_MERGE.get(), ScitosIcon.PROJECT_OPEN.create());
         this.mergeProjectItem.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(final ActionEvent event) {
                 SingleProjectView.this.mergeWithOtherPericope();
             }
         });
-        final JMenuItem projectInfoItem = new JMenuItem(HmxMessage.MENUBAR_PROJECTINFO.get(), ScitosIcon.CATEGORY.create());
+        final JMenuItem projectInfoItem = new JMenuItem(HmxMessage.MENUBAR_PROJECTINFO.get(), ScitosIcon.CLIPBOARD.create());
         projectInfoItem.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final boolean alreadyInProgress = SingleProjectView.this.activeView instanceof CombinedAnalysesPanel;
+                final boolean alreadyInProgress = SingleProjectView.this.activeView instanceof AnalysisPanel;
                 new ProjectInfoDialog(SingleProjectView.this.getProject(), alreadyInProgress).setVisible(true);
             }
         });
+        this.manageEditMenuOptions();
         return Arrays.asList(this.addTextItem, this.removeTextItem, this.mergeProjectItem, null, projectInfoItem);
     }
 
     @Override
     public List<JMenuItem> createViewMenuItems() {
-        this.toggleLabelsItem = new JMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get(), ScitosIcon.ATTRIBUTES_DISPLAY.create());
-        this.toggleLabelsItem.addActionListener(new ActionListener() {
+        this.viewPropositionLabelMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get(),
+                ScitosIcon.ATTRIBUTES_DISPLAY.create());
+        this.viewPropositionLabelMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                ((CombinedAnalysesPanel) SingleProjectView.this.activeView).togglePropositionLabelVisibility();
+                SingleProjectView.this.togglePropositionLabelVisibility();
             }
         });
-        this.toggleTranslationsItem = new JMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get(), ScitosIcon.HORIZONTAL_RULE.create());
-        this.toggleTranslationsItem.addActionListener(new ActionListener() {
+        this.viewPropositionIndentationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_INDENTATIONS.get(),
+                ScitosIcon.TREE.create());
+        this.viewPropositionIndentationMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                ((CombinedAnalysesPanel) SingleProjectView.this.activeView).togglePropositionTranslationVisibility();
+                SingleProjectView.this.togglePropositionIndentationVisibility();
             }
         });
-        return Arrays.asList(this.toggleLabelsItem, this.toggleTranslationsItem);
+        this.viewRelationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_RELATIONS.get(),
+                ScitosIcon.RELATIONS.create());
+        this.viewRelationMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.toggleRelationVisibility();
+            }
+        });
+        this.viewClauseItemMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_CLAUSE_ITEMS.get(),
+                ScitosIcon.GRID.create());
+        this.viewClauseItemMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.toggleClauseItemVisibility();
+            }
+        });
+        this.viewSyntacticTranslationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_SYNTACTIC_TRANSLATIONS.get(),
+                ScitosIcon.HORIZONTAL_RULE.create());
+        this.viewSyntacticTranslationMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.toggleSyntacticTranslationVisibility();
+            }
+        });
+        this.viewSemanticTranslationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_SEMANTIC_TRANSLATIONS.get(),
+                ScitosIcon.HORIZONTAL_RULE.create());
+        this.viewSemanticTranslationMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.toggleSemanticTranslationVisibility();
+            }
+        });
+        this.manageViewMenuOptions();
+        return Arrays.<JMenuItem>asList(this.viewPropositionLabelMenuItem, this.viewPropositionIndentationMenuItem, this.viewRelationMenuItem,
+                this.viewClauseItemMenuItem, this.viewSyntacticTranslationMenuItem, this.viewSemanticTranslationMenuItem);
+    }
+
+    @Override
+    public List<Component> createToolBarItems() {
+        this.allViewDetailsToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SHOW_ALL.get(), ScitosIcon.ATTRIBUTES_DISPLAY.create());
+        this.allViewDetailsToolBarItem.setFocusable(false);
+        this.allViewDetailsToolBarItem.setName("Preset: All");
+        this.allViewDetailsToolBarItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.applyViewPreset(IAnalysisViewSettings.SHOW_ALL);
+            }
+        });
+        this.syntacticalAnalysisToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SYNTACTICAL.get(), ScitosIcon.GRID.create());
+        this.syntacticalAnalysisToolBarItem.setFocusable(false);
+        this.syntacticalAnalysisToolBarItem.setName("Preset: Syntactical");
+        this.syntacticalAnalysisToolBarItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.applyViewPreset(IAnalysisViewSettings.SYNTACTICAL_ANALYSIS);
+            }
+        });
+        this.semanticalAnalysisToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SEMANTICAL.get(), ScitosIcon.RELATIONS.create());
+        this.semanticalAnalysisToolBarItem.setFocusable(false);
+        this.semanticalAnalysisToolBarItem.setName("Preset: Semantical");
+        this.semanticalAnalysisToolBarItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                SingleProjectView.this.applyViewPreset(IAnalysisViewSettings.SEMANTICAL_ANALYSIS);
+            }
+        });
+        this.manageToolBarItems();
+        return Arrays.<Component>asList(this.allViewDetailsToolBarItem, this.syntacticalAnalysisToolBarItem, this.semanticalAnalysisToolBarItem);
+    }
+
+    /**
+     * Toggle the visibility of the label fields for all propositions. Causing a full rebuild of the Pericope.
+     *
+     * @see #refresh()
+     */
+    void togglePropositionLabelVisibility() {
+        final boolean toggleValue = this.viewSettings.setShowingPropositionLabels(!this.viewSettings.isShowingPropositionLabels());
+        this.viewPropositionLabelMenuItem.setSelected(toggleValue);
+        this.manageToolBarItems();
+        this.refresh();
+    }
+
+    /**
+     * Toggle the visibility of the indentation (and associated functions) of all propositions. Causing a full rebuild of the Pericope.
+     *
+     * @see #refresh()
+     */
+    void togglePropositionIndentationVisibility() {
+        final boolean toggleValue = this.viewSettings.setShowingPropositionIndentations(!this.viewSettings.isShowingPropositionIndentations());
+        this.viewPropositionIndentationMenuItem.setSelected(toggleValue);
+        this.manageToolBarItems();
+        this.refresh();
+    }
+
+    /**
+     * Toggle the visibility of the relations over all propositions. Causing a full rebuild of the Pericope.
+     *
+     * @see #refresh()
+     */
+    void toggleRelationVisibility() {
+        final boolean toggleValue = this.viewSettings.setShowingRelations(!this.viewSettings.isShowingRelations());
+        this.viewRelationMenuItem.setSelected(toggleValue);
+        this.manageToolBarItems();
+        this.refresh();
+    }
+
+    /**
+     * Toggle between individual clause items and a single origin text field being shown for all propositions. Causing a full rebuild of the Pericope.
+     *
+     * @see #refresh()
+     */
+    void toggleClauseItemVisibility() {
+        final boolean toggleValue = this.viewSettings.setShowingClauseItems(!this.viewSettings.isShowingClauseItems());
+        this.viewClauseItemMenuItem.setSelected(toggleValue);
+        this.manageToolBarItems();
+        this.refresh();
+    }
+
+    /**
+     * Toggle the visibility of the syntactic translation fields for all propositions. Causing a full rebuild of the Pericope.
+     *
+     * @see #refresh()
+     */
+    void toggleSyntacticTranslationVisibility() {
+        final boolean toggleValue = this.viewSettings.setShowingSyntacticTranslations(!this.viewSettings.isShowingSyntacticTranslations());
+        this.viewSyntacticTranslationMenuItem.setSelected(toggleValue);
+        this.manageToolBarItems();
+        this.refresh();
+    }
+
+    /**
+     * Toggle the visibility of the semantic translation fields for all propositions. Causing a full rebuild of the Pericope.
+     *
+     * @see #refresh()
+     */
+    void toggleSemanticTranslationVisibility() {
+        final boolean toggleValue = this.viewSettings.setShowingSemanticTranslations(!this.viewSettings.isShowingSemanticTranslations());
+        this.viewSemanticTranslationMenuItem.setSelected(toggleValue);
+        this.manageToolBarItems();
+        this.refresh();
+    }
+
+    /**
+     * Apply the given view preset (potentially altering multiple individual toggles). Causing a full rebuild of the Pericope.
+     *
+     * @param preset collection of view toggles to set
+     * @see #refresh()
+     */
+    void applyViewPreset(final IAnalysisViewSettings preset) {
+        this.viewSettings.applyViewPreset(preset);
+        this.manageViewMenuOptions();
+        this.manageToolBarItems();
+        this.refresh();
     }
 }

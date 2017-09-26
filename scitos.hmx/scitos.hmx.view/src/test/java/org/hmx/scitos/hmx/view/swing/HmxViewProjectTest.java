@@ -29,9 +29,9 @@ import org.junit.Test;
 
 import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
+import org.assertj.swing.fixture.JToggleButtonFixture;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
-import org.hmx.scitos.hmx.view.swing.elements.SemProposition;
-import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
+import org.hmx.scitos.hmx.view.swing.elements.ViewProposition;
 import org.junit.Assert;
 
 /** UI test for a simple HermeneutiX project workflow. */
@@ -93,30 +93,30 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
         // #4 ignore project info input dialog
         this.getButtonByText(Message.CANCEL).click();
         // #5 enter single character as translation for first Proposition
-        this.getSynPropositionTranslationInput(0).enterText("T");
+        this.getPropositionSynTranslationInput(0).enterText("T");
         final JButtonFixture undoButton = this.getUndoToolBarButton().requireDisabled();
         final JButtonFixture redoButton = this.getRedoToolBarButton().requireDisabled();
         // #6 enter single character as label for first Proposition
-        this.getSynPropositionLabelInput(0).enterText("L");
+        this.getPropositionLabelInput(0).enterText("L");
         // #7 trigger "Undo" once
         redoButton.requireDisabled();
         undoButton.requireEnabled().click().requireEnabled();
-        this.getSynPropositionTranslationInput(0).requireText("T");
-        this.getSynPropositionLabelInput(0).requireEmpty();
+        this.getPropositionSynTranslationInput(0).requireText("T");
+        this.getPropositionLabelInput(0).requireEmpty();
         // #8 trigger "Undo" a second time
         redoButton.requireEnabled();
         undoButton.requireEnabled().click().requireDisabled();
-        this.getSynPropositionTranslationInput(0).requireEmpty();
-        this.getSynPropositionLabelInput(0).requireEmpty();
+        this.getPropositionSynTranslationInput(0).requireEmpty();
+        this.getPropositionLabelInput(0).requireEmpty();
         // #9 trigger "Redo" once
         redoButton.requireEnabled().click().requireEnabled();
         undoButton.requireEnabled();
-        getSynPropositionTranslationInput(0).requireText("T");
+        getPropositionSynTranslationInput(0).requireText("T");
         // #10 trigger "Redo" a second time
         redoButton.requireEnabled().click().requireDisabled();
         undoButton.requireEnabled();
-        getSynPropositionTranslationInput(0).requireText("T");
-        this.getSynPropositionLabelInput(0).requireText("L");
+        getPropositionSynTranslationInput(0).requireText("T");
+        this.getPropositionLabelInput(0).requireText("L");
     }
 
     /**
@@ -132,7 +132,6 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
      * <li>switch to Semantical Analysis</li>
      * <li>enter other character in label input</li>
      * <li>hide proposition labels</li>
-     * <li>show proposition translations</li>
      * <li>switch back to Syntactical Analysis</li>
      * <li>show proposition labels</li>
      * </ol>
@@ -149,73 +148,61 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
         // #4 ignore project info input dialog
         this.getButtonByText(Message.CANCEL).click();
         // #5 enter single character as translation for first Proposition
-        this.getSynPropositionTranslationInput(0).enterText("T");
+        this.getPropositionSynTranslationInput(0).enterText("T");
         // #6 hide proposition translations
-        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get()).click();
+        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_SYNTACTIC_TRANSLATIONS.get()).click();
         try {
-            this.getSynPropositionTranslationInput(0);
+            this.getPropositionSynTranslationInput(0);
             Assert.fail("The proposition's translation field should not be displayed.");
         } catch (final ComponentLookupException ex) {
             // the translation field is supposed to not be there
         }
         // #7 enter single character as label for first Proposition
-        this.getSynPropositionLabelInput(0).enterText("1");
+        this.getPropositionLabelInput(0).enterText("1");
         // #8 switch to Semantical Analysis
-        this.getSwitchAnalysisButton().click();
-        this.getSemPropositionLabelInput(0).requireText("1");
-        try {
-            this.getSemPropositionTranslationInput(0);
-            Assert.fail("The proposition's translation field should not be displayed.");
-        } catch (final ComponentLookupException ex) {
-            // the translation field is supposed to not be there
-        }
+        this.getSemanticalPresetToolBarButton().click();
+        this.getPropositionSemTranslationInput(0).requireEmpty();
+        this.getPropositionLabelInput(0).requireText("1");
         // #9 enter other character in label input
-        this.getSemPropositionLabelInput(0).deleteText().enterText("2");
+        this.getPropositionLabelInput(0).deleteText().enterText("2");
         // #10 hide proposition labels
         this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get()).click();
         try {
-            this.getSemPropositionLabelInput(0);
+            this.getPropositionLabelInput(0);
             Assert.fail("The proposition's label field should not be displayed.");
         } catch (final ComponentLookupException ex) {
             // the label field is supposed to not be there
         }
-        // #11 show proposition translations
-        this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS.get()).click();
-        this.getSemPropositionTranslationInput(0).requireEmpty();
-        // #12 switch back to Syntactical Analysis
-        this.getSwitchAnalysisButton().click();
-        this.getSynPropositionTranslationInput(0).requireText("T");
+        // #11 switch back to Syntactical Analysis
+        this.getSyntacticalPresetToolBarButton().click();
+        this.getPropositionSynTranslationInput(0).requireText("T");
 
-        // #13 show proposition labels
+        // #12 show proposition labels
         this.frame.menuItemWithPath(Message.MENUBAR_VIEW.get(), HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get()).click();
-        this.getSynPropositionLabelInput(0).requireText("2");
+        this.getPropositionLabelInput(0).requireText("2");
     }
 
-    private JPanelFixture getSynProposition(final int index) {
-        return this.frame.panel(new OrdinalComponentMatcher<SynProposition>(SynProposition.class, index, true));
+    private JPanelFixture getProposition(final int index) {
+        return this.frame.panel(new OrdinalComponentMatcher<ViewProposition>(ViewProposition.class, index, true));
     }
 
-    private JTextComponentFixture getSynPropositionTranslationInput(final int Index) {
-        return this.getSynProposition(Index).textBox("Translation Input");
+    private JTextComponentFixture getPropositionLabelInput(final int Index) {
+        return this.getProposition(Index).textBox("Label Input");
     }
 
-    private JTextComponentFixture getSynPropositionLabelInput(final int Index) {
-        return this.getSynProposition(Index).textBox("Label Input");
+    private JTextComponentFixture getPropositionSynTranslationInput(final int Index) {
+        return this.getProposition(Index).textBox("Syn Translation Input");
     }
 
-    private JPanelFixture getSemProposition(final int index) {
-        return this.frame.panel(new OrdinalComponentMatcher<SemProposition>(SemProposition.class, index, true));
+    private JTextComponentFixture getPropositionSemTranslationInput(final int Index) {
+        return this.getProposition(Index).textBox("Sem Translation Input");
     }
 
-    private JTextComponentFixture getSemPropositionTranslationInput(final int Index) {
-        return this.getSemProposition(Index).textBox("Translation Input");
+    private JToggleButtonFixture getSyntacticalPresetToolBarButton() {
+        return this.frame.toolBar().toggleButton("Preset: Syntactical");
     }
 
-    private JTextComponentFixture getSemPropositionLabelInput(final int Index) {
-        return this.getSemProposition(Index).textBox("Label Input");
-    }
-
-    private JButtonFixture getSwitchAnalysisButton() {
-        return this.frame.button("Switch Analysis Button");
+    private JToggleButtonFixture getSemanticalPresetToolBarButton() {
+        return this.frame.toolBar().toggleButton("Preset: Semantical");
     }
 }

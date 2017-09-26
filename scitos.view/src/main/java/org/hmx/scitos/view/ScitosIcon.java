@@ -44,9 +44,9 @@ public enum ScitosIcon {
     /** Icon: closed model group folder in the main view's project tree. */
     FOLDER_CLOSED("/icons/eclipse/folder_closed.png"),
     /** Icon: model element in the main view's project tree. */
-    MODEL_ELEMENT("/icons/fatcow/clipboard_invoice.png"),
+    CLIPBOARD("/icons/fatcow/clipboard_invoice.png"),
     /** Icon: model element in the main view's project tree. */
-    MODEL_ELEMENT_ADD("/icons/eclipse/add_task.png"),
+    CLIPBOARD_ADD("/icons/eclipse/add_task.png"),
     /** Icon: new file entry in menu bar / tool bar. */
     NEW_FILE("/icons/fatcow/page_white_add.png"),
     /** Icon: save file entry in menu bar / tool bar. */
@@ -81,10 +81,14 @@ public enum ScitosIcon {
     ADD("/icons/fatcow/add.png"),
     /** Icon: remove entry e.g. in category tree table. **/
     DELETE("/icons/fatcow/cross.png"),
-    /** Icon: model entry e.g. in category tree table. **/
-    CATEGORY("/icons/fatcow/clipboard_invoice.png"),
     /** Icon: attributes list. */
     ATTRIBUTES_DISPLAY("/icons/fatcow/attributes_display.png"),
+    /** Icon: a 3x3 grid. */
+    GRID("/icons/fatcow/grid.png"),
+    /** Icon: a tree structure with two sub nodes. */
+    TREE("/icons/fatcow/node_tree.png"),
+    /** Icon: relational (tree) lines (as on the semantical analysis in HermeneutiX), in red. */
+    RELATIONS("/icons/misc/relations_red.png"),
     /** Icon: horizontal rule below (text) block. */
     HORIZONTAL_RULE("/icons/fatcow/horizontal_rule.png");
 

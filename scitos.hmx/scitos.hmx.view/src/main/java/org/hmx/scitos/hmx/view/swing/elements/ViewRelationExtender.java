@@ -29,10 +29,10 @@ import javax.swing.JPanel;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 
 /**
- * simple {@link JPanel} with a colored horizontal line in a vertically centered position to fill gaps between a {@link SemRelation} and its
+ * simple {@link JPanel} with a colored horizontal line in a vertically centered position to fill gaps between a {@link ViewRelation} and its
  * subordinated elements.
  */
-public final class SemRelationExtender extends JPanel {
+public final class ViewRelationExtender extends JPanel {
 
     /**
      * relation line color.
@@ -42,7 +42,7 @@ public final class SemRelationExtender extends JPanel {
     /**
      * creates a new {@link SemRelationExtender} without any special functions.
      */
-    public SemRelationExtender() {
+    public ViewRelationExtender() {
         super(null);
         this.setBorder(null);
         this.color = HmxGeneralOption.RELATION_COLOR.getValueAsColor();
@@ -58,8 +58,8 @@ public final class SemRelationExtender extends JPanel {
         final Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setColor(this.color);
         final Rectangle line =
-                new Rectangle(0, (this.getSize().height - SemRelation.COMMENT_BORDER.getBorderInsets(this).bottom) / 2, this.getSize().width,
-                        (2 * SemRelation.HALF_LINE_THICKNESS));
+                new Rectangle(0, (this.getSize().height - ViewRelation.COMMENT_BORDER.getBorderInsets(this).bottom) / 2, this.getSize().width,
+                        (2 * ViewRelation.HALF_LINE_THICKNESS));
         graphics2D.draw(line);
         graphics2D.fill(line);
     }

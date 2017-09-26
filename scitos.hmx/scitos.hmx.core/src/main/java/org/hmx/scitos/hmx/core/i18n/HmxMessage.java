@@ -58,8 +58,16 @@ public enum HmxMessage implements ILocalizableMessage {
     MENUBAR_PROJECT_MERGE_BEHIND("Client.MenuBar.Edit.MergeProjects.Behind"),
     /** menubar entry: View -&gt; Hide/Show Proposition Labels. */
     MENUBAR_TOGGLE_PROPOSITION_LABELS("Client.MenuBar.View.TogglePropositionLabels"),
-    /** menubar entry: View -&gt; Hide/Show Proposition Translations. */
-    MENUBAR_TOGGLE_PROPOSITION_TRANSLATIONS("Client.MenuBar.View.TogglePropositionTranslations"),
+    /** menubar entry: View -&gt; Hide/Show Proposition Indentations. */
+    MENUBAR_TOGGLE_PROPOSITION_INDENTATIONS("Client.MenuBar.View.TogglePropositionIndentations"),
+    /** menubar entry: View -&gt; Hide/Show Relations. */
+    MENUBAR_TOGGLE_RELATIONS("Client.MenuBar.View.ToggleRelations"),
+    /** menubar entry: View -&gt; Hide/Show Clause Items. */
+    MENUBAR_TOGGLE_CLAUSE_ITEMS("Client.MenuBar.View.ToggleClauseItems"),
+    /** menubar entry: View -&gt; Hide/Show Syntactic Proposition Translations. */
+    MENUBAR_TOGGLE_SYNTACTIC_TRANSLATIONS("Client.MenuBar.View.ToggleSyntacticTranslations"),
+    /** menubar entry: View -&gt; Hide/Show Semantic Proposition Translations. */
+    MENUBAR_TOGGLE_SEMANTIC_TRANSLATIONS("Client.MenuBar.View.ToggleSemanticTranslations"),
 
     /** in the new-project-setup: the hint label over the main text input. */
     TEXTINPUT_TOPIC("TextInput.Topic"),
@@ -101,9 +109,13 @@ public enum HmxMessage implements ILocalizableMessage {
 
     /** label over the comment area in the analysis mode. */
     ANALYSIS_COMMENT_TOPIC("Analysis.CommentTopic"),
+    /** tool bar item for view preset: All Details. */
+    ANALYSIS_PRESET_SHOW_ALL("Client.ToolBar.ViewPreset.AllDetails"),
+    /** tool bar item for view preset: Syntactical Analysis. */
+    ANALYSIS_PRESET_SYNTACTICAL("Client.ToolBar.ViewPreset.SyntacticalAnalysis"),
+    /** tool bar item for view preset: Semantical Analysis. */
+    ANALYSIS_PRESET_SEMANTICAL("Client.ToolBar.ViewPreset.SemanticalAnalysis"),
 
-    /** button to switch to the syntactical analysis view. */
-    ANALYSIS_SYNTACTICAL_BUTTON("Analysis.Syntactical"),
     /** syntactical context menu entry: change clause item function. */
     MENU_CHANGE_ITEM_FUNCTION("Analysis.Syntactical.ChangeItemFunction"),
     /** syntactical context menu entry: change indentation function. */
@@ -141,8 +153,6 @@ public enum HmxMessage implements ILocalizableMessage {
     /** syntactical context menu entry: split part-after-arrow from other part. */
     MENU_RESET_PROP_PART("Analysis.Syntactical.ResetStandaloneProposition"),
 
-    /** button to switch to the syntactical analysis view. */
-    ANALYSIS_SEMANTICAL_BUTTON("Analysis.Semantical"),
     /** semantical context menu entry: create relation. */
     MENU_CREATE_RELATION("Analysis.Semantical.CreateRelation"),
     /** semantical context menu entry: rotate roles of relation parts. */
@@ -163,7 +173,6 @@ public enum HmxMessage implements ILocalizableMessage {
     /** export related labels. */
     EXPORT_TITLE("Export.Title"),
     EXPORT_TITLE_AUTHOR("Export.Title.Author"),
-
     EXPORT_HEIGHT("Export.Height"),
     EXPORT_WIDTH("Export.Width"),
 
@@ -206,7 +215,6 @@ public enum HmxMessage implements ILocalizableMessage {
     PREFERENCES_GENERAL_INDENTATION("Preferences.View.IndentationWidth"),
     PREFERENCES_GENERAL_PROPOSITIONS("Preferences.View.Propositions"),
     PREFERENCES_GENERAL_PROPOSITIONS_SHOW_LABELS("Preferences.View.Propositions.ShowLabels"),
-    PREFERENCES_GENERAL_PROPOSITIONS_SHOW_TRANSLATIONS("Preferences.View.Propositions.ShowTranslations"),
     PREFERENCES_GENERAL_INPUT("Preferences.View.TextInput"),
     PREFERENCES_GENERAL_INPUT_SHOW_SETTINGS("Preferences.View.TextInput.ShowSettings"),
     PREFERENCES_GENERAL_AUTHOR("Preferences.Analysis.ProjectInfo.DefaultAuthor"),

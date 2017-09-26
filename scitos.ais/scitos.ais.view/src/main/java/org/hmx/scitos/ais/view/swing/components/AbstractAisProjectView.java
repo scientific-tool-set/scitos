@@ -89,7 +89,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
     @Override
     public List<Component> createToolBarItems() {
         final List<Component> toolBarItems = new LinkedList<Component>();
-        final JButton addInterviewButton = new JButton(ScitosIcon.MODEL_ELEMENT_ADD.create());
+        final JButton addInterviewButton = new JButton(ScitosIcon.CLIPBOARD_ADD.create());
         addInterviewButton.setToolTipText(AisMessage.INTERVIEW_NEW.get());
         addInterviewButton.addActionListener(new ActionListener() {
 

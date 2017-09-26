@@ -46,9 +46,7 @@ import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
-import org.hmx.scitos.hmx.view.IPericopeView;
-import org.hmx.scitos.hmx.view.swing.components.SemAnalysisPanel;
-import org.hmx.scitos.hmx.view.swing.components.SemControl;
+import org.hmx.scitos.hmx.view.swing.components.AnalysisPanel;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.swing.ContextMenuPopupBuilder;
 import org.hmx.scitos.view.swing.components.ScaledTextField;
@@ -57,7 +55,7 @@ import org.hmx.scitos.view.swing.components.ScaledTextField;
  * View representation of a {@link Relation} drawing colored lines to show the relations between its subordinated {@link IConnectable}s and
  * {@link JTextField}s above displaying their roles.
  */
-public final class SemRelation extends AbstractCommentable<Relation> implements IConnectable<Relation> {
+public final class ViewRelation extends AbstractCommentable<Relation> implements IConnectable<Relation> {
 
     /** half thickness of the displayed lines. */
     protected static final int HALF_LINE_THICKNESS = 2;
@@ -68,8 +66,8 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     private final Border defaultBorder;
     /** Colored, raised bevel border, when not selected and with assigned comment. */
     private final Border defaultCommentedBorder;
-    /** The semantical analysis this is displayed in. */
-    final SemAnalysisPanel semArea;
+    /** The analysis view this is displayed in. */
+    final AnalysisPanel analysisPanel;
     /** The view representations of the sub ordinated associates. */
     private final List<IConnectable<?>> viewAssociates;
     /** The text fields displaying the respective roles of the sub ordinated associates. */
@@ -85,9 +83,9 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     /** Whether the role labels should be shown above the relation lines. Otherwise, they will be shown on top of the lines (i.e. hiding them). */
     private final boolean showRoleAboveLine;
     /**
-     * check box to select this {@link SemRelation}.
+     * check box to select this {@link ViewRelation}.
      */
-    private final JCheckBox checkBox = new JCheckBox();
+    private final JCheckBox checkBox;
     /** The depth in the relation tree of the current analysis. */
     private final int depth;
     /**
@@ -106,30 +104,31 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     /**
      * Constructor.
      *
-     * @param viewReference
-     *            the view providing access to the project's model handler and handling the comments on model elements
-     * @param semArea
-     *            semantical analysis view to be contained in
+     * @param analysisPanel
+     *            analysis view to be contained in
      * @param represented
      *            model {@link Relation} to display
      * @param foldedLevels
      *            levels to suppress display of semantic roles on
      */
-    public SemRelation(final IPericopeView viewReference, final SemAnalysisPanel semArea, final Relation represented,
-            final Collection<Integer> foldedLevels) {
+    public ViewRelation(final AnalysisPanel analysisPanel, final Relation represented, final Collection<Integer> foldedLevels) {
         super(null);
-        this.semArea = semArea;
+        this.analysisPanel = analysisPanel;
         this.represented = represented;
-        this.leftAligned = viewReference.getModelHandler().getModel().isLeftToRightOriented();
+        this.leftAligned = analysisPanel.getModelHandler().getModel().isLeftToRightOriented();
         final List<AbstractConnectable> modelAssociates = represented.getAssociates();
-        this.showRoleAboveLine = viewReference.isShowingPropositionTranslations();
+        this.showRoleAboveLine = analysisPanel.getViewSettings().isShowingSemanticTranslations()
+                || analysisPanel.getViewSettings().isShowingSyntacticTranslations();
         this.viewAssociates = new ArrayList<IConnectable<?>>(modelAssociates.size());
         for (final AbstractConnectable singleAssociate : modelAssociates) {
-            this.viewAssociates.add(SemControl.getRepresentative(semArea, singleAssociate));
+            this.viewAssociates.add(this.analysisPanel.getRepresentative(singleAssociate));
         }
         this.depth = represented.getTreeDepth();
         if (represented.getSuperOrdinatedRelation() == null) {
+            this.checkBox = new JCheckBox();
             this.add(this.checkBox);
+        } else {
+            this.checkBox = null;
         }
         if (foldedLevels.contains(this.depth)) {
             this.roleFields = null;
@@ -151,14 +150,14 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
                 this.add(roleField);
             }
         }
-        this.firstGridY = SemControl.getRepresentative(semArea, represented.getFirstPropositionContained()).getConnectY();
-        this.lastGridY = SemControl.getRepresentative(semArea, represented.getLastPropositionContained()).getConnectY();
+        this.firstGridY = this.analysisPanel.getRepresentative(represented.getFirstPropositionContained()).getConnectY();
+        this.lastGridY = this.analysisPanel.getRepresentative(represented.getLastPropositionContained()).getConnectY();
         this.refreshRoles();
         this.setToolTipText(represented.getComment());
         this.defaultBorder =
-                BorderFactory.createEmptyBorder(SemRelation.COMMENT_BORDER.getBorderInsets(this).top, 0,
-                        SemRelation.COMMENT_BORDER.getBorderInsets(this).bottom, 0);
-        final Insets borderInsets = SemRelation.COMMENT_BORDER.getBorderInsets(this);
+                BorderFactory.createEmptyBorder(ViewRelation.COMMENT_BORDER.getBorderInsets(this).top, 0,
+                        ViewRelation.COMMENT_BORDER.getBorderInsets(this).bottom, 0);
+        final Insets borderInsets = ViewRelation.COMMENT_BORDER.getBorderInsets(this);
         this.defaultCommentedBorder =
                 BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(borderInsets.top - 2, this.leftAligned
                         ? (borderInsets.left - 1) : 0, borderInsets.bottom - 2, this.leftAligned ? 0 : (borderInsets.right - 1)), BorderFactory
@@ -170,14 +169,14 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
 
             @Override
             public void mousePressed(final MouseEvent event) {
-                viewReference.handleSelectedCommentable(SemRelation.this);
+                analysisPanel.handleSelectedCommentable(ViewRelation.this);
                 this.mouseReleased(event);
             }
 
             @Override
             public void mouseReleased(final MouseEvent event) {
                 if (event.isPopupTrigger()) {
-                    final ContextMenuBuilder contextMenu = ContextMenuFactory.createSemRelationPopup(viewReference, represented);
+                    final ContextMenuBuilder contextMenu = ContextMenuFactory.createRelationPopup(analysisPanel, represented);
                     ContextMenuPopupBuilder.buildSwingPopupMenu(contextMenu).show(event.getComponent(), event.getX(), event.getY());
                 }
             }
@@ -207,28 +206,26 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         final int gridHeight = (int) (this.lastGridY - this.firstGridY) + 1;
         final int height = this.getSize().height;
         final double partY = height / (double) gridHeight;
-        int startX;
-        if (this.represented.getSuperOrdinatedRelation() == null) {
+        final int startX;
+        if (this.checkBox != null) {
             final Dimension boxSize = this.checkBox.getPreferredSize();
             int posX;
             if (this.leftAligned) {
-                posX = SemRelation.HALF_LINE_THICKNESS;
-                startX = (boxSize.width + (2 * SemRelation.HALF_LINE_THICKNESS));
+                posX = ViewRelation.HALF_LINE_THICKNESS;
+                startX = boxSize.width + (2 * ViewRelation.HALF_LINE_THICKNESS);
             } else {
-                posX = this.getSize().width - (boxSize.width + SemRelation.HALF_LINE_THICKNESS);
-                startX = this.getSize().width - (boxSize.width + (2 * SemRelation.HALF_LINE_THICKNESS));
+                posX = this.getSize().width - (boxSize.width + ViewRelation.HALF_LINE_THICKNESS);
+                startX = this.getSize().width - (boxSize.width + (2 * ViewRelation.HALF_LINE_THICKNESS));
             }
             // insert check box
-            this.checkBox.setBounds(posX, (int) (((this.connectY - (this.firstGridY - 0.5)) * partY) - (boxSize.height / 2.)), boxSize.width,
-                    boxSize.height);
+            final int posY = (int) (((this.connectY - (this.firstGridY - 0.5)) * partY) - (boxSize.height / 2.));
+            this.checkBox.setBounds(posX, posY, boxSize.width, boxSize.height);
+        } else if (this.leftAligned) {
+            startX = 0;
         } else {
-            if (this.leftAligned) {
-                startX = 0;
-            } else {
-                startX = this.getSize().width;
-            }
+            startX = this.getSize().width;
         }
-        final int topBorder = SemRelation.COMMENT_BORDER.getBorderInsets(this).top;
+        final int topBorder = ViewRelation.COMMENT_BORDER.getBorderInsets(this).top;
         final int lineLeftEnd;
         final int lineWidth;
         final List<Integer> horizontalLines = new ArrayList<Integer>(this.viewAssociates.size());
@@ -242,7 +239,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         // draw horizontal lines
         for (final IConnectable<?> singleAssociate : this.viewAssociates) {
             final int lineY = (int) ((singleAssociate.getConnectY() - this.firstGridY + 0.5) * partY - (topBorder / 2.));
-            final Rectangle singleHorizontal = new Rectangle(lineLeftEnd, lineY, lineWidth, (2 * SemRelation.HALF_LINE_THICKNESS));
+            final Rectangle singleHorizontal = new Rectangle(lineLeftEnd, lineY, lineWidth, (2 * ViewRelation.HALF_LINE_THICKNESS));
             graphics2D.draw(singleHorizontal);
             graphics2D.fill(singleHorizontal);
             horizontalLines.add(lineY);
@@ -252,27 +249,27 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         if (this.leftAligned) {
             verticalPos = lineLeftEnd;
         } else {
-            verticalPos = startX - (2 * SemRelation.HALF_LINE_THICKNESS);
+            verticalPos = startX - (2 * ViewRelation.HALF_LINE_THICKNESS);
         }
         final Rectangle verticalLine =
-                new Rectangle(verticalPos, horizontalLines.get(0), (2 * SemRelation.HALF_LINE_THICKNESS), (horizontalLines.get(horizontalLines
-                        .size() - 1) - horizontalLines.get(0)) + (2 * SemRelation.HALF_LINE_THICKNESS));
+                new Rectangle(verticalPos, horizontalLines.get(0), (2 * ViewRelation.HALF_LINE_THICKNESS), (horizontalLines.get(horizontalLines
+                        .size() - 1) - horizontalLines.get(0)) + (2 * ViewRelation.HALF_LINE_THICKNESS));
         graphics2D.draw(verticalLine);
         graphics2D.fill(verticalLine);
         if (this.roleFields != null) {
-            int fieldX = startX + 2 + (3 * SemRelation.HALF_LINE_THICKNESS);
+            int fieldX = startX + 2 + (3 * ViewRelation.HALF_LINE_THICKNESS);
             // insert role text fields
             for (int i = 0; i < this.roleFields.size(); i++) {
                 final JTextField roleField = this.roleFields.get(i);
                 final int fieldHeight = roleField.getPreferredSize().height;
                 final int fieldWidth = roleField.getPreferredSize().width + 5;
                 if (!this.leftAligned) {
-                    fieldX = startX - (2 + (3 * SemRelation.HALF_LINE_THICKNESS) + fieldWidth);
+                    fieldX = startX - (2 + (3 * ViewRelation.HALF_LINE_THICKNESS) + fieldWidth);
                 }
                 int fieldY = horizontalLines.get(i);
                 if (this.showRoleAboveLine) {
                     // ensure the field is shown above the line with spacing of 2px
-                    fieldY -= fieldHeight + SemRelation.HALF_LINE_THICKNESS + 2;
+                    fieldY -= fieldHeight + ViewRelation.HALF_LINE_THICKNESS + 2;
                 } else {
                     // display the field directly over the line (half above/half below)
                     fieldY -= fieldHeight / 2;
@@ -283,7 +280,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
     }
 
     /**
-     * Calculate the minimum preferred width of the {@link SemRelation} regarding the {@link JTextField}s containing the roles and the additional
+     * Calculate the minimum preferred width of the {@link ViewRelation} regarding the {@link JTextField}s containing the roles and the additional
      * border spacings.
      *
      * @return minimum preferred width
@@ -298,20 +295,15 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
         }
         // regard the additional checkbox if the relation is checkable
         if (this.represented.getSuperOrdinatedRelation() == null) {
-            result += this.checkBox.getPreferredSize().width + (2 * SemRelation.HALF_LINE_THICKNESS);
+            result += this.checkBox.getPreferredSize().width + (2 * ViewRelation.HALF_LINE_THICKNESS);
         }
         // add the default left and right spacing
-        return result + 11 + (4 * SemRelation.HALF_LINE_THICKNESS);
+        return result + 11 + (4 * ViewRelation.HALF_LINE_THICKNESS);
     }
 
     @Override
     public Relation getRepresented() {
         return this.represented;
-    }
-
-    @Override
-    public void setCheckBoxVisible(final boolean val) {
-        this.checkBox.setVisible(val);
     }
 
     @Override
@@ -346,7 +338,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
 
     @Override
     public void setCommentBorder() {
-        this.setBorder(SemRelation.COMMENT_BORDER);
+        this.setBorder(ViewRelation.COMMENT_BORDER);
     }
 
     @Override
@@ -425,7 +417,7 @@ public final class SemRelation extends AbstractCommentable<Relation> implements 
             }
         }
         final Dimension preferred = this.getPreferredSize();
-        this.setSize(new Dimension(preferred.width + (2 * SemRelation.HALF_LINE_THICKNESS), preferred.height));
+        this.setSize(new Dimension(preferred.width + (2 * ViewRelation.HALF_LINE_THICKNESS), preferred.height));
 
         // recalculate connectY
         final boolean firstAssociateHighWeight = this.viewAssociates.get(0).getRepresented().getRole().isHighWeight();

@@ -25,6 +25,7 @@ import org.hmx.scitos.hmx.core.HmxModelHandler;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
 import org.hmx.scitos.hmx.domain.model.Proposition;
+import org.hmx.scitos.hmx.view.swing.components.IAnalysisViewSettings;
 import org.hmx.scitos.hmx.view.swing.elements.AbstractCommentable;
 import org.hmx.scitos.view.swing.IUndoManagedView;
 
@@ -39,18 +40,11 @@ public interface IPericopeView extends ISemanticalRelationProvider, IUndoManaged
     HmxModelHandler getModelHandler();
 
     /**
-     * Getter for the view preference whether the label fields of propositions should be displayed or not.
+     * Getter for the view preferences what parts should be displayed.
      *
-     * @return whether to displayed proposition label fields
+     * @return view settings to apply
      */
-    boolean isShowingPropositionLabels();
-
-    /**
-     * Getter for the view preference whether the translation fields of propositions should be displayed or not.
-     *
-     * @return whether to displayed proposition translation fields
-     */
-    boolean isShowingPropositionTranslations();
+    IAnalysisViewSettings getViewSettings();
 
     /**
      * Collect the list of selected {@link Proposition}s in the syntactical analysis, if it is currently active (i.e. displayed).

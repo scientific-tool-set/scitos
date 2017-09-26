@@ -57,7 +57,7 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
 
     /**
      * Constructor.
-     * 
+     *
      * @param options
      *            the global preferences handler being represented by this view component
      */
@@ -68,8 +68,8 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
         this.languagePanel = new LanguageConfigPanel(options);
         final DesignGridLayout layout = new DesignGridLayout(this);
         final IHideable languagePanelRow = layout.row().center().add(this.languagePanel).fill().withOwnRowWidth();
-        final JButton switchToLanguagesButton = new JButton(HmxMessage.PREFERENCES_LANGUAGE_EDIT_LANGUAGES.get(), ScitosIcon.CATEGORY.create());
-        final JButton switchToFunctionsButton = new JButton(HmxMessage.PREFERENCES_LANGUAGE_EDIT_FUNCTIONS.get(), ScitosIcon.CATEGORY.create());
+        final JButton switchToLanguagesButton = new JButton(HmxMessage.PREFERENCES_LANGUAGE_EDIT_LANGUAGES.get(), ScitosIcon.CLIPBOARD.create());
+        final JButton switchToFunctionsButton = new JButton(HmxMessage.PREFERENCES_LANGUAGE_EDIT_FUNCTIONS.get(), ScitosIcon.CLIPBOARD.create());
         final IHideable switchToLanguagesRow = layout.row().center().add(switchToLanguagesButton);
         final IHideable switchToFunctionsRow = layout.row().center().add(switchToFunctionsButton);
         final IHideable functionPanelRow = layout.row().center().add(this.functionPanel).fill().withOwnRowWidth();
@@ -147,7 +147,7 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
 
     /**
      * Recursively determine whether two {@link SyntacticalFunction} elements are configured to have the same {@code code} value.
-     * 
+     *
      * @param functionElements
      *            the {@link SyntacticalFunction} and {@link SyntacticalFunctionGroup} elements to recursively check
      * @param codes

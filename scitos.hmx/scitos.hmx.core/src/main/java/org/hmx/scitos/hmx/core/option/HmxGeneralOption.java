@@ -37,8 +37,6 @@ public enum HmxGeneralOption implements IOptionSetting {
     COMMENTED_BORDER_COLOR("Commented.BorderColor", ConversionUtil.toString(Color.GREEN)),
     /** user setting: whether the labels on the analysis views should be visible by default. */
     SHOW_PROPOSITION_LABELS("Analysis.Proposition.ShowLabels", String.valueOf(true)),
-    /** user setting: whether the translations on the analysis views should be visible by default. */
-    SHOW_PROPOSITION_TRANSLATIONS("Analysis.Proposition.ShowTranslations", String.valueOf(true)),
     /** user setting: width of syntactical indentations. */
     INDENTATION_WIDTH("SynAnalysis.IndentationWidth", "50"),
     /** user setting: whether the setting area in the new-project-setup should be visible by default. */
@@ -57,10 +55,8 @@ public enum HmxGeneralOption implements IOptionSetting {
     /**
      * Constructor.
      *
-     * @param attributeKey
-     *            actual settings key
-     * @param defaultValue
-     *            default value to return if no value was specified before
+     * @param attributeKey actual settings key
+     * @param defaultValue default value to return if no value was specified before
      */
     private HmxGeneralOption(final String attributeKey, final String defaultValue) {
         this.key = attributeKey;

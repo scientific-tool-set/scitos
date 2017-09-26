@@ -56,7 +56,7 @@ public final class ProjectOverView extends AbstractAisProjectView<AisProject> {
         super(project, project.getModelObject(), options, new BorderLayout());
         this.analysisPanel = new PatternAnalysisPanel(client, project);
         this.add(this.analysisPanel);
-        final JButton addInterviewButton = new JButton(AisMessage.INTERVIEW_NEW.get(), ScitosIcon.MODEL_ELEMENT_ADD.create());
+        final JButton addInterviewButton = new JButton(AisMessage.INTERVIEW_NEW.get(), ScitosIcon.CLIPBOARD_ADD.create());
         addInterviewButton.addActionListener(new ActionListener() {
 
             @Override

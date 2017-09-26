@@ -56,7 +56,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
     /**
      * Getter for the title/caption of this menu.
-     * 
+     *
      * @return title/caption of this menu
      */
     public String getCaption() {
@@ -65,7 +65,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
     /**
      * Append a submenu with the given title/caption.
-     * 
+     *
      * @param subMenuCaption
      *            caption of the sub menu
      * @return created sub menu (capable of holding an own set of {@link CMenuEntry entries})
@@ -76,7 +76,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
     /**
      * Append an item with the given title/caption and the specified action.
-     * 
+     *
      * @param itemCaption
      *            caption of the single menu item
      * @param action
@@ -89,7 +89,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
     /**
      * Append a separator to this menu.
-     * 
+     *
      * @return visual grouping element
      */
     public CMenuSeparator addSeparator() {
@@ -112,7 +112,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
     /**
      * Getter for the list of contained menu entries.
-     * 
+     *
      * @return list of all defined {@link CMenuEntry menu entries}
      */
     public List<CMenuEntry> getEntries() {
@@ -122,6 +122,15 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
     @Override
     public Iterator<CMenuEntry> iterator() {
         return this.getEntries().iterator();
+    }
+
+    /**
+     * Returns {@code true} if this menu builder contains no entries.
+     *
+     * @return whether no entries have been added yet
+     */
+    public boolean isEmpty() {
+        return this.entryList.isEmpty();
     }
 
     /**
@@ -155,7 +164,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Constructor.
-         * 
+         *
          * @param caption
          *            this sub menu's title/caption
          */
@@ -165,7 +174,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Check if this sub menu provides a value for the optional tool tip.
-         * 
+         *
          * @return if the optional tool tip is set
          */
         public boolean hasToolTip() {
@@ -174,7 +183,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Getter for the optional tool tip.
-         * 
+         *
          * @return tool tip (can be {@code null})
          */
         public String getToolTip() {
@@ -183,7 +192,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Setter for the optional tool tip.
-         * 
+         *
          * @param toolTip
          *            the tool tip text to set
          * @return self reference
@@ -216,7 +225,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Constructor.
-         * 
+         *
          * @param caption
          *            the item's title/caption
          * @param action
@@ -229,7 +238,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Getter for this item's title/caption.
-         * 
+         *
          * @return caption of this menu item
          */
         public String getCaption() {
@@ -238,7 +247,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Getter for the action to be executed when this item is selected by the user.
-         * 
+         *
          * @return {@link CMenuItemAction executable action} on event of item selection
          */
         public CMenuItemAction getAction() {
@@ -247,7 +256,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Check if this menu item provides a value for the optional tool tip.
-         * 
+         *
          * @return if the optional tool tip is set
          */
         public boolean hasToolTip() {
@@ -256,7 +265,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Getter for the optional tool tip.
-         * 
+         *
          * @return the optional tool tip (can be {@code null})
          */
         public String getToolTip() {
@@ -265,7 +274,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Setter for the optional tool tip.
-         * 
+         *
          * @param toolTip
          *            tool tip text to set
          * @return self reference
@@ -277,7 +286,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Check if this menu item has a specific non-default {@link Font}.
-         * 
+         *
          * @return if the optional, specific {@link Font} is set
          */
         public boolean hasFont() {
@@ -286,7 +295,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Getter for the specific non-default {@link Font} for this menu item.
-         * 
+         *
          * @param defaultFont
          *            {@link Font} to use (or derive from) if no specific {@link Font} would have been set
          * @return specific {@link Font} to apply
@@ -297,7 +306,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Setter for the specific non-default {@link Font} for this menu item.
-         * 
+         *
          * @param font
          *            specific Font to apply (can be {@code null})
          * @return self reference
@@ -309,7 +318,7 @@ public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntr
 
         /**
          * Setter for the specific non-{@code plain} {@link Font} style.
-         * 
+         *
          * @param fontStyle
          *            differing {@link Font} style ({@link Font#BOLD BOLD}, {@link Font#ITALIC ITALIC}, or a combination of the two)
          * @return self reference

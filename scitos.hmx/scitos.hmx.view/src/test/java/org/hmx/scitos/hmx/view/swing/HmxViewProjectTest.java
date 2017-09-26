@@ -31,11 +31,8 @@ import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.fixture.JToggleButtonFixture;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
-import org.hmx.scitos.hmx.view.swing.elements.SemProposition;
-import org.hmx.scitos.hmx.view.swing.elements.SynProposition;
 import org.hmx.scitos.hmx.view.swing.elements.ViewProposition;
 import org.junit.Assert;
-import org.junit.Ignore;
 
 /** UI test for a simple HermeneutiX project workflow. */
 public class HmxViewProjectTest extends AbstractScitosUiTest {

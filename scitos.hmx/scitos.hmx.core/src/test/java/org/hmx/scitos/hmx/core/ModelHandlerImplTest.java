@@ -1309,6 +1309,51 @@ public class ModelHandlerImplTest {
     }
 
     /**
+     * Test: of {@code splitProposition(Proposition, ClauseItem)} after the first item of the first part of a {@link Proposition} with two enclosed
+     * children.
+     *
+     * @throws HmxException
+     *             impossible to split {@link Proposition} part after first of two items
+     */
+    @Test
+    public void testSplitProposition_7() throws HmxException {
+        final Proposition propositionFirst = this.pericope.getPropositionAt(0);
+        final Proposition propositionSecond = this.pericope.getPropositionAt(1);
+        final Proposition propositionThird = this.pericope.getPropositionAt(2);
+        final Proposition propositionFourth = this.pericope.getPropositionAt(3);
+        final Proposition propositionFifth = this.pericope.getPropositionAt(4);
+        this.modelHandler.mergePropositions(propositionFirst, propositionFourth);
+        this.modelHandler.createRelation(Arrays.asList(propositionFirst, propositionSecond), ModelHandlerImplTest.defaultRelationTemplate);
+        final Relation survivingLeadRelation = propositionSecond.getSuperOrdinatedRelation();
+        this.modelHandler.createRelation(Arrays.asList(propositionThird, propositionFifth), ModelHandlerImplTest.defaultRelationTemplate);
+        final Relation survivingTrailRelation = propositionThird.getSuperOrdinatedRelation();
+        this.modelHandler.createRelation(Arrays.asList(survivingLeadRelation, survivingTrailRelation), ModelHandlerImplTest.defaultRelationTemplate);
+        final Relation rootRelation = survivingLeadRelation.getSuperOrdinatedRelation();
+        final ClauseItem itemFirst = propositionFirst.getItems().get(0);
+        final ClauseItem itemSecond = propositionFirst.getItems().get(1);
+        this.modelHandler.splitProposition(propositionFirst, itemFirst);
+        final List<Proposition> newPropositions = this.pericope.getFlatText();
+        Assert.assertEquals(6, newPropositions.size());
+        Assert.assertEquals(Collections.singletonList(itemFirst), newPropositions.get(0).getItems());
+        Assert.assertEquals(Collections.singletonList(itemSecond), newPropositions.get(1).getItems());
+        Assert.assertSame(propositionSecond, newPropositions.get(2));
+        Assert.assertSame(propositionThird, newPropositions.get(3));
+        Assert.assertSame(propositionFourth, newPropositions.get(4));
+        Assert.assertSame(propositionFifth, newPropositions.get(5));
+        Assert.assertNull(newPropositions.get(0).getPartAfterArrow());
+        Assert.assertSame(propositionFourth, newPropositions.get(1).getPartAfterArrow());
+        Assert.assertSame(newPropositions.get(1), propositionFourth.getPartBeforeArrow());
+        Assert.assertNull(newPropositions.get(0).getSuperOrdinatedRelation());
+        Assert.assertSame(survivingLeadRelation, newPropositions.get(1).getSuperOrdinatedRelation());
+        Assert.assertSame(survivingLeadRelation, propositionSecond.getSuperOrdinatedRelation());
+        Assert.assertSame(survivingTrailRelation, propositionThird.getSuperOrdinatedRelation());
+        Assert.assertSame(survivingTrailRelation, propositionFifth.getSuperOrdinatedRelation());
+        Assert.assertNotNull(rootRelation);
+        Assert.assertSame(rootRelation, survivingLeadRelation.getSuperOrdinatedRelation());
+        Assert.assertSame(rootRelation, survivingTrailRelation.getSuperOrdinatedRelation());
+    }
+
+    /**
      * Test: of {@code resetStandaloneStateOfPartAfterArrow(Proposition)} for two top level {@link Proposition}s with a single enclosed child.
      *
      * @throws HmxException

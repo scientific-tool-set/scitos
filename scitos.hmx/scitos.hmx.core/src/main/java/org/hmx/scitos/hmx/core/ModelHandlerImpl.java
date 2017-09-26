@@ -567,23 +567,11 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
             secondPart.setLaterChildren(laterChildren);
 
             // avoid gaps in super ordinated relations
-            AbstractConnectable currentFocus = target;
-            Relation superOrdinated;
-            while ((superOrdinated = currentFocus.getSuperOrdinatedRelation()) != null) {
-                final List<AbstractConnectable> associates = superOrdinated.getAssociates();
-                if (currentFocus != associates.get(associates.size() - 1)) {
-                    /*
-                     * target is not the last associate in one of its super ordinated relations; this relation will become invalid by splitting the
-                     * targeted proposition; it needs to be removed
-                     */
-                    superOrdinated.kill();
-                    break;
-                }
-                currentFocus = superOrdinated;
-            }
+            this.handleRelationsWhenSplittingProposition(target, secondPart);
             // transfer part after arrow
+            final Proposition partAfterArrow = target.getPartAfterArrow();
             target.setPartAfterArrow(null);
-            secondPart.setPartAfterArrow(target.getPartAfterArrow());
+            secondPart.setPartAfterArrow(partAfterArrow);
 
             // finish model changes
             target.getParent().insertChildPropositionAfterPrior(secondPart, target);
@@ -620,6 +608,61 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         target.getParent().insertChildPropositionAfterPrior(partAfterArrow, target);
         // trigger a full model rebuild
         this.notifyListeners(this.getModel(), false);
+    }
+
+    /**
+     * When splitting a {@link Proposition} into two, super ordinated relations might no longer be valid and need to be removed to ensure model
+     * integrity. If the directly super ordinated {@link Relation} starts at the proposition being split, it should be moved to the new/second part.
+     *
+     * @param firstPart
+     *            leading part of the proposition being split
+     * @param secondPart
+     *            trailing part of the propostion being split
+     */
+    private void handleRelationsWhenSplittingProposition(final Proposition firstPart, final Proposition secondPart) {
+        if (firstPart.getSuperOrdinatedRelation() == null) {
+            // nothing to handle
+            return;
+        }
+        AbstractConnectable currentFocus = firstPart;
+        Relation superOrdinated = firstPart.getSuperOrdinatedRelation();
+        if (firstPart == superOrdinated.getAssociates().get(0)) {
+            // move relation to the new proposition in order to preserve its validity
+            final List<AbstractConnectable> newAssociates = new ArrayList<AbstractConnectable>(superOrdinated.getAssociates());
+            newAssociates.set(0, secondPart);
+            superOrdinated.setAssociates(newAssociates);
+            final AssociateRole role = firstPart.getRole();
+            firstPart.setSuperOrdinatedRelation(null, null);
+            secondPart.setSuperOrdinatedRelation(superOrdinated, role);
+            // check whether super ordinated relations are still valid after this move
+            currentFocus = superOrdinated;
+            while ((superOrdinated = currentFocus.getSuperOrdinatedRelation()) != null) {
+                final List<AbstractConnectable> associates = superOrdinated.getAssociates();
+                if (currentFocus != associates.get(0)) {
+                    /*
+                     * moved relation is not the first associate in one of its super ordinated relations; this relation will in turn become
+                     * invalid by splitting the targeted proposition; it needs to be removed
+                     */
+                    superOrdinated.kill();
+                    break;
+                }
+                currentFocus = superOrdinated;
+            }
+            return;
+        }
+        do {
+            final List<AbstractConnectable> associates = superOrdinated.getAssociates();
+            if (currentFocus != associates.get(associates.size() - 1)) {
+                /*
+                 * target is not the last associate in one of its super ordinated relations; this relation will become invalid by
+                 * splitting the targeted proposition; it needs to be removed
+                 */
+                superOrdinated.kill();
+                break;
+            }
+            currentFocus = superOrdinated;
+            superOrdinated = currentFocus.getSuperOrdinatedRelation();
+        } while (superOrdinated != null);
     }
 
     @Override

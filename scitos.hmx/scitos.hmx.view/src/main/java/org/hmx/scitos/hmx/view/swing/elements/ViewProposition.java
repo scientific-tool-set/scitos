@@ -200,17 +200,21 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         this.rightArrows = new ArrowStackLabel(false, 0);
 
         final IAnalysisViewSettings viewSettings = viewReference.getViewSettings();
-        final GridBagConstraints checkBoxConstraints = new GridBagConstraints();
-        checkBoxConstraints.gridx = 0;
-        checkBoxConstraints.gridy = 1;
-        if (this.represented.getPartBeforeArrow() == null && (viewSettings.isShowingPropositionIndentations()
-                || viewSettings.isShowingRelations() && this.represented.getSuperOrdinatedRelation() == null)) {
-            this.checkBox.setName("Check Box");
-            this.contentPane.add(this.checkBox, checkBoxConstraints);
-        } else {
-            final JPanel checkBoxDummy = new JPanel(null);
-            checkBoxDummy.setPreferredSize(this.checkBox.getPreferredSize());
-            this.contentPane.add(checkBoxDummy, checkBoxConstraints);
+        if (viewSettings.isShowingPropositionIndentations()
+                || viewSettings.isShowingRelations() && this.represented.getSuperOrdinatedRelation() == null) {
+            // add check box (or placeholder with same width)
+            final GridBagConstraints checkBoxConstraints = new GridBagConstraints();
+            checkBoxConstraints.gridx = 0;
+            checkBoxConstraints.gridy = 1;
+            if (this.represented.getPartBeforeArrow() == null) {
+                this.checkBox.setName("Check Box");
+                this.contentPane.add(this.checkBox, checkBoxConstraints);
+            } else {
+                // a part-after-arrow cannot be selected for merging/indenting with other propositions or including in relations
+                final JPanel checkBoxDummy = new JPanel(null);
+                checkBoxDummy.setPreferredSize(this.checkBox.getPreferredSize());
+                this.contentPane.add(checkBoxDummy, checkBoxConstraints);
+            }
         }
 
         this.labelField = this.initLabel(viewSettings);

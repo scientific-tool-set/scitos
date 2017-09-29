@@ -26,6 +26,8 @@ public interface IAnalysisViewSettings {
 
     /** Preset: showing all details. */
     IAnalysisViewSettings SHOW_ALL = new ReadOnlyViewSettings(true, true, true, true, true, true);
+    /** Preset: showing all details. */
+    IAnalysisViewSettings HIDE_ALL = new ReadOnlyViewSettings(false, false, false, false, false, false);
     /** Preset: syntactical analysis. */
     IAnalysisViewSettings SYNTACTICAL_ANALYSIS = new ReadOnlyViewSettings(true, true, false, true, true, false);
     /** Preset: semantical analysis. */

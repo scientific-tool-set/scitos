@@ -538,7 +538,11 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
      * @see #refresh()
      */
     void applyViewPreset(final IAnalysisViewSettings preset) {
-        this.viewSettings.applyViewPreset(preset);
+        if (this.viewSettings.matchesPreset(preset)) {
+            this.viewSettings.applyViewPreset(IAnalysisViewSettings.HIDE_ALL);
+        } else {
+            this.viewSettings.applyViewPreset(preset);
+        }
         this.manageViewMenuOptions();
         this.manageToolBarItems();
         this.refresh();

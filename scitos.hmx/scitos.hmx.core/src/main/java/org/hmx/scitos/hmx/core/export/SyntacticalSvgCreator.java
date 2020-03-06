@@ -36,7 +36,7 @@ import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.ClauseItem.Style;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

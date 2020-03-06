@@ -29,6 +29,8 @@ import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionReference;
 
 /**
  * Element in a {@link Pericope}, consisting of {@link ClauseItem}s, a label text, translations for the syntactical and semantical analysis, and
@@ -49,7 +51,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
     /** The identifying label. */
     private String label;
     /** The syntactical indentation function. */
-    private SyntacticalFunction function;
+    private SyntacticalFunctionReference function;
     /** The syntactical translation text. */
     private String synTranslation;
     /** The semantical translation text. */
@@ -134,7 +136,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      * Getter for the indentation function (related to its parent {@link Proposition}).
      */
     @Override
-    public SyntacticalFunction getFunction() {
+    public SyntacticalFunctionReference getFunction() {
         return this.function;
     }
 
@@ -142,7 +144,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      * Setter for the indentation function (related to its parent {@link Proposition}).
      */
     @Override
-    public void setFunction(final SyntacticalFunction syntacticalFunction) {
+    public void setFunction(final SyntacticalFunctionReference syntacticalFunction) {
         this.function = syntacticalFunction;
     }
 
@@ -267,7 +269,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
     /**
      * Getter for this element's first part. That might be this {@link Proposition} if no {@code partBeforeArrow} exists or the first non-{@code null}
      * {@code partBeforeArrow}.
-     * 
+     *
      * @return this element's first non-{@code null} {@code partBeforeArrow} or a self-reference
      */
     public Proposition getFirstPart() {
@@ -280,7 +282,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
     /**
      * Getter for this element's last part. That might be this {@link Proposition} if no {@code partAfterArrow} exists or the last non-{@code null}
      * {@code partAfterArrow}.
-     * 
+     *
      * @return this element's last non-{@code null} {@code partAfterArrow} or a self-reference
      */
     public Proposition getLastPart() {

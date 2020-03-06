@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2017 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -17,18 +17,22 @@
    along with SciToS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.hmx.scitos.hmx.domain.model;
-
-import java.io.Serializable;
+package org.hmx.scitos.hmx.domain.model.originlanguage;
 
 import org.hmx.scitos.domain.util.ComparisonUtil;
+import org.hmx.scitos.hmx.domain.model.ClauseItem;
+import org.hmx.scitos.hmx.domain.model.Proposition;
 
 /**
  * Single function or group of functions in the syntactical analysis. Either for a {@link ClauseItem} in its containing {@link Proposition}, or for a
  * subordinated (i.e. indented) {@link Proposition} to its {@code parent} {@link Proposition}.
+ *
+ * @param <R> reference type
  */
-public abstract class AbstractSyntacticalFunctionElement implements Serializable {
+public abstract class AbstractSyntacticalElement<R extends AbstractSyntacticalElementReference> {
 
+    /** Internal reference for matching this element to its equivalent in another display profile. */
+    private final R reference;
     /** Full identifier for this function, displayed for selection in the syntactical analysis. */
     private final String name;
     /** More elaborate description what this syntactical function represents. */
@@ -37,14 +41,26 @@ public abstract class AbstractSyntacticalFunctionElement implements Serializable
     /**
      * Constructor: setting the name and description to the given values to achieve immutability.
      *
+     * @param reference
+     *            display language independent reference to this syntactical function/function group
      * @param name
      *            the full identifier displayed when selecting this function in the syntactical analysis
      * @param description
      *            the description of this function's meaning
      */
-    protected AbstractSyntacticalFunctionElement(final String name, final String description) {
+    protected AbstractSyntacticalElement(final R reference, final String name, final String description) {
+        this.reference = reference;
         this.name = name;
         this.description = description;
+    }
+
+    /**
+     * Getter for the display language independent reference to this syntactical function.
+     *
+     * @return the reference
+     */
+    public R getReference() {
+        return this.reference;
     }
 
     /**
@@ -67,7 +83,7 @@ public abstract class AbstractSyntacticalFunctionElement implements Serializable
 
     @Override
     public int hashCode() {
-        return this.name.hashCode();
+        return this.reference.hashCode();
     }
 
     @Override
@@ -75,10 +91,12 @@ public abstract class AbstractSyntacticalFunctionElement implements Serializable
         if (this == otherObj) {
             return true;
         }
-        if (!(otherObj instanceof AbstractSyntacticalFunctionElement)) {
+        if (!(otherObj instanceof AbstractSyntacticalElement)) {
             return false;
         }
-        final AbstractSyntacticalFunctionElement otherFunction = (AbstractSyntacticalFunctionElement) otherObj;
-        return this.name.equals(otherFunction.name) && ComparisonUtil.isNullOrEmptyAwareEqual(this.description, otherFunction.description);
+        final AbstractSyntacticalElement<?> otherFunction = (AbstractSyntacticalElement) otherObj;
+        return this.reference.equals(otherFunction.reference)
+                && this.name.equals(otherFunction.name)
+                && ComparisonUtil.isNullOrEmptyAwareEqual(this.description, otherFunction.description);
     }
 }

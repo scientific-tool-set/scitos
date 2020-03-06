@@ -40,7 +40,7 @@ import javax.swing.text.StyledDocument;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.ClauseItem.Style;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
 import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.view.ContextMenuBuilder;

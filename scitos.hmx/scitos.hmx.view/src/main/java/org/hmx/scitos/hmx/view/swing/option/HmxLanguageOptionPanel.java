@@ -34,10 +34,10 @@ import net.java.dev.designgridlayout.IHideable;
 
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.MessageHandler.MessageType;
@@ -134,7 +134,7 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
         }
         for (final LanguageModel singleModel : this.languagePanel.getUserModels()) {
             final Set<String> codes = new HashSet<String>();
-            for (final List<AbstractSyntacticalFunctionElement> singleTopLevelGroup : singleModel.provideFunctions()) {
+            for (final List<AbstractSyntacticalElement> singleTopLevelGroup : singleModel.provideFunctions()) {
                 if (this.containsDuplicateFunctionCode(singleTopLevelGroup, codes)) {
                     final String message = MessageFormat.format(HmxMessage.PREFERENCES_LANGUAGEFUNCTIONS_CODE_UNIQUE.get(), singleModel.getName());
                     MessageHandler.showMessage(message, HmxMessage.PREFERENCES_LANGUAGE.get(), MessageType.WARN);
@@ -154,8 +154,8 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
      *            collection of already configured {@code code} values to add the checked values to
      * @return if the {@code codes} collection already contained an encountered {@link SyntacticalFunction}'s {@code code} value
      */
-    private boolean containsDuplicateFunctionCode(final List<AbstractSyntacticalFunctionElement> functionElements, final Set<String> codes) {
-        for (final AbstractSyntacticalFunctionElement singleElement : functionElements) {
+    private boolean containsDuplicateFunctionCode(final List<AbstractSyntacticalElement> functionElements, final Set<String> codes) {
+        for (final AbstractSyntacticalElement singleElement : functionElements) {
             if (singleElement instanceof SyntacticalFunction) {
                 // try to add code to duplicate-preventing set
                 if (!codes.add(((SyntacticalFunction) singleElement).getCode())) {

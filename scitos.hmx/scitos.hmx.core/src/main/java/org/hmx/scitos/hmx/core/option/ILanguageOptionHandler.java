@@ -21,7 +21,7 @@ package org.hmx.scitos.hmx.core.option;
 
 import java.util.List;
 
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 
 /**
  * Interface of an element providing access to the available {@link LanguageModel}s, separated by their modifiability (i.e. either only unmodifiable

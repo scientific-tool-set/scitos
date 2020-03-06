@@ -43,7 +43,7 @@ import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.Proposition;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
 import org.hmx.scitos.hmx.view.ContextMenuFactory;
 import org.hmx.scitos.hmx.view.IPericopeView;
 import org.hmx.scitos.hmx.view.swing.components.IAnalysisViewSettings;

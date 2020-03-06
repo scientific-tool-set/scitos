@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2017 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -17,27 +17,27 @@
    along with SciToS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.hmx.scitos.hmx.domain.model;
+package org.hmx.scitos.hmx.domain.model.originlanguage;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.hmx.scitos.domain.util.ComparisonUtil;
-
 /**
  * Representation of a group of functions in the syntactical analysis.
- * 
+ *
  * @see SyntacticalFunction
  */
-public class SyntacticalFunctionGroup extends AbstractSyntacticalFunctionElement {
+public class SyntacticalFunctionGroup extends AbstractSyntacticalElement<SyntacticalFunctionGroupReference> {
 
     /** Functions belonging to this function group. */
-    private final List<AbstractSyntacticalFunctionElement> subFunctions;
+    private final List<AbstractSyntacticalElement<?>> subFunctions;
 
     /**
      * Constructor: setting all fields to the given values to achieve immutability.
      *
+     * @param reference
+     *            display language independent reference to this syntactical function
      * @param name
      *            the full identifier displayed in the syntactical analysis
      * @param description
@@ -45,10 +45,9 @@ public class SyntacticalFunctionGroup extends AbstractSyntacticalFunctionElement
      * @param subFunctions
      *            the functions/function groups belonging to this function group
      */
-    public SyntacticalFunctionGroup(final String name, final String description,
-            final List<? extends AbstractSyntacticalFunctionElement> subFunctions) {
-        super(name, description);
-        this.subFunctions = Collections.unmodifiableList(new ArrayList<AbstractSyntacticalFunctionElement>(subFunctions));
+    public SyntacticalFunctionGroup(final SyntacticalFunctionGroupInfo info, final List<? extends AbstractSyntacticalElement<?>> subFunctions) {
+        super(info.getReference(), info.getName(), info.getDescription());
+        this.subFunctions = new ArrayList<AbstractSyntacticalElement<?>>(subFunctions);
     }
 
     /**
@@ -56,20 +55,8 @@ public class SyntacticalFunctionGroup extends AbstractSyntacticalFunctionElement
      *
      * @return the subordinated functions/function groups
      */
-    public List<AbstractSyntacticalFunctionElement> getSubFunctions() {
-        return this.subFunctions;
-    }
-
-    @Override
-    public boolean equals(final Object otherObj) {
-        if (!super.equals(otherObj)) {
-            return false;
-        }
-        if (!(otherObj instanceof SyntacticalFunctionGroup)) {
-            return false;
-        }
-        final SyntacticalFunctionGroup otherFunction = (SyntacticalFunctionGroup) otherObj;
-        return ComparisonUtil.isNullOrEmptyAwareEqual(this.subFunctions, otherFunction.subFunctions);
+    public List<AbstractSyntacticalElement<?>> getSubFunctions() {
+        return Collections.unmodifiableList(this.subFunctions);
     }
 
     @Override

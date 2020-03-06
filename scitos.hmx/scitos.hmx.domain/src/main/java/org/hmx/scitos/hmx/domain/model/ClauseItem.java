@@ -25,6 +25,7 @@ import java.io.Serializable;
 import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.ICommentable;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionReference;
 
 /**
  * Clause item containing a part of the origin text and its syntactical function for the {@link Proposition} it is a part of.
@@ -56,7 +57,7 @@ public final class ClauseItem implements ICanHaveSyntacticalFunction, ICommentab
     /** The contained origin text part. */
     private String originText;
     /** The syntactical function in the proposition. */
-    private SyntacticalFunction function;
+    private SyntacticalFunctionReference function;
     /** The applied font style. */
     private Style fontStyle = Style.PLAIN;
     /** The additional comment's text. */
@@ -114,12 +115,12 @@ public final class ClauseItem implements ICanHaveSyntacticalFunction, ICommentab
     }
 
     @Override
-    public SyntacticalFunction getFunction() {
+    public SyntacticalFunctionReference getFunction() {
         return this.function;
     }
 
     @Override
-    public void setFunction(final SyntacticalFunction syntacticalFunction) {
+    public void setFunction(final SyntacticalFunctionReference syntacticalFunction) {
         this.function = syntacticalFunction;
     }
 
@@ -190,7 +191,8 @@ public final class ClauseItem implements ICanHaveSyntacticalFunction, ICommentab
             return false;
         }
         final ClauseItem otherItem = (ClauseItem) otherObj;
-        return this.fontStyle == otherItem.fontStyle && this.originText.equals(otherItem.originText)
+        return this.fontStyle == otherItem.fontStyle
+                && this.originText.equals(otherItem.originText)
                 && ComparisonUtil.isNullAwareEqual(this.function, otherItem.function)
                 && ComparisonUtil.isNullOrEmptyAwareEqual(this.comment, otherItem.comment);
     }

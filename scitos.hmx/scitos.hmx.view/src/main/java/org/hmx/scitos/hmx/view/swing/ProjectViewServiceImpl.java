@@ -27,7 +27,7 @@ import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.hmx.core.ModelHandlerImpl;
 import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
 import org.hmx.scitos.hmx.core.option.HmxRelationOption;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.RelationModel;
 import org.hmx.scitos.hmx.view.swing.components.SingleProjectView;

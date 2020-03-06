@@ -31,6 +31,9 @@ import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionReference;
 
 /**
  * The main document of the SciToS module HermeneutiX, containing all top level {@link Proposition}s and some general information like origin
@@ -71,8 +74,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      *            the {@link Font} to apply for the origin text
      */
     public void init(final String originText, final LanguageModel language, final Font originTextFont) {
-        this.languageModel = new LanguageModel(language.getName(), language.isLeftToRightOriented());
-        this.languageModel.addAll(language.provideFunctions());
+        this.languageModel = language;
         this.setFont(originTextFont);
         this.text.clear();
         if (originText != null) {
@@ -128,11 +130,11 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
                 continue;
             }
             final List<ClauseItem> items = new ArrayList<ClauseItem>();
-            for (String singleItemText : originTextPart.split("\t")) {
+            for (final String singleItemText : originTextPart.split("\t")) {
                 // empty items should be ignored
-                singleItemText = singleItemText.trim().replaceAll("\\s+", " ");
-                if (!singleItemText.isEmpty()) {
-                    items.add(new ClauseItem(null, singleItemText));
+                final String trimmedItemText = singleItemText.trim().replaceAll("\\s+", " ");
+                if (!trimmedItemText.isEmpty()) {
+                    items.add(new ClauseItem(null, trimmedItemText));
                 }
             }
             propositions.add(new Proposition(this, items));
@@ -235,7 +237,16 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     }
 
     /**
-     * Getter for the origin text's language.
+     * Getter for the origin text language's syntactical model.
+     *
+     * @return the language model
+     */
+    public LanguageModel getLanguageModel() {
+        return this.languageModel;
+    }
+
+    /**
+     * Getter for the origin text language's name.
      *
      * @return the language of the origin text
      */
@@ -253,9 +264,14 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     }
 
     @Override
-    public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
-        return this.languageModel == null ? Collections.<List<AbstractSyntacticalFunctionElement>>emptyList() : this.languageModel
+    public List<List<AbstractSyntacticalElement<?>>> provideFunctions() {
+        return this.languageModel == null ? Collections.<List<AbstractSyntacticalElement<?>>>emptyList() : this.languageModel
                 .provideFunctions();
+    }
+
+    @Override
+    public String getSyntacticalFunctionCodeByReference(final SyntacticalFunctionReference reference) {
+        return this.languageModel == null ? "" : this.languageModel.getSyntacticalFunctionCodeByReference(reference);
     }
 
     /**
@@ -421,7 +437,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
             throw new IllegalStateException("Model has not been initialized yet.");
         }
         final Pericope cloned = new Pericope();
-        cloned.init(null, this.languageModel, new Font(this.font.getAttributes()));
+        cloned.init(null, this.languageModel.clone(), new Font(this.font.getAttributes()));
         for (final Proposition singleProposition : this.text) {
             final Proposition clonedProposition = singleProposition.clone();
             clonedProposition.setParent(cloned);

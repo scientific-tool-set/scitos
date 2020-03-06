@@ -43,7 +43,7 @@ import net.java.dev.designgridlayout.DesignGridLayout;
 import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxLanguageOption;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.MessageHandler.MessageType;
@@ -66,8 +66,6 @@ public final class LanguageConfigPanel extends JPanel {
     private final JButton discardFormChangesButton = new JButton(HmxMessage.PREFERENCES_LANGUAGE_DISCARD.get());
     /** Labels associated with form fields that should be enabled/disabled with their respective inputs. */
     private final List<JLabel> formLabels = new ArrayList<JLabel>(3);
-    /** Form input field: name of a language model. */
-    private final JTextField languageNameInput = new JTextField(new Validation(128), null, 0);
     /** Form input field: indication whether the origin text is left-to-right oriented. */
     private final JRadioButton leftToRightButton = new JRadioButton(HmxMessage.PREFERENCES_LANGUAGE_ORIENTATION_LTR.get());
     /** Form input field: indication whether the origin text is right-to-left oriented. */
@@ -81,7 +79,7 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Constructor.
-     * 
+     *
      * @param options
      *            the global preferences handler providing the configurable language models
      */
@@ -115,12 +113,10 @@ public final class LanguageConfigPanel extends JPanel {
                 LanguageConfigPanel.this.handleTableSelection();
             }
         });
-        this.formLabels.add(new JLabel(HmxMessage.PREFERENCES_LANGUAGE_NAME.get()));
         this.formLabels.add(new JLabel(HmxMessage.PREFERENCES_LANGUAGE_ORIENTATION.get()));
         this.formLabels.add(new JLabel(HmxMessage.PREFERENCES_LANGUAGE_FONTS.get()));
-        layout.row().grid(this.formLabels.get(0)).add(this.languageNameInput, 2);
-        layout.row().grid(this.formLabels.get(1)).add(this.leftToRightButton, this.rightToLeftButton);
-        layout.row().grid(this.formLabels.get(2)).add(this.recommendedFontsInput, 2);
+        layout.row().grid(this.formLabels.get(0)).add(this.leftToRightButton, this.rightToLeftButton);
+        layout.row().grid(this.formLabels.get(1)).add(this.recommendedFontsInput, 2);
         this.orientationButtonGroup.add(this.leftToRightButton);
         this.orientationButtonGroup.add(this.rightToLeftButton);
         this.orientationButtonGroup.setSelected(this.leftToRightButton.getModel(), true);
@@ -129,7 +125,7 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Getter for the current state of the user-defined language models.
-     * 
+     *
      * @return user-defined language models
      */
     public List<LanguageModel> getUserModels() {
@@ -138,7 +134,7 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Getter for the currently selected language model in the respective table.
-     * 
+     *
      * @return selected language model
      */
     public LanguageModel getSelectedModel() {
@@ -148,16 +144,16 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Check whether the form is currently active and used for changing a selected language model.
-     * 
+     *
      * @return whether the form is currently active and used for changing a selected language model
      */
     public boolean isInEditMode() {
-        return this.languageNameInput.isEnabled();
+        return this.recommendedFontsInput.isEnabled();
     }
 
     /**
      * Check whether the currently selected language model (if one is selected) is a user-defined one.
-     * 
+     *
      * @return whether a user-defined language model is selected
      */
     public boolean isSelectedModelUserDefined() {
@@ -167,7 +163,7 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Register the given listener to be notified whenever the selected language model changed.
-     * 
+     *
      * @param listener
      *            the listener to notify
      */
@@ -177,7 +173,7 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Unregister the given listener from notifications regarding changes to the selected language model.
-     * 
+     *
      * @param listener
      *            the listener to no longer notify
      * @return whether the listener was registered before and has been removed successfully
@@ -243,20 +239,16 @@ public final class LanguageConfigPanel extends JPanel {
      */
     void handleTableSelection() {
         final TreePath selectedPath = this.treeTable.getSelectedPath();
-        final String languageName;
         final boolean leftToRightOriented;
         final String recommendedFonts;
         if (selectedPath == null) {
-            languageName = "";
             leftToRightOriented = true;
             recommendedFonts = "";
         } else {
             final LanguageModel selectedLanguage = this.languageTreeTableModel.getModelForPath(selectedPath);
-            languageName = selectedLanguage.getName();
             leftToRightOriented = selectedLanguage.isLeftToRightOriented();
             recommendedFonts = CollectionUtil.toString(selectedLanguage.getRecommendedFonts(), "; ");
         }
-        this.languageNameInput.setText(languageName);
         this.orientationButtonGroup.setSelected((leftToRightOriented ? this.leftToRightButton : this.rightToLeftButton).getModel(), true);
         this.recommendedFontsInput.setText(recommendedFonts);
         this.handleFormAvailability(false);
@@ -265,26 +257,19 @@ public final class LanguageConfigPanel extends JPanel {
 
     /** Apply the form's contents to the associated language model, disable the form again, and trigger any registered action listeners. */
     void applyFormChanges() {
-        final String languageName = this.languageNameInput.getText().trim();
-        if (languageName.isEmpty()) {
-            MessageHandler.showMessage(HmxMessage.PREFERENCES_LANGUAGE_NAME_MANDATORY.get(), HmxMessage.PREFERENCES_LANGUAGE_NAME.get(),
-                    MessageType.WARN);
-            return;
-        }
         final boolean leftToRightOriented = this.leftToRightButton.isSelected();
         final String[] recommendedFonts = this.recommendedFontsInput.getText().trim().split("([\\s]*[;][\\s]*)+");
         final List<String> fontList = new ArrayList<String>(Arrays.asList(recommendedFonts));
         // remove empty entry if there is one
         fontList.remove("");
         final LanguageModel model = this.getSelectedModel();
-        model.setName(languageName);
         model.setLeftToRightOriented(leftToRightOriented);
         model.setRecommendedFonts(fontList);
         this.fireSelectedModelRowUpdated();
         this.handleFormAvailability(false);
         this.triggerActionListeners();
     }
-    
+
     /** Trigger the update of the selected table row to incorporate any recent changes. */
     void fireSelectedModelRowUpdated() {
         final LanguageModel model = this.getSelectedModel();
@@ -293,7 +278,7 @@ public final class LanguageConfigPanel extends JPanel {
 
     /**
      * Make sure the correct components are enabled/disabled according to the given flag.
-     * 
+     *
      * @param enableForm
      *            if the form should be enabled for editing (and the above table disabled) or vice versa
      */
@@ -307,7 +292,6 @@ public final class LanguageConfigPanel extends JPanel {
         for (final JLabel singleLabel : this.formLabels) {
             singleLabel.setEnabled(enableForm);
         }
-        this.languageNameInput.setEnabled(enableForm);
         this.leftToRightButton.setEnabled(enableForm);
         this.rightToLeftButton.setEnabled(enableForm);
         this.recommendedFontsInput.setEnabled(enableForm);

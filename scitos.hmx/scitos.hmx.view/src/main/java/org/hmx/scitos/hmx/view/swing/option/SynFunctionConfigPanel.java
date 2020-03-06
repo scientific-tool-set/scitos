@@ -41,7 +41,7 @@ import net.java.dev.designgridlayout.DesignGridLayout;
 
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
 import org.hmx.scitos.hmx.view.swing.option.SynFunctionTreeModel.TreeTableRow;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.MessageHandler;
@@ -127,7 +127,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
     }
 
     @Override
-    public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
+    public List<List<AbstractSyntacticalElement>> provideFunctions() {
         return this.functionModel.provideFunctions();
     }
 

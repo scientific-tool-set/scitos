@@ -34,7 +34,7 @@ import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.ClauseItem.Style;
 import org.hmx.scitos.hmx.domain.model.Pericope;
@@ -42,8 +42,8 @@ import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.hmx.scitos.view.ContextMenuBuilder;
 import org.hmx.scitos.view.ContextMenuBuilder.CMenu;
 import org.hmx.scitos.view.ContextMenuBuilder.CMenuItem;
@@ -188,7 +188,7 @@ public final class ContextMenuFactory {
             final HmxMessage menuTextKey, final ICanHaveSyntacticalFunction target, final boolean indentProp) {
         final CMenu functionSubMenu = popupMenu.addMenu(menuTextKey.get());
         boolean addSeparator = false;
-        for (final List<AbstractSyntacticalFunctionElement> singleGroup : viewReference.getModelHandler().getModel().provideFunctions()) {
+        for (final List<AbstractSyntacticalElement> singleGroup : viewReference.getModelHandler().getModel().provideFunctions()) {
             if (addSeparator) {
                 functionSubMenu.addSeparator();
             } else {
@@ -213,8 +213,8 @@ public final class ContextMenuFactory {
      *            if the proposition should be indented under checked
      */
     private static void addSyntacticalFunctionEntries(final CMenu changeFunctionMenu, final ICanHaveSyntacticalFunction target,
-            final List<AbstractSyntacticalFunctionElement> functions, final IPericopeView viewReference, final boolean indentProp) {
-        for (final AbstractSyntacticalFunctionElement singleFunction : functions) {
+            final List<AbstractSyntacticalElement> functions, final IPericopeView viewReference, final boolean indentProp) {
+        for (final AbstractSyntacticalElement singleFunction : functions) {
             final String description = singleFunction.getDescription();
             if (singleFunction instanceof SyntacticalFunction) {
                 final CMenuItem menuEntry = changeFunctionMenu.addItem(singleFunction.getName(), new CMenuItemAction() {

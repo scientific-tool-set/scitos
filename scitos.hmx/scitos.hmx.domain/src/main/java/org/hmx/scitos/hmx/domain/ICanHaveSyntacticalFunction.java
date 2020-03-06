@@ -19,7 +19,7 @@
 
 package org.hmx.scitos.hmx.domain;
 
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionReference;
 
 /** Indicator interface for a model element, that can have a syntactical function in its super ordinated structure. */
 public interface ICanHaveSyntacticalFunction {
@@ -29,7 +29,7 @@ public interface ICanHaveSyntacticalFunction {
      *
      * @return the syntactical function
      */
-    SyntacticalFunction getFunction();
+    SyntacticalFunctionReference getFunction();
 
     /**
      * Setter for the syntactical function.
@@ -37,5 +37,5 @@ public interface ICanHaveSyntacticalFunction {
      * @param syntacticalFunction
      *            the syntactical function to set
      */
-    void setFunction(final SyntacticalFunction syntacticalFunction);
+    void setFunction(final SyntacticalFunctionReference syntacticalFunction);
 }

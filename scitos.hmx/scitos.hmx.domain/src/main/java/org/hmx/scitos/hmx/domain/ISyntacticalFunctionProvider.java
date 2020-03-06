@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2016-2017 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -21,9 +21,10 @@ package org.hmx.scitos.hmx.domain;
 
 import java.util.List;
 
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionReference;
 
 /**
  * Generic interface of a model element providing access to the hierarchical structure of {@link SyntacticalFunctionGroup}s and
@@ -37,5 +38,13 @@ public interface ISyntacticalFunctionProvider {
      *
      * @return all top level syntactical functions (including function groups, that contain one or more functions/groups and cannot be selected)
      */
-    List<List<AbstractSyntacticalFunctionElement>> provideFunctions();
+    List<List<AbstractSyntacticalElement<?>>> provideFunctions();
+
+    /**
+     * Provide the code to display for the given syntactical function reference.
+     *
+     * @param reference reference to a syntactical function
+     * @return the short identifier (i.e. "code" value) to display
+     */
+    String getSyntacticalFunctionCodeByReference(SyntacticalFunctionReference reference);
 }

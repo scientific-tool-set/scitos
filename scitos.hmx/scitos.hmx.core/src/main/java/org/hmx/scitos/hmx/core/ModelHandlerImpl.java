@@ -41,7 +41,7 @@ import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
 
 /**
  * utility class to manage all possible changes in the model.
@@ -854,7 +854,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
 
     @Override
     public void mergeWithOtherPericope(final Pericope otherPericope, final boolean inFront) throws HmxException {
-        if (!this.getModel().getLanguage().equals(otherPericope.getLanguage())) {
+        if (!this.getModel().getLanguageModel().equals(otherPericope.getLanguageModel())) {
             throw new HmxException(HmxMessage.ERROR_MERGE_PERICOPES_LANGUAGE_CONFLICT);
         }
         this.getModel().addNewPropositions(otherPericope.getText(), inFront);

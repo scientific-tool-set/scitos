@@ -29,10 +29,10 @@ import javax.swing.tree.TreePath;
 
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.ILanguageOptionHandler;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,10 +62,10 @@ public class LanguageTreeModelTest {
      */
     @BeforeClass
     public static void initFunctionProvider() {
-        final List<AbstractSyntacticalFunctionElement> functionsB = new ArrayList<AbstractSyntacticalFunctionElement>(3);
+        final List<AbstractSyntacticalElement> functionsB = new ArrayList<AbstractSyntacticalElement>(3);
         functionsB.add(new SyntacticalFunction("B1", "Function B1", false, null));
         functionsB.add(new SyntacticalFunction("B2", "Function B2", true, "Some extra information"));
-        final List<AbstractSyntacticalFunctionElement> groupB3 = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        final List<AbstractSyntacticalElement> groupB3 = new ArrayList<AbstractSyntacticalElement>(2);
         groupB3.add(new SyntacticalFunction("B31", "Function B31", true, "some hint"));
         groupB3.add(new SyntacticalFunction("B32", "Function B32", false, null));
         functionsB.add(new SyntacticalFunctionGroup("Group B3", "Group B3's hint", groupB3));

@@ -21,7 +21,6 @@ package org.hmx.scitos.hmx.core;
 
 import java.awt.Font;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -36,17 +35,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.domain.model.RelationModel;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalDisplayProfile;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -94,7 +94,7 @@ public class ModelParseServiceImplTest {
         modelHandler.setClauseItemFontStyle(propositions.get(0).getItems().get(1), ClauseItem.Style.BOLD);
         modelHandler.setClauseItemFontStyle(propositions.get(0).getItems().get(2), ClauseItem.Style.ITALIC);
         modelHandler.setClauseItemFontStyle(propositions.get(0).getItems().get(3), ClauseItem.Style.BOLD_ITALIC);
-        final List<List<AbstractSyntacticalFunctionElement>> functions = model.provideFunctions();
+        final List<List<AbstractSyntacticalElement>> functions = model.provideFunctions();
         modelHandler.indentPropositionUnderParent(propositions.get(1), propositions.get(2), (SyntacticalFunction) functions.get(0).get(1));
         modelHandler.indentPropositionUnderParent(propositions.get(0), propositions.get(2), (SyntacticalFunction) functions.get(0).get(2));
         modelHandler.mergePropositions(propositions.get(5), propositions.get(2));
@@ -124,7 +124,7 @@ public class ModelParseServiceImplTest {
         model.init("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12", language, new Font("Arial", Font.PLAIN, 17));
         final HmxModelHandler modelHandler = new ModelHandlerImpl(model);
         final List<Proposition> propositions = model.getFlatText();
-        final List<List<AbstractSyntacticalFunctionElement>> functions = model.provideFunctions();
+        final List<List<AbstractSyntacticalElement>> functions = model.provideFunctions();
         modelHandler.setSyntacticalFunction(propositions.get(0).getItems().get(0), (SyntacticalFunction) functions.get(0).get(4));
         modelHandler.setSyntacticalFunction(propositions.get(1).getItems().get(0), (SyntacticalFunction) functions.get(1).get(0));
         modelHandler.setSyntacticalFunction(propositions.get(2).getItems().get(0), (SyntacticalFunction) functions.get(3).get(0));
@@ -252,6 +252,31 @@ public class ModelParseServiceImplTest {
     }
 
     /**
+     * Test: of the system {@link LanguageModel} retrieval.
+     *
+     * @throws HmxException
+     *             internal error while looking up or parsing the system defined models
+     */
+    @Test
+    public void testGetSystemLanguageModels() throws HmxException {
+        // parse this model from the internal xml file
+        final List<LanguageModel> systemModels = ModelParseServiceImplTest.parseService.getSystemLanguageModels();
+        // there should "Greek" and "Hebrew"
+        Assert.assertEquals(2, systemModels.size());
+        // both should have an "English" and "German" display profile
+        Assert.assertEquals(2, systemModels.get(0).getDisplayProfiles().size());
+        Assert.assertEquals(2, systemModels.get(1).getDisplayProfiles().size());
+        // the default profiles should be "English"
+        final SyntacticalDisplayProfile firstDefaultProfile = systemModels.get(0).getDefaultDisplayProfile();
+        final SyntacticalDisplayProfile secondDefaultProfile = systemModels.get(1).getDefaultDisplayProfile();
+        Assert.assertEquals(Locale.ENGLISH, firstDefaultProfile.getLocale());
+        Assert.assertEquals(Locale.ENGLISH, secondDefaultProfile.getLocale());
+        // ensure that there is something in the profiles
+        Assert.assertFalse(firstDefaultProfile.provideFunctions().isEmpty());
+        Assert.assertFalse(secondDefaultProfile.provideFunctions().isEmpty());
+    }
+
+    /**
      * Test: of the {@code parseXmlFromLanguageModel()} and {@code parseLanguageModelsFromXml()} methods.
      *
      * @throws HmxException
@@ -280,58 +305,6 @@ public class ModelParseServiceImplTest {
     }
 
     /**
-     * Test: of the system {@link LanguageModel} retrieval.
-     *
-     * @throws HmxException
-     *             internal error while looking up or parsing the system defined model
-     */
-    @Test
-    public void testGetSystemLanguageModels() throws HmxException {
-        // Build the default English language model for Greek
-        final LookupLanguageModel model = new LookupLanguageModel("Greek", true);
-        model.add(Arrays.asList(new SyntacticalFunction("Subj", "Subject", false, null), new SyntacticalFunction("S/P", "Subject-Predicate",
-                false, null), new SyntacticalFunction("Voc", "Vocative", false, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("Pred", "Predicate", false, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("C", "Connector", true, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("Attr", "Attribute", false, null)));
-        model.add(Arrays.asList(new SyntacticalFunction("GenO", "Genitive Object", false, null), new SyntacticalFunction("DatO", "Dative Object",
-                false, null), new SyntacticalFunction("AccO", "Accusative Object", false, null), new SyntacticalFunction("PrepO",
-                "Prepositional Object", false, null)));
-        final List<AbstractSyntacticalFunctionElement> groups = new ArrayList<AbstractSyntacticalFunctionElement>(2);
-        for (final String[] groupedType : new String[][] { new String[] { "Complement", "necessary" }, new String[] { "Adjunct", "erasable" } }) {
-            final String type = groupedType[0];
-            final char firstChar = type.charAt(0);
-            final List<AbstractSyntacticalFunctionElement> subTypes = new ArrayList<AbstractSyntacticalFunctionElement>(8);
-            subTypes.add(new SyntacticalFunction("SId" + firstChar, "Subject-Indentification-" + type, false, null));
-            subTypes.add(new SyntacticalFunction("SMan" + firstChar, "Subject-Manner-" + type, false, null));
-            subTypes.add(new SyntacticalFunction("OId" + firstChar, "Object-Indentification-" + type, false, null));
-            subTypes.add(new SyntacticalFunction("OMan" + firstChar, "Object-Manner-" + type, false, null));
-            subTypes.add(new SyntacticalFunction("Loc" + firstChar, "Locale-" + type, false, null));
-            subTypes.add(new SyntacticalFunction("Time" + firstChar, "Time-" + type, false, null));
-            subTypes.add(new SyntacticalFunction("Mod" + firstChar, "Modal-" + type, false, null));
-            final List<SyntacticalFunction> subSubTypes = new ArrayList<SyntacticalFunction>(7);
-            subSubTypes.add(new SyntacticalFunction("Caus" + firstChar, "causal", false, null));
-            subSubTypes.add(new SyntacticalFunction("Cond" + firstChar, "conditional", false, null));
-            subSubTypes.add(new SyntacticalFunction("Cons" + firstChar, "consecutiv", false, null));
-            subSubTypes.add(new SyntacticalFunction("Fin" + firstChar, "final", false, null));
-            subSubTypes.add(new SyntacticalFunction("Conc" + firstChar, "concessiv", false, null));
-            subSubTypes.add(new SyntacticalFunction("Inst" + firstChar, "instrumental", false, null));
-            subSubTypes.add(new SyntacticalFunction("Int" + firstChar, "of interest", false, null));
-            subTypes.add(new SyntacticalFunctionGroup("Causal " + type, null, subSubTypes));
-            groups.add(new SyntacticalFunctionGroup(type, groupedType[1] + ", means\nnot requested by verb", subTypes));
-        }
-        model.add(groups);
-        // parse this model from the internal xml file
-        final List<LanguageModel> systemModels = ModelParseServiceImplTest.parseService.getSystemLanguageModels();
-        // the test xml file contains only this one model
-        Assert.assertEquals(2, systemModels.size());
-        // confirm equality of the expected and retrieved model (step by step to produce helpful test output in case of an error)
-        this.assertLanguageModelEquals(model, systemModels.get(0));
-        // this covers the whole model (including name and text orientation), but does not produce a helpful message to narrow down a potential error
-        Assert.assertEquals(model, systemModels.get(0));
-    }
-
-    /**
      * Check the equality of the provided {@link SyntacticalFunction}s.
      *
      * @param expectedLanguageModel
@@ -341,8 +314,8 @@ public class ModelParseServiceImplTest {
      */
     private void assertLanguageModelEquals(final ISyntacticalFunctionProvider expectedLanguageModel,
             final ISyntacticalFunctionProvider actualLanguageModel) {
-        final List<List<AbstractSyntacticalFunctionElement>> expectedGroups = expectedLanguageModel.provideFunctions();
-        final List<List<AbstractSyntacticalFunctionElement>> actualGroups = actualLanguageModel.provideFunctions();
+        final List<List<AbstractSyntacticalElement>> expectedGroups = expectedLanguageModel.provideFunctions();
+        final List<List<AbstractSyntacticalElement>> actualGroups = actualLanguageModel.provideFunctions();
         final int expectedGroupCount = expectedGroups.size();
         Assert.assertEquals("Number of defined groups differ", expectedGroupCount, actualGroups.size());
         for (int groupIndex = 0; groupIndex < expectedGroupCount; groupIndex++) {
@@ -358,13 +331,13 @@ public class ModelParseServiceImplTest {
      * @param actual
      *            list of {@link SyntacticalFunction}s, as they have been parsed/loaded
      */
-    private void assertFunctionGroupEquals(final List<AbstractSyntacticalFunctionElement> expected,
-            final List<AbstractSyntacticalFunctionElement> actual) {
+    private void assertFunctionGroupEquals(final List<AbstractSyntacticalElement> expected,
+            final List<AbstractSyntacticalElement> actual) {
         final int expectedCount = expected.size();
         Assert.assertEquals("Number of functions differ. (" + expected + " != " + actual + ')', expectedCount, actual.size());
         for (int functionIndex = 0; functionIndex < expectedCount; functionIndex++) {
-            final AbstractSyntacticalFunctionElement expectedElement = expected.get(functionIndex);
-            final AbstractSyntacticalFunctionElement actualElement = actual.get(functionIndex);
+            final AbstractSyntacticalElement expectedElement = expected.get(functionIndex);
+            final AbstractSyntacticalElement actualElement = actual.get(functionIndex);
             if (expectedElement instanceof SyntacticalFunctionGroup && actualElement instanceof SyntacticalFunctionGroup) {
                 this.assertFunctionGroupEquals(((SyntacticalFunctionGroup) expectedElement).getSubFunctions(),
                         ((SyntacticalFunctionGroup) actualElement).getSubFunctions());

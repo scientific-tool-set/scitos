@@ -29,9 +29,9 @@ import javax.swing.tree.TreePath;
 
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,30 +73,30 @@ public class SynFunctionTreeModelTest {
      */
     @BeforeClass
     public static void initFunctionProvider() {
-        final List<AbstractSyntacticalFunctionElement> groupA = new ArrayList<AbstractSyntacticalFunctionElement>(3);
+        final List<AbstractSyntacticalElement> groupA = new ArrayList<AbstractSyntacticalElement>(3);
         groupA.add(new SyntacticalFunction("A1", "Function A1", false, null));
         groupA.add(new SyntacticalFunction("A2", "Function A2", true, "Some extra information"));
         groupA.add(new SyntacticalFunction("A3", "Function A3", false, "Other description"));
-        final List<AbstractSyntacticalFunctionElement> groupB = Collections.emptyList();
-        final List<AbstractSyntacticalFunctionElement> groupC = new ArrayList<AbstractSyntacticalFunctionElement>(4);
-        final List<AbstractSyntacticalFunctionElement> groupC1 = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        final List<AbstractSyntacticalElement> groupB = Collections.emptyList();
+        final List<AbstractSyntacticalElement> groupC = new ArrayList<AbstractSyntacticalElement>(4);
+        final List<AbstractSyntacticalElement> groupC1 = new ArrayList<AbstractSyntacticalElement>(2);
         groupC1.add(new SyntacticalFunction("C11", "Function C11", true, "some hint"));
         groupC1.add(new SyntacticalFunction("C12", "Function C12", false, null));
         groupC.add(new SyntacticalFunctionGroup("Group C1", "Group C1's hint", groupC1));
         groupC.add(new SyntacticalFunction("C2", "Function C2", false, "text"));
-        groupC.add(new SyntacticalFunctionGroup("Group C3", "", Collections.<AbstractSyntacticalFunctionElement>emptyList()));
-        final List<AbstractSyntacticalFunctionElement> groupC41 = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        groupC.add(new SyntacticalFunctionGroup("Group C3", "", Collections.<AbstractSyntacticalElement>emptyList()));
+        final List<AbstractSyntacticalElement> groupC41 = new ArrayList<AbstractSyntacticalElement>(2);
         groupC41.add(new SyntacticalFunction("C411", "Function C411", false, "..."));
         groupC41.add(new SyntacticalFunction("C412", "Function C412", true, ""));
         final List<SyntacticalFunctionGroup> groupC4 = Collections.singletonList(new SyntacticalFunctionGroup("Group C41", "Something", groupC41));
         groupC.add(new SyntacticalFunctionGroup("Group C4", null, groupC4));
 
-        final List<List<AbstractSyntacticalFunctionElement>> functionGroups = Arrays.asList(groupA, groupB, groupC);
+        final List<List<AbstractSyntacticalElement>> functionGroups = Arrays.asList(groupA, groupB, groupC);
 
         SynFunctionTreeModelTest.functionProvider = new ISyntacticalFunctionProvider() {
 
             @Override
-            public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
+            public List<List<AbstractSyntacticalElement>> provideFunctions() {
                 return functionGroups;
             }
         };
@@ -124,8 +124,8 @@ public class SynFunctionTreeModelTest {
      */
     @Test
     public void testProvideFunctions() {
-        final List<List<AbstractSyntacticalFunctionElement>> expectedElements = SynFunctionTreeModelTest.functionProvider.provideFunctions();
-        final List<List<AbstractSyntacticalFunctionElement>> actualElements = this.model.provideFunctions();
+        final List<List<AbstractSyntacticalElement>> expectedElements = SynFunctionTreeModelTest.functionProvider.provideFunctions();
+        final List<List<AbstractSyntacticalElement>> actualElements = this.model.provideFunctions();
         // ensure the ISyntacticalFunctionProvider's provideFunctions() method returns an equal copy of the prepared syntactical functions
         Assert.assertNotSame(expectedElements, actualElements);
         Assert.assertEquals(expectedElements, actualElements);

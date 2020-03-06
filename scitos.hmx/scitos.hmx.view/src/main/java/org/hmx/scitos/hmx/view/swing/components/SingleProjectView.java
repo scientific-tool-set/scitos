@@ -39,7 +39,7 @@ import org.hmx.scitos.hmx.core.ILanguageModelProvider;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;

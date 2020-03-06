@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2017 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -17,21 +17,28 @@
    along with SciToS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.hmx.scitos.hmx.core;
+package org.hmx.scitos.hmx.domain.model.originlanguage;
 
-import java.util.Map;
-
-import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
+import java.util.UUID;
 
 /**
- * Generic interface of an element providing access to the available {@link LanguageModel}s.
+ * Reference to a syntactical function.
  */
-public interface ILanguageModelProvider {
+public class SyntacticalFunctionReference extends AbstractSyntacticalElementReference {
 
     /**
-     * Provide the {@link LanguageModel}s that can be assigned to a new project.
-     *
-     * @return available {@link LanguageModel}s mapped (and sorted) by their names
+     * Constructor: initializing a reference with a random {@code uuid}.
      */
-    Map<String, LanguageModel> provideLanguageModels();
+    public SyntacticalFunctionReference() {
+        super();
+    }
+
+    /**
+     * Constructor: initializing a reference with the given {@code uuid}.
+     *
+     * @param uuid unique reference identifier
+     */
+    public SyntacticalFunctionReference(final UUID uuid) {
+        super(uuid);
+    }
 }

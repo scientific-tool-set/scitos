@@ -32,9 +32,9 @@ import javax.swing.tree.TreePath;
 import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
 /**
@@ -58,13 +58,13 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
     private static final SyntacticalFunction DEFAULT_NEW_FUNCTION = new SyntacticalFunction("", "", false, "");
     /** Default initial state for a new function group. */
     private static final SyntacticalFunctionGroup DEFAULT_NEW_GROUP = new SyntacticalFunctionGroup("", "",
-            Collections.<AbstractSyntacticalFunctionElement>emptyList());
+            Collections.<AbstractSyntacticalElement>emptyList());
     /**
-     * Representation of the lists of {@link AbstractSyntacticalFunctionElement}s on the top level.
+     * Representation of the lists of {@link AbstractSyntacticalElement}s on the top level.
      */
     private final Map<UUID, List<UUID>> topLevelGrouping = new LinkedHashMap<UUID, List<UUID>>();
     /**
-     * Collection of all {@link AbstractSyntacticalFunctionElement}s represented here - regardless of their positions in the hierarchy.
+     * Collection of all {@link AbstractSyntacticalElement}s represented here - regardless of their positions in the hierarchy.
      */
     private final Map<UUID, TreeTableRow> rowMapping = new HashMap<UUID, TreeTableRow>();
 
@@ -82,10 +82,10 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
     public void reset(final ISyntacticalFunctionProvider provider) {
         this.topLevelGrouping.clear();
         this.rowMapping.clear();
-        for (final List<AbstractSyntacticalFunctionElement> singleTopLevelGroup : provider.provideFunctions()) {
+        for (final List<AbstractSyntacticalElement> singleTopLevelGroup : provider.provideFunctions()) {
             final UUID reference = UUID.randomUUID();
             final List<UUID> topLevelChildren = new ArrayList<UUID>(singleTopLevelGroup.size());
-            for (final AbstractSyntacticalFunctionElement singleTopLevelChild : singleTopLevelGroup) {
+            for (final AbstractSyntacticalElement singleTopLevelChild : singleTopLevelGroup) {
                 topLevelChildren.add(this.addTreeTableRow(reference, singleTopLevelChild));
             }
             this.topLevelGrouping.put(reference, topLevelChildren);
@@ -102,14 +102,14 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
      *            the {@link SyntacticalFunction} or {@link SyntacticalFunctionGroup} to represent
      * @return the internal reference to the added row
      */
-    private UUID addTreeTableRow(final UUID parent, final AbstractSyntacticalFunctionElement modelElement) {
+    private UUID addTreeTableRow(final UUID parent, final AbstractSyntacticalElement modelElement) {
         final UUID reference = UUID.randomUUID();
         final TreeTableRow row;
         if (modelElement instanceof SyntacticalFunction) {
             row = new SynFunctionRow(parent, (SyntacticalFunction) modelElement);
         } else {
             row = new GroupRow(parent, (SyntacticalFunctionGroup) modelElement);
-            for (final AbstractSyntacticalFunctionElement singleChild : ((SyntacticalFunctionGroup) modelElement).getSubFunctions()) {
+            for (final AbstractSyntacticalElement singleChild : ((SyntacticalFunctionGroup) modelElement).getSubFunctions()) {
                 ((GroupRow) row).subEntries.add(this.addTreeTableRow(reference, singleChild));
             }
         }
@@ -118,11 +118,11 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
     }
 
     @Override
-    public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
-        final List<List<AbstractSyntacticalFunctionElement>> result;
-        result = new ArrayList<List<AbstractSyntacticalFunctionElement>>(this.topLevelGrouping.size());
+    public List<List<AbstractSyntacticalElement>> provideFunctions() {
+        final List<List<AbstractSyntacticalElement>> result;
+        result = new ArrayList<List<AbstractSyntacticalElement>>(this.topLevelGrouping.size());
         for (final List<UUID> singleGroup : this.topLevelGrouping.values()) {
-            final List<AbstractSyntacticalFunctionElement> topLevelList = new ArrayList<AbstractSyntacticalFunctionElement>(singleGroup.size());
+            final List<AbstractSyntacticalElement> topLevelList = new ArrayList<AbstractSyntacticalElement>(singleGroup.size());
             for (final UUID singleTopLevelReference : singleGroup) {
                 topLevelList.add(this.deriveModelInstance(singleTopLevelReference));
             }
@@ -138,11 +138,11 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
      *            the reference to the row to be transfered into an equivalent {@link SyntacticalFunction} or {@link SyntacticalFunctionGroup}
      * @return equivalent model element
      */
-    private AbstractSyntacticalFunctionElement deriveModelInstance(final UUID rowReference) {
+    private AbstractSyntacticalElement deriveModelInstance(final UUID rowReference) {
         final TreeTableRow row = this.rowMapping.get(rowReference);
         if (row instanceof GroupRow) {
-            final List<AbstractSyntacticalFunctionElement> subFunctions;
-            subFunctions = new ArrayList<AbstractSyntacticalFunctionElement>(((GroupRow) row).subEntries.size());
+            final List<AbstractSyntacticalElement> subFunctions;
+            subFunctions = new ArrayList<AbstractSyntacticalElement>(((GroupRow) row).subEntries.size());
             for (final UUID singleSubEntry : ((GroupRow) row).subEntries) {
                 subFunctions.add(this.deriveModelInstance(singleSubEntry));
             }
@@ -495,7 +495,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
          * @param modelElement
          *            the syntactical function or function group to represent
          */
-        TreeTableRow(final UUID parent, final AbstractSyntacticalFunctionElement modelElement) {
+        TreeTableRow(final UUID parent, final AbstractSyntacticalElement modelElement) {
             this.parent = parent;
             this.name = modelElement.getName();
             this.description = modelElement.getDescription();

@@ -24,18 +24,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 import org.hmx.scitos.core.HmxException;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalDisplayProfile;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionReference;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,15 +61,18 @@ public class ModelHandlerImplTest {
      */
     @BeforeClass
     public static void setUp() {
-        final List<AbstractSyntacticalFunctionElement> functions = new LinkedList<AbstractSyntacticalFunctionElement>();
-        functions.add(new SyntacticalFunction("A", "A Function", false, null));
-        functions.add(new SyntacticalFunction("B", "Second Function", true, "some description"));
-        functions.add(new SyntacticalFunctionGroup("Group", null, Arrays.asList(new SyntacticalFunction("C", "Nested Function", false, null),
-                new SyntacticalFunction("D", "Other Sub Function", false, "The last one"))));
-        ModelHandlerImplTest.languageModel = new LanguageModel("Language", true);
-        ModelHandlerImplTest.languageModel.add(functions);
-        ModelHandlerImplTest.defaultRelationTemplate =
-                new RelationTemplate(new AssociateRole("A", true), null, new AssociateRole("B", false), "something");
+        final List<AbstractSyntacticalElement> functions = new LinkedList<AbstractSyntacticalElement>();
+        functions.add(new SyntacticalFunction(new SyntacticalFunctionReference(UUID.randomUUID()), "A", "A Function", false, null));
+        functions.add(new SyntacticalFunction(new SyntacticalFunctionReference(UUID.randomUUID()), "B", "Second Function", true, "some description"));
+        functions.add(new SyntacticalFunctionGroup("Group", null, Arrays
+                .asList(new SyntacticalFunction(new SyntacticalFunctionReference(UUID.randomUUID()), "C", "Nested Function", false, null),
+                        new SyntacticalFunction(new SyntacticalFunctionReference(UUID.randomUUID()),
+                                "D", "Other Sub Function", false, "The last one"))));
+        final SyntacticalDisplayProfile profile = new SyntacticalDisplayProfile("Default", Locale.ENGLISH, Arrays.asList(functions));
+        ModelHandlerImplTest.languageModel = new LanguageModel(true);
+        ModelHandlerImplTest.languageModel.addDisplayProfile(profile);
+        ModelHandlerImplTest.defaultRelationTemplate = new RelationTemplate(new AssociateRole("A", true), null, new AssociateRole("B", false),
+                "something");
     }
 
     /** Final clearing up: discard reference to the used language model. */
@@ -121,8 +128,7 @@ public class ModelHandlerImplTest {
      * Test: for {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)}, making the first {@link Proposition} the single
      * prior child of its follower.
      *
-     * @throws HmxException
-     *             impossible to indent first under second top level {@link Proposition}
+     * @throws HmxException impossible to indent first under second top level {@link Proposition}
      */
     @Test
     public void testIndentPropositionUnderParent_1() throws HmxException {
@@ -141,8 +147,7 @@ public class ModelHandlerImplTest {
      * Test: for {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)}, making the second {@link Proposition} the single
      * later child of its prior.
      *
-     * @throws HmxException
-     *             impossible to indent second under first top level {@link Proposition}
+     * @throws HmxException impossible to indent second under first top level {@link Proposition}
      */
     @Test
     public void testIndentPropositionUnderParent_2() throws HmxException {
@@ -161,19 +166,18 @@ public class ModelHandlerImplTest {
      * Test: for {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)}, making the second and third {@link Proposition}s
      * the later children of their prior.
      *
-     * @throws HmxException
-     *             impossible to indent second or third under first top level {@link Proposition}
+     * @throws HmxException impossible to indent second or third under first top level {@link Proposition}
      */
     @Test
     public void testIndentPropositionUnderParent_3() throws HmxException {
         final Proposition first = this.pericope.getPropositionAt(0);
         final Proposition second = this.pericope.getPropositionAt(1);
         final Proposition third = this.pericope.getPropositionAt(2);
-        final SyntacticalFunction functionSecond =
-                (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
+        final SyntacticalFunction functionSecond
+                = (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
                         .getSubFunctions().get(0);
-        final SyntacticalFunction functionThird =
-                (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
+        final SyntacticalFunction functionThird
+                = (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
                         .getSubFunctions().get(1);
         this.modelHandler.indentPropositionUnderParent(second, first, functionSecond);
         this.modelHandler.indentPropositionUnderParent(third, first, functionThird);
@@ -188,8 +192,7 @@ public class ModelHandlerImplTest {
      * Test: for {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)}, trying to make the third {@link Proposition} the
      * single later child of the first.
      *
-     * @throws HmxException
-     *             impossible to indent third under first top level {@link Proposition} (expected)
+     * @throws HmxException impossible to indent third under first top level {@link Proposition} (expected)
      */
     @Test(expected = HmxException.class)
     public void testIndentPropositionUnderParent_4() throws HmxException {
@@ -203,8 +206,7 @@ public class ModelHandlerImplTest {
      * Test: for {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)}, trying to make the first {@link Proposition} the
      * single prior child of the third.
      *
-     * @throws HmxException
-     *             impossible to indent first under third top level {@link Proposition} (expected)
+     * @throws HmxException impossible to indent first under third top level {@link Proposition} (expected)
      */
     @Test(expected = HmxException.class)
     public void testIndentPropositionUnderParent_5() throws HmxException {
@@ -218,9 +220,8 @@ public class ModelHandlerImplTest {
      * Test: for {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)}, trying to indent a top level {@link Proposition}
      * under its child's child.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to indent {@link Proposition} under its own child's child (latter is
-     *             expected)
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to indent {@link Proposition} under its own child's child
+     * (latter is expected)
      */
     @Test(expected = HmxException.class)
     public void testIndentPropositionUnderParent_6() throws HmxException {
@@ -237,9 +238,8 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for neighboring indented {@link Proposition}s of
      * differing parents.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to indent neighboring {@link Proposition} that have not the same
-     *             parent
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to indent neighboring {@link Proposition} that have not the
+     * same parent
      */
     @Test
     public void testIndentPropositionUnderParent_7() throws HmxException {
@@ -262,9 +262,8 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for neighboring indented {@link Proposition}s of
      * differing parents.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to indent neighboring {@link Proposition} that have not the same
-     *             parent
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to indent neighboring {@link Proposition} that have not the
+     * same parent
      */
     @Test
     public void testIndentPropositionUnderParent_8() throws HmxException {
@@ -287,8 +286,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for the last {@link Proposition} in the
      * {@link Pericope}.
      *
-     * @throws HmxException
-     *             impossible to indent last {@link Proposition} under its prior
+     * @throws HmxException impossible to indent last {@link Proposition} under its prior
      */
     @Test
     public void testIndentPropositionUnderParent_9() throws HmxException {
@@ -304,8 +302,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for an already indented {@link Proposition},
      * changing only the {@link SyntacticalFunction}.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to change {@link SyntacticalFunction} on second iteration
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to change {@link SyntacticalFunction} on second iteration
      */
     @Test
     public void testIndentPropositionUnderParent_10() throws HmxException {
@@ -324,8 +321,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for the last {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s
+     * @throws HmxException impossible to indent {@link Proposition}s
      */
     @Test
     public void testIndentPropositionUnderParent_11() throws HmxException {
@@ -345,9 +341,8 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for unconnected {@link Proposition}s with
      * differing parents.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to indent unconnected {@link Proposition}s of differing parents
-     *             (latter is expected)
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to indent unconnected {@link Proposition}s of differing
+     * parents (latter is expected)
      */
     @Test(expected = HmxException.class)
     public void testIndentPropositionUnderParent_12() throws HmxException {
@@ -368,8 +363,8 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for the second of two {@link Proposition}s that
      * are enclosed by another two part {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to merge {@link Proposition}s for setup, or failed to indent enclosed {@link Proposition} under {@code partAfterArrow}
+     * @throws HmxException impossible to merge {@link Proposition}s for setup, or failed to indent enclosed {@link Proposition} under
+     * {@code partAfterArrow}
      */
     @Test
     public void testIndentPropositionUnderParent_13() throws HmxException {
@@ -390,8 +385,8 @@ public class ModelHandlerImplTest {
      * Test: of {@code indentPropositionUnderParent(Proposition, Proposition, SyntacticalFunction)} for the second of two {@link Proposition}s that
      * are enclosed by another two part {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to merge {@link Proposition}s for setup, or failed to indent enclosed {@link Proposition} under {@code partAfterArrow}
+     * @throws HmxException impossible to merge {@link Proposition}s for setup, or failed to indent enclosed {@link Proposition} under
+     * {@code partAfterArrow}
      */
     @Test
     public void testIndentPropositionUnderParent_14() throws HmxException {
@@ -413,8 +408,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentation(Proposition)} and {@code removeOneIndentationAffectsOthers(Proposition)} for a single prior child.
      *
-     * @throws HmxException
-     *             impossible to indent first under second top level {@link Proposition}, or indentation removal (check) failed
+     * @throws HmxException impossible to indent first under second top level {@link Proposition}, or indentation removal (check) failed
      */
     @Test
     public void testRemoveOneIndentation_1() throws HmxException {
@@ -432,8 +426,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentation(Proposition)} and {@code removeOneIndentationAffectsOthers(Proposition)} for a single later child.
      *
-     * @throws HmxException
-     *             impossible to indent first under second top level {@link Proposition}, or indentation removal (check) failed
+     * @throws HmxException impossible to indent first under second top level {@link Proposition}, or indentation removal (check) failed
      */
     @Test
     public void testRemoveOneIndentation_2() throws HmxException {
@@ -451,8 +444,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentationAffectsOthers(Proposition)} for a top level {@link Proposition}.
      *
-     * @throws HmxException
-     *             indentation removal check failed (expected)
+     * @throws HmxException indentation removal check failed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemoveOneIndentation_3() throws HmxException {
@@ -462,8 +454,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentation(Proposition)} for a top level {@link Proposition}.
      *
-     * @throws HmxException
-     *             indentation removal failed (expected)
+     * @throws HmxException indentation removal failed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemoveOneIndentation_4() throws HmxException {
@@ -474,8 +465,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code removeOneIndentation(Proposition)} and {@code removeOneIndentationAffectsOthers(Proposition)} for the first of two prior
      * children.
      *
-     * @throws HmxException
-     *             impossible to indent first or second under third top level {@link Proposition}, or indentation removal (check) failed
+     * @throws HmxException impossible to indent first or second under third top level {@link Proposition}, or indentation removal (check) failed
      */
     @Test
     public void testRemoveOneIndentation_5() throws HmxException {
@@ -500,8 +490,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code removeOneIndentation(Proposition)} and {@code removeOneIndentationAffectsOthers(Proposition)} for the second of two prior
      * children.
      *
-     * @throws HmxException
-     *             impossible to indent first or second under third top level {@link Proposition}, or indentation removal (check) failed
+     * @throws HmxException impossible to indent first or second under third top level {@link Proposition}, or indentation removal (check) failed
      */
     @Test
     public void testRemoveOneIndentation_6() throws HmxException {
@@ -525,8 +514,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code removeOneIndentation(Proposition)} and {@code removeOneIndentationAffectsOthers(Proposition)} for the first of two later
      * children.
      *
-     * @throws HmxException
-     *             impossible to indent second or third under first top level {@link Proposition}, or indentation removal (check) failed
+     * @throws HmxException impossible to indent second or third under first top level {@link Proposition}, or indentation removal (check) failed
      */
     @Test
     public void testRemoveOneIndentation_7() throws HmxException {
@@ -550,8 +538,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code removeOneIndentation(Proposition)} and {@code removeOneIndentationAffectsOthers(Proposition)} for the second of two later
      * children.
      *
-     * @throws HmxException
-     *             impossible to indent second or third under first top level {@link Proposition}, or indentation removal (check) failed
+     * @throws HmxException impossible to indent second or third under first top level {@link Proposition}, or indentation removal (check) failed
      */
     @Test
     public void testRemoveOneIndentation_8() throws HmxException {
@@ -575,8 +562,8 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentationAffectsOthers(Proposition)} for a single enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge first and second top level {@link Proposition}, or indentation removal check failed (latter is expected)
+     * @throws HmxException impossible to merge first and second top level {@link Proposition}, or indentation removal check failed (latter is
+     * expected)
      */
     @Test(expected = HmxException.class)
     public void testRemoveOneIndentation_9() throws HmxException {
@@ -590,8 +577,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentation(Proposition)} for a single enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge first and third top level {@link Proposition}, or indentation removal failed (latter is expected)
+     * @throws HmxException impossible to merge first and third top level {@link Proposition}, or indentation removal failed (latter is expected)
      */
     @Test(expected = HmxException.class)
     public void testRemoveOneIndentation_10() throws HmxException {
@@ -605,8 +591,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentation(Proposition)} for a twice indented prior child {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or indentation removal failed
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or indentation removal failed
      */
     @Test
     public void testRemoveOneIndentation_11() throws HmxException {
@@ -628,8 +613,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeOneIndentation(Proposition)} for a twice indented later child {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or indentation removal failed
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or indentation removal failed
      */
     @Test
     public void testRemoveOneIndentation_12() throws HmxException {
@@ -650,8 +634,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for two neighboring top level {@link Proposition}s.
      *
-     * @throws HmxException
-     *             impossible to merge first and second top level {@link Proposition}
+     * @throws HmxException impossible to merge first and second top level {@link Proposition}
      */
     @Test
     public void testMergePropositions_1() throws HmxException {
@@ -672,8 +655,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for first and third top level {@link Proposition}s with a single enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge first and third top level {@link Proposition}
+     * @throws HmxException impossible to merge first and third top level {@link Proposition}
      */
     @Test
     public void testMergePropositions_2() throws HmxException {
@@ -694,8 +676,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a single prior child with its parent {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to merge first and second {@link Proposition}
+     * @throws HmxException impossible to merge first and second {@link Proposition}
      */
     @Test
     public void testMergePropositions_3() throws HmxException {
@@ -718,8 +699,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a single later child with its parent {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to merge first and second {@link Proposition}
+     * @throws HmxException impossible to merge first and second {@link Proposition}
      */
     @Test
     public void testMergePropositions_4() throws HmxException {
@@ -738,8 +718,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a single later child with the following prior child {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to merge first and second {@link Proposition}
+     * @throws HmxException impossible to merge first and second {@link Proposition}
      */
     @Test
     public void testMergePropositions_5() throws HmxException {
@@ -766,8 +745,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a top level {@link Proposition} with the following single prior child.
      *
-     * @throws HmxException
-     *             impossible to merge first and second {@link Proposition}
+     * @throws HmxException impossible to merge first and second {@link Proposition}
      */
     @Test
     public void testMergePropositions_6() throws HmxException {
@@ -787,8 +765,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a single later child with the following top level {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to merge first and second {@link Proposition}
+     * @throws HmxException impossible to merge first and second {@link Proposition}
      */
     @Test
     public void testMergePropositions_7() throws HmxException {
@@ -808,8 +785,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for enclosed children with a nested enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_8() throws HmxException {
@@ -836,8 +812,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for enclosed children with two nested enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_9() throws HmxException {
@@ -870,8 +845,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} with two enclosed children, merging with the first.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_10() throws HmxException {
@@ -900,8 +874,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} with two enclosed children, merging with the second.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_11() throws HmxException {
@@ -929,8 +902,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} merging with its only enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_12() throws HmxException {
@@ -950,8 +922,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} merging with its only enclosed child.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_13() throws HmxException {
@@ -973,8 +944,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} merging with the first of its two later children.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_14() throws HmxException {
@@ -1002,8 +972,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} in three parts with two separate enclosed children.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_15() throws HmxException {
@@ -1027,8 +996,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} in three parts with two separate enclosed children.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_16() throws HmxException {
@@ -1051,8 +1019,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} to be merged with itself.
      *
-     * @throws HmxException
-     *             impossible to merge with itself
+     * @throws HmxException impossible to merge with itself
      */
     @Test
     public void testMergePropositions_17() throws HmxException {
@@ -1065,8 +1032,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for unconnected {@link Proposition} that are not on the same level.
      *
-     * @throws HmxException
-     *             impossible to merge with itself
+     * @throws HmxException impossible to merge with itself
      */
     @Test(expected = HmxException.class)
     public void testMergePropositions_18() throws HmxException {
@@ -1082,8 +1048,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a {@link Proposition} with two enclosed children, merging the enclosed
      * children.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_19() throws HmxException {
@@ -1110,8 +1075,8 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for a prior child with the same parent {@link Proposition}'s later child.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to merge prior and later child of the same parent (latter expected)
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to merge prior and later child of the same parent (latter
+     * expected)
      */
     @Test(expected = HmxException.class)
     public void testMergePropositions_20() throws HmxException {
@@ -1127,8 +1092,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergePropositions(Proposition, Proposition)} for the first of two enclosed child {@link Proposition}s.
      *
-     * @throws HmxException
-     *             impossible to merge
+     * @throws HmxException impossible to merge
      */
     @Test
     public void testMergePropositions_21() throws HmxException {
@@ -1158,8 +1122,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergePropositions(Proposition, Proposition)} for the three of three enclosed child {@link Proposition}s which is in turn
      * indented under the first enclosed child.
      *
-     * @throws HmxException
-     *             impossible to indent {@link Proposition}s for setup, or failed to merge
+     * @throws HmxException impossible to indent {@link Proposition}s for setup, or failed to merge
      */
     @Test
     public void testMergePropositions_22() throws HmxException {
@@ -1190,8 +1153,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code splitProposition(Proposition, ClauseItem)} for a top level {@link Proposition}, after the first of two {@link ClauseItem}s.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition} after first of two items
+     * @throws HmxException impossible to split {@link Proposition} after first of two items
      */
     @Test
     public void testSplitProposition_1() throws HmxException {
@@ -1212,8 +1174,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code splitProposition(Proposition, ClauseItem)} for a top level {@link Proposition}, after the second of two {@link ClauseItem}s.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition} after last item (expected)
+     * @throws HmxException impossible to split {@link Proposition} after last item (expected)
      */
     @Test(expected = HmxException.class)
     public void testSplitProposition_2() throws HmxException {
@@ -1225,8 +1186,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code splitProposition(Proposition, ClauseItem)} after a {@link ClauseItem} from a different {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition}
+     * @throws HmxException impossible to split {@link Proposition}
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSplitProposition_3() throws HmxException {
@@ -1237,8 +1197,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code splitProposition(Proposition, ClauseItem)} after the last item of the first part of a {@link Proposition} with an enclosed
      * child.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition} part after first of two items
+     * @throws HmxException impossible to split {@link Proposition} part after first of two items
      */
     @Test
     public void testSplitProposition_4() throws HmxException {
@@ -1266,8 +1225,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code splitProposition(Proposition, ClauseItem)} after the single item of the first part of a {@link Proposition} with an enclosed
      * child.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition} part after first of two items
+     * @throws HmxException impossible to split {@link Proposition} part after first of two items
      */
     @Test
     public void testSplitProposition_5() throws HmxException {
@@ -1284,8 +1242,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code splitProposition(Proposition, ClauseItem)} for a top level {@link Proposition}, after the first of two {@link ClauseItem}s,
      * with super ordinated {@link Relation}s.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition} after first of two items
+     * @throws HmxException impossible to split {@link Proposition} after first of two items
      */
     @Test
     public void testSplitProposition_6() throws HmxException {
@@ -1312,8 +1269,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code splitProposition(Proposition, ClauseItem)} after the first item of the first part of a {@link Proposition} with two enclosed
      * children.
      *
-     * @throws HmxException
-     *             impossible to split {@link Proposition} part after first of two items
+     * @throws HmxException impossible to split {@link Proposition} part after first of two items
      */
     @Test
     public void testSplitProposition_7() throws HmxException {
@@ -1356,8 +1312,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code resetStandaloneStateOfPartAfterArrow(Proposition)} for two top level {@link Proposition}s with a single enclosed child.
      *
-     * @throws HmxException
-     *             impossible o merge first and third top level {@link Proposition}, or resetting third's standalone state failed
+     * @throws HmxException impossible o merge first and third top level {@link Proposition}, or resetting third's standalone state failed
      */
     @Test
     public void testResetStandaloneStateOfPartAfterArrow() throws HmxException {
@@ -1378,8 +1333,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergeClauseItemWithPrior(ClauseItem)} for the second of two {@link ClauseItem}s, both having an assigned
      * {@link SyntacticalFunction}.
      *
-     * @throws HmxException
-     *             no preceding first item to merge with
+     * @throws HmxException no preceding first item to merge with
      */
     @Test
     public void testMergeClauseItemWithPrior_1() throws HmxException {
@@ -1399,8 +1353,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergeClauseItemWithPrior(ClauseItem)} for the second of two {@link ClauseItem}s, the first not having an assigned
      * {@link SyntacticalFunction}.
      *
-     * @throws HmxException
-     *             no preceding first item to merge with
+     * @throws HmxException no preceding first item to merge with
      */
     @Test
     public void testMergeClauseItemWithPrior_2() throws HmxException {
@@ -1416,8 +1369,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergeClauseItemWithPrior(ClauseItem)} for the first of two {@link ClauseItem}s.
      *
-     * @throws HmxException
-     *             no preceding first item to merge with (expected)
+     * @throws HmxException no preceding first item to merge with (expected)
      */
     @Test(expected = HmxException.class)
     public void testMergeClauseItemWithPrior_3() throws HmxException {
@@ -1429,8 +1381,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergeClauseItemWithFollower(ClauseItem)} for the first of two {@link ClauseItem}s, both having an assigned
      * {@link SyntacticalFunction}.
      *
-     * @throws HmxException
-     *             no following second item to merge with
+     * @throws HmxException no following second item to merge with
      */
     @Test
     public void testMergeClauseItemWithFollower_1() throws HmxException {
@@ -1450,8 +1401,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergeClauseItemWithFollower(ClauseItem)} for the first of two {@link ClauseItem}s, the first not having an assigned
      * {@link SyntacticalFunction}.
      *
-     * @throws HmxException
-     *             no following second item to merge with
+     * @throws HmxException no following second item to merge with
      */
     @Test
     public void testMergeClauseItemWithFollower_2() throws HmxException {
@@ -1469,8 +1419,7 @@ public class ModelHandlerImplTest {
      * Test: of {@code mergeClauseItemWithFollower(ClauseItem)} for the second of two {@link ClauseItem}s, the first not having an assigned
      * {@link SyntacticalFunction}.
      *
-     * @throws HmxException
-     *             no following third item to merge with (expected)
+     * @throws HmxException no following third item to merge with (expected)
      */
     @Test(expected = HmxException.class)
     public void testMergeClauseItemWithFollower_3() throws HmxException {
@@ -1604,8 +1553,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code setSyntacticalFunction(ICanHaveSyntacticalFunction, SyntacticalFunction)} for a single prior child {@link Proposition}.
      *
-     * @throws HmxException
-     *             impossible to indent first under second top level {@link Proposition}
+     * @throws HmxException impossible to indent first under second top level {@link Proposition}
      */
     @Test
     public void testSetSyntacticalFunction_Proposition() throws HmxException {
@@ -1625,8 +1573,8 @@ public class ModelHandlerImplTest {
     @Test
     public void testSetSyntacticalFunction_ClauseItem() {
         final ClauseItem target = this.pericope.getPropositionAt(0).getItems().get(0);
-        final SyntacticalFunction function =
-                (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
+        final SyntacticalFunction function
+                = (SyntacticalFunction) ((SyntacticalFunctionGroup) ModelHandlerImplTest.languageModel.provideFunctions().get(0).get(2))
                         .getSubFunctions().get(0);
         this.modelHandler.setSyntacticalFunction(target, function);
         Assert.assertEquals(function, target.getFunction());
@@ -1646,8 +1594,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code createRelation(List, RelationTemplate)} over four {@link Proposition}s.
      *
-     * @throws HmxException
-     *             the first three top level {@link Proposition}s cannot be added to a {@link Relation}
+     * @throws HmxException the first three top level {@link Proposition}s cannot be added to a {@link Relation}
      */
     @Test
     public void testCreateRelation_1() throws HmxException {
@@ -1668,8 +1615,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code createRelation(List, RelationTemplate)} over two {@link Proposition}s that are not direct neighbors.
      *
-     * @throws HmxException
-     *             the first and third top level {@link Proposition}s cannot be added to a {@link Relation} (expected)
+     * @throws HmxException the first and third top level {@link Proposition}s cannot be added to a {@link Relation} (expected)
      */
     @Test(expected = HmxException.class)
     public void testCreateRelation_2() throws HmxException {
@@ -1680,8 +1626,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code createRelation(List, RelationTemplate)} over a single {@link Proposition}.
      *
-     * @throws HmxException
-     *             the first top level {@link Proposition} cannot be added to a {@link Relation} on its own
+     * @throws HmxException the first top level {@link Proposition} cannot be added to a {@link Relation} on its own
      */
     @Test(expected = IllegalArgumentException.class)
     public void testCreateRelation_3() throws HmxException {
@@ -1691,9 +1636,8 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code createRelation(List, RelationTemplate)} over a {@link Relation} and one of its own associate {@link Proposition}s.
      *
-     * @throws HmxException
-     *             the first and second top level {@link Proposition}s cannot be added to a {@link Relation}, or the first {@link Proposition} cannot
-     *             be combined with its own super ordinated {@link Relation} into a new one (latter is expected)
+     * @throws HmxException the first and second top level {@link Proposition}s cannot be added to a {@link Relation}, or the first
+     * {@link Proposition} cannot be combined with its own super ordinated {@link Relation} into a new one (latter is expected)
      */
     @Test(expected = HmxException.class)
     public void testCreateRelation_4() throws HmxException {
@@ -1707,9 +1651,8 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code createRelation(List, RelationTemplate)} over two {@link Proposition}s and a {@link Relation}.
      *
-     * @throws HmxException
-     *             the second and third top level {@link Proposition} could not be combined in a {@link Relation} or the first and fourth top level
-     *             {@link Proposition} could not be combined with the previous {@link Relation} into a surrounding one
+     * @throws HmxException the second and third top level {@link Proposition} could not be combined in a {@link Relation} or the first and fourth top
+     * level {@link Proposition} could not be combined with the previous {@link Relation} into a surrounding one
      */
     @Test
     public void testCreateRelation_5() throws HmxException {
@@ -1742,8 +1685,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code rotateAssociateRoles(Relation)} for a {@link Relation} with two associates.
      *
-     * @throws HmxException
-     *             could not create {@link Relation} over the first two top level {@link Proposition}s
+     * @throws HmxException could not create {@link Relation} over the first two top level {@link Proposition}s
      */
     @Test
     public void testRotateAssociateRoles_1() throws HmxException {
@@ -1767,8 +1709,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code rotateAssociateRoles(Relation)} for a {@link Relation} with three associates.
      *
-     * @throws HmxException
-     *             could not create {@link Relation} over the first three top level {@link Proposition}s
+     * @throws HmxException could not create {@link Relation} over the first three top level {@link Proposition}s
      */
     @Test
     public void testRotateAssociateRoles_2() throws HmxException {
@@ -1798,8 +1739,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code alterRelationType(Relation, RelationTemplate)} for a a {@link Relation} with two associates.
      *
-     * @throws HmxException
-     *             could not create {@link Relation} over the first two top level {@link Proposition}s
+     * @throws HmxException could not create {@link Relation} over the first two top level {@link Proposition}s
      */
     @Test
     public void testAlterRelationType_1() throws HmxException {
@@ -1820,8 +1760,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code alterRelationType(Relation, RelationTemplate)} for a a {@link Relation} with two associates.
      *
-     * @throws HmxException
-     *             could not create {@link Relation} over the first two top level {@link Proposition}s
+     * @throws HmxException could not create {@link Relation} over the first two top level {@link Proposition}s
      */
     @Test
     public void testAlterRelationType_2() throws HmxException {
@@ -1841,8 +1780,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code alterRelationType(Relation, RelationTemplate)} for a a {@link Relation} with three associates.
      *
-     * @throws HmxException
-     *             could not create {@link Relation} over the first three top level {@link Proposition}s
+     * @throws HmxException could not create {@link Relation} over the first three top level {@link Proposition}s
      */
     @Test
     public void testAlterRelationType_3() throws HmxException {
@@ -1863,8 +1801,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeRelation(Relation)} for a single {@link Relation}.
      *
-     * @throws HmxException
-     *             could not create the {@link Relation}
+     * @throws HmxException could not create the {@link Relation}
      */
     @Test
     public void testRemoveRelation_1() throws HmxException {
@@ -1885,8 +1822,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeRelation(Relation)} for the highest {@link Relation} in a tree with depth {@code 2}.
      *
-     * @throws HmxException
-     *             could not create the {@link Relation}s
+     * @throws HmxException could not create the {@link Relation}s
      */
     @Test
     public void testRemoveRelation_2() throws HmxException {
@@ -1915,8 +1851,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removeRelation(Relation)} for the lowest {@link Relation} in a tree with depth {@code 2}.
      *
-     * @throws HmxException
-     *             could not create the {@link Relation}s
+     * @throws HmxException could not create the {@link Relation}s
      */
     @Test
     public void testRemoveRelation_3() throws HmxException {
@@ -1966,8 +1901,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergeWithOtherPericope(Pericope, boolean)}.
      *
-     * @throws HmxException
-     *             differing language model in the merged {@link Pericope}
+     * @throws HmxException differing language model in the merged {@link Pericope}
      */
     @Test
     public void testMergeWithOtherPericope_1() throws HmxException {
@@ -1982,8 +1916,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergeWithOtherPericope(Pericope, boolean)}.
      *
-     * @throws HmxException
-     *             differing language model in the merged {@link Pericope}
+     * @throws HmxException differing language model in the merged {@link Pericope}
      */
     @Test
     public void testMergeWithOtherPericope_2() throws HmxException {
@@ -2001,15 +1934,14 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code mergeWithOtherPericope(Pericope, boolean)} with a differing {@link LanguageModel}.
      *
-     * @throws HmxException
-     *             differing language model in the merged {@link Pericope} (expected)
+     * @throws HmxException differing language model in the merged {@link Pericope} (expected)
      */
     @Test(expected = HmxException.class)
     public void testMergeWithOtherPericope_3() throws HmxException {
         final Pericope otherPericope = new Pericope();
         // only the text orientation is different
-        final LanguageModel differingModel = new LanguageModel("otherName", false);
-        differingModel.addAll(ModelHandlerImplTest.languageModel.provideFunctions());
+        final LanguageModel differingModel = ModelHandlerImplTest.languageModel.clone();
+        differingModel.setLeftToRightOriented(!ModelHandlerImplTest.languageModel.isLeftToRightOriented());
         otherPericope.init("11", differingModel, this.pericope.getFont());
         this.modelHandler.mergeWithOtherPericope(otherPericope, false);
     }
@@ -2017,8 +1949,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for the first two top level {@link Proposition}s.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed
      */
     @Test
     public void testRemovePropositions_1() throws HmxException {
@@ -2035,8 +1966,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for an empty list of {@link Proposition}.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_2() throws HmxException {
@@ -2046,8 +1976,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for the all {@link Proposition}s.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_3() throws HmxException {
@@ -2057,8 +1986,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for an indented {@link Proposition}.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_4() throws HmxException {
@@ -2072,8 +2000,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for a {@link Proposition} having a prior child.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_5() throws HmxException {
@@ -2087,8 +2014,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for a {@link Proposition} having a later child.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_6() throws HmxException {
@@ -2102,8 +2028,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for a {@link Proposition} part before arrow.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_7() throws HmxException {
@@ -2116,8 +2041,7 @@ public class ModelHandlerImplTest {
     /**
      * Test: of {@code removePropositions(List)} for a {@link Proposition} part after arrow.
      *
-     * @throws HmxException
-     *             invalid selection of {@link Proposition}s to be removed (expected)
+     * @throws HmxException invalid selection of {@link Proposition}s to be removed (expected)
      */
     @Test(expected = HmxException.class)
     public void testRemovePropositions_8() throws HmxException {

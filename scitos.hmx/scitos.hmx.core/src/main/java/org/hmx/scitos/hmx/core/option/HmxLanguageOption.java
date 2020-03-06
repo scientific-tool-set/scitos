@@ -42,7 +42,7 @@ import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.option.OptionHandler;
 import org.hmx.scitos.hmx.core.ILanguageModelProvider;
 import org.hmx.scitos.hmx.core.ModelParseServiceImpl;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

@@ -33,10 +33,10 @@ import javax.swing.tree.TreePath;
 import org.hmx.scitos.domain.util.CollectionUtil;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.ILanguageOptionHandler;
-import org.hmx.scitos.hmx.domain.model.AbstractSyntacticalFunctionElement;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunction;
-import org.hmx.scitos.hmx.domain.model.SyntacticalFunctionGroup;
+import org.hmx.scitos.hmx.domain.model.originlanguage.AbstractSyntacticalElement;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunction;
+import org.hmx.scitos.hmx.domain.model.originlanguage.SyntacticalFunctionGroup;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
 /**
@@ -138,8 +138,8 @@ final class LanguageTreeModel extends AbstractTreeTableModel {
         case 1:
             // count the number of syntactical functions contained in the respective language model (ignore the number of groups)
             final AtomicInteger functionCounter = new AtomicInteger(0);
-            for (final List<AbstractSyntacticalFunctionElement> singleGroup : this.languageModels.get(node).provideFunctions()) {
-                for (final AbstractSyntacticalFunctionElement topLevelElement : singleGroup) {
+            for (final List<AbstractSyntacticalElement> singleGroup : this.languageModels.get(node).provideFunctions()) {
+                for (final AbstractSyntacticalElement topLevelElement : singleGroup) {
                     this.addFunctionCount(topLevelElement, functionCounter);
                 }
             }
@@ -164,11 +164,11 @@ final class LanguageTreeModel extends AbstractTreeTableModel {
      * @param counter
      *            the counter to increment by the number of contained syntactical functions
      */
-    private void addFunctionCount(final AbstractSyntacticalFunctionElement element, final AtomicInteger counter) {
+    private void addFunctionCount(final AbstractSyntacticalElement element, final AtomicInteger counter) {
         if (element instanceof SyntacticalFunction) {
             counter.incrementAndGet();
         } else if (element instanceof SyntacticalFunctionGroup) {
-            for (final AbstractSyntacticalFunctionElement subElement : ((SyntacticalFunctionGroup) element).getSubFunctions()) {
+            for (final AbstractSyntacticalElement subElement : ((SyntacticalFunctionGroup) element).getSubFunctions()) {
                 this.addFunctionCount(subElement, counter);
             }
         }

@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,7 @@ import org.hmx.scitos.hmx.core.ILanguageModelProvider;
 import org.hmx.scitos.hmx.core.i18n.HmxMessage;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.ClauseItem;
-import org.hmx.scitos.hmx.domain.model.LanguageModel;
+import org.hmx.scitos.hmx.domain.model.originlanguage.LanguageModel;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.view.swing.IUndoManagedView;
@@ -147,11 +146,8 @@ public final class TextInputPanel extends JPanel implements IUndoManagedView {
                 }
             });
         } else {
-            this.languageModels = new HashMap<String, LanguageModel>();
-            final String language = parentView.getModel().getLanguage();
-            final LanguageModel currentModel = new LanguageModel(language, parentView.getModel().isLeftToRightOriented());
-            currentModel.addAll(parentView.getModel().provideFunctions());
-            this.languageModels.put(language, currentModel);
+            final LanguageModel language = parentView.getModel().getLanguageModel();
+            this.languageModels = Collections.singletonMap(language.getName(), language);
             this.buttons = new JButton[3];
             this.buttons[0] = new JButton(HmxMessage.TEXTINPUT_BEFORE_BUTTON.get());
             this.buttons[0].addActionListener(new ActionListener() {

@@ -17,13 +17,13 @@
    along with SciToS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.hmx.scitos.hmx.domain.model;
+package org.hmx.scitos.hmx.domain.model.originlanguage;
 
 /**
  * Representation of an associated function in the syntactical analysis. Either for a {@link ClauseItem} in its containing {@link Proposition}, or for
  * a subordinated (i.e. indented) {@link Proposition} to its {@code parent} {@link Proposition}.
  */
-public class SyntacticalFunction extends AbstractSyntacticalFunctionElement {
+public class SyntacticalFunction extends AbstractSyntacticalElement<SyntacticalFunctionReference> {
 
     /** Short identifier that is used as the textual representation of this function in the syntactical analysis. */
     private final String code;
@@ -33,6 +33,8 @@ public class SyntacticalFunction extends AbstractSyntacticalFunctionElement {
     /**
      * Constructor: setting all fields to the given values to achieve immutability.
      *
+     * @param reference
+     *            display language independent reference to this syntactical function
      * @param code
      *            the short identifier used in the syntactical analysis
      * @param name
@@ -42,8 +44,9 @@ public class SyntacticalFunction extends AbstractSyntacticalFunctionElement {
      * @param description
      *            the description of this function's meaning
      */
-    public SyntacticalFunction(final String code, final String name, final boolean underlined, final String description) {
-        super(name, description);
+    public SyntacticalFunction(final SyntacticalFunctionReference reference, final String code, final String name, final boolean underlined,
+            final String description) {
+        super(reference, name, description);
         this.code = code;
         this.underlined = underlined;
     }
@@ -75,14 +78,7 @@ public class SyntacticalFunction extends AbstractSyntacticalFunctionElement {
             return false;
         }
         final SyntacticalFunction otherFunction = (SyntacticalFunction) otherObj;
-        return this.code.equals(otherFunction.code) && this.underlined == otherFunction.underlined;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("code: '").append(this.getCode()).append("' - name: '").append(this.getName());
-        builder.append("' - description: '").append(this.getDescription()).append("' - underline: ").append(this.isUnderlined());
-        return builder.toString();
+        return this.code.equals(otherFunction.code)
+                && this.underlined == otherFunction.underlined;
     }
 }

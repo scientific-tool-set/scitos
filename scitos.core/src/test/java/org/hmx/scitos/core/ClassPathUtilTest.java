@@ -1,9 +1,7 @@
 package org.hmx.scitos.core;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.hmx.scitos.core.util.ClassPathUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,6 +22,7 @@ public class ClassPathUtilTest {
     @Test
     public void testGetFileResourcePaths_2() {
         final List<String> result = ClassPathUtil.getFileResourcePaths(ClassPathUtilTest.class, ".+-File[.]txt");
-        Assert.assertEquals(Arrays.asList("/org/hmx/scitos/core/Empty-ClassPathUtil-File.txt", "/org/hmx/scitos/core/Other-File.txt"), result);
+        Assert.assertTrue(result.contains("/org/hmx/scitos/core/Empty-ClassPathUtil-File.txt"));
+        Assert.assertTrue(result.contains("/org/hmx/scitos/core/Other-File.txt"));
     }
 }

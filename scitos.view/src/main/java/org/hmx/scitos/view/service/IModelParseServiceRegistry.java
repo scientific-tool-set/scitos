@@ -31,6 +31,7 @@ public interface IModelParseServiceRegistry {
     /**
      * Register the given service instance for the specified file and model type.
      *
+     * @param <M> model type
      * @param type
      *            associated file type
      * @param modelClass

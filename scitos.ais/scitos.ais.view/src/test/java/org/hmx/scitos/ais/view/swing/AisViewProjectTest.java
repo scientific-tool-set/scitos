@@ -19,16 +19,16 @@
 
 package org.hmx.scitos.ais.view.swing;
 
+import com.thedeanda.lorem.Lorem;
+import com.thedeanda.lorem.LoremIpsum;
 import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-
 import org.assertj.swing.core.MouseButton;
 import org.assertj.swing.core.TypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -44,12 +44,11 @@ import org.hmx.scitos.view.swing.AbstractScitosUiTest;
 import org.hmx.scitos.view.swing.components.ScaledTable;
 import org.hmx.scitos.view.swing.util.OrdinalComponentMatcher;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.thedeanda.lorem.Lorem;
-import com.thedeanda.lorem.LoremIpsum;
-
 /** UI test for a simple AIS project workflow. */
+@Ignore
 public class AisViewProjectTest extends AbstractScitosUiTest {
 
     /**
@@ -83,7 +82,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
         this.frame.button(JButtonMatcher.withText(AisMessage.INTERVIEW_START_SCORING.get())).click();
         // #3 insert text for the first interview and go into scoring mode
         final String interviewTextOne = textGenerator.getWords(6);
-        this.frame.textBox(new OrdinalComponentMatcher<JTextPane>(JTextPane.class, 0, true)).setText(interviewTextOne).enterText("\n");
+        this.frame.textBox(new OrdinalComponentMatcher<>(JTextPane.class, 0, true)).setText(interviewTextOne).enterText("\n");
         this.frame.button(JButtonMatcher.withText(AisMessage.INTERVIEW_START_SCORING.get())).click();
         final List<JPanelFixture> tokenComponents = this.getTextTokenComponents();
         Assert.assertEquals(6, tokenComponents.size());
@@ -101,7 +100,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
         participantIdDialog.okButton().click();
         // #6 insert text for the second interview and go into scoring mode
         final String interviewTextTwo = textGenerator.getWords(6);
-        this.frame.textBox(new OrdinalComponentMatcher<JTextPane>(JTextPane.class, 0, true)).setText(interviewTextTwo);
+        this.frame.textBox(new OrdinalComponentMatcher<>(JTextPane.class, 0, true)).setText(interviewTextTwo);
         this.frame.button(JButtonMatcher.withText(AisMessage.INTERVIEW_START_SCORING.get())).click();
         // #7 assign and unassign detail categories via keyboard shortcuts (i.e. selection via arrow keys and assigning details via shortcuts)
         final String[] textTwoTokens = interviewTextTwo.trim().split("[\\s]+");
@@ -115,7 +114,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
         this.tabbedPane.selectTab(AisMessage.PROJECT_UNSAVED.get());
         final String[] rowOne = new String[] { participantOne, "6", "2", "1", "1", "0", "0", "0", "1", "0", "0", "1", "0", "0" };
         final String[] rowTwo = new String[] { participantTwo, "5", "2", "1", "1", "0", "0", "0", "1", "0", "0", "1", "0", "0" };
-        this.frame.table(new OrdinalComponentMatcher<ScaledTable>(ScaledTable.class, 0, true)).requireContents(new String[][] { rowOne, rowTwo });
+        this.frame.table(new OrdinalComponentMatcher<>(ScaledTable.class, 0, true)).requireContents(new String[][] { rowOne, rowTwo });
     }
 
     /**
@@ -208,7 +207,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
      * @return the {@code TextTokenComponent}'s text label's fixture
      */
     private JLabelFixture getTextTokenComponentLabel(final int ordinal) {
-        return this.frame.panel(new OrdinalComponentMatcher<TextTokenComponent>(TextTokenComponent.class, ordinal, true)).label("Text");
+        return this.frame.panel(new OrdinalComponentMatcher<>(TextTokenComponent.class, ordinal, true)).label("Text");
     }
 
     /**
@@ -254,7 +253,7 @@ public class AisViewProjectTest extends AbstractScitosUiTest {
      */
     private List<JPanelFixture> getTextTokenComponents() {
         final Collection<Component> tokenComponents = this.robot().finder().findAll(new TypeMatcher(TextTokenComponent.class, true));
-        final List<JPanelFixture> fixtures = new ArrayList<JPanelFixture>(tokenComponents.size());
+        final List<JPanelFixture> fixtures = new ArrayList<>(tokenComponents.size());
         for (final Component singleComponent : tokenComponents) {
             fixtures.add(new JPanelFixture(this.robot(), (JPanel) singleComponent));
         }

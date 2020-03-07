@@ -30,6 +30,8 @@ public interface IProjectViewServiceRegistry {
     /**
      * Register the given service instance for the specified project type.
      *
+     * @param <P> project type
+     * @param <M> model type
      * @param projectClass
      *            type of the project the given service should be registered for
      * @param modelClass

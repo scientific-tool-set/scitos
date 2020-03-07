@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2016-2020 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -19,10 +19,10 @@
 
 package org.hmx.scitos.ais.core;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
@@ -44,6 +44,15 @@ public interface AisModelHandler extends IModelHandler<AisProject> {
      * @return created interview instance
      */
     Interview createInterview(String participantId);
+
+    /**
+     * Create an interview for the participant with the given id and initial text. Ensure the interview index stays unique for the participant id.
+     *
+     * @param interviews
+     *            interviews to create
+     * @return created interview instance
+     */
+    List<Interview> createInterviews(Collection<? extends InterviewToCreate> interviews);
 
     /**
      * Replace the current text tokens in the specified interview object with the tokens extracted from the given text.

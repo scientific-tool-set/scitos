@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2016-2020 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -21,14 +21,10 @@ package org.hmx.scitos.ais.view.swing.components;
 
 import java.awt.Component;
 import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
-
 import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.core.AisOption;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
@@ -49,7 +45,7 @@ import org.hmx.scitos.view.swing.MessageHandler;
 abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProject, M> {
 
     /** The provider of user defined preferences. */
-    final AisOption options;
+    private final AisOption options;
 
     /**
      * Main constructor.
@@ -71,16 +67,15 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
 
     @Override
     public List<JMenuItem> createEditMenuItems() {
-        final List<JMenuItem> editMenuItems = new LinkedList<JMenuItem>();
+        final List<JMenuItem> editMenuItems = new LinkedList<>();
+        final JMenuItem importInterviewsItem = new JMenuItem(AisMessage.PROJECT_IMPORT_INTERVIEWS.get(), ScitosIcon.FILE_ODS.create());
+        importInterviewsItem.addActionListener(event -> this.getProject().importInterviewsFromOds());
+        editMenuItems.add(importInterviewsItem);
         final JMenuItem changeCategoryModelItem = new JMenuItem(AisMessage.PROJECT_CHANGE_CATEGORIES.get(), ScitosIcon.CONFIG.create());
-        changeCategoryModelItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final AisModelHandler modelHandler = AbstractAisProjectView.this.getProject().getModelHandler();
-                final CategoryModelChangeDialog dialog = new CategoryModelChangeDialog(modelHandler, AbstractAisProjectView.this.options);
-                dialog.setVisible(true);
-            }
+        changeCategoryModelItem.addActionListener(event -> {
+            final AisModelHandler modelHandler = this.getProject().getModelHandler();
+            final CategoryModelChangeDialog dialog = new CategoryModelChangeDialog(modelHandler, this.options);
+            dialog.setVisible(true);
         });
         editMenuItems.add(changeCategoryModelItem);
         return editMenuItems;
@@ -88,16 +83,10 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
 
     @Override
     public List<Component> createToolBarItems() {
-        final List<Component> toolBarItems = new LinkedList<Component>();
+        final List<Component> toolBarItems = new LinkedList<>();
         final JButton addInterviewButton = new JButton(ScitosIcon.CLIPBOARD_ADD.create());
         addInterviewButton.setToolTipText(AisMessage.INTERVIEW_NEW.get());
-        addInterviewButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                AbstractAisProjectView.this.createInterview();
-            }
-        });
+        addInterviewButton.addActionListener(event -> this.createInterview());
         toolBarItems.add(addInterviewButton);
         return toolBarItems;
     }

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2016-2020 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -21,6 +21,7 @@ package org.hmx.scitos.ais.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +34,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
+import java.util.stream.Collectors;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.IDetailCategoryProvider;
 import org.hmx.scitos.ais.domain.model.AisProject;
@@ -66,8 +67,14 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         super(model);
     }
 
-    @Override
-    public synchronized Interview createInterview(final String participantId) {
+    /**
+     * Create a single {@link Interview} with the given participant id and initial text and add it to the underlying data model.
+     *
+     * @param participantId participant id the new interview should be associated with
+     * @param text initial interview text to set (may still be altered afterwards and can be {@code null} here)
+     * @return created {@link Interview} instance
+     */
+    private synchronized Interview createInterview(final String participantId, final String text) {
         // get rid of leading/trailing whitespaces
         final String cleanId = participantId.trim();
         // determine the highest interview index for this participant, that is in use
@@ -79,19 +86,47 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         }
         // instantiate a new Interview for the given participant with the next higher index
         final Interview interview = new Interview(cleanId, maxUsedIndex + 1);
-        // append it to the list of existing interviews
-        final List<Interview> interviews = new LinkedList<Interview>(this.getModel().getInterviews());
+        if (text != null) {
+            final List<TextToken> paragraphs = this.determineTokensFromText(text);
+            interview.setText(paragraphs);
+        }
+        final List<Interview> interviews = new ArrayList<>(this.getModel().getInterviews());
         interviews.add(interview);
-        // set the extended interview list on the model
         this.getModel().setInterviews(interviews);
-        // trigger model change event for the new interview
         this.notifyListeners(interview, false);
         return interview;
     }
 
     @Override
+    public Interview createInterview(final String participantId) {
+        return this.createInterview(participantId, null);
+    }
+
+    @Override
+    public List<Interview> createInterviews(final Collection<? extends InterviewToCreate> interviewsToCreate) {
+        final List<Interview> newInterviews = interviewsToCreate.stream()
+                .map(toCreate -> this.createInterview(toCreate.getParticipantId(), toCreate.getInterviewText()))
+                .collect(Collectors.toList());
+        return newInterviews;
+    }
+
+    @Override
     public synchronized void setInterviewText(final Interview interview, final String text) {
-        final List<TextToken> paragraphs = new LinkedList<TextToken>();
+        final List<TextToken> paragraphs = this.determineTokensFromText(text);
+        // add the collected paragraphs to the given interview
+        interview.setText(paragraphs);
+        // trigger model change event for the modified interview
+        this.notifyListeners(interview, true);
+    }
+
+    /**
+     * Collect the tokenized paragraphs from the given text.
+     *
+     * @param text interview text to split into paragraphs and separate tokens
+     * @return tokenized text
+     */
+    private List<TextToken> determineTokensFromText(final String text) {
+        final List<TextToken> paragraphs = new LinkedList<>();
         // split text into paragraphs at line separators
         for (final String singleParagraph : text.split(ModelHandlerImpl.REGEX_PARAGRAPH_SEPARATOR)) {
             // separate paragraph into tokens (ideally words) at whitespaces
@@ -109,16 +144,13 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
             // add paragraph represented by the first token (of the double linked list) to the list of paragraphs
             paragraphs.add(firstToken);
         }
-        // add the collected paragraphs to the given interview
-        interview.setText(paragraphs);
-        // trigger model change event for the modified interview
-        this.notifyListeners(interview, true);
+        return paragraphs;
     }
 
     @Override
     public void deleteInterview(final Interview interview) {
         // collect all interviews of the model (to modify and reset this list to the model)
-        final List<Interview> interviews = new ArrayList<Interview>(this.getModel().getInterviews());
+        final List<Interview> interviews = new ArrayList<>(this.getModel().getInterviews());
         // get the list of interviews for the same participant (as they might be affected by changing indices)
         final List<Interview> affectedInterviews = this.getModel().getSubModelObjects().get(interview.getParticipantId());
         if (affectedInterviews.size() > interview.getIndex()) {
@@ -214,9 +246,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
             }
         }
         // replace currently assigned categories and clear start/end markers for all targeted tokens
-        for (final TextToken selectedToken : tokens) {
-            selectedToken.setDetail(category).setFirstTokenOfDetail(false).setLastTokenOfDetail(false);
-        }
+        tokens.forEach(selectedToken -> selectedToken.setDetail(category).setFirstTokenOfDetail(false).setLastTokenOfDetail(false));
         // set start marker if separation is required
         final TextToken firstTarget = tokens.get(0);
         final TextToken lastBeforeSelection = firstTarget.getPreviousToken();
@@ -273,9 +303,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         // now, that the previous run did not yield an error, actually resolve those intersected detail category assignments
         this.resolveIntersectedCategoryAssignments(parts);
         // the currently assigned categories should be replaced
-        for (final TextToken selectedToken : tokens) {
-            selectedToken.setDetail(category).setFirstTokenOfDetail(false).setLastTokenOfDetail(false);
-        }
+        tokens.forEach(selectedToken -> selectedToken.setDetail(category).setFirstTokenOfDetail(false).setLastTokenOfDetail(false));
         // set start/end markers for the whole selection
         if (category != null) {
             // set start marker on first token in first selected part (i.e. token range)
@@ -373,10 +401,10 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *         even part (second, fourth, ...)
      */
     private List<List<TextToken>> collectInterruptedSelectionParts(final List<TextToken> selectedTokens) {
-        final List<List<TextToken>> parts = new LinkedList<List<TextToken>>();
+        final List<List<TextToken>> parts = new LinkedList<>();
         // determine the first token out of the targeted range to end the following loop on
         final TextToken firstTokenAfterSelection = selectedTokens.get(selectedTokens.size() - 1).getFollowingToken();
-        List<TextToken> currentPart = new LinkedList<TextToken>();
+        List<TextToken> currentPart = new LinkedList<>();
         // alternate between selected and unselected sections (i.e. token ranges)
         boolean currentPartSelected = true;
         TextToken currentToken = selectedTokens.get(0);
@@ -387,7 +415,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                 // add current part to result list
                 parts.add(currentPart);
                 // create a new part list
-                currentPart = new LinkedList<TextToken>();
+                currentPart = new LinkedList<>();
             }
             currentPart.add(currentToken);
             currentToken = currentToken.getFollowingToken();
@@ -423,15 +451,13 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
             final int startsToMoveCount = singleConflict.getValue().getNumberOfStartedButNotEndedConflicts();
             final int endsToMoveCount = singleConflict.getValue().getNumberOfEndedButNotStartedConflicts();
             // detail category is not starting but ending in the enclosed part
-            final boolean requiredDetailStartNotMet =
-                    endsToMoveCount > 0
-                            && (!leadingConflicts.containsKey(conflictingDetail) || endsToMoveCount < leadingConflicts.get(conflictingDetail)
-                                    .getNumberOfStartedButNotEndedConflicts());
+            final boolean requiredDetailStartNotMet = endsToMoveCount > 0
+                    && (!leadingConflicts.containsKey(conflictingDetail) || endsToMoveCount < leadingConflicts.get(conflictingDetail)
+                    .getNumberOfStartedButNotEndedConflicts());
             // detail category is starting but not ending in the enclosed part
-            final boolean requiredDetailEndNotMet =
-                    startsToMoveCount > 0
-                            && (!trailingConflicts.containsKey(conflictingDetail) || startsToMoveCount < trailingConflicts.get(conflictingDetail)
-                                    .getNumberOfEndedButNotStartedConflicts());
+            final boolean requiredDetailEndNotMet = startsToMoveCount > 0
+                    && (!trailingConflicts.containsKey(conflictingDetail) || startsToMoveCount < trailingConflicts.get(conflictingDetail)
+                    .getNumberOfEndedButNotStartedConflicts());
             if (requiredDetailStartNotMet || requiredDetailEndNotMet) {
                 // the intersected detail category cannot be resolved
                 throw new HmxException(AisMessage.ERROR_AIS_SELECTION_INVALID);
@@ -441,8 +467,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         final DetailCategory enclosedOrphan = this.collectPossibleOrphanCategory(enclosedUnselectedSection);
         if (enclosedOrphan != null
                 && (!leadingConflicts.containsKey(enclosedOrphan) || !trailingConflicts.containsKey(enclosedOrphan)
-                        || leadingConflicts.get(enclosedOrphan).getNumberOfStartedButNotEndedConflicts() < 1 || trailingConflicts.get(
-                        enclosedOrphan).getNumberOfEndedButNotStartedConflicts() < 1)) {
+                || leadingConflicts.get(enclosedOrphan).getNumberOfStartedButNotEndedConflicts() < 1 || trailingConflicts.get(
+                enclosedOrphan).getNumberOfEndedButNotStartedConflicts() < 1)) {
             // the enclosed detail category could not be resolved
             throw new HmxException(AisMessage.ERROR_AIS_SELECTION_INVALID);
         }
@@ -459,7 +485,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *         a start
      */
     private Map<DetailCategory, CategoryConflictHandler> collectIntersectedCategories(final List<TextToken> tokenRange) {
-        final Map<DetailCategory, CategoryConflictHandler> affectedSections = new HashMap<DetailCategory, CategoryConflictHandler>();
+        final Map<DetailCategory, CategoryConflictHandler> affectedSections = new HashMap<>();
         for (final TextToken selectedToken : tokenRange) {
             // ignore null categories and single tokens that are start and stop in themselves
             if (selectedToken.getDetail() == null || selectedToken.isFirstTokenOfDetail() == selectedToken.isLastTokenOfDetail()) {
@@ -492,8 +518,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *             the token range contains a detail category that neither starts or ends there (and throwExceptionOnOrphanedToken was set to true)
      */
     private DetailCategory collectPossibleOrphanCategory(final List<TextToken> tokenRange) throws HmxException {
-        final Map<DetailCategory, AtomicInteger> affectedSections = new HashMap<DetailCategory, AtomicInteger>();
-        final Set<DetailCategory> possibleOrphans = new HashSet<DetailCategory>();
+        final Map<DetailCategory, AtomicInteger> affectedSections = new HashMap<>();
+        final Set<DetailCategory> possibleOrphans = new HashSet<>();
         for (final TextToken selectedToken : tokenRange) {
             if (selectedToken.getDetail() != null && !selectedToken.isFirstTokenOfDetail() && !selectedToken.isLastTokenOfDetail()
                     && (!affectedSections.containsKey(selectedToken.getDetail()) || affectedSections.get(selectedToken.getDetail()).get() <= 0)) {
@@ -643,9 +669,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         final int affectedRangeStart = Math.min(newIndex, oldIndex) - 1;
         final int affectedRangeEnd = Math.max(newIndex, oldIndex);
         final List<Interview> participantsInterviews = this.getModel().getSubModelObjects().get(interview.getParticipantId());
-        for (final Interview affectedInterview : participantsInterviews.subList(affectedRangeStart, affectedRangeEnd)) {
-            affectedInterview.setIndex(affectedInterview.getIndex() + offset);
-        }
+        participantsInterviews.subList(affectedRangeStart, affectedRangeEnd)
+                .forEach(affectedInterview -> affectedInterview.setIndex(affectedInterview.getIndex() + offset));
         interview.setIndex(newIndex);
         // trigger model change event for the whole model
         this.notifyListeners(this.getModel(), false);
@@ -661,10 +686,10 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     @Override
     public Map<Interview, Map<DetailCategory, AtomicLong>> countDetailOccurrences(final List<Interview> interviews) {
         final Map<Interview, Map<DetailCategory, AtomicLong>> result;
-        result = new LinkedHashMap<Interview, Map<DetailCategory, AtomicLong>>(interviews.size());
+        result = new LinkedHashMap<>(interviews.size());
         final List<DetailCategory> categories = this.getModel().provide();
         for (final Interview singleInterview : interviews) {
-            final Map<DetailCategory, AtomicLong> occurences = new LinkedHashMap<DetailCategory, AtomicLong>();
+            final Map<DetailCategory, AtomicLong> occurences = new LinkedHashMap<>();
             // initialize counter for each category
             for (final DetailCategory singleCategory : categories) {
                 occurences.put(singleCategory, new AtomicLong(0));
@@ -685,7 +710,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     @Override
     public Map<Interview, AtomicLong> countTokensWithAssignedDetail(final List<Interview> interviews) {
-        final Map<Interview, AtomicLong> result = new LinkedHashMap<Interview, AtomicLong>(interviews.size());
+        final Map<Interview, AtomicLong> result = new LinkedHashMap<>(interviews.size());
         for (final Interview singleInterview : interviews) {
             final AtomicLong counter = new AtomicLong();
             for (final TextToken singleParagraph : singleInterview.getText()) {
@@ -705,14 +730,14 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     @Override
     public Map<Interview, Map<List<DetailCategory>, AtomicLong>> extractDetailPattern(final List<Interview> interviews, final int minLength,
             final int maxLength) {
-        final Map<Interview, Map<List<DetailCategory>, AtomicLong>> result = new LinkedHashMap<Interview, Map<List<DetailCategory>, AtomicLong>>();
+        final Map<Interview, Map<List<DetailCategory>, AtomicLong>> result = new LinkedHashMap<>();
         // iterate over all given interviews
         for (final Interview singleInterview : interviews) {
-            final Map<List<DetailCategory>, AtomicLong> patternOccurences = new HashMap<List<DetailCategory>, AtomicLong>();
-            final List<List<DetailCategory>> currentPattern = new LinkedList<List<DetailCategory>>();
+            final Map<List<DetailCategory>, AtomicLong> patternOccurences = new HashMap<>();
+            final List<List<DetailCategory>> currentPattern = new LinkedList<>();
             // iterate over the whole detail category sequence
             for (final DetailCategory singleDetail : this.extractDetailSequence(singleInterview)) {
-                currentPattern.add(new ArrayList<DetailCategory>(maxLength));
+                currentPattern.add(new ArrayList<>(maxLength));
                 final Iterator<List<DetailCategory>> patternIterator = currentPattern.iterator();
                 do {
                     final List<DetailCategory> singlePattern = patternIterator.next();
@@ -741,7 +766,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     @Override
     public List<DetailCategory> extractDetailSequence(final Interview interview) {
-        final List<DetailCategory> sequence = new LinkedList<DetailCategory>();
+        final List<DetailCategory> sequence = new LinkedList<>();
         // iterate over all paragraphs
         for (final TextToken singleParagraph : interview.getText()) {
             // iterate over all tokens of the current paragraph
@@ -767,8 +792,8 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                     .append(otherProject.getInterviews().size()).toString();
         }
         // avoid differing sort order failing this check
-        final List<Interview> oneInterviews = new ArrayList<Interview>(this.getModel().getInterviews());
-        final List<Interview> otherInterviews = new ArrayList<Interview>(otherProject.getInterviews());
+        final List<Interview> oneInterviews = new ArrayList<>(this.getModel().getInterviews());
+        final List<Interview> otherInterviews = new ArrayList<>(otherProject.getInterviews());
         Collections.sort(oneInterviews);
         Collections.sort(otherInterviews);
         // compare each interview with its counter part at the same list position
@@ -835,7 +860,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                     || oneToken.isLastTokenOfDetail() != otherToken.isLastTokenOfDetail()
                     || oneToken.getDetail() != otherToken.getDetail()
                     && (oneToken.getDetail() == null || otherToken.getDetail() == null || !oneToken.getDetail().getCode()
-                            .equals(otherToken.getDetail().getCode()))) {
+                    .equals(otherToken.getDetail().getCode()))) {
                 final StringBuilder error = new StringBuilder("A Token's Detail Category assignment does not match: '");
                 error.append(oneToken.getText()).append("'    ");
                 this.appendCategoryStringForToken(error, oneToken);
@@ -876,19 +901,19 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     }
 
     /** Conflict handler class for collecting detail category sections that are being started but not ended and/or ended but not started. */
-    static class CategoryConflictHandler {
+    private static class CategoryConflictHandler {
 
         /** Registered unresolved detail category changes, i.e. started but not ended and/or ended but not started. */
-        final LinkedList<Boolean> categoryChanges = new LinkedList<Boolean>();
+        final LinkedList<Boolean> categoryChanges = new LinkedList<>();
 
         /**
          * Add another start or end of a detail category to this conflict handler.
-         * 
+         *
          * @param sectionStarted
          *            whether the respective detail category section is starting
          */
         void addCategoryChange(final boolean sectionStarted) {
-            if (this.categoryChanges.isEmpty() || !this.categoryChanges.getLast().booleanValue() || sectionStarted) {
+            if (this.categoryChanges.isEmpty() || !this.categoryChanges.getLast() || sectionStarted) {
                 this.categoryChanges.add(sectionStarted);
             } else {
                 // previous change was a section start, the current change ends that section again
@@ -898,7 +923,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
         /**
          * Check whether this handler instance contains unresolved conflicts.
-         * 
+         *
          * @return if at least one section was started but not ended or ended but not started
          */
         boolean hasUnresolvedConflicts() {
@@ -907,32 +932,20 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
         /**
          * Return the number of conflicting sections that are ending but have not been started before.
-         * 
+         *
          * @return number of conflicting section ends
          */
         int getNumberOfEndedButNotStartedConflicts() {
-            int result = 0;
-            for (final Boolean singleChange : this.categoryChanges) {
-                if (!singleChange) {
-                    result++;
-                }
-            }
-            return result;
+            return (int) this.categoryChanges.stream().filter(singleChange -> !singleChange).count();
         }
 
         /**
          * Return the number of conflicting sections that are starting but not ending afterwards.
-         * 
+         *
          * @return number of conflicting section starts
          */
         int getNumberOfStartedButNotEndedConflicts() {
-            int result = 0;
-            for (final Boolean singleChange : this.categoryChanges) {
-                if (singleChange) {
-                    result++;
-                }
-            }
-            return result;
+            return (int) this.categoryChanges.stream().filter(singleChange -> singleChange).count();
         }
     }
 }

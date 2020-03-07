@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -40,9 +39,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
-
 import net.java.dev.designgridlayout.DesignGridLayout;
-
 import org.hmx.scitos.core.i18n.Message;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.core.option.OptionHandler;
@@ -151,13 +148,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
                     SwingUtilities.updateComponentTreeUI(GeneralOptionPanel.this.dialog);
                     SwingUtilities.updateComponentTreeUI(viewParent);
                     viewParent.validate();
-                } catch (final ClassNotFoundException cnfex) {
-                    // ignore
-                } catch (final InstantiationException iex) {
-                    // ignore
-                } catch (final IllegalAccessException iaex) {
-                    // ignore
-                } catch (final UnsupportedLookAndFeelException ulafex) {
+                } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                     // ignore
                 }
             }
@@ -176,7 +167,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
         final List<Locale> availableLocales = Message.getAvailableLocales();
         // include default translation: English language
         availableLocales.add(new Locale("en"));
-        this.locales = new TreeMap<String, Locale>();
+        this.locales = new TreeMap<>();
         for (final Locale singleLocale : availableLocales) {
             // mapping the display name to the actual Locale
             this.locales.put(singleLocale.getDisplayName(Option.TRANSLATION.getValueAsLocale()), singleLocale);
@@ -186,7 +177,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
             // adding the display name of the Locale in the combo box
             this.localeBox.addItem(displayName);
         }
-        String selected;
+        final String selected;
         if (this.containsChosenSettingKey(Option.TRANSLATION)) {
             selected = this.getChosenSetting(Option.TRANSLATION);
         } else {

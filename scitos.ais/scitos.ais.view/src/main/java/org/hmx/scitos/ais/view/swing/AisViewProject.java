@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2016 HermeneutiX.org
+   Copyright (C) 2016-2020 HermeneutiX.org
 
    This file is part of SciToS.
 
@@ -20,17 +20,17 @@
 package org.hmx.scitos.ais.view.swing;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.swing.SwingUtilities;
-
 import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.AisProject;
 import org.hmx.scitos.ais.domain.model.Interview;
+import org.hmx.scitos.ais.view.swing.components.SpreadsheetInterviewImportDialog;
 import org.hmx.scitos.core.ExportOption;
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.i18n.Message;
@@ -42,20 +42,21 @@ import org.hmx.scitos.view.IViewProject;
 import org.hmx.scitos.view.swing.MessageHandler;
 import org.hmx.scitos.view.swing.ScitosClient;
 import org.hmx.scitos.view.swing.util.ViewUtil;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 /** Swing controller representing one open project containing the model and view elements. */
 public final class AisViewProject implements IViewProject<AisProject>, ModelChangeListener {
 
     /** The main client instance this view project belongs to. */
-    final ScitosClient client;
+    private final ScitosClient client;
     /** The dedicated model handler for the represented model project instance. */
     private final AisModelHandler modelHandler;
     /** The flag indicating whether the current state contains no unsaved changes. */
-    boolean saved = true;
+    private boolean saved = true;
     /** The path this project has been loaded from and/or last saved to. It is used as the default path for the next requested save operation. */
-    File savePath;
+    private File savePath;
     /** The elements displayed in open tabs when this view project was last loaded/saved. */
-    private final List<Object> openTabElements = new LinkedList<Object>();
+    private final List<Object> openTabElements = new LinkedList<>();
 
     /**
      * Creates a new project in the specified {@link ScitosClient}.
@@ -71,13 +72,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
         this.client = client;
         this.modelHandler = modelHandler;
         this.setSavePath(savePath);
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                modelHandler.addModelChangeListener(AisViewProject.this);
-            }
-        });
+        SwingUtilities.invokeLater(() -> modelHandler.addModelChangeListener(this));
     }
 
     @Override
@@ -150,13 +145,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
             this.client.getMainView().validateTabsForProject(this);
         }
         this.saved = false;
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                AisViewProject.this.client.revalidate();
-            }
-        });
+        SwingUtilities.invokeLater(this.client::revalidate);
     }
 
     @Override
@@ -226,6 +215,25 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
         }
     }
 
+    /**
+     * Allow the user to open an ODS file, extract the contained interviews and add them to this project.
+     */
+    public void importInterviewsFromOds() {
+        final File path = ViewUtil.openFile(this.client.getFrame(), AisMessage.PROJECT_IMPORT_INTERVIEWS.get(), false);
+        if (path == null) {
+            return;
+        }
+        try {
+            final SpreadSheet importFile = SpreadSheet.createFromFile(path);
+            if (importFile.getSheetCount() == 0) {
+                throw new HmxException(AisMessage.PROJECT_IMPORT_INTERVIEWS_INVALID_SPREADSHEET);
+            }
+            new SpreadsheetInterviewImportDialog(this.modelHandler, importFile).setVisible(true);
+        } catch (IOException | HmxException ex) {
+            MessageHandler.showException(ex);
+        }
+    }
+
     @Override
     public boolean close() {
         return this.client.closeProject(this);
@@ -273,14 +281,10 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
      *            if this project should be marked as saved
      */
     public void setSaved(final boolean flag) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (AisViewProject.this.saved != flag) {
-                    AisViewProject.this.saved = flag;
-                    AisViewProject.this.client.refreshTitle();
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (AisViewProject.this.saved != flag) {
+                AisViewProject.this.saved = flag;
+                AisViewProject.this.client.refreshTitle();
             }
         });
     }

@@ -42,7 +42,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -53,7 +52,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
-
 import org.hmx.scitos.core.i18n.Message;
 
 /**
@@ -182,7 +180,7 @@ public class ButtonTabComponent extends JPanel {
     protected void paintChildren(final Graphics graphics) {
         final int index = this.pane.indexOfTabComponent(this);
         final int selection = this.pane.getSelectedIndex();
-        String colorKey;
+        final String colorKey;
         if (index == selection) {
             colorKey = "TabbedPane.selectedTabTitleNormalColor";
         } else {

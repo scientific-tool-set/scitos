@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.hmx.scitos.core.HmxException;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.domain.util.CollectionUtil;
@@ -469,7 +468,7 @@ public final class ContextMenuFactory {
         final int size = checked.size();
         if (size == 2) {
             // the clicked proposition and only one other are checked
-            Proposition target;
+            final Proposition target;
             if (checked.get(0) == selectedProposition) {
                 target = checked.get(1);
             } else {

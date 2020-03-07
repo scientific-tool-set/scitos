@@ -20,21 +20,22 @@
 package org.hmx.scitos.hmx.view.swing;
 
 import org.assertj.swing.exception.ComponentLookupException;
+import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JPanelFixture;
+import org.assertj.swing.fixture.JTextComponentFixture;
+import org.assertj.swing.fixture.JToggleButtonFixture;
 import org.hmx.scitos.core.i18n.Message;
+import org.hmx.scitos.hmx.core.i18n.HmxMessage;
+import org.hmx.scitos.hmx.view.swing.elements.ViewProposition;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.swing.AbstractScitosUiTest;
 import org.hmx.scitos.view.swing.util.OrdinalComponentMatcher;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import org.assertj.swing.fixture.JButtonFixture;
-import org.assertj.swing.fixture.JTextComponentFixture;
-import org.assertj.swing.fixture.JToggleButtonFixture;
-import org.hmx.scitos.hmx.core.i18n.HmxMessage;
-import org.hmx.scitos.hmx.view.swing.elements.ViewProposition;
-import org.junit.Assert;
-
 /** UI test for a simple HermeneutiX project workflow. */
+@Ignore
 public class HmxViewProjectTest extends AbstractScitosUiTest {
 
     /**
@@ -183,7 +184,7 @@ public class HmxViewProjectTest extends AbstractScitosUiTest {
     }
 
     private JPanelFixture getProposition(final int index) {
-        return this.frame.panel(new OrdinalComponentMatcher<ViewProposition>(ViewProposition.class, index, true));
+        return this.frame.panel(new OrdinalComponentMatcher<>(ViewProposition.class, index, true));
     }
 
     private JTextComponentFixture getPropositionLabelInput(final int Index) {

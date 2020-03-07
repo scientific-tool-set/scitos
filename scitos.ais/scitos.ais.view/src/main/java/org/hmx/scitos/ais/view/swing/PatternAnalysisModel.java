@@ -21,8 +21,6 @@ package org.hmx.scitos.ais.view.swing;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,10 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
+import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
-
 import org.hmx.scitos.ais.core.i18n.AisMessage;
 import org.hmx.scitos.ais.domain.model.DetailCategory;
 import org.hmx.scitos.ais.domain.model.Interview;
@@ -148,25 +145,23 @@ public final class PatternAnalysisModel {
             this.tokenCounts = PatternAnalysisModel.this.project.getModelHandler().countTokensWithAssignedDetail(this.rows);
             this.values = PatternAnalysisModel.this.project.getModelHandler().countDetailOccurrences(this.rows);
 
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    SummaryTableModel.this.fireTableStructureChanged();
-                }
-            });
+            SwingUtilities.invokeLater(this::fireTableStructureChanged);
         }
 
         @Override
         public Object getValueAt(final int rowIndex, final int columnIndex) {
             final Interview interview = this.rows.get(rowIndex);
             final Object value;
-            if (columnIndex == 0) {
+            switch (columnIndex) {
+            case 0:
                 value = PatternAnalysisModel.this.project.getLabel(interview);
-            } else if (columnIndex == 1) {
+                break;
+            case 1:
                 value = this.tokenCounts.get(interview).get();
-            } else {
+                break;
+            default:
                 value = this.values.get(interview).get(this.columns.get(columnIndex - 2)).get();
+                break;
             }
             return value;
         }
@@ -184,12 +179,16 @@ public final class PatternAnalysisModel {
         @Override
         public String getColumnName(final int columnIndex) {
             final String columnName;
-            if (columnIndex == 0) {
+            switch (columnIndex) {
+            case 0:
                 columnName = AisMessage.ANALYSIS_TABLE_HEADER_INTERVIEW.get();
-            } else if (columnIndex == 1) {
+                break;
+            case 1:
                 columnName = AisMessage.ANALYSIS_TABLE_HEADER_TOKENCOUNT.get();
-            } else {
+                break;
+            default:
                 columnName = this.columns.get(columnIndex - 2).getCode();
+                break;
             }
             return columnName;
         }
@@ -221,20 +220,14 @@ public final class PatternAnalysisModel {
         /** Recollect the displayed table contents. */
         void refreshModel() {
             this.columns = PatternAnalysisModel.this.project.getModelObject().getInterviews();
-            this.values = new HashMap<Interview, List<DetailCategory>>();
+            this.values = new HashMap<>();
             this.rowCount = 0;
             for (final Interview singleInterview : this.columns) {
                 final List<DetailCategory> sequence = PatternAnalysisModel.this.project.getModelHandler().extractDetailSequence(singleInterview);
                 this.values.put(singleInterview, sequence);
                 this.rowCount = Math.max(this.rowCount, sequence.size());
             }
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    SequenceTableModel.this.fireTableStructureChanged();
-                }
-            });
+            SwingUtilities.invokeLater(this::fireTableStructureChanged);
         }
 
         @Override
@@ -306,19 +299,13 @@ public final class PatternAnalysisModel {
         void refreshModel() {
             this.columns = PatternAnalysisModel.this.project.getModelObject().getInterviews();
             this.values = PatternAnalysisModel.this.project.getModelHandler().extractDetailPattern(this.columns, 2, 3);
-            final Set<List<DetailCategory>> patterns = new HashSet<List<DetailCategory>>();
-            for (final Map<List<DetailCategory>, AtomicLong> singlePatternList : this.values.values()) {
-                patterns.addAll(singlePatternList.keySet());
-            }
-            this.rows = new ArrayList<List<DetailCategory>>(patterns);
-            Collections.sort(this.rows, this.sorter);
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    PatternTableModel.this.fireTableStructureChanged();
-                }
-            });
+            final Set<List<DetailCategory>> patterns = new HashSet<>();
+            this.rows = this.values.values().stream()
+                    .flatMap(singlePatternList -> singlePatternList.keySet().stream())
+                    .distinct()
+                    .sorted(this.sorter)
+                    .collect(Collectors.toList());
+            SwingUtilities.invokeLater(this::fireTableStructureChanged);
         }
 
         @Override
@@ -327,17 +314,14 @@ public final class PatternAnalysisModel {
             if (!this.rows.isEmpty()) {
                 final List<DetailCategory> pattern = this.rows.get(rowIndex);
                 if (columnIndex == 0) {
-                    final StringBuilder patternString = new StringBuilder();
-                    for (final DetailCategory singleDetail : pattern) {
-                        patternString.append(singleDetail.getCode());
-                        patternString.append(' ');
-                    }
-                    cellValue = patternString.deleteCharAt(patternString.length() - 1).toString();
+                    cellValue = pattern.stream()
+                            .map(DetailCategory::getCode)
+                            .collect(Collectors.joining(" "));
                 } else {
                     final Interview interview = this.columns.get(columnIndex - 1);
                     cellValue = this.values.get(interview).get(pattern);
                     if (cellValue == null) {
-                        cellValue = Long.valueOf(0);
+                        cellValue = 0L;
                     } else {
                         cellValue = ((AtomicLong) cellValue).get();
                     }
@@ -386,7 +370,7 @@ public final class PatternAnalysisModel {
     private static final class PatternSorter implements Comparator<List<DetailCategory>> {
 
         /** Mapped sort rank for each detail category, to speedup the actual sorting. */
-        private final Map<DetailCategory, Integer> cachedDetailOrder = new HashMap<DetailCategory, Integer>();
+        private final Map<DetailCategory, Integer> cachedDetailOrder = new HashMap<>();
 
         /**
          * Main constructor.
@@ -395,8 +379,10 @@ public final class PatternAnalysisModel {
          *            detail categories in the order they should be sorted
          */
         PatternSorter(final List<DetailCategory> categoryOrder) {
-            for (int index = 0; index < categoryOrder.size(); index++) {
-                this.cachedDetailOrder.put(categoryOrder.get(index), Integer.valueOf(index));
+            int index = 0;
+            for (DetailCategory category : categoryOrder) {
+                this.cachedDetailOrder.put(category, index);
+                index++;
             }
         }
 

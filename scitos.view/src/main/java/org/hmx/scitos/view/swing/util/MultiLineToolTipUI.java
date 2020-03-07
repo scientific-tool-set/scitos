@@ -21,7 +21,6 @@ package org.hmx.scitos.view.swing.util;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.JComponent;
@@ -32,7 +31,7 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicToolTipUI;
 
 /**
- * Renders ToolTips:
+ * Renders ToolTips.
  * <ul>
  * <li>with multiple lines</li>
  * <li>auto-width + max. width</li>

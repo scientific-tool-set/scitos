@@ -33,12 +33,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
@@ -209,7 +207,7 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
         final int startX;
         if (this.checkBox != null) {
             final Dimension boxSize = this.checkBox.getPreferredSize();
-            int posX;
+            final int posX;
             if (this.leftAligned) {
                 posX = ViewRelation.HALF_LINE_THICKNESS;
                 startX = boxSize.width + (2 * ViewRelation.HALF_LINE_THICKNESS);

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
 import javax.swing.SwingUtilities;
 import org.hmx.scitos.ais.core.AisModelHandler;
 import org.hmx.scitos.ais.core.i18n.AisMessage;
@@ -224,8 +225,16 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
             return;
         }
         try {
-            final SpreadSheet importFile = SpreadSheet.createFromFile(path);
-            if (importFile.getSheetCount() == 0) {
+            final SpreadSheet importFile;
+            try {
+                importFile = SpreadSheet.createFromFile(path);
+            } catch (NullPointerException ex) {
+                throw new HmxException(AisMessage.PROJECT_IMPORT_INTERVIEWS_INVALID_SPREADSHEET, ex);
+            }
+            if (IntStream.range(0, importFile.getSheetCount())
+                    .mapToObj(importFile::getSheet)
+                    .filter(sheet -> sheet.getColumnCount() > 1 && sheet.getRowCount() > 1)
+                    .noneMatch(sheet -> !sheet.getImmutableCellAt(0, 0).isEmpty() && !sheet.getImmutableCellAt(1, 0).isEmpty())) {
                 throw new HmxException(AisMessage.PROJECT_IMPORT_INTERVIEWS_INVALID_SPREADSHEET);
             }
             new SpreadsheetInterviewImportDialog(this.modelHandler, importFile).setVisible(true);

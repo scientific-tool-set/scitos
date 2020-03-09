@@ -76,7 +76,8 @@ Zugeordnete Kategorien ohne Entsprechung im neuen Modell werden verworfen!</entr
 	<entry key="Ais.Project.Export.Html">HTML-Datei</entry>
 	<entry key="Ais.Project.Export.Ods">ODS-Datei (Ergebnistabellen)</entry>
 	<entry key="Ais.Project.Import.Interviews.Ods">Importiere Interviews (aus ODS-Spreadsheet)</entry>
-	<entry key="Ais.Project.Import.Interviews.Ods.InvalidSpreadsheet">Ein Spreadsheet kann nur für den Import verwendet werden, wenn es mindesten ein Tabellenblatt enthält, mit mindestens zwei Spalten und zwei Zeilen.
+	<entry key="Ais.Project.Import.Interviews.Ods.InvalidSpreadsheet">Ein Import-Spreadsheet sollte vom Typ *.ods (OpenDocument Spreadsheet) sein.
+Darüber hinaus sollte es mindestens ein Tabellenblatt enthalten, mit mindestens zwei Spalten und zwei Zeilen.
 
 Eine Spalte sollte den Bezeichner der Studienteilnehmer enthalten und die andere Spalte die Interview-Mitschrift.</entry>
 	<entry key="Ais.Project.Import.Interviews.Ods.Preview.Participant">Teilnehmer</entry>

@@ -82,6 +82,7 @@ public final class SpreadsheetInterviewImportDialog extends JDialog {
         this.sheetSelection = new JComboBox<>(IntStream.range(0, spreadsheet.getSheetCount())
                 .mapToObj(spreadsheet::getSheet)
                 .filter(sheet -> sheet.getColumnCount() > 1 && sheet.getRowCount() > 1)
+                .filter(sheet -> !sheet.getImmutableCellAt(0, 0).isEmpty() && !sheet.getImmutableCellAt(1, 0).isEmpty())
                 .map(SheetComboBoxItem::new)
                 .toArray(SheetComboBoxItem[]::new));
         contentPane.add(this.createSelectionForm(), BorderLayout.NORTH);

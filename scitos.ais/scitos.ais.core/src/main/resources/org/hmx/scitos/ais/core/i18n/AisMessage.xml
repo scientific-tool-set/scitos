@@ -73,7 +73,8 @@ Category assignments without a selected replacement are being discarded.</entry>
 	<entry key="Ais.Project.Export.Html">HTML File</entry>
 	<entry key="Ais.Project.Export.Ods">Spreadsheet (only Results)</entry>
 	<entry key="Ais.Project.Import.Interviews.Ods">Import Interviews (from Spreadsheet)</entry>
-	<entry key="Ais.Project.Import.Interviews.Ods.InvalidSpreadsheet">An import spreadsheet should have at least one sheet and at least two columns and rows on that sheet.
+	<entry key="Ais.Project.Import.Interviews.Ods.InvalidSpreadsheet">An import spreadsheet should be an *.ods (OpenDocument Spreadsheet) file.
+It should also have at least one sheet and at least two columns and rows on that sheet.
 
 One column is expected to contain the Participant IDs and another column should contain the associated interview texts.</entry>
 	<entry key="Ais.Project.Import.Interviews.Ods.Preview.Participant">Participant ID</entry>

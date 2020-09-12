@@ -231,36 +231,18 @@ public final class ScitosClient {
         // create the "open" entry in the "file" menu
         final JMenuItem openItem = new JMenuItem(Message.MENUBAR_FILE_OPEN.get(), ScitosIcon.FOLDER_OPEN.create());
         openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ScitosClient.SHORTCUT_MASK));
-        openItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.open();
-            }
-        });
+        openItem.addActionListener(event -> this.open());
         fileMenu.add(openItem);
         fileMenu.addSeparator();
         // create the "save" entry in the "file" menu
         this.saveMenuItem = new JMenuItem(Message.MENUBAR_FILE_SAVE.get(), ScitosIcon.SAVE_FILE.create());
         this.saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ScitosClient.SHORTCUT_MASK));
-        this.saveMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.save();
-            }
-        });
+        this.saveMenuItem.addActionListener(event -> this.save());
         fileMenu.add(this.saveMenuItem);
         // create the "save to" entry in the "file" menu
         this.saveAsMenuItem = new JMenuItem(Message.MENUBAR_FILE_SAVEAS.get(), ScitosIcon.SAVEAS_FILE.create());
-        this.saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | ScitosClient.SHORTCUT_MASK));
-        this.saveAsMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.saveAs();
-            }
-        });
+        this.saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK | ScitosClient.SHORTCUT_MASK));
+        this.saveAsMenuItem.addActionListener(event -> this.saveAs());
         fileMenu.add(this.saveAsMenuItem);
         this.exportMenu = new JMenu(Message.MENUBAR_FILE_EXPORT.get());
         this.exportMenu.setIcon(ScitosIcon.EXPORT_FILE.create());
@@ -270,34 +252,16 @@ public final class ScitosClient {
         if (!ScitosApp.IS_MAC) {
             fileMenu.addSeparator();
             final JMenuItem aboutItem = new JMenuItem(Message.MENUBAR_ABOUT.get());
-            aboutItem.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    new AboutDialog(ScitosClient.this.getFrame()).setVisible(true);
-                }
-            });
+            aboutItem.addActionListener(event -> new AboutDialog(this.getFrame()).setVisible(true));
             fileMenu.add(aboutItem);
             // create the "preferences" entry in the "file" menu
             final JMenuItem preferencesItem = new JMenuItem(Message.MENUBAR_PREFERENCES.get(), ScitosIcon.CONFIG.create());
-            preferencesItem.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    OptionView.showPreferenceDialog(ScitosClient.this, ScitosClient.this.optionPanelProvider);
-                }
-            });
+            preferencesItem.addActionListener(event -> OptionView.showPreferenceDialog(this, this.optionPanelProvider));
             fileMenu.add(preferencesItem);
             fileMenu.addSeparator();
             // create the "exit" entry in the "file" menu
             final JMenuItem exitItem = new JMenuItem(Message.MENUBAR_QUIT.get());
-            exitItem.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    ScitosClient.this.quit();
-                }
-            });
+            exitItem.addActionListener(event -> this.quit());
             fileMenu.add(exitItem);
         }
         return fileMenu;
@@ -313,23 +277,11 @@ public final class ScitosClient {
         this.undoMenuItem = this.editMenu.add(new JMenuItem(Message.MENUBAR_EDIT_UNDO.get(), ScitosIcon.UNDO_EDIT.create()));
         this.undoMenuItem.setEnabled(false);
         this.undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ScitosClient.SHORTCUT_MASK));
-        this.undoMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.undo();
-            }
-        });
+        this.undoMenuItem.addActionListener(event -> this.undo());
         this.redoMenuItem = this.editMenu.add(new JMenuItem(Message.MENUBAR_EDIT_REDO.get(), ScitosIcon.REDO_EDIT.create()));
         this.redoMenuItem.setEnabled(false);
         this.redoMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ScitosClient.SHORTCUT_MASK));
-        this.redoMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.redo();
-            }
-        });
+        this.redoMenuItem.addActionListener(event -> this.redo());
         return this.editMenu;
     }
 
@@ -347,33 +299,19 @@ public final class ScitosClient {
         scaleDownFontItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ScitosClient.SHORTCUT_MASK | InputEvent.SHIFT_DOWN_MASK));
         // allow the scaling only in the given range, with 10% change per step: 1.1^(-2 to +8)
         final AtomicInteger range = new AtomicInteger(0);
-        scaleUpFontItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                scaleUpFontItem.setEnabled(range.incrementAndGet() < 8);
-                scaleDownFontItem.setEnabled(true);
-                ScitosClient.this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
-            }
+        scaleUpFontItem.addActionListener(event -> {
+            scaleUpFontItem.setEnabled(range.incrementAndGet() < 8);
+            scaleDownFontItem.setEnabled(true);
+            this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
         });
-        scaleDownFontItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                scaleUpFontItem.setEnabled(true);
-                scaleDownFontItem.setEnabled(range.decrementAndGet() > -2);
-                ScitosClient.this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
-            }
+        scaleDownFontItem.addActionListener(event -> {
+            scaleUpFontItem.setEnabled(true);
+            scaleDownFontItem.setEnabled(range.decrementAndGet() > -2);
+            this.setContentScaleFactor((float) Math.pow(1.1, range.get()));
         });
         final JMenuItem toggleTreeItem =
                 this.viewMenu.add(new JMenuItem(Message.MENUBAR_VIEW_TOGGLE_PROJECT_TREE.get(), ScitosIcon.SIDEBAR.create()));
-        toggleTreeItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.mainView.toggleProjectTreeVisibility();
-            }
-        });
+        toggleTreeItem.addActionListener(event -> this.mainView.toggleProjectTreeVisibility());
         return this.viewMenu;
     }
 
@@ -420,51 +358,27 @@ public final class ScitosClient {
                     // nothing to do
                 }
             });
-            newFileButton.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    menu.show(newFileButton, 0, newFileButton.getHeight());
-                }
-            });
+            newFileButton.addActionListener(event -> menu.show(newFileButton, 0, newFileButton.getHeight()));
         }
         bar.add(newFileButton);
         this.saveToolItem = new JButton(ScitosIcon.SAVE_FILE.create());
         this.saveToolItem.setToolTipText(Message.MENUBAR_FILE_SAVE.get());
         this.saveToolItem.setFocusable(false);
         this.saveToolItem.setEnabled(false);
-        this.saveToolItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.save();
-            }
-        });
+        this.saveToolItem.addActionListener(event -> this.save());
         bar.add(this.saveToolItem);
         bar.addSeparator();
         this.undoToolItem = new JButton(ScitosIcon.UNDO_EDIT.create());
         this.undoToolItem.setToolTipText(Message.MENUBAR_EDIT_UNDO.get());
         this.undoToolItem.setFocusable(false);
         this.undoToolItem.setEnabled(false);
-        this.undoToolItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.undo();
-            }
-        });
+        this.undoToolItem.addActionListener(event -> this.undo());
         bar.add(this.undoToolItem);
         this.redoToolItem = new JButton(ScitosIcon.REDO_EDIT.create());
         this.redoToolItem.setToolTipText(Message.MENUBAR_EDIT_REDO.get());
         this.redoToolItem.setFocusable(false);
         this.redoToolItem.setEnabled(false);
-        this.redoToolItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                ScitosClient.this.redo();
-            }
-        });
+        this.redoToolItem.addActionListener(event -> this.redo());
         bar.add(this.redoToolItem);
         return bar;
     }

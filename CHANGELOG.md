@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `scitos`
+#### Changed
+- BREAKING CHANGE: Minimum Java version is now `9` (and no longer `8`)!
+
 #### Fixed
 - show error if closing of connection to saved file encounters one
+- re-instate macOS specific handlers for About, Preferences, Quit actions (necessitated by changes in Java 9)
 
 ## [2.3.1] - 2020-03-09
 ### `scitos-ais`

@@ -19,7 +19,10 @@
 
 package org.hmx.scitos.view.swing;
 
+import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.awt.Taskbar;
+import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -31,7 +34,6 @@ import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.view.FileType;
 import org.hmx.scitos.view.ScitosIcon;
 import org.hmx.scitos.view.swing.option.OptionView;
-import org.hmx.scitos.view.swing.util.MacAppEventAdapter;
 import org.hmx.scitos.view.swing.util.MultiLineToolTipUI;
 
 import dagger.ObjectGraph;
@@ -58,51 +60,54 @@ public final class ScitosApp {
      *            arguments that are currently ignored
      */
     public static void main(final String[] args) {
+        EventQueue.invokeLater(ScitosApp::run);
+    }
+
+    /**
+     * Start and show the ScitosClient.
+     */
+    private static void run() {
         if (ScitosApp.IS_MAC) {
             // set the application name in screen menu bar
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SciToS");
             // transfer the frame menu bar to screen menu bar
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             // initialize apple event listeners for screen menu bar
-            try {
-                MacAppEventAdapter.setAboutHandler(null, ScitosApp.class.getDeclaredMethod("showAbout"));
-                MacAppEventAdapter.setFileHandler(null, ScitosApp.class.getDeclaredMethod("openFile", File.class));
-                MacAppEventAdapter.setPreferencesHandler(null, ScitosApp.class.getDeclaredMethod("showPreferences"));
-                MacAppEventAdapter.setQuitHandler(null, ScitosApp.class.getDeclaredMethod("quit"));
-                MacAppEventAdapter.setDockIconImage(ScitosIcon.APPLICATION.getResourcePath());
-            } catch (final SecurityException sec) {
-                // ignore reflection error
-            } catch (final NoSuchMethodException nsm) {
-                // ignore reflection error
+            final Desktop desktop = Desktop.getDesktop();
+            desktop.setAboutHandler(event -> showAbout());
+            desktop.setPreferencesHandler(event -> showPreferences());
+            desktop.setOpenFileHandler(event -> event.getFiles().forEach(ScitosApp::openFile));
+            desktop.disableSuddenTermination();
+            desktop.setQuitHandler((event, response) -> {
+                if (quit()) {
+                    System.exit(0);
+                }
+            });
+            if (Taskbar.isTaskbarSupported()) {
+                Taskbar.getTaskbar().setIconImage(ScitosIcon.APPLICATION.create().getImage());
             }
         }
-        EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    // default: NATIVE Look and Feel
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    /*
-                     * set the look and feel regarding to the options file entry; may throw an exception, when there is no valid entry
-                     */
-                    final String chosenLaF = Option.LOOK_AND_FEEL.getValue();
-                    if (chosenLaF != null) {
-                        UIManager.setLookAndFeel(chosenLaF);
-                    }
-                } catch (final Exception expected) {
-                    // ignore
-                }
-                MultiLineToolTipUI.setMaximumWidth(400);
-                MultiLineToolTipUI.initialize();
-                ToolTipManager.sharedInstance().setDismissDelay(20000);
-                try {
-                    ScitosApp.loadModulesAndShowClient();
-                } catch (final Exception ex) {
-                    MessageHandler.showException(ex);
-                }
+        try {
+            // default: NATIVE Look and Feel
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            /*
+            * set the look and feel regarding to the options file entry; may throw an exception, when there is no valid entry
+            */
+            final String chosenLaF = Option.LOOK_AND_FEEL.getValue();
+            if (chosenLaF != null) {
+                UIManager.setLookAndFeel(chosenLaF);
             }
-        });
+        } catch (final Exception expected) {
+            // ignore
+        }
+        MultiLineToolTipUI.setMaximumWidth(400);
+        MultiLineToolTipUI.initialize();
+        ToolTipManager.sharedInstance().setDismissDelay(20000);
+        try {
+            ScitosApp.loadModulesAndShowClient();
+        } catch (final Exception ex) {
+            MessageHandler.showException(ex);
+        }
     }
 
     /**
@@ -128,8 +133,13 @@ public final class ScitosApp {
             if (singleType.isSupportedByDistribution()) {
                 final Class<?> moduleClass = Class.forName(singleType.getModuleClassName());
                 final Class<?> moduleInitializerClass = Class.forName(singleType.getModuleInitializerClassName());
-                modules.add(moduleClass.newInstance());
-                initializerClasses.add(moduleInitializerClass);
+                try {
+                    modules.add(moduleClass.getConstructor().newInstance());
+                    initializerClasses.add(moduleInitializerClass);
+                } catch (final NoSuchMethodException | SecurityException | InvocationTargetException ex) {
+                    System.err.println("Failed to load " + singleType.getModuleClassName());
+                    ex.printStackTrace();
+                }
             }
         }
         // create dependency injection graph from combined modules

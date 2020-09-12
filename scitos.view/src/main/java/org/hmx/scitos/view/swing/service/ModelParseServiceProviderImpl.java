@@ -157,15 +157,18 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
     private void save(final Document xml, final Transformer transformer, final File target) throws HmxException {
         // create target file output stream
         FileOutputStream output = null;
+        boolean errorOccurred = false;
         try {
             output = new FileOutputStream(target);
             // write the xml structure to the output stream
             transformer.transform(new DOMSource(xml), new StreamResult(output));
             output.flush();
         } catch (final IOException ioe) {
+            errorOccurred = true;
             // error while initializing the FileOutputStream
             throw new HmxException(Message.ERROR_UNKNOWN, ioe);
         } catch (final TransformerException te) {
+            errorOccurred = true;
             // error while transferring the xml document through the output stream
             throw new HmxException(Message.ERROR_UNKNOWN, te);
         } finally {
@@ -173,7 +176,9 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
                 try {
                     output.close();
                 } catch (final IOException ioex) {
-                    // at least we tried
+                    if (!errorOccurred) {
+                        throw new HmxException(Message.ERROR_UNKNOWN, ioex);
+                    }
                 }
             }
         }

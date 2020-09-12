@@ -121,7 +121,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
             doc.getDocumentElement().appendChild(this.parseXmlFromDetailCategories(doc, project));
             // include scored interviews
             final Element interviewRoot = doc.createElementNS(ModelParseServiceImpl.NAMESPACE, ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
-            final List<Interview> interviews = new ArrayList<Interview>(project.getInterviews());
+            final List<Interview> interviews = new ArrayList<>(project.getInterviews());
             // add interviews in sorted order - just for a user who opens the file in a text editor
             Collections.sort(interviews);
             for (final Interview singleInterview : interviews) {
@@ -188,13 +188,13 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
         // retrieve interviews from document
         final Element interviewRoot = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
         if (interviewRoot != null) {
-            final List<Interview> containedInterviews = new LinkedList<Interview>();
+            final List<Interview> containedInterviews = new LinkedList<>();
             for (final Element singleInterview : DomUtil.getChildElements(interviewRoot, ModelParseServiceImpl.TAG_INTERVIEW)) {
                 containedInterviews.add(this.parseInterviewFromXml(singleInterview, categories));
             }
             project.setInterviews(containedInterviews);
         }
-        return new SimpleEntry<AisProject, List<?>>(project, this.parseOpenViewElementsFromXml(doc, project));
+        return new SimpleEntry<>(project, this.parseOpenViewElementsFromXml(doc, project));
     }
 
     /**
@@ -287,7 +287,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private List<DetailCategory> parseDetailCategoriesFromXmlRecursively(final List<Element> categories, final DetailCategory parentCategory)
             throws HmxException {
-        final List<DetailCategory> result = new LinkedList<DetailCategory>();
+        final List<DetailCategory> result = new LinkedList<>();
         for (final Element singleCategoryElement : categories) {
             // parse mandatory category attributes
             final String code = singleCategoryElement.getAttribute(ModelParseServiceImpl.ATTR_CATEGORY_CODE);
@@ -421,7 +421,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
         // include last token of this range
         detailElement.appendChild(this.parseXmlFromTokenText(doc, currentToken));
         // return create wrapper element (including its tokens) and the token where to continue the parsing
-        return new SimpleEntry<Element, TextToken>(detailElement, currentToken.getFollowingToken());
+        return new SimpleEntry<>(detailElement, currentToken.getFollowingToken());
     }
 
     /**
@@ -458,7 +458,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
             throw new HmxException(Message.ERROR_FILE_INVALID, new IllegalArgumentException("invalid " + ModelParseServiceImpl.TAG_INTERVIEW
                     + " definition"));
         }
-        final List<TextToken> text = new LinkedList<TextToken>();
+        final List<TextToken> text = new LinkedList<>();
         for (final Element singleParagraph : DomUtil.getChildElements(interviewElement, ModelParseServiceImpl.TAG_INTERVIEW_PARAGRAPH)) {
             text.add(this.parseTextParagraphFromXml(singleParagraph, categories));
         }
@@ -556,7 +556,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      * @return successfully parsed list of model elements that were open in the view, when the document was created
      */
     private List<Object> parseOpenViewElementsFromXml(final Document doc, final AisProject parsedProject) {
-        final List<Object> openViewElements = new LinkedList<Object>();
+        final List<Object> openViewElements = new LinkedList<>();
         final Element viewsRoot = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_VIEWS);
         if (viewsRoot != null) {
             for (final Element singleView : DomUtil.getChildElements(viewsRoot)) {

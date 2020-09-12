@@ -128,7 +128,7 @@ public final class DomUtil {
      * @return all child elements with the given name
      */
     public static List<Element> getChildElements(final Node parentNode, final String... childNodeNames) {
-        final List<Element> children = new LinkedList<Element>();
+        final List<Element> children = new LinkedList<>();
         final NodeList candidates = parentNode.getChildNodes();
         final int childCount = candidates.getLength();
         final List<String> targetNodeNames = Arrays.asList(childNodeNames);

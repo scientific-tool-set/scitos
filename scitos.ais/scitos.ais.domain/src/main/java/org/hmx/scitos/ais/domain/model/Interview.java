@@ -36,7 +36,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
     /** The index (i.e. number) of this interview in the project containing it. */
     private int index;
     /** The actual interview including assigned details (i.e. applied scoring). */
-    private final List<TextToken> text = new LinkedList<TextToken>();
+    private final List<TextToken> text = new LinkedList<>();
 
     /**
      * Main constructor.
@@ -127,7 +127,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
     public Interview reset(final Interview replacingState) {
         this.setParticipantId(replacingState.getParticipantId());
         this.setIndex(replacingState.getIndex());
-        final List<TextToken> copiedParagraphs = new LinkedList<TextToken>();
+        final List<TextToken> copiedParagraphs = new LinkedList<>();
         for (final TextToken singleParagraph : replacingState.getText()) {
             copiedParagraphs.add(singleParagraph.clone());
         }

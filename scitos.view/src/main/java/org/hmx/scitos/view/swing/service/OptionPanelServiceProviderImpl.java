@@ -48,7 +48,7 @@ public final class OptionPanelServiceProviderImpl implements IOptionPanelService
     /** Main constructor. */
     @Inject
     public OptionPanelServiceProviderImpl() {
-        this.optionPanelServices = new LinkedHashMap<Class<?>, IOptionPanelService>();
+        this.optionPanelServices = new LinkedHashMap<>();
         // register main application preferences service
         this.registerOptionPanelService(Option.class, new IOptionPanelService() {
 

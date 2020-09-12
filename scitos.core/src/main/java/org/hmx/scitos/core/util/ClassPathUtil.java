@@ -45,7 +45,7 @@ public final class ClassPathUtil {
      * @see Class#getResourceAsStream(String)
      */
     public static List<String> getFileResourcePaths(final Class<?> clazz, final String fileNameRegex) {
-        final List<String> paths = new LinkedList<String>();
+        final List<String> paths = new LinkedList<>();
         // check if this is being executed from within a jar file
         final Pattern pattern = Pattern.compile(fileNameRegex);
         final File jarFile = new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath());

@@ -37,7 +37,7 @@ public class RelationModel implements ISemanticalRelationProvider, Serializable,
      * Constructor: initializing an empty set of template groups.
      */
     public RelationModel() {
-        this.relationTemplateGroups = new LinkedList<List<RelationTemplate>>();
+        this.relationTemplateGroups = new LinkedList<>();
     }
 
     /**
@@ -73,7 +73,7 @@ public class RelationModel implements ISemanticalRelationProvider, Serializable,
      *            single group of relation templates to add to this model
      */
     public void add(final List<RelationTemplate> group) {
-        this.relationTemplateGroups.add(Collections.unmodifiableList(new ArrayList<RelationTemplate>(group)));
+        this.relationTemplateGroups.add(Collections.unmodifiableList(new ArrayList<>(group)));
     }
 
     @Override

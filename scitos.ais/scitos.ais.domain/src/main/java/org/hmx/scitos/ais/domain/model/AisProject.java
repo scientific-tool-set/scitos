@@ -40,7 +40,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
     /** The detail categories that can be used for scoring tokens in interviews. */
     private final List<DetailCategory> categories;
     /** The contained interviews. */
-    private final List<Interview> interviews = new LinkedList<Interview>();
+    private final List<Interview> interviews = new LinkedList<>();
 
     /**
      * Main constructor.
@@ -52,7 +52,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
      */
     public AisProject(final String label, final List<DetailCategory> categories) {
         this.setLabel(label);
-        this.categories = new ArrayList<DetailCategory>(categories);
+        this.categories = new ArrayList<>(categories);
     }
 
     /**
@@ -120,8 +120,8 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     @Override
     public Map<String, List<Interview>> getSubModelObjects() {
-        final Map<String, List<Interview>> subModelMap = new HashMap<String, List<Interview>>();
-        final List<Interview> sortedInterviews = new ArrayList<Interview>(this.interviews);
+        final Map<String, List<Interview>> subModelMap = new HashMap<>();
+        final List<Interview> sortedInterviews = new ArrayList<>(this.interviews);
         Collections.sort(sortedInterviews);
         for (final Interview singleInterview : sortedInterviews) {
             final String groupKey = this.getGroupKey(singleInterview);
@@ -129,7 +129,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
             if (subModelMap.containsKey(groupKey)) {
                 groupedInterviews = subModelMap.get(groupKey);
             } else {
-                groupedInterviews = new LinkedList<Interview>();
+                groupedInterviews = new LinkedList<>();
                 subModelMap.put(groupKey, groupedInterviews);
             }
             groupedInterviews.add(singleInterview);
@@ -144,7 +144,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     @Override
     public List<DetailCategory> provideSelectables() {
-        final List<DetailCategory> selectables = new LinkedList<DetailCategory>();
+        final List<DetailCategory> selectables = new LinkedList<>();
         for (final DetailCategory singleCategory : this.categories) {
             if (singleCategory.isSelectable()) {
                 selectables.add(singleCategory);
@@ -155,7 +155,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     @Override
     public AisProject clone() {
-        final List<Interview> clonedInterviews = new LinkedList<Interview>();
+        final List<Interview> clonedInterviews = new LinkedList<>();
         for (final Interview singleInterview : this.getInterviews()) {
             clonedInterviews.add(singleInterview.clone());
         }

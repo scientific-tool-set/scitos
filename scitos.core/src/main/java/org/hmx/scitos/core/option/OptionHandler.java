@@ -66,7 +66,7 @@ public final class OptionHandler<O extends Enum<? extends IOptionSetting> & IOpt
             if (OptionHandler.instances.containsKey(optionImplClass)) {
                 singleton = (OptionHandler<S>) OptionHandler.instances.get(optionImplClass);
             } else {
-                singleton = new OptionHandler<S>(optionImplClass);
+                singleton = new OptionHandler<>(optionImplClass);
                 OptionHandler.instances.put(optionImplClass, singleton);
             }
             return singleton;

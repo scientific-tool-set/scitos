@@ -119,8 +119,8 @@ public final class ScitosApp {
      */
     static ScitosClient loadModulesAndShowClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         // collect dependency injection modules
-        final Set<Object> modules = new LinkedHashSet<Object>();
-        final Set<Class<?>> initializerClasses = new LinkedHashSet<Class<?>>();
+        final Set<Object> modules = new LinkedHashSet<>();
+        final Set<Class<?>> initializerClasses = new LinkedHashSet<>();
         // add main module
         modules.add(new ScitosModule());
         // add all sub modules

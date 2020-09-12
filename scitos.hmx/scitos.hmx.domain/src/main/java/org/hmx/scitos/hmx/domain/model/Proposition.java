@@ -45,7 +45,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
     /**
      * The included {@link ClauseItem}s containing the represented origin text part.
      */
-    private final List<ClauseItem> items = new LinkedList<ClauseItem>();
+    private final List<ClauseItem> items = new LinkedList<>();
     /** The identifying label. */
     private String label;
     /** The syntactical indentation function. */
@@ -228,7 +228,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
         if (priorChildren == null || priorChildren.isEmpty()) {
             this.priorChildren = null;
         } else {
-            this.priorChildren = new ArrayList<Proposition>(priorChildren);
+            this.priorChildren = new ArrayList<>(priorChildren);
             for (final Proposition singleChild : this.priorChildren) {
                 singleChild.setParent(this);
             }
@@ -257,7 +257,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
         if (laterChildren == null || laterChildren.isEmpty()) {
             this.laterChildren = null;
         } else {
-            this.laterChildren = new ArrayList<Proposition>(laterChildren);
+            this.laterChildren = new ArrayList<>(laterChildren);
             for (final Proposition singleChild : this.laterChildren) {
                 singleChild.setParent(this);
             }
@@ -390,7 +390,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     private void addPriorChild(final Proposition childProposition, final boolean asLeadingChild) {
         if (this.priorChildren == null) {
-            this.priorChildren = new LinkedList<Proposition>();
+            this.priorChildren = new LinkedList<>();
         }
         childProposition.setParent(this);
         if (asLeadingChild) {
@@ -430,7 +430,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     private void addLaterChild(final Proposition childProposition, final boolean asLeadingChild) {
         if (this.laterChildren == null) {
-            this.laterChildren = new LinkedList<Proposition>();
+            this.laterChildren = new LinkedList<>();
         }
         childProposition.setParent(this);
         if (asLeadingChild) {
@@ -511,7 +511,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     @Override
     public Proposition clone() {
-        final List<ClauseItem> clonedItems = new ArrayList<ClauseItem>(this.items.size());
+        final List<ClauseItem> clonedItems = new ArrayList<>(this.items.size());
         for (final ClauseItem singleItem : this.items) {
             clonedItems.add(singleItem.clone());
         }
@@ -522,7 +522,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
         cloned.synTranslation = this.synTranslation;
         cloned.setComment(this.getComment());
         if (this.priorChildren != null) {
-            cloned.priorChildren = new ArrayList<Proposition>(this.priorChildren.size());
+            cloned.priorChildren = new ArrayList<>(this.priorChildren.size());
             for (final Proposition singlePriorChild : this.priorChildren) {
                 final Proposition clonedChild = singlePriorChild.clone();
                 clonedChild.setParent(cloned);
@@ -530,7 +530,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
             }
         }
         if (this.laterChildren != null) {
-            cloned.laterChildren = new ArrayList<Proposition>(this.laterChildren.size());
+            cloned.laterChildren = new ArrayList<>(this.laterChildren.size());
             for (final Proposition singleLaterChild : this.laterChildren) {
                 final Proposition clonedChild = singleLaterChild.clone();
                 clonedChild.setParent(cloned);

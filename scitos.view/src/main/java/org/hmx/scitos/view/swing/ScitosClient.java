@@ -491,7 +491,7 @@ public final class ScitosClient {
      * @return supported file types and associated new file actions
      */
     Map<FileType, ActionListener> createNewFileActions() {
-        final Map<FileType, ActionListener> result = new LinkedHashMap<FileType, ActionListener>();
+        final Map<FileType, ActionListener> result = new LinkedHashMap<>();
         for (final FileType singleType : FileType.values()) {
             if (!singleType.isSupportedByDistribution() || singleType.getLocalizableName() == null) {
                 // skip file types that are associated with modules not contained in this distribution or only exist for compatibility purposes

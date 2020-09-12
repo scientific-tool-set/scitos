@@ -71,7 +71,7 @@ public final class InterviewScoringPanel extends InterviewPanel implements IUndo
     public InterviewScoringPanel(final InterviewView parentView) {
         super(parentView, parentView.getProject().getModelHandler());
         this.parentView = parentView;
-        this.undoManager = new UndoManager<Interview>(parentView.getModel());
+        this.undoManager = new UndoManager<>(parentView.getModel());
         this.dragHandler = new MouseDragListener();
         this.getViewPortView().setFocusable(true);
         this.getViewPortView().addMouseListener(this.dragHandler);

@@ -65,7 +65,7 @@ public final class LanguageConfigPanel extends JPanel {
     /** Button to disable the language form without applying the changes made. */
     private final JButton discardFormChangesButton = new JButton(HmxMessage.PREFERENCES_LANGUAGE_DISCARD.get());
     /** Labels associated with form fields that should be enabled/disabled with their respective inputs. */
-    private final List<JLabel> formLabels = new ArrayList<JLabel>(3);
+    private final List<JLabel> formLabels = new ArrayList<>(3);
     /** Form input field: name of a language model. */
     private final JTextField languageNameInput = new JTextField(new Validation(128), null, 0);
     /** Form input field: indication whether the origin text is left-to-right oriented. */
@@ -77,7 +77,7 @@ public final class LanguageConfigPanel extends JPanel {
     /** Form input field: list of recommended origin text fonts. */
     private final JTextField recommendedFontsInput = new JTextField(new Validation(512), null, 0);
     /** Registered external listeners for changes to the language model selection. */
-    private final List<ActionListener> actionListeners = new ArrayList<ActionListener>(1);
+    private final List<ActionListener> actionListeners = new ArrayList<>(1);
 
     /**
      * Constructor.
@@ -273,7 +273,7 @@ public final class LanguageConfigPanel extends JPanel {
         }
         final boolean leftToRightOriented = this.leftToRightButton.isSelected();
         final String[] recommendedFonts = this.recommendedFontsInput.getText().trim().split("([\\s]*[;][\\s]*)+");
-        final List<String> fontList = new ArrayList<String>(Arrays.asList(recommendedFonts));
+        final List<String> fontList = new ArrayList<>(Arrays.asList(recommendedFonts));
         // remove empty entry if there is one
         fontList.remove("");
         final LanguageModel model = this.getSelectedModel();

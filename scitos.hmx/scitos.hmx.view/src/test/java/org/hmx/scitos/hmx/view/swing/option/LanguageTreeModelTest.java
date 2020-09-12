@@ -62,10 +62,10 @@ public class LanguageTreeModelTest {
      */
     @BeforeClass
     public static void initFunctionProvider() {
-        final List<AbstractSyntacticalFunctionElement> functionsB = new ArrayList<AbstractSyntacticalFunctionElement>(3);
+        final List<AbstractSyntacticalFunctionElement> functionsB = new ArrayList<>(3);
         functionsB.add(new SyntacticalFunction("B1", "Function B1", false, null));
         functionsB.add(new SyntacticalFunction("B2", "Function B2", true, "Some extra information"));
-        final List<AbstractSyntacticalFunctionElement> groupB3 = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        final List<AbstractSyntacticalFunctionElement> groupB3 = new ArrayList<>(2);
         groupB3.add(new SyntacticalFunction("B31", "Function B31", true, "some hint"));
         groupB3.add(new SyntacticalFunction("B32", "Function B32", false, null));
         functionsB.add(new SyntacticalFunctionGroup("Group B3", "Group B3's hint", groupB3));

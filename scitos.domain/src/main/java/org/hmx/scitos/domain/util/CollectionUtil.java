@@ -94,7 +94,7 @@ public final class CollectionUtil {
      * @return mapping of contained instances to their respective count of occurrences
      */
     public static <T> Map<T, AtomicInteger> countOccurrences(final Collection<T> collection) {
-        final Map<T, AtomicInteger> map = new HashMap<T, AtomicInteger>();
+        final Map<T, AtomicInteger> map = new HashMap<>();
         for (final T instance : collection) {
             final AtomicInteger counter = map.get(instance);
             if (counter == null) {
@@ -128,7 +128,7 @@ public final class CollectionUtil {
      */
     public static <K, V> void moveEntryInInsertSortedMap(final Map<K, V> insertSortedMap, final K entryKey, final boolean increaseIndexByOne) {
         // #1 create a copy of the original key order as list (to make it accessible via index)
-        final List<K> keyList = new ArrayList<K>(insertSortedMap.keySet());
+        final List<K> keyList = new ArrayList<>(insertSortedMap.keySet());
         // #2 determine the designated entry's current position
         final int index = keyList.indexOf(entryKey);
         // #3 determine the entry's new position
@@ -144,7 +144,7 @@ public final class CollectionUtil {
             throw new IllegalArgumentException();
         }
         // #4 create a copy of the unchanged relation template groups map
-        final Map<K, V> groupsCopy = new LinkedHashMap<K, V>(insertSortedMap);
+        final Map<K, V> groupsCopy = new LinkedHashMap<>(insertSortedMap);
         // #5 remove all mapping from the original relation template groups map, starting at the affected groups' indices
         insertSortedMap.keySet().retainAll(keyList.subList(0, Math.min(index, indexToSwitchWith)));
         final K entryToSwitchWith = keyList.get(indexToSwitchWith);

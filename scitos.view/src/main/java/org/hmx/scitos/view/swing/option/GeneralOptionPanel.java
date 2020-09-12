@@ -82,7 +82,7 @@ public final class GeneralOptionPanel extends AbstractSimpleOptionPanel<Option> 
 
         // get all available look and feels
         final LookAndFeelInfo[] installedUIs = UIManager.getInstalledLookAndFeels();
-        this.lookAndFeels = new TreeMap<String, String>();
+        this.lookAndFeels = new TreeMap<>();
         for (final LookAndFeelInfo singleLaF : installedUIs) {
             final String shortName = singleLaF.getName();
             if (!"Nimbus".equals(shortName)) {

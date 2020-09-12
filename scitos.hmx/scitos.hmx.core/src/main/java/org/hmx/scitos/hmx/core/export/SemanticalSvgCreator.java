@@ -156,7 +156,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         final Element contentGroup = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_GROUP);
         // begin with the propositions
         final int propositionCount = flatText.size();
-        final List<Element> propositionElements = new ArrayList<Element>(propositionCount);
+        final List<Element> propositionElements = new ArrayList<>(propositionCount);
         // create the single propositions
         for (int i = 0; i < propositionCount; i++) {
             propositionElements.add(this.createSemanticalProposition(xml, flatText, i));
@@ -243,7 +243,7 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         // height needed for the relation labels
         this.roleHeight = 0;
         // maximum width of each column created by the relation tree
-        this.semColumnWidths = new ArrayList<Double>(texts.size() - 3);
+        this.semColumnWidths = new ArrayList<>(texts.size() - 3);
         // texts[3..n] semantical roles separated by line breaks
         for (final String rolesInThisColumn : texts.subList(3, texts.size())) {
             this.roleHeight = Math.max(this.roleHeight, this.getTextBounds(rolesInThisColumn.replace('\n', ' '), this.labelFontPlain).getHeight());
@@ -298,11 +298,11 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
             translations.append(singleProposition.getSemTranslation());
             translations.append(' ');
         }
-        final List<String> cachedTexts = new ArrayList<String>(3 + maxTreeDepth);
+        final List<String> cachedTexts = new ArrayList<>(3 + maxTreeDepth);
         cachedTexts.add(originTexts.toString().trim());
         cachedTexts.add(labels.toString().trim());
         cachedTexts.add(translations.toString().trim());
-        final List<StringBuilder> rolesInColumns = new ArrayList<StringBuilder>(maxTreeDepth);
+        final List<StringBuilder> rolesInColumns = new ArrayList<>(maxTreeDepth);
         for (int i = 0; i < maxTreeDepth; i++) {
             rolesInColumns.add(new StringBuilder());
         }
@@ -484,12 +484,12 @@ class SemanticalSvgCreator extends AbstractSvgCreator {
         }
         // add a count on the end, if there are equal roles
         final List<AbstractConnectable> associates = target.getAssociates();
-        final List<AssociateRole> roles = new ArrayList<AssociateRole>(associates.size());
+        final List<AssociateRole> roles = new ArrayList<>(associates.size());
         for (final AbstractConnectable singleAssociate : associates) {
             roles.add(singleAssociate.getRole());
         }
         final Map<AssociateRole, AtomicInteger> occurrences = CollectionUtil.countOccurrences(roles);
-        final Map<AssociateRole, Integer> indices = new HashMap<AssociateRole, Integer>();
+        final Map<AssociateRole, Integer> indices = new HashMap<>();
         boolean insertComment = this.commentsIncluded && target.getComment() != null && !target.getComment().isEmpty();
         final StringBuffer bufferedPoints = new StringBuffer();
         for (final AbstractConnectable singleAssociate : associates) {

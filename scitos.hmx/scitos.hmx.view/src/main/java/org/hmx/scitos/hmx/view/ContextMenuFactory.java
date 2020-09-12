@@ -333,7 +333,7 @@ public final class ContextMenuFactory {
     private static void addHighlightClauseItemEntry(final ContextMenuBuilder popupMenu, final IPericopeView viewReference, final ClauseItem item) {
         final CMenu highlightEntry = popupMenu.addMenu(HmxMessage.MENU_HIGHLIGHT_ITEM.get());
         // set PLAIN
-        final Map<Style, HmxMessage> styles = new LinkedHashMap<Style, HmxMessage>();
+        final Map<Style, HmxMessage> styles = new LinkedHashMap<>();
         styles.put(Style.PLAIN, HmxMessage.MENU_HIGHLIGHT_ITEM_PLAIN);
         styles.put(Style.BOLD, HmxMessage.MENU_HIGHLIGHT_ITEM_BOLD);
         styles.put(Style.ITALIC, HmxMessage.MENU_HIGHLIGHT_ITEM_ITALIC);
@@ -618,7 +618,7 @@ public final class ContextMenuFactory {
                 itemLabel.append(" - ...");
             }
         } else {
-            final Map<AssociateRole, Integer> indices = new HashMap<AssociateRole, Integer>();
+            final Map<AssociateRole, Integer> indices = new HashMap<>();
             for (final AssociateRole singleRole : roles) {
                 Integer index = indices.get(singleRole);
                 if (itemLabel.length() > 0) {

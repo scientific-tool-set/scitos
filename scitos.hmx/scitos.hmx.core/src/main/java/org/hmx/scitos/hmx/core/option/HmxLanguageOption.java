@@ -84,7 +84,7 @@ public final class HmxLanguageOption implements ILanguageModelProvider, ILanguag
         // apply general option file naming convention
         this.filePath = OptionHandler.buildOptionFilePath(HmxLanguageOption.class);
         // initialize user defined language models
-        this.userModels = new LinkedList<LanguageModel>();
+        this.userModels = new LinkedList<>();
         // retrieve settings from persistent storage (i.e. file)
         final File targetFile = new File(this.filePath);
         if (targetFile.exists() && targetFile.canRead()) {
@@ -133,7 +133,7 @@ public final class HmxLanguageOption implements ILanguageModelProvider, ILanguag
     @Override
     public Map<String, LanguageModel> provideLanguageModels() {
         // avoid duplicates (two models with same name) and sort the models lexicographically by their names
-        final Map<String, LanguageModel> models = new TreeMap<String, LanguageModel>();
+        final Map<String, LanguageModel> models = new TreeMap<>();
         for (final LanguageModel singleModel : this.systemModels) {
             models.put(singleModel.getName(), singleModel);
         }

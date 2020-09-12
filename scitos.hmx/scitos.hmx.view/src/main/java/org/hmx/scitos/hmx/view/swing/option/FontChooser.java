@@ -60,7 +60,7 @@ public final class FontChooser extends JPanel {
     public FontChooser() {
         final String[] fontFamilyNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         Arrays.sort(fontFamilyNames);
-        this.fontTypeBox = new JComboBox<String>(fontFamilyNames);
+        this.fontTypeBox = new JComboBox<>(fontFamilyNames);
         AutoCompleteDecorator.decorate(this.fontTypeBox);
         this.fontTypeBox.addActionListener(new ActionListener() {
 

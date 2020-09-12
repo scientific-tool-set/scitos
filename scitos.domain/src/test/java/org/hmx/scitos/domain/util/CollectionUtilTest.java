@@ -59,7 +59,7 @@ public class CollectionUtilTest {
     /** Test: for moveEntryInInsertSortedMap method (expect failure: move first entry up) */
     @Test(expected = IllegalArgumentException.class)
     public void testMoveEntryInInsertSortedMap_First_Up() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         CollectionUtil.moveEntryInInsertSortedMap(map, "1", false);
@@ -68,103 +68,103 @@ public class CollectionUtilTest {
     /** Test: for moveEntryInInsertSortedMap method (move first entry up) */
     @Test
     public void testMoveEntryInInsertSortedMap_First_Down() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         CollectionUtil.moveEntryInInsertSortedMap(map, "1", true);
-        Assert.assertEquals(Arrays.asList("2", "1", "3"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("2", "1", "3"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move second entry up) */
     @Test
     public void testMoveEntryInInsertSortedMap_Second_Up() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         map.put("4", 4);
         CollectionUtil.moveEntryInInsertSortedMap(map, "2", false);
-        Assert.assertEquals(Arrays.asList("2", "1", "3", "4"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("2", "1", "3", "4"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move second entry down) */
     @Test
     public void testMoveEntryInInsertSortedMap_Second_Down() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         map.put("4", 4);
         CollectionUtil.moveEntryInInsertSortedMap(map, "2", true);
-        Assert.assertEquals(Arrays.asList("1", "3", "2", "4"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("1", "3", "2", "4"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move middle entry up) */
     @Test
     public void testMoveEntryInInsertSortedMap_Mid_Up() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         map.put("4", 4);
         map.put("5", 5);
         CollectionUtil.moveEntryInInsertSortedMap(map, "3", false);
-        Assert.assertEquals(Arrays.asList("1", "3", "2", "4", "5"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("1", "3", "2", "4", "5"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move middle entry down) */
     @Test
     public void testMoveEntryInInsertSortedMap_Mid_Down() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         map.put("4", 4);
         map.put("5", 5);
         CollectionUtil.moveEntryInInsertSortedMap(map, "3", true);
-        Assert.assertEquals(Arrays.asList("1", "2", "4", "3", "5"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("1", "2", "4", "3", "5"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move second to last entry up) */
     @Test
     public void testMoveEntryInInsertSortedMap_SecondToLast_Up() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         map.put("4", 4);
         CollectionUtil.moveEntryInInsertSortedMap(map, "3", false);
-        Assert.assertEquals(Arrays.asList("1", "3", "2", "4"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("1", "3", "2", "4"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move second to last entry down) */
     @Test
     public void testMoveEntryInInsertSortedMap_SecondToLast_Down() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         map.put("4", 4);
         CollectionUtil.moveEntryInInsertSortedMap(map, "3", true);
-        Assert.assertEquals(Arrays.asList("1", "2", "4", "3"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("1", "2", "4", "3"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (move first entry up) */
     @Test
     public void testMoveEntryInInsertSortedMap_Last_Up() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         map.put("3", 3);
         CollectionUtil.moveEntryInInsertSortedMap(map, "3", false);
-        Assert.assertEquals(Arrays.asList("1", "3", "2"), new ArrayList<String>(map.keySet()));
+        Assert.assertEquals(Arrays.asList("1", "3", "2"), new ArrayList<>(map.keySet()));
     }
 
     /** Test: for moveEntryInInsertSortedMap method (expect failure: move last entry down) */
     @Test(expected = IllegalArgumentException.class)
     public void testMoveEntryInInsertSortedMap_Last_Down() {
-        final Map<String, Integer> map = new LinkedHashMap<String, Integer>(3);
+        final Map<String, Integer> map = new LinkedHashMap<>(3);
         map.put("1", 1);
         map.put("2", 2);
         CollectionUtil.moveEntryInInsertSortedMap(map, "2", true);

@@ -181,7 +181,7 @@ abstract class AbstractSvgCreator {
      * @see SvgConstants#VAL_ID_ARROW_DOWNWARD
      */
     protected List<Element> createArrowDefinition(final Document xml, final double arrowHeight) {
-        final List<Element> result = new ArrayList<Element>(2);
+        final List<Element> result = new ArrayList<>(2);
         // determine the preferred color
         final String arrowColor = HmxExportOption.ARROW_COLOR.getValue();
         // prepare scaling

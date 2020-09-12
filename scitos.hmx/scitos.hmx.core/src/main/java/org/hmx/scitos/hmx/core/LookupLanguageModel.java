@@ -46,7 +46,7 @@ public class LookupLanguageModel extends LanguageModel {
      */
     public LookupLanguageModel(final String name, final boolean leftToRightOriented) {
         super(name, leftToRightOriented);
-        this.functionsByCode = new HashMap<String, SyntacticalFunction>();
+        this.functionsByCode = new HashMap<>();
     }
 
     @Override

@@ -41,7 +41,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     /** The origin text language's syntactical model. */
     private LanguageModel languageModel;
     /** The top level propositions, that in turn can contain more subordinated propositions. */
-    private final List<Proposition> text = new LinkedList<Proposition>();
+    private final List<Proposition> text = new LinkedList<>();
     /**
      * The origin text's font, to allow the analysis of languages that require a special {@link Font} in order to be displayed properly.
      */
@@ -121,13 +121,13 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return represented text
      */
     private List<Proposition> buildPropositionsFromText(final String originText) {
-        final List<Proposition> propositions = new ArrayList<Proposition>();
+        final List<Proposition> propositions = new ArrayList<>();
         for (final String originTextPart : originText.split(System.getProperty("line.separator"))) {
             if (originTextPart.trim().isEmpty()) {
                 // empty lines should be ignored
                 continue;
             }
-            final List<ClauseItem> items = new ArrayList<ClauseItem>();
+            final List<ClauseItem> items = new ArrayList<>();
             for (String singleItemText : originTextPart.split("\t")) {
                 // empty items should be ignored
                 singleItemText = singleItemText.trim().replaceAll("\\s+", " ");
@@ -156,7 +156,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return ordered list of all {@code Proposition}s
      */
     public List<Proposition> getFlatText() {
-        final List<Proposition> result = new LinkedList<Proposition>();
+        final List<Proposition> result = new LinkedList<>();
         for (final Proposition singleTopLevelProposition : this.text) {
             // recursively fill result list
             this.collectFlatText(singleTopLevelProposition, result);
@@ -198,7 +198,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return ordered list of all relations
      */
     public List<Relation> getFlatRelations() {
-        final List<Relation> result = new LinkedList<Relation>();
+        final List<Relation> result = new LinkedList<>();
         // get the first Proposition
         AbstractConnectable currentFocus = this.getPropositionAt(0);
         while (currentFocus != null) {
@@ -435,7 +435,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
          */
         final List<Relation> originRelations = this.getFlatRelations();
         if (originRelations != null) {
-            final List<Relation> clonedRelations = new ArrayList<Relation>(originRelations.size());
+            final List<Relation> clonedRelations = new ArrayList<>(originRelations.size());
             for (final Relation singleRelation : originRelations) {
                 clonedRelations.add(singleRelation.clone());
             }
@@ -472,7 +472,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     private void cloneAssociations(final Relation subTreeHead, final List<Relation> originRelations, final Pericope clonedPericope,
             final List<Relation> clonedRelations) {
         final List<AbstractConnectable> topAssociates = subTreeHead.getAssociates();
-        final List<AbstractConnectable> clonedAssociates = new ArrayList<AbstractConnectable>(topAssociates.size());
+        final List<AbstractConnectable> clonedAssociates = new ArrayList<>(topAssociates.size());
         final Relation clonedSubTreeHead = clonedRelations.get(CollectionUtil.indexOfInstance(originRelations, subTreeHead));
         for (final AbstractConnectable originAssociate : topAssociates) {
             final AbstractConnectable clonedAssociate;

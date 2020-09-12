@@ -67,7 +67,7 @@ public class ModelParseServiceTest {
         modelHandler.setInterviewText(modelHandler.createInterview("a"), "1 2 3\n4 5 6 7 8 9\n10");
         modelHandler.createInterview("b");
         // all interview views open, and a sub model group
-        final List<Object> openViewElements = new LinkedList<Object>(model.getInterviews());
+        final List<Object> openViewElements = new LinkedList<>(model.getInterviews());
         openViewElements.add("a");
         final Document xml = this.service.parseXmlFromModel(model, openViewElements);
         final Entry<AisProject, List<?>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));

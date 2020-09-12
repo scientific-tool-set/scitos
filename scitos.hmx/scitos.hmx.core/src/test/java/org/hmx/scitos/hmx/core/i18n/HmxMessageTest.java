@@ -44,8 +44,8 @@ public class HmxMessageTest {
     public void testMessageAvailability() {
         final ResourceBundle bundle = ResourceBundle.getBundle(HmxMessage.class.getName(), Locale.ENGLISH, new XmlResourceBundleControl());
         Assert.assertNotNull(bundle);
-        final List<String> unusedMessages = new LinkedList<String>();
-        final List<String> unavailableMessages = new LinkedList<String>();
+        final List<String> unusedMessages = new LinkedList<>();
+        final List<String> unavailableMessages = new LinkedList<>();
         final Enumeration<String> availableKeys = bundle.getKeys();
         while (availableKeys.hasMoreElements()) {
             unusedMessages.add(availableKeys.nextElement());

@@ -52,8 +52,8 @@ public class ProjectViewServiceProviderImpl implements IProjectViewServiceRegist
     /** Main constructor. */
     @Inject
     public ProjectViewServiceProviderImpl() {
-        this.modelViewServices = Collections.synchronizedMap(new HashMap<Class<? extends IModel<?>>, IProjectViewService<?, ?>>());
-        this.projectViewServices = Collections.synchronizedMap(new HashMap<Class<? extends IViewProject<?>>, IProjectViewService<?, ?>>());
+        this.modelViewServices = Collections.synchronizedMap(new HashMap<>());
+        this.projectViewServices = Collections.synchronizedMap(new HashMap<>());
     }
 
     @Override

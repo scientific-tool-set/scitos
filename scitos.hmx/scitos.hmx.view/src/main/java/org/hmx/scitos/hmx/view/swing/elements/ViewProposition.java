@@ -222,7 +222,7 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         this.functionLabel = this.initFunctionLabel();
         if (viewSettings.isShowingClauseItems()) {
             this.originText = null;
-            this.items = new LinkedList<ViewClauseItem>();
+            this.items = new LinkedList<>();
         } else {
             this.originText = new ScaledTextField();
             this.items = null;

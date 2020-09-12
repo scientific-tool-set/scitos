@@ -69,8 +69,8 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
      */
     @Inject
     public ModelParseServiceProviderImpl() {
-        this.modelClasses = Collections.synchronizedMap(new HashMap<FileType, Class<? extends IModel<?>>>());
-        this.modelParseServices = Collections.synchronizedMap(new HashMap<FileType, IModelParseService<?>>());
+        this.modelClasses = Collections.synchronizedMap(new HashMap<>());
+        this.modelParseServices = Collections.synchronizedMap(new HashMap<>());
     }
 
     @Override
@@ -97,12 +97,9 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
         try {
             // parse file into xml structure
             xml = factory.newDocumentBuilder().parse(target);
-        } catch (final ParserConfigurationException pcex) {
+        } catch (final ParserConfigurationException | IOException ex) {
             // error while creating a DocumentBuilder instance from factory or while accessing file
-            throw new HmxException(Message.ERROR_UNKNOWN, pcex);
-        } catch (final IOException ioex) {
-            // error while creating a DocumentBuilder instance from factory or while accessing file
-            throw new HmxException(Message.ERROR_UNKNOWN, ioex);
+            throw new HmxException(Message.ERROR_UNKNOWN, ex);
         } catch (final SAXException se) {
             // error while interpreting (invalid) xml structure
             throw new HmxException(Message.ERROR_FILE_INVALID, se);
@@ -133,12 +130,9 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "3");
             this.save(xml, transformer, target);
-        } catch (final TransformerFactoryConfigurationError tfce) {
-            // error while instantiating the transformer factory
-            throw new HmxException(Message.ERROR_UNKNOWN, tfce);
-        } catch (final TransformerConfigurationException tce) {
-            // error while initializing the transformer instance
-            throw new HmxException(Message.ERROR_UNKNOWN, tce);
+        } catch (final TransformerFactoryConfigurationError | TransformerConfigurationException ex) {
+            // error while instantiating the transformer factory or initializing an instance
+            throw new HmxException(Message.ERROR_UNKNOWN, ex);
         }
     }
 
@@ -163,21 +157,17 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
             // write the xml structure to the output stream
             transformer.transform(new DOMSource(xml), new StreamResult(output));
             output.flush();
-        } catch (final IOException ioe) {
+        } catch (final IOException | TransformerException ex) {
             errorOccurred = true;
-            // error while initializing the FileOutputStream
-            throw new HmxException(Message.ERROR_UNKNOWN, ioe);
-        } catch (final TransformerException te) {
-            errorOccurred = true;
-            // error while transferring the xml document through the output stream
-            throw new HmxException(Message.ERROR_UNKNOWN, te);
+            // error while initializing the FileOutputStream or transferring the xml document through the output stream
+            throw new HmxException(Message.ERROR_UNKNOWN, ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
-                } catch (final IOException ioex) {
+                } catch (final IOException ex) {
                     if (!errorOccurred) {
-                        throw new HmxException(Message.ERROR_UNKNOWN, ioex);
+                        throw new HmxException(Message.ERROR_UNKNOWN, ex);
                     }
                 }
             }
@@ -191,12 +181,9 @@ public final class ModelParseServiceProviderImpl implements IModelParseServiceRe
         try {
             final Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);
             this.save(xml, transformer, target);
-        } catch (final TransformerFactoryConfigurationError tfce) {
-            // error while instantiating the transformer factory
-            throw new HmxException(Message.ERROR_UNKNOWN, tfce);
-        } catch (final TransformerConfigurationException tce) {
-            // error while initializing the transformer instance
-            throw new HmxException(Message.ERROR_UNKNOWN, tce);
+        } catch (final TransformerFactoryConfigurationError | TransformerConfigurationException ex) {
+            // error while instantiating the transformer factory and initializing an instance
+            throw new HmxException(Message.ERROR_UNKNOWN, ex);
         }
     }
 

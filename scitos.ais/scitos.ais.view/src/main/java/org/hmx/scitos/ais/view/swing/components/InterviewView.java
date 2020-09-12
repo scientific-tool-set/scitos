@@ -50,7 +50,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
      */
     private IUndoManagedView viewPanel;
     /** The main tool bar items that belong to this view – in order to enable/disable them according to the current selection. */
-    private final List<JButton> detailToolBarItems = new LinkedList<JButton>();
+    private final List<JButton> detailToolBarItems = new LinkedList<>();
 
     /**
      * Main constructor.

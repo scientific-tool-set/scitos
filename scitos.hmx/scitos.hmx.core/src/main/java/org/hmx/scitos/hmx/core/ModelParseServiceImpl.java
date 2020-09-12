@@ -446,7 +446,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             languageModel =
                     this.parseLanguageModelFromXml(systemModelNode, systemModelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_NAME),
                             textOrientation);
-            compatibleRoleTranslator = new Translator<CompatibleRelationRole>(CompatibleRelationRole.class);
+            compatibleRoleTranslator = new Translator<>(CompatibleRelationRole.class);
         } else {
             final String textOrientation = pericopeNode.getAttribute(ModelParseServiceImpl.ATT_ROOT_ORIENTATION);
             languageModel = this.parseLanguageModelFromXml(syntacticalModelNode, language, textOrientation);
@@ -467,7 +467,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         newPericope.setComment(DomUtil.getNullableAttribute(pericopeNode, ModelParseServiceImpl.ATT_ROOT_COMMENT));
 
         // Creates an List of Propositions for the rootPropositions
-        final List<Proposition> text = new LinkedList<Proposition>();
+        final List<Proposition> text = new LinkedList<>();
         // all top level children, including the root Propositions
         for (final Element topLevelProposition : DomUtil.getChildElements(pericopeNode, ModelParseServiceImpl.TAG_PROPOSITION)) {
             text.add(this.parsePropositionFromXml(topLevelProposition, languageModel));
@@ -478,7 +478,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         final Element connectablesTree = DomUtil.getChildElement(pericopeNode, ModelParseServiceImpl.TAG_RELATION_SUB_TREE);
         if (connectablesTree != null && !text.isEmpty()) {
             // gets a list of all Propositions contained in the pericope in order of appearence
-            final Deque<Proposition> propositionsInOrder = new LinkedList<Proposition>();
+            final Deque<Proposition> propositionsInOrder = new LinkedList<>();
             Proposition nextProposition = newPericope.getPropositionAt(0);
             while (nextProposition != null) {
                 propositionsInOrder.addLast(nextProposition);
@@ -488,7 +488,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
                 this.parseConnectableFromXml(topLevelConnectable, propositionsInOrder, compatibleRoleTranslator);
             }
         }
-        return new SimpleEntry<Pericope, List<?>>(newPericope, Collections.singletonList(newPericope));
+        return new SimpleEntry<>(newPericope, Collections.singletonList(newPericope));
     }
 
     /**
@@ -500,7 +500,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      */
     public List<LanguageModel> getSystemLanguageModels() throws HmxException {
         final Map<String, Element> systemModelNodes = this.getSystemLanguageModelNodes();
-        final List<LanguageModel> result = new ArrayList<LanguageModel>(systemModelNodes.size());
+        final List<LanguageModel> result = new ArrayList<>(systemModelNodes.size());
         for (final Element modelNode : systemModelNodes.values()) {
             final LookupLanguageModel model =
                     this.parseLanguageModelFromXml(modelNode, modelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_NAME),
@@ -527,7 +527,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     private List<AbstractSyntacticalFunctionElement> removeBackwardCompatibilityInfo(
             final List<AbstractSyntacticalFunctionElement> possibleCompatibleFunctions) {
         final List<AbstractSyntacticalFunctionElement> result =
-                new ArrayList<AbstractSyntacticalFunctionElement>(possibleCompatibleFunctions.size());
+                new ArrayList<>(possibleCompatibleFunctions.size());
         for (final AbstractSyntacticalFunctionElement singleFunction : possibleCompatibleFunctions) {
             if (singleFunction instanceof SyntacticalFunction) {
                 result.add(new SyntacticalFunction(((SyntacticalFunction) singleFunction).getCode(), singleFunction.getName(),
@@ -576,7 +576,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             }
         }
         final String userLanguage = Option.TRANSLATION.getValueAsLocale().getLanguage();
-        final Map<String, Element> availableModels = new TreeMap<String, Element>();
+        final Map<String, Element> availableModels = new TreeMap<>();
         for (final Element modelNode : systemModelNodes) {
             // get the user language independent name of this model
             final String compatibleName = modelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_NAME_COMPATIBLE);
@@ -600,7 +600,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      */
     public List<LanguageModel> parseLanguageModelsFromXml(final Document xml) throws HmxException {
         final List<Element> modelNodes = DomUtil.getChildElements(xml.getDocumentElement(), ModelParseServiceImpl.TAG_LANGMODEL);
-        final List<LanguageModel> models = new ArrayList<LanguageModel>(modelNodes.size());
+        final List<LanguageModel> models = new ArrayList<>(modelNodes.size());
         for (final Element singleModelNode : modelNodes) {
             final String modelName = singleModelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_NAME);
             final String modelOrientation = singleModelNode.getAttribute(ModelParseServiceImpl.ATT_LANGMODEL_ORIENTATION);
@@ -651,7 +651,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      * @return successfully parsed functions
      */
     private List<AbstractSyntacticalFunctionElement> parseSyntacticalFunctionsFromXml(final Element parentNode) {
-        final LinkedList<AbstractSyntacticalFunctionElement> result = new LinkedList<AbstractSyntacticalFunctionElement>();
+        final LinkedList<AbstractSyntacticalFunctionElement> result = new LinkedList<>();
         for (final Element singleFunctionNode : DomUtil.getChildElements(parentNode, ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION,
                 ModelParseServiceImpl.TAG_LANGMODEL_FUNCTIONGROUP)) {
             if (ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION.equals(singleFunctionNode.getTagName())) {
@@ -761,9 +761,9 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     private RelationModel parseRelationModelFromXml(final Element semanticalModelNode) throws HmxException {
         final RelationModel model = new RelationModel();
         for (final Element singleGroupNode : DomUtil.getChildElements(semanticalModelNode, ModelParseServiceImpl.TAG_RELMODEL_GROUP)) {
-            final List<RelationTemplate> group = new LinkedList<RelationTemplate>();
+            final List<RelationTemplate> group = new LinkedList<>();
             for (final Element singleTemplateNode : DomUtil.getChildElements(singleGroupNode, ModelParseServiceImpl.TAG_RELMODEL_RELATION)) {
-                final List<AssociateRole> roles = new ArrayList<AssociateRole>(3);
+                final List<AssociateRole> roles = new ArrayList<>(3);
                 for (final Element singleRoleNode : DomUtil.getChildElements(singleTemplateNode, ModelParseServiceImpl.TAG_RELMODEL_ASSOCIATE)) {
                     final String roleName = singleRoleNode.getAttribute(ModelParseServiceImpl.ATT_RELMODEL_ASSOCIATE_ROLE);
                     final boolean isHighWeight =
@@ -816,7 +816,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             throw new HmxException(Message.ERROR_FILE_INVALID);
         }
         // collect the contained ClauseItems
-        final List<ClauseItem> itemList = new LinkedList<ClauseItem>();
+        final List<ClauseItem> itemList = new LinkedList<>();
         for (final Element singleClauseItem : DomUtil.getChildElements(tempItemElement, ModelParseServiceImpl.TAG_CLAUSE_ITEM)) {
             itemList.add(this.parseClauseItemFromXml(singleClauseItem, languageModel));
         }
@@ -835,7 +835,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         // adds prior propositions to the Proposition according to the xml code
         final Element priorPropositionsElement = DomUtil.getChildElement(propositionNode, ModelParseServiceImpl.TAG_PRIOR_PROP_SUB_TREE);
         if (priorPropositionsElement != null) {
-            final List<Proposition> priorChildren = new LinkedList<Proposition>();
+            final List<Proposition> priorChildren = new LinkedList<>();
             // calls itself to add every prior Proposition contained in the Proposition
             for (final Element singlePriorChild : DomUtil.getChildElements(priorPropositionsElement, ModelParseServiceImpl.TAG_PROPOSITION)) {
                 priorChildren.add(this.parsePropositionFromXml(singlePriorChild, languageModel));
@@ -845,7 +845,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         // adds later propositions to the proposition according to the xml code
         final Element laterPropositionsElement = DomUtil.getChildElement(propositionNode, ModelParseServiceImpl.TAG_LATER_PROP_SUB_TREE);
         if (laterPropositionsElement != null) {
-            final List<Proposition> laterChildren = new LinkedList<Proposition>();
+            final List<Proposition> laterChildren = new LinkedList<>();
             // calls itself to add every later Proposition contained in the Proposition
             for (final Element singleLaterChild : DomUtil.getChildElements(laterPropositionsElement, ModelParseServiceImpl.TAG_PROPOSITION)) {
                 laterChildren.add(this.parsePropositionFromXml(singleLaterChild, languageModel));
@@ -912,8 +912,8 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             return propositionsInOrder.removeFirst();
         }
         // Connectable to retrieve is a Relation - iterate through all subordinated Connectables
-        final List<AbstractConnectable> associates = new ArrayList<AbstractConnectable>(associateNodes.size());
-        final List<AssociateRole> rolesAndWeights = new ArrayList<AssociateRole>(associateNodes.size());
+        final List<AbstractConnectable> associates = new ArrayList<>(associateNodes.size());
+        final List<AssociateRole> rolesAndWeights = new ArrayList<>(associateNodes.size());
         for (final Element singleAssociateNode : associateNodes) {
             // recursively handle contained nodes representing a connectable model element
             associates.add(this.parseConnectableFromXml(singleAssociateNode, propositionsInOrder, compatibleRoleTranslator));

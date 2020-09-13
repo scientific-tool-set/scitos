@@ -49,6 +49,18 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>lib-dir-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>lib</finalName>
+							<descriptor>src/main/resources/assembly/assembly-descriptor-libdir.xml</descriptor>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+					<execution>
 						<id>distribution-zip-assembly</id>
 						<phase>package</phase>
 						<goals>

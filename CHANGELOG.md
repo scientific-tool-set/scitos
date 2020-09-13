@@ -4,16 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [2.4.0] - 2020-09-13
 ### `scitos`
 #### Added
 - capability to generate basic macOS `.app` bundle alternative for future releases
 
 #### Changed
-- BREAKING CHANGE: Minimum Java version is now `9` (and no longer `8`)!
+- __*BREAKING CHANGE*__: Minimum Java version is now `9` (and no longer `8`)! *not relevant for the macOS `.app` as a JRE 11 is included in the bundle*
 
 #### Fixed
-- show error if closing of connection to saved file encounters one
+- show error message if the closing of the connection to a saved file encounters an error
 - re-instate macOS specific handlers for About/Preferences/Quit actions (necessitated by changes in Java 9)
 
 ## [2.3.1] - 2020-03-09
@@ -106,6 +108,7 @@ The SVG export however is not affected by these changes. Labels and translations
     - other browsers (e.g. Chrome) might prevent this by default for local files (for security reasons), as this feature is realised via an embedded XSLT stylesheet (i.e. a script)
 
 
+[Unreleased]: https://github.com/scientific-tool-set/scitos/compare/v2.4.0...HEAD
 [2.4.0]: https://github.com/scientific-tool-set/scitos/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/scientific-tool-set/scitos/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/scientific-tool-set/scitos/compare/v2.2.0...v2.3.0

@@ -61,6 +61,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </plist>" > target/SciToS.app/Contents/Info.plist
 
 echo "Packaging as SciTos-macOS-Bundle.tar.gz..."
-tar cJf SciTos-macOS-Bundle.tar.gz SciToS.app
+tar cJf target/SciTos-macOS-Bundle.tar.gz target/SciToS.app
 
 echo "SciToS.app creation completed!"

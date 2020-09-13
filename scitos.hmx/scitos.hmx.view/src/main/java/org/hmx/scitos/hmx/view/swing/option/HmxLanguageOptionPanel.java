@@ -133,7 +133,7 @@ public final class HmxLanguageOptionPanel extends AbstractOptionPanel {
             return false;
         }
         for (final LanguageModel singleModel : this.languagePanel.getUserModels()) {
-            final Set<String> codes = new HashSet<String>();
+            final Set<String> codes = new HashSet<>();
             for (final List<AbstractSyntacticalFunctionElement> singleTopLevelGroup : singleModel.provideFunctions()) {
                 if (this.containsDuplicateFunctionCode(singleTopLevelGroup, codes)) {
                     final String message = MessageFormat.format(HmxMessage.PREFERENCES_LANGUAGEFUNCTIONS_CODE_UNIQUE.get(), singleModel.getName());

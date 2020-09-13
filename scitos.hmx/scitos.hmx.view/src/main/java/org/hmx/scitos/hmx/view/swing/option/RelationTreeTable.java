@@ -72,7 +72,7 @@ public final class RelationTreeTable extends JPanel {
     /** Button to disable the relation template form without applying the changes made. */
     private final JButton discardFormChangesButton = new JButton(HmxMessage.PREFERENCES_RELATION_DISCARD.get());
     /** Labels indicating the expected type of value in form fields. */
-    private final List<JLabel> formLabels = new ArrayList<JLabel>(4);
+    private final List<JLabel> formLabels = new ArrayList<>(4);
     /** Input field for the role with high weight in the relation template (maximum of 32 characters length). */
     private final JTextField highWeightRoleInput = new JTextField(new Validation(32), null, 0);
     /** Input field for the role with low weight in the relation template (maximum of 32 characters length). */

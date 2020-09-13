@@ -132,7 +132,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
      * The indices of currently collapsed {@link Relation} columns, i.e. where the associate roles are currently hidden to reduce required horizontal
      * space.
      */
-    private final Set<Integer> foldedLevels = new HashSet<Integer>();
+    private final Set<Integer> foldedLevels = new HashSet<>();
     /**
      * Complete list of currently contained view components representing the {@link Pericope}'s {@link Proposition}s.
      */
@@ -159,7 +159,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         this.modelHandler = modelHandler;
         this.relationProvider = relationProvider;
         this.viewSettings = viewSettings;
-        this.undoManager = new UndoManager<Pericope>(modelHandler.getModel());
+        this.undoManager = new UndoManager<>(modelHandler.getModel());
 
         this.scrollPane = this.initScrollableContent();
         // initialize the commentArea to be reachable by commentable components
@@ -330,7 +330,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         this.rightContentSpacing.setVisible(!showingRelations);
         this.contentArea.removeAll();
         // get the currently used origin text font
-        this.propositionList = new ArrayList<ViewProposition>();
+        this.propositionList = new ArrayList<>();
         // fill the propositionList
         int propositionIndexOffset = 0;
         for (final Proposition singleTopLevelProposition : this.getModelHandler().getModel().getText()) {
@@ -339,7 +339,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
         // show pericope
         this.levels = this.calculateLevels();
         this.displayPropositions();
-        this.relationMap = new HashMap<Relation, ViewRelation>();
+        this.relationMap = new HashMap<>();
         if (this.viewSettings.isShowingRelations()) {
             this.displayRelations();
         }
@@ -532,7 +532,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
 
     @Override
     public List<Proposition> getSelectedPropositions(final Proposition defaultSelected) {
-        final List<Proposition> result = new LinkedList<Proposition>();
+        final List<Proposition> result = new LinkedList<>();
         for (ViewProposition singleProposition : this.propositionList) {
             if (singleProposition.isChecked() || singleProposition.getRepresented() == defaultSelected) {
                 result.add(singleProposition.getRepresented());
@@ -543,7 +543,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
 
     @Override
     public List<AbstractConnectable> getSelectedConnectables(final AbstractConnectable defaultSelected) {
-        final List<AbstractConnectable> list = new LinkedList<AbstractConnectable>();
+        final List<AbstractConnectable> list = new LinkedList<>();
         // REQUIREMENT: whole model is represented in the view
         AbstractConnectable nextToCheck = this.propositionList.get(0).getRepresented();
         while (nextToCheck != null) {
@@ -675,7 +675,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
             return;
         }
         // calculate width of each column
-        final Map<Integer, Integer> maxColumnSize = new HashMap<Integer, Integer>();
+        final Map<Integer, Integer> maxColumnSize = new HashMap<>();
         final GridBagLayout contentLayout = (GridBagLayout) this.contentArea.getLayout();
         // check each component for its width and determine maximum per column
         for (final Component singleComponent : this.contentArea.getComponents()) {

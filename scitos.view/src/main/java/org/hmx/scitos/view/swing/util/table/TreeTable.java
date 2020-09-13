@@ -237,7 +237,7 @@ public class TreeTable extends JXTreeTable {
     public List<TreePath> getExpandedChildren(final TreePath parentPath) {
         final Object parentNode = parentPath.getLastPathComponent();
         final int childCount = this.getTreeTableModel().getChildCount(parentNode);
-        final List<TreePath> expandedChildren = new ArrayList<TreePath>(childCount);
+        final List<TreePath> expandedChildren = new ArrayList<>(childCount);
         for (int index = 0; index < childCount; index++) {
             final TreePath siblingPath = parentPath.pathByAddingChild(this.getTreeTableModel().getChild(parentNode, index));
             if (this.isExpanded(siblingPath)) {

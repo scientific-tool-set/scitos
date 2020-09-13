@@ -57,7 +57,7 @@ public class ModelHandlerImplTest {
      */
     @BeforeClass
     public static void setUp() {
-        final List<AbstractSyntacticalFunctionElement> functions = new LinkedList<AbstractSyntacticalFunctionElement>();
+        final List<AbstractSyntacticalFunctionElement> functions = new LinkedList<>();
         functions.add(new SyntacticalFunction("A", "A Function", false, null));
         functions.add(new SyntacticalFunction("B", "Second Function", true, "some description"));
         functions.add(new SyntacticalFunctionGroup("Group", null, Arrays.asList(new SyntacticalFunction("C", "Nested Function", false, null),

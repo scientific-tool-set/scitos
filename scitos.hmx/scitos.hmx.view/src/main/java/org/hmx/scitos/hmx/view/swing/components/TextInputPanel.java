@@ -147,7 +147,7 @@ public final class TextInputPanel extends JPanel implements IUndoManagedView {
                 }
             });
         } else {
-            this.languageModels = new HashMap<String, LanguageModel>();
+            this.languageModels = new HashMap<>();
             final String language = parentView.getModel().getLanguage();
             final LanguageModel currentModel = new LanguageModel(language, parentView.getModel().isLeftToRightOriented());
             currentModel.addAll(parentView.getModel().provideFunctions());
@@ -461,7 +461,7 @@ public final class TextInputPanel extends JPanel implements IUndoManagedView {
      * @return created {@link JPanel}
      */
     private JPanel createLanguageComboBox() {
-        this.languageBox = new JComboBox<String>(this.languageModels.keySet().toArray(new String[this.languageModels.size()]));
+        this.languageBox = new JComboBox<>(this.languageModels.keySet().toArray(new String[this.languageModels.size()]));
         this.languageBox.setName("Language Selection");
         this.languageBox.setEditable(false);
         if (this.languageModels.size() < 2) {
@@ -504,7 +504,7 @@ public final class TextInputPanel extends JPanel implements IUndoManagedView {
     private JPanel createFontTypeComboBox() {
         this.fontFamilyNames = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         Collections.sort(this.fontFamilyNames);
-        this.fontTypeBox = new JComboBox<String>(this.fontFamilyNames.toArray(new String[this.fontFamilyNames.size()]));
+        this.fontTypeBox = new JComboBox<>(this.fontFamilyNames.toArray(new String[this.fontFamilyNames.size()]));
         this.fontTypeBox.setName("Font Type Selection");
         this.fontTypeBox.setEditable(false);
         this.fontTypeBox.addActionListener(new ActionListener() {

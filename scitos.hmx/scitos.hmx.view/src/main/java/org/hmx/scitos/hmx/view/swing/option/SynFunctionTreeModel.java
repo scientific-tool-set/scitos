@@ -62,11 +62,11 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
     /**
      * Representation of the lists of {@link AbstractSyntacticalFunctionElement}s on the top level.
      */
-    private final Map<UUID, List<UUID>> topLevelGrouping = new LinkedHashMap<UUID, List<UUID>>();
+    private final Map<UUID, List<UUID>> topLevelGrouping = new LinkedHashMap<>();
     /**
      * Collection of all {@link AbstractSyntacticalFunctionElement}s represented here - regardless of their positions in the hierarchy.
      */
-    private final Map<UUID, TreeTableRow> rowMapping = new HashMap<UUID, TreeTableRow>();
+    private final Map<UUID, TreeTableRow> rowMapping = new HashMap<>();
 
     /** Constructor. */
     public SynFunctionTreeModel() {
@@ -84,7 +84,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
         this.rowMapping.clear();
         for (final List<AbstractSyntacticalFunctionElement> singleTopLevelGroup : provider.provideFunctions()) {
             final UUID reference = UUID.randomUUID();
-            final List<UUID> topLevelChildren = new ArrayList<UUID>(singleTopLevelGroup.size());
+            final List<UUID> topLevelChildren = new ArrayList<>(singleTopLevelGroup.size());
             for (final AbstractSyntacticalFunctionElement singleTopLevelChild : singleTopLevelGroup) {
                 topLevelChildren.add(this.addTreeTableRow(reference, singleTopLevelChild));
             }
@@ -120,9 +120,9 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
     @Override
     public List<List<AbstractSyntacticalFunctionElement>> provideFunctions() {
         final List<List<AbstractSyntacticalFunctionElement>> result;
-        result = new ArrayList<List<AbstractSyntacticalFunctionElement>>(this.topLevelGrouping.size());
+        result = new ArrayList<>(this.topLevelGrouping.size());
         for (final List<UUID> singleGroup : this.topLevelGrouping.values()) {
-            final List<AbstractSyntacticalFunctionElement> topLevelList = new ArrayList<AbstractSyntacticalFunctionElement>(singleGroup.size());
+            final List<AbstractSyntacticalFunctionElement> topLevelList = new ArrayList<>(singleGroup.size());
             for (final UUID singleTopLevelReference : singleGroup) {
                 topLevelList.add(this.deriveModelInstance(singleTopLevelReference));
             }
@@ -142,7 +142,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
         final TreeTableRow row = this.rowMapping.get(rowReference);
         if (row instanceof GroupRow) {
             final List<AbstractSyntacticalFunctionElement> subFunctions;
-            subFunctions = new ArrayList<AbstractSyntacticalFunctionElement>(((GroupRow) row).subEntries.size());
+            subFunctions = new ArrayList<>(((GroupRow) row).subEntries.size());
             for (final UUID singleSubEntry : ((GroupRow) row).subEntries) {
                 subFunctions.add(this.deriveModelInstance(singleSubEntry));
             }
@@ -295,7 +295,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
             children = this.topLevelGrouping.get(parentReference);
         } else if (parentReference == this.getRoot()) {
             // make it unmodifiable to ensure that an exception is being thrown if this case is not treated specifically
-            children = Collections.unmodifiableList(new ArrayList<UUID>(this.topLevelGrouping.keySet()));
+            children = Collections.unmodifiableList(new ArrayList<>(this.topLevelGrouping.keySet()));
         } else {
             throw new IllegalArgumentException();
         }
@@ -368,7 +368,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
      */
     public TreePath addTopLevelGroup() {
         final UUID childReference = UUID.randomUUID();
-        this.topLevelGrouping.put(childReference, new ArrayList<UUID>(3));
+        this.topLevelGrouping.put(childReference, new ArrayList<>(3));
         final TreePath rootPath = new TreePath(this.getRoot());
         this.modelSupport.fireChildAdded(rootPath, this.topLevelGrouping.size() - 1, childReference);
         return rootPath.pathByAddingChild(childReference);
@@ -553,7 +553,7 @@ final class SynFunctionTreeModel extends AbstractTreeTableModel implements ISynt
     static class GroupRow extends TreeTableRow {
 
         /** The references to sub ordinated rows. */
-        final List<UUID> subEntries = new ArrayList<UUID>(3);
+        final List<UUID> subEntries = new ArrayList<>(3);
 
         /**
          * Constructor.

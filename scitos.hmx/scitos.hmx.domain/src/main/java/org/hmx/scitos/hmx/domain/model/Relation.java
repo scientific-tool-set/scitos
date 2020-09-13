@@ -34,7 +34,7 @@ import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 public final class Relation extends AbstractConnectable implements Cloneable, Iterable<AbstractConnectable> {
 
     /** The subordinated elements forming this relation. */
-    private final List<AbstractConnectable> associates = new LinkedList<AbstractConnectable>();
+    private final List<AbstractConnectable> associates = new LinkedList<>();
 
     /**
      * Constructor: for a {@code Relation} between the specified associates with the respective role and weight.

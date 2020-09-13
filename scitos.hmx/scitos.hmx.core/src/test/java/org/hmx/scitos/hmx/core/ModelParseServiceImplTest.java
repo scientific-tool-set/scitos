@@ -178,7 +178,7 @@ public class ModelParseServiceImplTest {
         this.assertStringEqualsNullOrEmptyAware("Title differs", expected.getTitle(), actual.getTitle());
         this.assertStringEqualsNullOrEmptyAware("Comment differs", expected.getComment(), actual.getComment());
         // iterate over the contained Propositions and their super ordinated Relations, thereby producing helpful output in case of an error
-        this.assertPropositionListEquals(expected.getText(), actual.getText(), new HashSet<Relation>());
+        this.assertPropositionListEquals(expected.getText(), actual.getText(), new HashSet<>());
         // this covers the whole model but does not provide a helpful error message
         Assert.assertEquals(expected, actual);
     }
@@ -297,11 +297,11 @@ public class ModelParseServiceImplTest {
         model.add(Arrays.asList(new SyntacticalFunction("GenO", "Genitive Object", false, null), new SyntacticalFunction("DatO", "Dative Object",
                 false, null), new SyntacticalFunction("AccO", "Accusative Object", false, null), new SyntacticalFunction("PrepO",
                 "Prepositional Object", false, null)));
-        final List<AbstractSyntacticalFunctionElement> groups = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        final List<AbstractSyntacticalFunctionElement> groups = new ArrayList<>(2);
         for (final String[] groupedType : new String[][] { new String[] { "Complement", "necessary" }, new String[] { "Adjunct", "erasable" } }) {
             final String type = groupedType[0];
             final char firstChar = type.charAt(0);
-            final List<AbstractSyntacticalFunctionElement> subTypes = new ArrayList<AbstractSyntacticalFunctionElement>(8);
+            final List<AbstractSyntacticalFunctionElement> subTypes = new ArrayList<>(8);
             subTypes.add(new SyntacticalFunction("SId" + firstChar, "Subject-Indentification-" + type, false, null));
             subTypes.add(new SyntacticalFunction("SMan" + firstChar, "Subject-Manner-" + type, false, null));
             subTypes.add(new SyntacticalFunction("OId" + firstChar, "Object-Indentification-" + type, false, null));
@@ -309,7 +309,7 @@ public class ModelParseServiceImplTest {
             subTypes.add(new SyntacticalFunction("Loc" + firstChar, "Locale-" + type, false, null));
             subTypes.add(new SyntacticalFunction("Time" + firstChar, "Time-" + type, false, null));
             subTypes.add(new SyntacticalFunction("Mod" + firstChar, "Modal-" + type, false, null));
-            final List<SyntacticalFunction> subSubTypes = new ArrayList<SyntacticalFunction>(7);
+            final List<SyntacticalFunction> subSubTypes = new ArrayList<>(7);
             subSubTypes.add(new SyntacticalFunction("Caus" + firstChar, "causal", false, null));
             subSubTypes.add(new SyntacticalFunction("Cond" + firstChar, "conditional", false, null));
             subSubTypes.add(new SyntacticalFunction("Cons" + firstChar, "consecutiv", false, null));
@@ -388,7 +388,7 @@ public class ModelParseServiceImplTest {
         final AssociateRole nucleus = new AssociateRole("Nucleus", true);
         model.add(Arrays.asList(new RelationTemplate(sequentialNucleus, sequentialNucleus, sequentialNucleus, null), new RelationTemplate(
                 simultaneousNucleus, simultaneousNucleus, simultaneousNucleus, null), new RelationTemplate(nucleus, nucleus, nucleus, null)));
-        final List<RelationTemplate> secondGroup = new LinkedList<RelationTemplate>();
+        final List<RelationTemplate> secondGroup = new LinkedList<>();
         secondGroup.add(new RelationTemplate(new AssociateRole("Orienter", false), null, new AssociateRole("Content", true), null));
         secondGroup.add(new RelationTemplate(new AssociateRole("Circumstance", false), null, nucleus, null));
         secondGroup.add(new RelationTemplate(new AssociateRole("Move", false), null, new AssociateRole("Goal", true), null));

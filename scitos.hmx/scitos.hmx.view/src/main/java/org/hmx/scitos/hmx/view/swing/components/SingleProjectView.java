@@ -22,8 +22,6 @@ package org.hmx.scitos.hmx.view.swing.components;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -329,44 +327,26 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     @Override
     public List<JMenuItem> createEditMenuItems() {
         this.addTextItem = new JMenuItem(HmxMessage.MENUBAR_ORIGINTEXT_ADD.get(), ScitosIcon.ADD.create());
-        this.addTextItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.goToTextInputView();
-            }
-        });
+        this.addTextItem.addActionListener(event -> this.goToTextInputView());
         this.removeTextItem = new JMenuItem(HmxMessage.MENUBAR_ORIGINTEXT_REMOVE.get(), ScitosIcon.DELETE.create());
-        this.removeTextItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                if (SingleProjectView.this.activeView instanceof IPericopeView
-                        && MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(HmxMessage.MENUBAR_ORIGINTEXT_REMOVE_CONFIRM.get(),
-                                HmxMessage.MENUBAR_ORIGINTEXT_REMOVE.get())) {
-                    final List<Proposition> selection = ((IPericopeView) SingleProjectView.this.activeView).getSelectedPropositions(null);
-                    try {
-                        SingleProjectView.this.getProject().getModelHandler().removePropositions(selection);
-                    } catch (final HmxException expected) {
-                        // illegal selection of Propositions
-                        MessageHandler.showException(expected);
-                    }
+        this.removeTextItem.addActionListener(event -> {
+            if (this.activeView instanceof IPericopeView
+                    && MessageHandler.Choice.YES == MessageHandler.showConfirmDialog(HmxMessage.MENUBAR_ORIGINTEXT_REMOVE_CONFIRM.get(),
+                            HmxMessage.MENUBAR_ORIGINTEXT_REMOVE.get())) {
+                final List<Proposition> selection = ((IPericopeView) this.activeView).getSelectedPropositions(null);
+                try {
+                    this.getProject().getModelHandler().removePropositions(selection);
+                } catch (final HmxException expected) {
+                    // illegal selection of Propositions
+                    MessageHandler.showException(expected);
                 }
             }
         });
         this.mergeProjectItem = new JMenuItem(HmxMessage.MENUBAR_PROJECT_MERGE.get(), ScitosIcon.PROJECT_OPEN.create());
-        this.mergeProjectItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.mergeWithOtherPericope();
-            }
-        });
+        this.mergeProjectItem.addActionListener(event -> this.mergeWithOtherPericope());
         final JMenuItem projectInfoItem = new JMenuItem(HmxMessage.MENUBAR_PROJECTINFO.get(), ScitosIcon.CLIPBOARD.create());
-        projectInfoItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final boolean alreadyInProgress = SingleProjectView.this.activeView instanceof AnalysisPanel;
-                new ProjectInfoDialog(SingleProjectView.this.getProject(), alreadyInProgress).setVisible(true);
-            }
-        });
+        projectInfoItem.addActionListener(event -> new ProjectInfoDialog(this.getProject(),
+                this.activeView instanceof AnalysisPanel).setVisible(true));
         this.manageEditMenuOptions();
         return Arrays.asList(this.addTextItem, this.removeTextItem, this.mergeProjectItem, null, projectInfoItem);
     }
@@ -375,52 +355,22 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
     public List<JMenuItem> createViewMenuItems() {
         this.viewPropositionLabelMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_LABELS.get(),
                 ScitosIcon.ATTRIBUTES_DISPLAY.create());
-        this.viewPropositionLabelMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.togglePropositionLabelVisibility();
-            }
-        });
+        this.viewPropositionLabelMenuItem.addActionListener(event -> this.togglePropositionLabelVisibility());
         this.viewPropositionIndentationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_PROPOSITION_INDENTATIONS.get(),
                 ScitosIcon.TREE.create());
-        this.viewPropositionIndentationMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.togglePropositionIndentationVisibility();
-            }
-        });
+        this.viewPropositionIndentationMenuItem.addActionListener(event -> this.togglePropositionIndentationVisibility());
         this.viewRelationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_RELATIONS.get(),
                 ScitosIcon.RELATIONS.create());
-        this.viewRelationMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.toggleRelationVisibility();
-            }
-        });
+        this.viewRelationMenuItem.addActionListener(event -> this.toggleRelationVisibility());
         this.viewClauseItemMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_CLAUSE_ITEMS.get(),
                 ScitosIcon.GRID.create());
-        this.viewClauseItemMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.toggleClauseItemVisibility();
-            }
-        });
+        this.viewClauseItemMenuItem.addActionListener(event -> this.toggleClauseItemVisibility());
         this.viewSyntacticTranslationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_SYNTACTIC_TRANSLATIONS.get(),
                 ScitosIcon.HORIZONTAL_RULE.create());
-        this.viewSyntacticTranslationMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.toggleSyntacticTranslationVisibility();
-            }
-        });
+        this.viewSyntacticTranslationMenuItem.addActionListener(event -> this.toggleSyntacticTranslationVisibility());
         this.viewSemanticTranslationMenuItem = new JCheckBoxMenuItem(HmxMessage.MENUBAR_TOGGLE_SEMANTIC_TRANSLATIONS.get(),
                 ScitosIcon.HORIZONTAL_RULE.create());
-        this.viewSemanticTranslationMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.toggleSemanticTranslationVisibility();
-            }
-        });
+        this.viewSemanticTranslationMenuItem.addActionListener(event -> this.toggleSemanticTranslationVisibility());
         this.manageViewMenuOptions();
         return Arrays.<JMenuItem>asList(this.viewPropositionLabelMenuItem, this.viewPropositionIndentationMenuItem, this.viewRelationMenuItem,
                 this.viewClauseItemMenuItem, this.viewSyntacticTranslationMenuItem, this.viewSemanticTranslationMenuItem);
@@ -431,30 +381,15 @@ public class SingleProjectView extends AbstractProjectView<HmxSwingProject, Peri
         this.allViewDetailsToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SHOW_ALL.get(), ScitosIcon.ATTRIBUTES_DISPLAY.create());
         this.allViewDetailsToolBarItem.setFocusable(false);
         this.allViewDetailsToolBarItem.setName("Preset: All");
-        this.allViewDetailsToolBarItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.applyViewPreset(IAnalysisViewSettings.SHOW_ALL);
-            }
-        });
+        this.allViewDetailsToolBarItem.addActionListener(event -> this.applyViewPreset(IAnalysisViewSettings.SHOW_ALL));
         this.syntacticalAnalysisToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SYNTACTICAL.get(), ScitosIcon.GRID.create());
         this.syntacticalAnalysisToolBarItem.setFocusable(false);
         this.syntacticalAnalysisToolBarItem.setName("Preset: Syntactical");
-        this.syntacticalAnalysisToolBarItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.applyViewPreset(IAnalysisViewSettings.SYNTACTICAL_ANALYSIS);
-            }
-        });
+        this.syntacticalAnalysisToolBarItem.addActionListener(event -> this.applyViewPreset(IAnalysisViewSettings.SYNTACTICAL_ANALYSIS));
         this.semanticalAnalysisToolBarItem = new JToggleButton(HmxMessage.ANALYSIS_PRESET_SEMANTICAL.get(), ScitosIcon.RELATIONS.create());
         this.semanticalAnalysisToolBarItem.setFocusable(false);
         this.semanticalAnalysisToolBarItem.setName("Preset: Semantical");
-        this.semanticalAnalysisToolBarItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                SingleProjectView.this.applyViewPreset(IAnalysisViewSettings.SEMANTICAL_ANALYSIS);
-            }
-        });
+        this.semanticalAnalysisToolBarItem.addActionListener(event -> this.applyViewPreset(IAnalysisViewSettings.SEMANTICAL_ANALYSIS));
         this.manageToolBarItems();
         return Arrays.<Component>asList(this.allViewDetailsToolBarItem, this.syntacticalAnalysisToolBarItem, this.semanticalAnalysisToolBarItem);
     }

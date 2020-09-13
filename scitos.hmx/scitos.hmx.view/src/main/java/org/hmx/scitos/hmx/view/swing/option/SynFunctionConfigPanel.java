@@ -91,7 +91,7 @@ public final class SynFunctionConfigPanel extends JPanel implements ISyntactical
     /** Form input for the optional description/tooltip text associated with a function/group (maximum of 512 characters length). */
     private final JTextArea descriptionArea = new JTextArea(new Validation(512));
     /** Registered external listeners for changes to the language model. */
-    private final List<ActionListener> actionListeners = new ArrayList<ActionListener>(1);
+    private final List<ActionListener> actionListeners = new ArrayList<>(1);
 
     /** Constructor. */
     public SynFunctionConfigPanel() {

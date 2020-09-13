@@ -48,7 +48,7 @@ public abstract class AbstractModelHandler<M extends IModel<M>> implements IMode
      */
     protected AbstractModelHandler(final M model) {
         this.model = model;
-        this.listeners = new LinkedList<ModelChangeListener>();
+        this.listeners = new LinkedList<>();
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class AbstractModelHandler<M extends IModel<M>> implements IMode
      */
     protected <O> void notifyListeners(final O changedElement, final boolean updated) {
         // create generic model event
-        final ModelEvent<O> event = new ModelEvent<O>(changedElement, updated);
+        final ModelEvent<O> event = new ModelEvent<>(changedElement, updated);
         // notify all currently registered ModelChangeListeners
         for (final ModelChangeListener singleListener : this.listeners) {
             singleListener.modelChanged(event);

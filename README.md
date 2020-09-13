@@ -16,6 +16,7 @@ Input of any kind is appreciated.
 
 ---
 
+## Modules
 ### 1. AIS – Autobiographical Interview Scoring
 #### 1.1 Background
 Autobiographical Interviews (AI) are a method to tease apart the forms of memory that contribute to a participant's description of a remembered past event.
@@ -69,3 +70,15 @@ The main advantage of the newer/ported version - besides better test coverage an
   - Adding/Changing/Rearranging/Removing selectable **syntactical functions**.
   - Adding/Changing/Rearranging/Removing selectable **semantical relations**.
   - The applied origin text language (including the associated syntactical functions) is being stored as part of a .hmx save file and therefore portable.
+
+---
+
+## F.A.Q.
+### 1. How to exchange configurations?
+When using the `scitos.jar` directly, you can find various `.xml` files beside it (generated once the respective configuration was made).
+Those files contain all the configurations made inside the application (through the "Preferences" menu) and can simply be copy-pasted.
+
+### 2. Where are the configuration files in the macOS `SciToS.app`?
+In case of macOS, you have to right-click on the `SciToS.app` and select "Show Package Contents".
+In there, you'll find the configuration files under `Contents/Resources/`.
+The configuration files between the two distributions are the same, i.e. they can be shared regardless of the operating system.

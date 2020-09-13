@@ -51,8 +51,8 @@ public class LanguageModel implements ISyntacticalFunctionProvider, Serializable
     public LanguageModel(final String name, final boolean leftToRightOriented) {
         this.name = name;
         this.leftToRightOriented = leftToRightOriented;
-        this.recommendedFonts = new LinkedList<String>();
-        this.functionGroups = new LinkedList<List<AbstractSyntacticalFunctionElement>>();
+        this.recommendedFonts = new LinkedList<>();
+        this.functionGroups = new LinkedList<>();
     }
 
     /**

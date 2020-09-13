@@ -135,7 +135,7 @@ public final class CategoryModelChangeDialog extends JDialog {
         final Map<Interview, Map<DetailCategory, AtomicLong>> detailsInUse =
                 this.modelHandler.countDetailOccurrences(this.modelHandler.getModel().getInterviews());
         // sum up and ignore unused detail categories
-        final Map<DetailCategory, AtomicLong> oldDetailOccurences = new HashMap<DetailCategory, AtomicLong>();
+        final Map<DetailCategory, AtomicLong> oldDetailOccurences = new HashMap<>();
         for (final Map<DetailCategory, AtomicLong> singleInterviewDetails : detailsInUse.values()) {
             for (final Entry<DetailCategory, AtomicLong> singleOldDetailCount : singleInterviewDetails.entrySet()) {
                 if (singleOldDetailCount.getKey().isSelectable() && singleOldDetailCount.getValue().get() > 0) {
@@ -257,7 +257,7 @@ public final class CategoryModelChangeDialog extends JDialog {
             final Border rightColumnBorder =
                     BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, Color.BLACK),
                             BorderFactory.createEmptyBorder(1, 10, 1, 10));
-            this.mapping = new HashMap<DetailCategory, DetailCategory>();
+            this.mapping = new HashMap<>();
             for (final Entry<DetailCategory, AtomicLong> singleEntry : oldDetailOccurences.entrySet()) {
                 constraints.gridy++;
                 constraints.gridx = 0;

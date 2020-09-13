@@ -37,11 +37,11 @@ public final class UndoManager<M extends IModel<M>> {
     /**
      * The collection of previous model object states, available for {@link #undo()}.
      */
-    private final Deque<M> availableUndos = new LinkedList<M>();
+    private final Deque<M> availableUndos = new LinkedList<>();
     /**
      * The collection of previous model object states, which were rolled back and are available for {@link #redo()}.
      */
-    private final Deque<M> availableRedos = new LinkedList<M>();
+    private final Deque<M> availableRedos = new LinkedList<>();
     /** The maximum of stored undo-able model changes. */
     private int limit;
 

@@ -8,21 +8,13 @@
 		<format>zip</format>
 	</formats>
 	<baseDirectory>scitos</baseDirectory>
-	<dependencySets>
-		<dependencySet>
-			<outputDirectory>lib</outputDirectory>
-			<useProjectArtifact>false</useProjectArtifact>
-			<excludes>
-				<exclude>org.hmx:scitos*</exclude>
-			</excludes>
-		</dependencySet>
-	</dependencySets>
 	<fileSets>
 		<fileSet>
 			<outputDirectory></outputDirectory>
 			<directory>target</directory>
 			<includes>
 				<include>scitos*.jar</include>
+				<include>lib/*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>

@@ -206,7 +206,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
              * case: target is a prior child
              */
             // removes the indentation of all other prior children before and finally the target itself
-            for (final Proposition singleChild : new ArrayList<Proposition>(priorChildren).subList(0,
+            for (final Proposition singleChild : new ArrayList<>(priorChildren).subList(0,
                     CollectionUtil.indexOfInstance(priorChildren, target) + 1)) {
                 parent.removeChildProposition(singleChild);
                 // adding child in front of its former parent in the list
@@ -429,7 +429,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
                  * indented under another enclosed child of prop2 and its partBeforeArrow
                  */
                 prop1Part.getParent().removeChildProposition(prop1Part);
-                final List<Proposition> priorChildren = new ArrayList<Proposition>(prop2Part.getPriorChildren());
+                final List<Proposition> priorChildren = new ArrayList<>(prop2Part.getPriorChildren());
                 priorChildren.addAll(prop1Part.getPriorChildren());
                 prop1Part.setPriorChildren(priorChildren);
                 prop1Part.setFunction(null);
@@ -450,7 +450,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
      */
     private void mergeConnectedPropositionsIntoOne(final Proposition firstPart, final Proposition secondPart) {
         // merge ClauseItems
-        final List<ClauseItem> items = new ArrayList<ClauseItem>(firstPart.getItems());
+        final List<ClauseItem> items = new ArrayList<>(firstPart.getItems());
         items.addAll(secondPart.getItems());
         firstPart.setItems(items);
         if (firstPart.getLabel() == null || firstPart.getLabel().isEmpty()) {
@@ -468,7 +468,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         firstPart.setPartAfterArrow(secondPart.getPartAfterArrow());
         final Relation superOrdinated = secondPart.getSuperOrdinatedRelation();
         if (firstPart.getSuperOrdinatedRelation() == null && superOrdinated != null) {
-            final List<AbstractConnectable> associates = new ArrayList<AbstractConnectable>(superOrdinated.getAssociates());
+            final List<AbstractConnectable> associates = new ArrayList<>(superOrdinated.getAssociates());
             associates.set(CollectionUtil.indexOfInstance(associates, secondPart), firstPart);
             firstPart.setSuperOrdinatedRelation(superOrdinated, secondPart.getRole());
             superOrdinated.setAssociates(associates);
@@ -537,7 +537,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
                 secondPart.setPriorChildren(firstLaterChildren);
             } else {
                 // make sure all enclosed children are in the same list to keep the ability to merge and indent of enclosed
-                final List<Proposition> combinedChildren = new LinkedList<Proposition>(firstLaterChildren);
+                final List<Proposition> combinedChildren = new LinkedList<>(firstLaterChildren);
                 combinedChildren.addAll(secondPriorChildren);
                 secondPart.setPriorChildren(combinedChildren);
             }
@@ -557,7 +557,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         }
         final int lastItemIndex = CollectionUtil.indexOfInstance(firstPartItems, lastItemInFirstPart);
         if (lastItemIndex + 1 < firstPartItems.size()) {
-            final List<ClauseItem> secondPartItems = new ArrayList<ClauseItem>(firstPartItems.subList(lastItemIndex + 1, firstPartItems.size()));
+            final List<ClauseItem> secondPartItems = new ArrayList<>(firstPartItems.subList(lastItemIndex + 1, firstPartItems.size()));
             // removes the duplicates of the secondPart from the firstPart
             target.removeClauseItems(secondPartItems);
             // make sure the propositions are still in the right order, transfer target's later children to the new proposition
@@ -628,7 +628,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
         Relation superOrdinated = firstPart.getSuperOrdinatedRelation();
         if (firstPart == superOrdinated.getAssociates().get(0)) {
             // move relation to the new proposition in order to preserve its validity
-            final List<AbstractConnectable> newAssociates = new ArrayList<AbstractConnectable>(superOrdinated.getAssociates());
+            final List<AbstractConnectable> newAssociates = new ArrayList<>(superOrdinated.getAssociates());
             newAssociates.set(0, secondPart);
             superOrdinated.setAssociates(newAssociates);
             final AssociateRole role = firstPart.getRole();

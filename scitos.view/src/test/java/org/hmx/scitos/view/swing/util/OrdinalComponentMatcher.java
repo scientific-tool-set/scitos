@@ -51,7 +51,7 @@ public class OrdinalComponentMatcher<T extends Component> extends GenericTypeMat
         super(supportedType, requireShowing);
         this.targetOrdinal = ordinal;
         // avoid counting the same component multiple times if the matcher is being called repeatedly but preserve component order
-        this.checkedComponents = new ArrayList<T>(ordinal + 1);
+        this.checkedComponents = new ArrayList<>(ordinal + 1);
     }
 
     @Override

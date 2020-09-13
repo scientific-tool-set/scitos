@@ -33,7 +33,7 @@ import org.hmx.scitos.core.HmxException;
 public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntry> {
 
     /** The menu's entries - menu items, separators and/or submenus. */
-    private final List<CMenuEntry> entryList = new LinkedList<CMenuEntry>();
+    private final List<CMenuEntry> entryList = new LinkedList<>();
     /** The menu's title/caption. */
     private final String caption;
 

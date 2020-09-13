@@ -115,7 +115,7 @@ public final class ParticipantInterviewGroupView extends AbstractAisProjectView<
         final GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         constraints.weightx = 1;
-        final List<Interview> interviews = new ArrayList<Interview>(this.getProject().getModelObject().getSubModelObjects().get(this.getModel()));
+        final List<Interview> interviews = new ArrayList<>(this.getProject().getModelObject().getSubModelObjects().get(this.getModel()));
         final int interviewCount = interviews.size();
         for (int listIndex = 0; listIndex < interviewCount; listIndex++) {
             constraints.gridy = listIndex;

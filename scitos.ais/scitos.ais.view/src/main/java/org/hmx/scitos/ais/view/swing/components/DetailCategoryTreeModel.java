@@ -61,8 +61,8 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
         super(new Object());
         final MutableDetailCategoryModel model = new MutableDetailCategoryModel();
         model.addAll(categoryProvider.provide());
-        this.rootCategories = new LinkedList<DetailCategoryRow>();
-        this.categoryChildren = new HashMap<DetailCategoryRow, List<DetailCategoryRow>>();
+        this.rootCategories = new LinkedList<>();
+        this.categoryChildren = new HashMap<>();
         for (final DetailCategory singleRoot : model.getRootCategories()) {
             this.rootCategories.add(this.addCategoryTreeToMap(model, singleRoot));
         }
@@ -79,7 +79,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * @return row object representing the given category
      */
     private DetailCategoryRow addCategoryTreeToMap(final MutableDetailCategoryModel model, final DetailCategory detail) {
-        final List<DetailCategoryRow> children = new LinkedList<DetailCategoryRow>();
+        final List<DetailCategoryRow> children = new LinkedList<>();
         for (final DetailCategory singleChild : model.getChildCategories(detail)) {
             children.add(this.addCategoryTreeToMap(model, singleChild));
         }
@@ -106,7 +106,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
         } else {
             final Object parentRow = parent.getLastPathComponent();
             if (!this.categoryChildren.containsKey(parentRow)) {
-                this.categoryChildren.put((DetailCategoryRow) parentRow, new LinkedList<DetailCategoryRow>());
+                this.categoryChildren.put((DetailCategoryRow) parentRow, new LinkedList<>());
             }
             parentsChildren = this.categoryChildren.get(parentRow);
             // inherit color from parent
@@ -313,7 +313,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * @return all detail categories in unsorted list
      */
     private List<DetailCategoryRow> getFlatCategoryList() {
-        final List<DetailCategoryRow> categories = new LinkedList<DetailCategoryRow>(this.rootCategories);
+        final List<DetailCategoryRow> categories = new LinkedList<>(this.rootCategories);
         for (final List<DetailCategoryRow> childCategories : this.categoryChildren.values()) {
             categories.addAll(childCategories);
         }
@@ -329,7 +329,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * @return full tree path from root to given category row
      */
     private TreePath buildPathToRow(final DetailCategoryRow row) {
-        final Deque<Object> pathElements = new LinkedList<Object>();
+        final Deque<Object> pathElements = new LinkedList<>();
         DetailCategoryRow currentElement = row;
         // traverse the tree path from the given leaf upwards
         outer: do {
@@ -353,7 +353,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * @return all categories have unique, non-empty codes
      */
     boolean isValid() {
-        final Set<String> codesInUse = new HashSet<String>();
+        final Set<String> codesInUse = new HashSet<>();
         for (final DetailCategoryRow singleRoot : this.rootCategories) {
             if (singleRoot.code.isEmpty() || codesInUse.contains(singleRoot.code)) {
                 return false;
@@ -379,11 +379,11 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      */
     SimpleEntry<MutableDetailCategoryModel, Map<DetailCategory, DetailCategory>> toModelWithMapping() {
         final MutableDetailCategoryModel model = new MutableDetailCategoryModel();
-        final Map<DetailCategory, DetailCategory> mapping = new HashMap<DetailCategory, DetailCategory>();
+        final Map<DetailCategory, DetailCategory> mapping = new HashMap<>();
         for (final DetailCategoryRow singleRoot : this.rootCategories) {
             this.addDetailCategoryToModel(null, singleRoot, model, mapping);
         }
-        return new SimpleEntry<MutableDetailCategoryModel, Map<DetailCategory, DetailCategory>>(model, mapping);
+        return new SimpleEntry<>(model, mapping);
     }
 
     /**

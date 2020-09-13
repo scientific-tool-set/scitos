@@ -81,7 +81,7 @@ public final class Translator<M extends ILocalizableMessage> {
      */
     public static List<Locale> getAvailableLocales(final Class<? extends ILocalizableMessage> messageType) {
         final List<String> messageFiles = ClassPathUtil.getFileResourcePaths(messageType, messageType.getSimpleName() + "_.+[.]xml");
-        final List<Locale> availableLocales = new ArrayList<Locale>(messageFiles.size());
+        final List<Locale> availableLocales = new ArrayList<>(messageFiles.size());
         // the full file path starts like the full class name, plus a leading slash '/' and the trailing underscore '_'
         final int prefixLength = messageType.getName().length() + 2;
         for (final String messageFilePath : messageFiles) {

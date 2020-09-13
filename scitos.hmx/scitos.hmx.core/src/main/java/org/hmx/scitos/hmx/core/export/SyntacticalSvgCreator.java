@@ -159,8 +159,8 @@ class SyntacticalSvgCreator extends AbstractSvgCreator {
         root.appendChild(defsElement);
         final Element contentGroup = xml.createElementNS(SvgConstants.NAMESPACE_SVG, SvgConstants.TAG_GROUP);
         final int propositionCount = flatText.size();
-        this.arrowPartIndentation = new HashMap<Integer, Double>();
-        final List<Element> propositionElements = new ArrayList<Element>(propositionCount);
+        this.arrowPartIndentation = new HashMap<>();
+        final List<Element> propositionElements = new ArrayList<>(propositionCount);
         for (int i = 0; i < propositionCount; i++) {
             propositionElements.add(this.createSyntacticalProposition(xml, flatText, i));
         }

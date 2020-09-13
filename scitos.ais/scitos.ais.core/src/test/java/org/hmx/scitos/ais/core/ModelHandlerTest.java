@@ -137,7 +137,7 @@ public class ModelHandlerTest {
         this.assertTokenState(text.get(10), true, oldSelectableCategories.get(3), true);
         this.assertTokenState(text.get(11), true, null, false);
         final MutableDetailCategoryModel newModel = new MutableDetailCategoryModel();
-        final Map<DetailCategory, DetailCategory> mappedOldToNew = new HashMap<DetailCategory, DetailCategory>();
+        final Map<DetailCategory, DetailCategory> mappedOldToNew = new HashMap<>();
         final DetailCategory firstCategory = new DetailCategory(null, "A", "Category A", true, Color.BLACK, null);
         final DetailCategory parent = new DetailCategory(null, "B", "Parent", false, Color.BLUE, null);
         final DetailCategory secondCategory = new DetailCategory(parent, "C", "", true, null, KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, true));
@@ -1125,7 +1125,7 @@ public class ModelHandlerTest {
      * @return list of all following tokens (including given start token)
      */
     private List<TextToken> getFlatTokenList(final TextToken startToken) {
-        final List<TextToken> list = new ArrayList<TextToken>(20);
+        final List<TextToken> list = new ArrayList<>(20);
         TextToken currentToken = startToken;
         do {
             list.add(currentToken);
@@ -1265,7 +1265,7 @@ public class ModelHandlerTest {
         final DetailCategory thirdDetail = selectables.get(2);
         final DetailCategory fourthDetail = selectables.get(3);
         final List<TextToken> text = this.getFlatTokenList(this.paragraphStartToken);
-        final List<DetailCategory> expectedSequence = new ArrayList<DetailCategory>(11);
+        final List<DetailCategory> expectedSequence = new ArrayList<>(11);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(1, 4), firstDetail);
         expectedSequence.add(firstDetail);
         this.modelHandler.assignDetailCategory(this.interview, text.subList(5, 6), secondDetail);
@@ -1306,7 +1306,7 @@ public class ModelHandlerTest {
     @Test
     public void testValidateEquality_2() {
         final AisProject clone = this.project.clone();
-        final List<DetailCategory> categories = new ArrayList<DetailCategory>(this.project.provide());
+        final List<DetailCategory> categories = new ArrayList<>(this.project.provide());
         categories.remove(categories.size() - 1);
         this.modelHandler.replaceCategoryModel(new MutableDetailCategoryModel().reset(categories),
                 Collections.<DetailCategory, DetailCategory>emptyMap());

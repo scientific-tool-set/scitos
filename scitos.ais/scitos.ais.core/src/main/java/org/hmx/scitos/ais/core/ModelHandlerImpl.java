@@ -752,7 +752,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                         AtomicLong currentValue = patternOccurences.get(singlePattern);
                         if (currentValue == null) {
                             currentValue = new AtomicLong(0);
-                            patternOccurences.put(new ArrayList<DetailCategory>(singlePattern), currentValue);
+                            patternOccurences.put(new ArrayList<>(singlePattern), currentValue);
                         }
                         // increase counter for the correct sized pattern by one
                         currentValue.incrementAndGet();

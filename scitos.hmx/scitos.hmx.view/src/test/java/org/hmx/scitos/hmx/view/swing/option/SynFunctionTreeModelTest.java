@@ -73,19 +73,19 @@ public class SynFunctionTreeModelTest {
      */
     @BeforeClass
     public static void initFunctionProvider() {
-        final List<AbstractSyntacticalFunctionElement> groupA = new ArrayList<AbstractSyntacticalFunctionElement>(3);
+        final List<AbstractSyntacticalFunctionElement> groupA = new ArrayList<>(3);
         groupA.add(new SyntacticalFunction("A1", "Function A1", false, null));
         groupA.add(new SyntacticalFunction("A2", "Function A2", true, "Some extra information"));
         groupA.add(new SyntacticalFunction("A3", "Function A3", false, "Other description"));
         final List<AbstractSyntacticalFunctionElement> groupB = Collections.emptyList();
-        final List<AbstractSyntacticalFunctionElement> groupC = new ArrayList<AbstractSyntacticalFunctionElement>(4);
-        final List<AbstractSyntacticalFunctionElement> groupC1 = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        final List<AbstractSyntacticalFunctionElement> groupC = new ArrayList<>(4);
+        final List<AbstractSyntacticalFunctionElement> groupC1 = new ArrayList<>(2);
         groupC1.add(new SyntacticalFunction("C11", "Function C11", true, "some hint"));
         groupC1.add(new SyntacticalFunction("C12", "Function C12", false, null));
         groupC.add(new SyntacticalFunctionGroup("Group C1", "Group C1's hint", groupC1));
         groupC.add(new SyntacticalFunction("C2", "Function C2", false, "text"));
         groupC.add(new SyntacticalFunctionGroup("Group C3", "", Collections.<AbstractSyntacticalFunctionElement>emptyList()));
-        final List<AbstractSyntacticalFunctionElement> groupC41 = new ArrayList<AbstractSyntacticalFunctionElement>(2);
+        final List<AbstractSyntacticalFunctionElement> groupC41 = new ArrayList<>(2);
         groupC41.add(new SyntacticalFunction("C411", "Function C411", false, "..."));
         groupC41.add(new SyntacticalFunction("C412", "Function C412", true, ""));
         final List<SyntacticalFunctionGroup> groupC4 = Collections.singletonList(new SyntacticalFunctionGroup("Group C41", "Something", groupC41));

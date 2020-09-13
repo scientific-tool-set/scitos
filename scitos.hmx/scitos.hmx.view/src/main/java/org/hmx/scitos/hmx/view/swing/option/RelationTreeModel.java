@@ -57,11 +57,11 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
      * The groups of relation templates – directly under the root of the tree structure - identified by a UUID and mapping to the list of contained
      * relation templates' UUIDs.
      */
-    private final Map<UUID, List<UUID>> relationGroups = new LinkedHashMap<UUID, List<UUID>>();
+    private final Map<UUID, List<UUID>> relationGroups = new LinkedHashMap<>();
     /**
      * The individual relation template associated with their respective UUID.
      */
-    private final Map<UUID, RelationTemplate> relationTemplates = new HashMap<UUID, RelationTemplate>();
+    private final Map<UUID, RelationTemplate> relationTemplates = new HashMap<>();
 
     /**
      * Constructor.
@@ -73,7 +73,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
         super(new Object());
         // setup delegate structure (as the TreeModel cannot handle the mutable data objects as immediate nodes)
         for (final List<RelationTemplate> singleGroup : relationProvider.provideRelationTemplates()) {
-            final List<UUID> relationTemplatesInGroup = new LinkedList<UUID>();
+            final List<UUID> relationTemplatesInGroup = new LinkedList<>();
             for (final RelationTemplate singleTemplate : singleGroup) {
                 // map each relation template to a random UUID
                 final UUID templateId = UUID.randomUUID();
@@ -87,9 +87,9 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
 
     @Override
     public List<List<RelationTemplate>> provideRelationTemplates() {
-        final List<List<RelationTemplate>> result = new ArrayList<List<RelationTemplate>>(this.relationGroups.size());
+        final List<List<RelationTemplate>> result = new ArrayList<>(this.relationGroups.size());
         for (final List<UUID> templateIdsInSingleGroup : this.relationGroups.values()) {
-            final List<RelationTemplate> resultGroup = new ArrayList<RelationTemplate>(templateIdsInSingleGroup.size());
+            final List<RelationTemplate> resultGroup = new ArrayList<>(templateIdsInSingleGroup.size());
             for (final UUID singleTemplateId : templateIdsInSingleGroup) {
                 resultGroup.add(this.relationTemplates.get(singleTemplateId));
             }
@@ -105,7 +105,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
             return this.relationGroups.get(parent).get(index);
         }
         // the parent is the root, return the relation template group's id at the given index
-        return new ArrayList<UUID>(this.relationGroups.keySet()).get(index);
+        return new ArrayList<>(this.relationGroups.keySet()).get(index);
     }
 
     @Override
@@ -135,7 +135,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
             return this.relationGroups.get(parent).indexOf(child);
         }
         // the parent is the root, find the index of the designated relation template group
-        return new ArrayList<UUID>(this.relationGroups.keySet()).indexOf(child);
+        return new ArrayList<>(this.relationGroups.keySet()).indexOf(child);
     }
 
     @Override
@@ -193,7 +193,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
         List<UUID> result = null;
         if (this.relationGroups.containsKey(node)) {
             // the node is a relation template group, return list of all group ids
-            result = new ArrayList<UUID>(this.relationGroups.keySet());
+            result = new ArrayList<>(this.relationGroups.keySet());
         } else {
             // the node is a relation template, return list of all relation template ids in the same group
             for (final List<UUID> singleGroup : this.relationGroups.values()) {
@@ -282,7 +282,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
      */
     public TreePath addGroupEntry() {
         final UUID groupId = UUID.randomUUID();
-        this.relationGroups.put(groupId, new LinkedList<UUID>());
+        this.relationGroups.put(groupId, new LinkedList<>());
         final TreePath rootPath = new TreePath(this.getRoot());
         this.modelSupport.fireChildAdded(rootPath, this.relationGroups.size() - 1, groupId);
         return rootPath.pathByAddingChild(groupId);

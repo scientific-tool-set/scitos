@@ -53,7 +53,7 @@ public abstract class AbstractSimpleOptionPanel<S extends Enum<? extends IOption
     /**
      * All settings chosen in this instance, which will be saved when the {@link OptionViewDialog} is closed by the {@code OK}-button.
      */
-    private final Map<S, String> chosenSettings = new HashMap<S, String>();
+    private final Map<S, String> chosenSettings = new HashMap<>();
 
     /**
      * Main constructor.

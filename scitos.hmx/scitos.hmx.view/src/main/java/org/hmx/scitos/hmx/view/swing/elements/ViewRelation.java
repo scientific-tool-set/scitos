@@ -117,7 +117,7 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
         final List<AbstractConnectable> modelAssociates = represented.getAssociates();
         this.showRoleAboveLine = analysisPanel.getViewSettings().isShowingSemanticTranslations()
                 || analysisPanel.getViewSettings().isShowingSyntacticTranslations();
-        this.viewAssociates = new ArrayList<IConnectable<?>>(modelAssociates.size());
+        this.viewAssociates = new ArrayList<>(modelAssociates.size());
         for (final AbstractConnectable singleAssociate : modelAssociates) {
             this.viewAssociates.add(this.analysisPanel.getRepresentative(singleAssociate));
         }
@@ -132,7 +132,7 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
             this.roleFields = null;
         } else {
             final int associateCount = modelAssociates.size();
-            this.roleFields = new ArrayList<JTextField>(associateCount);
+            this.roleFields = new ArrayList<>(associateCount);
             final Border outsideBorder;
             if (this.showRoleAboveLine) {
                 outsideBorder = BorderFactory.createLoweredBevelBorder();
@@ -226,7 +226,7 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
         final int topBorder = ViewRelation.COMMENT_BORDER.getBorderInsets(this).top;
         final int lineLeftEnd;
         final int lineWidth;
-        final List<Integer> horizontalLines = new ArrayList<Integer>(this.viewAssociates.size());
+        final List<Integer> horizontalLines = new ArrayList<>(this.viewAssociates.size());
         if (this.leftAligned) {
             lineLeftEnd = startX;
             lineWidth = this.getSize().width - startX;

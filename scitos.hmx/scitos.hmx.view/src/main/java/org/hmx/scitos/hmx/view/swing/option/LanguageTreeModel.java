@@ -52,7 +52,7 @@ import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 final class LanguageTreeModel extends AbstractTreeTableModel {
 
     /** The read-only system-defined language models. */
-    private final Map<UUID, LanguageModel> languageModels = new LinkedHashMap<UUID, LanguageModel>();
+    private final Map<UUID, LanguageModel> languageModels = new LinkedHashMap<>();
     /** The number of unchangeable system defined language models (at the top of the table). */
     private final int systemModelCount;
 
@@ -253,7 +253,7 @@ final class LanguageTreeModel extends AbstractTreeTableModel {
         if (index < this.systemModelCount) {
             throw new IllegalArgumentException();
         }
-        final UUID node = new ArrayList<UUID>(this.languageModels.keySet()).get(index);
+        final UUID node = new ArrayList<>(this.languageModels.keySet()).get(index);
         this.modelSupport.fireChildChanged(new TreePath(this.getRoot()), index, node);
     }
 
@@ -263,6 +263,6 @@ final class LanguageTreeModel extends AbstractTreeTableModel {
      * @return the user-defined language-models
      */
     List<LanguageModel> getUserLanguageModels() {
-        return new ArrayList<LanguageModel>(this.languageModels.values()).subList(this.systemModelCount, this.languageModels.size());
+        return new ArrayList<>(this.languageModels.values()).subList(this.systemModelCount, this.languageModels.size());
     }
 }

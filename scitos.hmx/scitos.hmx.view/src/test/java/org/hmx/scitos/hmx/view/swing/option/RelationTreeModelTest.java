@@ -57,7 +57,7 @@ public class RelationTreeModelTest {
     @BeforeClass
     public static void initRelationProvider() {
         // build the relation template groups to test
-        final List<List<RelationTemplate>> providedModel = new ArrayList<List<RelationTemplate>>(3);
+        final List<List<RelationTemplate>> providedModel = new ArrayList<>(3);
         /* first group: one relation template with all the same high weight roles */
         final AssociateRole singleRoleA1 = new AssociateRole("a1", true);
         final RelationTemplate templateA1 = new RelationTemplate(singleRoleA1, singleRoleA1, singleRoleA1, "a comment");

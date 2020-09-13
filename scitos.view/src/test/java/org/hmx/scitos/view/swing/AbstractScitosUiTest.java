@@ -157,7 +157,7 @@ public abstract class AbstractScitosUiTest extends AssertJSwingTestCaseTemplate 
      * @return the matched tool bar button
      */
     protected final JButtonFixture getToolBarButtonByToolTip(ILocalizableMessage buttonToolTip) {
-        final ToolTipComponentMatcher<JButton> matcher = new ToolTipComponentMatcher<JButton>(JButton.class, buttonToolTip.get(), true);
+        final ToolTipComponentMatcher<JButton> matcher = new ToolTipComponentMatcher<>(JButton.class, buttonToolTip.get(), true);
         return this.frame.toolBar().button(matcher);
     }
 

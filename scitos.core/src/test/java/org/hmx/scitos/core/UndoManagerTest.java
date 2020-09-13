@@ -34,7 +34,7 @@ public class UndoManagerTest {
     @Before
     public void prepareManager() {
         this.managedModel = UndoManagerTest.MODEL_CLONE.clone();
-        this.undoManager = new UndoManager<TestModelImpl>(this.managedModel);
+        this.undoManager = new UndoManager<>(this.managedModel);
         this.undoManager.setLimit(2);
     }
 
@@ -87,13 +87,13 @@ public class UndoManagerTest {
     public void testUndoMultipleTimes() {
         final int iterationCount = 3;
         this.undoManager.setLimit(iterationCount);
-        final List<TestModelImpl> oldStates = new LinkedList<TestModelImpl>();
+        final List<TestModelImpl> oldStates = new LinkedList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             oldStates.add(this.managedModel.clone());
             this.managedModel.changeState();
             this.undoManager.undoableEditHappened(this.managedModel);
         }
-        final Deque<TestModelImpl> undoStates = new LinkedList<TestModelImpl>();
+        final Deque<TestModelImpl> undoStates = new LinkedList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             undoStates.addFirst(this.undoManager.undo());
         }
@@ -116,7 +116,7 @@ public class UndoManagerTest {
     public void testRedoMultipleTimes() {
         final int iterationCount = 3;
         this.undoManager.setLimit(iterationCount);
-        final List<TestModelImpl> originalStates = new LinkedList<TestModelImpl>();
+        final List<TestModelImpl> originalStates = new LinkedList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             this.managedModel.changeState();
             originalStates.add(this.managedModel.clone());
@@ -125,7 +125,7 @@ public class UndoManagerTest {
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             this.undoManager.undo();
         }
-        final List<TestModelImpl> redoStates = new LinkedList<TestModelImpl>();
+        final List<TestModelImpl> redoStates = new LinkedList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             redoStates.add(this.undoManager.redo());
         }

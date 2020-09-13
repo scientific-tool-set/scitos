@@ -69,7 +69,7 @@ public final class OptionView {
             }
         });
         this.dialog.setModal(true);
-        this.optionNodes = new LinkedList<DefaultMutableTreeNode>();
+        this.optionNodes = new LinkedList<>();
         DefaultMutableTreeNode firstNode = null;
         for (final IOptionPanelService singleService : optionPanelProvider.getServices()) {
             // adding node to the category tree

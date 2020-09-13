@@ -227,7 +227,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
      * @return selected text token ui components
      */
     final List<TextTokenComponent> getSelection() {
-        final List<TextTokenComponent> selection = new LinkedList<TextTokenComponent>();
+        final List<TextTokenComponent> selection = new LinkedList<>();
         for (final Component singleParagraph : this.getViewPortView().getComponents()) {
             for (final Component singleToken : ((Container) singleParagraph).getComponents()) {
                 if (((TextTokenComponent) singleToken).isSelected()) {
@@ -246,7 +246,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
      */
     final List<TextToken> getSelectedTokens() {
         final List<TextTokenComponent> components = this.getSelection();
-        final List<TextToken> selection = new ArrayList<TextToken>(components.size());
+        final List<TextToken> selection = new ArrayList<>(components.size());
         for (final TextTokenComponent selectedComponent : components) {
             selection.add(selectedComponent.getModel());
         }

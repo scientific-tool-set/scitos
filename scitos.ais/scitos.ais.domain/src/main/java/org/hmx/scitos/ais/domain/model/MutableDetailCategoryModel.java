@@ -40,7 +40,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     /** Main constructor: initializes an empty category model. */
     public MutableDetailCategoryModel() {
-        this.categoryByCode = new LinkedHashMap<String, DetailCategory>();
+        this.categoryByCode = new LinkedHashMap<>();
     }
 
     /**
@@ -89,12 +89,12 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
      */
     @Override
     public List<DetailCategory> provide() {
-        return new ArrayList<DetailCategory>(this.categoryByCode.values());
+        return new ArrayList<>(this.categoryByCode.values());
     }
 
     @Override
     public List<DetailCategory> provideSelectables() {
-        final List<DetailCategory> selectables = new LinkedList<DetailCategory>();
+        final List<DetailCategory> selectables = new LinkedList<>();
         for (final DetailCategory singleCategory : this.categoryByCode.values()) {
             if (singleCategory.isSelectable()) {
                 selectables.add(singleCategory);
@@ -120,7 +120,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
      * @return detail category that have the given one as their parent
      */
     public List<DetailCategory> getChildCategories(final DetailCategory parent) {
-        final List<DetailCategory> children = new LinkedList<DetailCategory>();
+        final List<DetailCategory> children = new LinkedList<>();
         for (final DetailCategory singleCategory : this.categoryByCode.values()) {
             if (ComparisonUtil.isNullAwareEqual(singleCategory.getParent(), parent)) {
                 children.add(singleCategory);

@@ -78,7 +78,7 @@ public final class RelationTemplate implements Serializable {
         if (associateCount < 1 || associateCount > 2 && !this.canHaveMoreThanTwoAssociates()) {
             throw new IllegalArgumentException();
         }
-        final List<AssociateRole> result = new ArrayList<AssociateRole>(associateCount);
+        final List<AssociateRole> result = new ArrayList<>(associateCount);
         result.add(this.leadingAssociate);
         final int repetitiveAssociatesToAdd = associateCount - 2;
         for (int count = 0; count < repetitiveAssociatesToAdd; count++) {

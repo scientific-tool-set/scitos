@@ -65,15 +65,4 @@ public interface IPropositionParent {
      *            the {@link Proposition} to remove
      */
     void removeChildProposition(final Proposition toDelete);
-
-    /**
-     * Check if this element is equal to the given {@code Object}.
-     *
-     * @param otherObj
-     *            other element to be compared with
-     * @param ignoreChildren
-     *            if contained child propositions should be ignored in the comparison
-     * @return if this element is equal to the given {@code Object}
-     */
-    boolean equals(Object otherObj, boolean ignoreChildren);
 }

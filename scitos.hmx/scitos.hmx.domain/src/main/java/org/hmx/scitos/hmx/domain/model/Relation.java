@@ -151,7 +151,7 @@ public final class Relation extends AbstractConnectable implements Cloneable, It
     }
 
     /**
-     * Create an empty copy of this {@link Relation} WITHOUT setting its sub ordinated associates.
+     * Create an empty copy of this {@link Relation} WITHOUT setting its subordinated associates.
      *
      * @return the cloned Relation, holding only its comment
      */
@@ -164,7 +164,7 @@ public final class Relation extends AbstractConnectable implements Cloneable, It
 
     @Override
     public int hashCode() {
-        return super.hashCode() + this.associates.size();
+        return super.hashCode();
     }
 
     @Override
@@ -175,25 +175,6 @@ public final class Relation extends AbstractConnectable implements Cloneable, It
         if (!(otherObj instanceof Relation)) {
             return false;
         }
-        // equals() of the AbstractConnectable class invokes equalsIgnoreSuperOrdinatedRelation()
         return super.equals(otherObj);
-    }
-
-    @Override
-    protected boolean equalsIgnoreSuperOrdinatedRelation(final AbstractConnectable otherConnectable) {
-        if (!(otherConnectable instanceof Relation)) {
-            return false;
-        }
-        final Relation otherRelation = (Relation) otherConnectable;
-        final int associateCount = this.associates.size();
-        if (associateCount != otherRelation.associates.size()) {
-            return false;
-        }
-        for (int associateIndex = 0; associateIndex < associateCount; associateIndex++) {
-            if (!this.associates.get(associateIndex).equalsIgnoreSuperOrdinatedRelation(otherRelation.associates.get(associateIndex))) {
-                return false;
-            }
-        }
-        return true;
     }
 }

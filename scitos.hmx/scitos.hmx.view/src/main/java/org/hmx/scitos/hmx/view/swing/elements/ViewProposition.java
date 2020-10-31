@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -749,5 +750,10 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         if (this.semTranslationField != null) {
             this.semTranslationField.setToolTipText(toolTip);
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.getRepresented().getItems().stream().map(ClauseItem::getOriginText).collect(Collectors.joining(" "));
     }
 }

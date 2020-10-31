@@ -21,9 +21,9 @@ package org.hmx.scitos.hmx.domain.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import org.hmx.scitos.domain.util.CollectionUtil;
-import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
@@ -34,12 +34,22 @@ import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
  */
 public abstract class AbstractConnectable implements Serializable, ICommentable {
 
+    /** Run-time identifier of this model element. */
+    private final UUID id;
+
     /** The super ordinated relation this is an associate of. */
     private Relation superOrdinatedRelation;
     /** The role in the super ordinated relation. */
     private AssociateRole role;
     /** The additional comment's text. */
     private String comment;
+
+    /**
+     * Constructor: setting the internal run-time identifier (generating one if necessary).
+     */
+    protected AbstractConnectable() {
+        this.id = UUID.randomUUID();
+    }
 
     /**
      * Getter for the super ordinated relation this is an associate of.
@@ -209,7 +219,7 @@ public abstract class AbstractConnectable implements Serializable, ICommentable 
 
     @Override
     public int hashCode() {
-        return 3 * (this.role == null ? 0 : this.role.hashCode()) + (this.comment == null ? 0 : this.comment.hashCode());
+        return this.id.hashCode();
     }
 
     @Override
@@ -221,22 +231,7 @@ public abstract class AbstractConnectable implements Serializable, ICommentable 
             return false;
         }
         final AbstractConnectable otherConnectable = (AbstractConnectable) otherObj;
-        if (this.superOrdinatedRelation == null) {
-            return otherConnectable.superOrdinatedRelation == null && this.equalsIgnoreSuperOrdinatedRelation(otherConnectable);
-        }
-        return this.superOrdinatedRelation.equals(otherConnectable.superOrdinatedRelation);
-    }
-
-    /**
-     * Check if this is equal to the given {@code AbstractConnectable}, disregarding any super ordinated {@link Relation}.
-     *
-     * @param otherConnectable
-     *            other element to check for equal connection properties
-     * @return if the connection weight, role and comment are equal
-     */
-    protected boolean equalsIgnoreSuperOrdinatedRelation(final AbstractConnectable otherConnectable) {
-        return ComparisonUtil.isNullAwareEqual(this.role, otherConnectable.role)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.comment, otherConnectable.comment);
+        return this.id.equals(otherConnectable.id);
     }
 
     /**

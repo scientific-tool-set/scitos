@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hmx.scitos.domain.util.CollectionUtil;
-import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICanHaveSyntacticalFunction;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
 
@@ -551,67 +550,17 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result += this.label == null ? 0 : this.label.hashCode();
-        result *= 3;
-        result += this.function == null ? 0 : this.function.hashCode();
-        result *= 5;
-        result += this.synTranslation == null ? 0 : this.synTranslation.hashCode();
-        result *= 7;
-        result += this.semTranslation == null ? 0 : this.semTranslation.hashCode();
-        return result * this.items.size();
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(final Object otherObj) {
-        return this.equals(otherObj, false);
-    }
-
-    @Override
-    public boolean equals(final Object otherObj, final boolean ignoreChildren) {
         if (this == otherObj) {
             return true;
         }
         if (!(otherObj instanceof Proposition)) {
             return false;
         }
-        final Proposition otherProposition = (Proposition) otherObj;
-        if (this.partBeforeArrow == null && otherProposition.partBeforeArrow == null) {
-            // first of the (possibly multiple) proposition parts established
-            return this.equalsIgnorePartBeforeArrow(otherProposition, ignoreChildren);
-        }
-        if (this.partBeforeArrow != null && otherProposition.partBeforeArrow != null) {
-            // check part before arrow as well
-            return this.partBeforeArrow.equals(otherProposition.partBeforeArrow, ignoreChildren);
-        }
-        return false;
-    }
-
-    /**
-     * Check if this is equal to the given {@code Proposition}, disregarding any potential {@code partBeforeArrow}.
-     *
-     * @param otherProposition
-     *            the other element to compare with
-     * @param ignoreChildren
-     *            if subordinated {@link Proposition}s should also be excluded from this check
-     * @return if the given {@link Proposition} is equal to this one (under the given constraints)
-     */
-    private boolean equalsIgnorePartBeforeArrow(final Proposition otherProposition, final boolean ignoreChildren) {
-        if (this.partAfterArrow == null) {
-            if (otherProposition.partAfterArrow != null) {
-                return false;
-            }
-        } else if (otherProposition.partAfterArrow == null
-                || !this.partAfterArrow.equalsIgnorePartBeforeArrow(otherProposition.partAfterArrow, ignoreChildren)) {
-            return false;
-        }
-        return super.equals(otherProposition) && ComparisonUtil.isNullOrEmptyAwareEqual(this.label, otherProposition.label)
-                && ComparisonUtil.isNullAwareEqual(this.function, otherProposition.function)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.synTranslation, otherProposition.synTranslation)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.semTranslation, otherProposition.semTranslation)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.items, otherProposition.items)
-                && (ignoreChildren || ComparisonUtil.isNullOrEmptyAwareEqual(this.priorChildren, otherProposition.priorChildren))
-                && (ignoreChildren || ComparisonUtil.isNullOrEmptyAwareEqual(this.laterChildren, otherProposition.laterChildren))
-                && this.parent.equals(otherProposition.parent, true);
+        return super.equals(otherObj);
     }
 }

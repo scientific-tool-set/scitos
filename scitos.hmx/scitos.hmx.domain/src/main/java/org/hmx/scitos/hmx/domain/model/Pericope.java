@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.hmx.scitos.domain.IModel;
 import org.hmx.scitos.domain.util.CollectionUtil;
-import org.hmx.scitos.domain.util.ComparisonUtil;
 import org.hmx.scitos.hmx.domain.ICommentable;
 import org.hmx.scitos.hmx.domain.IPropositionParent;
 import org.hmx.scitos.hmx.domain.ISyntacticalFunctionProvider;
@@ -486,36 +485,5 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
             clonedAssociates.add(clonedAssociate);
         }
         clonedSubTreeHead.setAssociates(clonedAssociates);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = this.languageModel.hashCode();
-        result += this.author == null ? 0 : this.author.hashCode();
-        result *= 3;
-        result += this.title == null ? 0 : this.title.hashCode();
-        result *= 5;
-        result += this.comment == null ? 0 : this.comment.hashCode();
-        return result * this.text.size();
-    }
-
-    @Override
-    public boolean equals(final Object otherObj) {
-        return this.equals(otherObj, false);
-    }
-
-    @Override
-    public boolean equals(final Object otherObj, final boolean ignoreChildren) {
-        if (this == otherObj) {
-            return true;
-        }
-        if (!(otherObj instanceof Pericope)) {
-            return false;
-        }
-        final Pericope otherPericope = (Pericope) otherObj;
-        return this.languageModel.equals(otherPericope.languageModel) && ComparisonUtil.isNullOrEmptyAwareEqual(this.author, otherPericope.author)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.title, otherPericope.title)
-                && ComparisonUtil.isNullOrEmptyAwareEqual(this.comment, otherPericope.comment)
-                && (ignoreChildren || this.text.equals(otherPericope.text));
     }
 }

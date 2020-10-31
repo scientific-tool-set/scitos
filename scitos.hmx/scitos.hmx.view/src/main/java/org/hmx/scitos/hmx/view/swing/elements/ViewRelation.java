@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
@@ -40,6 +42,7 @@ import javax.swing.border.Border;
 import org.hmx.scitos.core.option.Option;
 import org.hmx.scitos.hmx.core.option.HmxGeneralOption;
 import org.hmx.scitos.hmx.domain.model.AbstractConnectable;
+import org.hmx.scitos.hmx.domain.model.ClauseItem;
 import org.hmx.scitos.hmx.domain.model.Pericope;
 import org.hmx.scitos.hmx.domain.model.Proposition;
 import org.hmx.scitos.hmx.domain.model.Relation;
@@ -250,8 +253,17 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
             verticalPos = startX - (2 * ViewRelation.HALF_LINE_THICKNESS);
         }
         final Rectangle verticalLine =
-                new Rectangle(verticalPos, horizontalLines.get(0), (2 * ViewRelation.HALF_LINE_THICKNESS), (horizontalLines.get(horizontalLines
-                        .size() - 1) - horizontalLines.get(0)) + (2 * ViewRelation.HALF_LINE_THICKNESS));
+                new Rectangle(verticalPos, horizontalLines.get(0),
+                        (2 * ViewRelation.HALF_LINE_THICKNESS),
+                        (horizontalLines.get(horizontalLines.size() - 1) - horizontalLines.get(0)) + (2 * ViewRelation.HALF_LINE_THICKNESS));
+        if (horizontalLines.size() > 2) {
+            System.out.println("Drawing Relation:");
+            IntStream.range(0, horizontalLines.size())
+                    .forEach(index -> System.out.println("horizontal: " + horizontalLines.get(index) + " ("
+                            + this.viewAssociates.get(index).toString() + " | " + this.viewAssociates.get(index).getConnectY() + ")"));
+            System.out.println("vertical: " + verticalLine.getY() + " to " + (verticalLine.getY() + verticalLine.height));
+            System.out.println("-------------------------------");
+        }
         graphics2D.draw(verticalLine);
         graphics2D.fill(verticalLine);
         if (this.roleFields != null) {
@@ -444,5 +456,14 @@ public final class ViewRelation extends AbstractCommentable<Relation> implements
         for (final Component singleComponent : this.getComponents()) {
             singleComponent.addMouseListener(listener);
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.getRepresented().getFirstPropositionContained().getItems().stream()
+                    .map(ClauseItem::getOriginText).collect(Collectors.joining(" "))
+                + " - "
+                + this.getRepresented().getLastPropositionContained().getItems().stream()
+                    .map(ClauseItem::getOriginText).collect(Collectors.joining(" "));
     }
 }

@@ -179,8 +179,6 @@ public class ModelParseServiceImplTest {
         this.assertStringEqualsNullOrEmptyAware("Comment differs", expected.getComment(), actual.getComment());
         // iterate over the contained Propositions and their super ordinated Relations, thereby producing helpful output in case of an error
         this.assertPropositionListEquals(expected.getText(), actual.getText(), new HashSet<>());
-        // this covers the whole model but does not provide a helpful error message
-        Assert.assertEquals(expected, actual);
     }
 
     private void assertPropositionListEquals(final List<Proposition> expected, final List<Proposition> actual,

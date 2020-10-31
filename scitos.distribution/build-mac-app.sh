@@ -3,7 +3,7 @@
 # Special script for creating a Mac .app Bundle.
 # This is not portable, needs to be triggered manually and the following parameters need to be adjusted accordingly.
 #
-VERSION="2.4.1"
+VERSION="2.4.2-SNAPSHOT"
 JDK_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home
 JRE_MODULES="java.base,java.compiler,java.desktop,java.prefs,java.scripting,java.sql.rowset,jdk.unsupported"
 

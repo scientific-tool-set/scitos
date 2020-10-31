@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.hmx</groupId>
 		<artifactId>scitos</artifactId>
-		<version>2.4.1</version>
+		<version>2.4.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>scitos.distribution</artifactId>
 
@@ -67,7 +67,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>scitos-${scitos.version}</finalName>
+							<finalName>scitos-${project.version}</finalName>
 							<descriptor>src/main/resources/assembly/assembly-descriptor-zip.xml</descriptor>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>

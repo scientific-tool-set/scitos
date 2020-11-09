@@ -71,13 +71,7 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
         this.client = client;
         this.modelHandler = modelHandler;
         this.setSavePath(savePath);
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                modelHandler.addModelChangeListener(HmxSwingProject.this);
-            }
-        });
+        SwingUtilities.invokeLater(() -> modelHandler.addModelChangeListener(HmxSwingProject.this));
     }
 
     @Override
@@ -128,13 +122,7 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
             this.client.getMainView().resetTreeStructure();
         }
         this.saved = false;
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                HmxSwingProject.this.client.revalidate();
-            }
-        });
+        SwingUtilities.invokeLater(this.client::revalidate);
     }
 
     /**
@@ -186,10 +174,15 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
             // don't confuse the user by showing an exception about being unable to read a file, when it was just saved
             throw new HmxException(Message.ERROR_SAVE_FAILED);
         }
-        if (!this.getModelObject().equals(reloadedModel.getKey())) {
+        this.setSavePath(path);
+        // only perform very basic structural comparison: count propositions and relations
+        final Pericope reloadedPericope = (Pericope) reloadedModel.getKey();
+        if (this.getModelObject().getFlatText().size() != reloadedPericope.getFlatText().size()) {
             throw new HmxException(Message.ERROR_SAVE_FAILED);
         }
-        this.setSavePath(path);
+        if (this.getModelObject().getFlatRelations().size() != reloadedPericope.getFlatRelations().size()) {
+            throw new HmxException(Message.ERROR_SAVE_FAILED);
+        }
         this.setSaved(true);
         this.client.invokeRepresentationRefresh(this);
     }
@@ -197,10 +190,6 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
     @Override
     public void export(final ExportOption type) throws HmxException {
         switch (type.getTargetFileType()) {
-        // case HTML:
-        // TODO implement exportToHtml
-        // this.client.getModelParseProvider().export(this.getModelObject(), type.getStylesheetPath(), path);
-        // break;
         case SVG:
             new SvgExportDetailsDialog(this, this.client.getModelParseProvider()).setVisible(true);
             break;
@@ -254,14 +243,10 @@ public final class HmxSwingProject implements HmxViewProject, ModelChangeListene
      *            if this project should be marked as saved
      */
     public void setSaved(final boolean flag) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (HmxSwingProject.this.saved != flag) {
-                    HmxSwingProject.this.saved = flag;
-                    HmxSwingProject.this.client.refreshTitle();
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (this.saved != flag) {
+                this.saved = flag;
+                this.client.refreshTitle();
             }
         });
     }

@@ -18,7 +18,7 @@ java -jar src/main/resources/packr/packr-all-2.7.0.jar \
     --mainclass org.hmx.scitos.view.swing.ScitosApp \
     --bundle org.hmx.scitos.swing \
     --icon src/main/resources/icons/scitos_application.icns \
-    --vmargs Xmx256M \
+    --vmargs Xmx1G \
     --output target/SciToS.app
 
 echo "Removing the (ca. 300MB) JRE being included by default..."

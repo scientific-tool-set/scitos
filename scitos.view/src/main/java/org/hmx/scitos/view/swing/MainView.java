@@ -86,7 +86,7 @@ public class MainView extends JPanel {
     /** The client instance containing this view. */
     final ScitosClient client;
     /** The currently open view projects. */
-    private final List<IViewProject<?>> openProjects = new LinkedList<>();
+    private final List<IViewProject<? extends IModel<?>>> openProjects = new LinkedList<>();
 
     /** The divided pane containing the project tree on the left and the tab stack on the right. */
     private final JSplitPane splitPane;

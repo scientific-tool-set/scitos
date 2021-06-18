@@ -91,6 +91,16 @@ public class ButtonTabComponent extends JPanel {
                 }
                 return pane.getTitleAt(index);
             }
+
+            @Override
+            public Color getForeground() {
+                return Color.BLACK;
+            }
+
+            @Override
+            public Color getBackground() {
+                return Color.LIGHT_GRAY;
+            }
         };
         this.add(this.label);
         // add more space between the label and the button
@@ -269,6 +279,8 @@ public class ButtonTabComponent extends JPanel {
             graphics2D.setStroke(new BasicStroke(2));
             if (this.getModel().isRollover()) {
                 graphics2D.setColor(Color.RED);
+            } else {
+                graphics2D.setColor(Color.BLACK);
             }
             final int delta = 6;
             graphics2D.drawLine(delta, delta, this.getWidth() - delta - 1, this.getHeight() - delta - 1);

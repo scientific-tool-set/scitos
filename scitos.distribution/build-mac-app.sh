@@ -4,7 +4,7 @@
 # This is not portable, needs to be triggered manually and the following parameters need to be adjusted accordingly.
 #
 VERSION="2.4.3-SNAPSHOT"
-JDK_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home
+JDK_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home
 JRE_MODULES="java.base,java.compiler,java.desktop,java.prefs,java.scripting,java.sql.rowset,jdk.unsupported"
 
 # collect dependencies to mention them in the classpath one-by-one

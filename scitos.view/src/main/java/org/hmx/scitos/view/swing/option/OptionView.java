@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -69,7 +69,7 @@ public final class OptionView {
             }
         });
         this.dialog.setModal(true);
-        this.optionNodes = new LinkedList<>();
+        this.optionNodes = new ArrayList<>();
         DefaultMutableTreeNode firstNode = null;
         for (final IOptionPanelService singleService : optionPanelProvider.getServices()) {
             // adding node to the category tree

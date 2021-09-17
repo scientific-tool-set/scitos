@@ -21,7 +21,6 @@ package org.hmx.scitos.ais.domain.model;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -94,7 +93,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
 
     @Override
     public List<DetailCategory> provideSelectables() {
-        final List<DetailCategory> selectables = new LinkedList<>();
+        final List<DetailCategory> selectables = new ArrayList<>();
         for (final DetailCategory singleCategory : this.categoryByCode.values()) {
             if (singleCategory.isSelectable()) {
                 selectables.add(singleCategory);
@@ -120,7 +119,7 @@ public class MutableDetailCategoryModel implements IDetailCategoryProvider {
      * @return detail category that have the given one as their parent
      */
     public List<DetailCategory> getChildCategories(final DetailCategory parent) {
-        final List<DetailCategory> children = new LinkedList<>();
+        final List<DetailCategory> children = new ArrayList<>();
         for (final DetailCategory singleCategory : this.categoryByCode.values()) {
             if (ComparisonUtil.isNullAwareEqual(singleCategory.getParent(), parent)) {
                 children.add(singleCategory);

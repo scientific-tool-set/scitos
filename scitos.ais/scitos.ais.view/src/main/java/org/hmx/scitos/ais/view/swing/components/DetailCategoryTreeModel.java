@@ -21,6 +21,7 @@ package org.hmx.scitos.ais.view.swing.components;
 
 import java.awt.Color;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,7 +62,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
         super(new Object());
         final MutableDetailCategoryModel model = new MutableDetailCategoryModel();
         model.addAll(categoryProvider.provide());
-        this.rootCategories = new LinkedList<>();
+        this.rootCategories = new ArrayList<>();
         this.categoryChildren = new HashMap<>();
         for (final DetailCategory singleRoot : model.getRootCategories()) {
             this.rootCategories.add(this.addCategoryTreeToMap(model, singleRoot));
@@ -79,7 +80,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * @return row object representing the given category
      */
     private DetailCategoryRow addCategoryTreeToMap(final MutableDetailCategoryModel model, final DetailCategory detail) {
-        final List<DetailCategoryRow> children = new LinkedList<>();
+        final List<DetailCategoryRow> children = new ArrayList<>();
         for (final DetailCategory singleChild : model.getChildCategories(detail)) {
             children.add(this.addCategoryTreeToMap(model, singleChild));
         }
@@ -106,7 +107,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
         } else {
             final Object parentRow = parent.getLastPathComponent();
             if (!this.categoryChildren.containsKey(parentRow)) {
-                this.categoryChildren.put((DetailCategoryRow) parentRow, new LinkedList<>());
+                this.categoryChildren.put((DetailCategoryRow) parentRow, new ArrayList<>());
             }
             parentsChildren = this.categoryChildren.get(parentRow);
             // inherit color from parent
@@ -313,7 +314,7 @@ final class DetailCategoryTreeModel extends AbstractTreeTableModel {
      * @return all detail categories in unsorted list
      */
     private List<DetailCategoryRow> getFlatCategoryList() {
-        final List<DetailCategoryRow> categories = new LinkedList<>(this.rootCategories);
+        final List<DetailCategoryRow> categories = new ArrayList<>(this.rootCategories);
         for (final List<DetailCategoryRow> childCategories : this.categoryChildren.values()) {
             categories.addAll(childCategories);
         }

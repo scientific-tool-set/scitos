@@ -21,7 +21,7 @@ package org.hmx.scitos.hmx.core.i18n;
 
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -44,8 +44,8 @@ public class HmxMessageTest {
     public void testMessageAvailability() {
         final ResourceBundle bundle = ResourceBundle.getBundle(HmxMessage.class.getName(), Locale.ENGLISH, new XmlResourceBundleControl());
         Assert.assertNotNull(bundle);
-        final List<String> unusedMessages = new LinkedList<>();
-        final List<String> unavailableMessages = new LinkedList<>();
+        final List<String> unusedMessages = new ArrayList<>();
+        final List<String> unavailableMessages = new ArrayList<>();
         final Enumeration<String> availableKeys = bundle.getKeys();
         while (availableKeys.hasMoreElements()) {
             unusedMessages.add(availableKeys.nextElement());

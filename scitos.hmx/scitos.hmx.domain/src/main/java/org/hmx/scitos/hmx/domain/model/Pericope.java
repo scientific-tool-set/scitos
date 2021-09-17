@@ -22,7 +22,7 @@ package org.hmx.scitos.hmx.domain.model;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.domain.IModel;
@@ -40,7 +40,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
     /** The origin text language's syntactical model. */
     private LanguageModel languageModel;
     /** The top level propositions, that in turn can contain more subordinated propositions. */
-    private final List<Proposition> text = new LinkedList<>();
+    private final List<Proposition> text = new ArrayList<>();
     /**
      * The origin text's font, to allow the analysis of languages that require a special {@link Font} in order to be displayed properly.
      */
@@ -155,7 +155,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return ordered list of all {@code Proposition}s
      */
     public List<Proposition> getFlatText() {
-        final List<Proposition> result = new LinkedList<>();
+        final List<Proposition> result = new ArrayList<>();
         for (final Proposition singleTopLevelProposition : this.text) {
             // recursively fill result list
             this.collectFlatText(singleTopLevelProposition, result);
@@ -197,7 +197,7 @@ public final class Pericope implements IModel<Pericope>, IPropositionParent, ICo
      * @return ordered list of all relations
      */
     public List<Relation> getFlatRelations() {
-        final List<Relation> result = new LinkedList<>();
+        final List<Relation> result = new ArrayList<>();
         // get the first Proposition
         AbstractConnectable currentFocus = this.getPropositionAt(0);
         while (currentFocus != null) {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -126,7 +127,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      * @return tokenized text
      */
     private List<TextToken> determineTokensFromText(final String text) {
-        final List<TextToken> paragraphs = new LinkedList<>();
+        final List<TextToken> paragraphs = new ArrayList<>();
         // split text into paragraphs at line separators
         for (final String singleParagraph : text.split(ModelHandlerImpl.REGEX_PARAGRAPH_SEPARATOR)) {
             // separate paragraph into tokens (ideally words) at whitespaces
@@ -401,10 +402,10 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
      *         even part (second, fourth, ...)
      */
     private List<List<TextToken>> collectInterruptedSelectionParts(final List<TextToken> selectedTokens) {
-        final List<List<TextToken>> parts = new LinkedList<>();
+        final List<List<TextToken>> parts = new ArrayList<>();
         // determine the first token out of the targeted range to end the following loop on
         final TextToken firstTokenAfterSelection = selectedTokens.get(selectedTokens.size() - 1).getFollowingToken();
-        List<TextToken> currentPart = new LinkedList<>();
+        List<TextToken> currentPart = new ArrayList<>();
         // alternate between selected and unselected sections (i.e. token ranges)
         boolean currentPartSelected = true;
         TextToken currentToken = selectedTokens.get(0);
@@ -415,7 +416,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
                 // add current part to result list
                 parts.add(currentPart);
                 // create a new part list
-                currentPart = new LinkedList<>();
+                currentPart = new ArrayList<>();
             }
             currentPart.add(currentToken);
             currentToken = currentToken.getFollowingToken();
@@ -734,7 +735,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
         // iterate over all given interviews
         for (final Interview singleInterview : interviews) {
             final Map<List<DetailCategory>, AtomicLong> patternOccurences = new HashMap<>();
-            final List<List<DetailCategory>> currentPattern = new LinkedList<>();
+            final List<List<DetailCategory>> currentPattern = new ArrayList<>();
             // iterate over the whole detail category sequence
             for (final DetailCategory singleDetail : this.extractDetailSequence(singleInterview)) {
                 currentPattern.add(new ArrayList<>(maxLength));
@@ -766,7 +767,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
 
     @Override
     public List<DetailCategory> extractDetailSequence(final Interview interview) {
-        final List<DetailCategory> sequence = new LinkedList<>();
+        final List<DetailCategory> sequence = new ArrayList<>();
         // iterate over all paragraphs
         for (final TextToken singleParagraph : interview.getText()) {
             // iterate over all tokens of the current paragraph
@@ -904,7 +905,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<AisProject> imp
     private static class CategoryConflictHandler {
 
         /** Registered unresolved detail category changes, i.e. started but not ended and/or ended but not started. */
-        final LinkedList<Boolean> categoryChanges = new LinkedList<>();
+        final Deque<Boolean> categoryChanges = new LinkedList<>();
 
         /**
          * Add another start or end of a detail category to this conflict handler.

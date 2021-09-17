@@ -22,7 +22,7 @@ package org.hmx.scitos.hmx.domain.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.hmx.domain.ISemanticalRelationProvider;
@@ -37,7 +37,7 @@ public class RelationModel implements ISemanticalRelationProvider, Serializable,
      * Constructor: initializing an empty set of template groups.
      */
     public RelationModel() {
-        this.relationTemplateGroups = new LinkedList<>();
+        this.relationTemplateGroups = new ArrayList<>();
     }
 
     /**

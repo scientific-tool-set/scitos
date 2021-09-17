@@ -22,7 +22,7 @@ package org.hmx.scitos.hmx.domain.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.domain.util.CollectionUtil;
@@ -44,7 +44,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
     /**
      * The included {@link ClauseItem}s containing the represented origin text part.
      */
-    private final List<ClauseItem> items = new LinkedList<>();
+    private final List<ClauseItem> items = new ArrayList<>();
     /** The identifying label. */
     private String label;
     /** The syntactical indentation function. */
@@ -389,7 +389,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     private void addPriorChild(final Proposition childProposition, final boolean asLeadingChild) {
         if (this.priorChildren == null) {
-            this.priorChildren = new LinkedList<>();
+            this.priorChildren = new ArrayList<>();
         }
         childProposition.setParent(this);
         if (asLeadingChild) {
@@ -429,7 +429,7 @@ public final class Proposition extends AbstractConnectable implements Cloneable,
      */
     private void addLaterChild(final Proposition childProposition, final boolean asLeadingChild) {
         if (this.laterChildren == null) {
-            this.laterChildren = new LinkedList<>();
+            this.laterChildren = new ArrayList<>();
         }
         childProposition.setParent(this);
         if (asLeadingChild) {

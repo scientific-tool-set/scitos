@@ -22,7 +22,7 @@ package org.hmx.scitos.ais.view.swing;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.IntStream;
@@ -57,7 +57,7 @@ public final class AisViewProject implements IViewProject<AisProject>, ModelChan
     /** The path this project has been loaded from and/or last saved to. It is used as the default path for the next requested save operation. */
     private File savePath;
     /** The elements displayed in open tabs when this view project was last loaded/saved. */
-    private final List<Object> openTabElements = new LinkedList<>();
+    private final List<Object> openTabElements = new ArrayList<>();
 
     /**
      * Creates a new project in the specified {@link ScitosClient}.

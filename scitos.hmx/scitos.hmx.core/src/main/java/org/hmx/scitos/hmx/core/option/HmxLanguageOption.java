@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -84,7 +84,7 @@ public final class HmxLanguageOption implements ILanguageModelProvider, ILanguag
         // apply general option file naming convention
         this.filePath = OptionHandler.buildOptionFilePath(HmxLanguageOption.class);
         // initialize user defined language models
-        this.userModels = new LinkedList<>();
+        this.userModels = new ArrayList<>();
         // retrieve settings from persistent storage (i.e. file)
         final File targetFile = new File(this.filePath);
         if (targetFile.exists() && targetFile.canRead()) {

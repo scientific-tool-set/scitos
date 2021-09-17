@@ -21,7 +21,7 @@ package org.hmx.scitos.hmx.domain.model;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
@@ -34,7 +34,7 @@ import org.hmx.scitos.hmx.domain.model.RelationTemplate.AssociateRole;
 public final class Relation extends AbstractConnectable implements Cloneable, Iterable<AbstractConnectable> {
 
     /** The subordinated elements forming this relation. */
-    private final List<AbstractConnectable> associates = new LinkedList<>();
+    private final List<AbstractConnectable> associates = new ArrayList<>();
 
     /**
      * Constructor: for a {@code Relation} between the specified associates with the respective role and weight.

@@ -22,7 +22,7 @@ package org.hmx.scitos.hmx.core;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.core.HmxException;
@@ -57,7 +57,7 @@ public class ModelHandlerImplTest {
      */
     @BeforeClass
     public static void setUp() {
-        final List<AbstractSyntacticalFunctionElement> functions = new LinkedList<>();
+        final List<AbstractSyntacticalFunctionElement> functions = new ArrayList<>();
         functions.add(new SyntacticalFunction("A", "A Function", false, null));
         functions.add(new SyntacticalFunction("B", "Second Function", true, "some description"));
         functions.add(new SyntacticalFunctionGroup("Group", null, Arrays.asList(new SyntacticalFunction("C", "Nested Function", false, null),

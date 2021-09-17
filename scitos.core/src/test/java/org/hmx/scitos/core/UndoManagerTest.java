@@ -1,5 +1,6 @@
 package org.hmx.scitos.core;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,7 +88,7 @@ public class UndoManagerTest {
     public void testUndoMultipleTimes() {
         final int iterationCount = 3;
         this.undoManager.setLimit(iterationCount);
-        final List<TestModelImpl> oldStates = new LinkedList<>();
+        final Deque<TestModelImpl> oldStates = new LinkedList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             oldStates.add(this.managedModel.clone());
             this.managedModel.changeState();
@@ -116,7 +117,7 @@ public class UndoManagerTest {
     public void testRedoMultipleTimes() {
         final int iterationCount = 3;
         this.undoManager.setLimit(iterationCount);
-        final List<TestModelImpl> originalStates = new LinkedList<>();
+        final List<TestModelImpl> originalStates = new ArrayList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             this.managedModel.changeState();
             originalStates.add(this.managedModel.clone());
@@ -125,7 +126,7 @@ public class UndoManagerTest {
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             this.undoManager.undo();
         }
-        final List<TestModelImpl> redoStates = new LinkedList<>();
+        final List<TestModelImpl> redoStates = new ArrayList<>();
         for (int iteration = 0; iteration < iterationCount; iteration++) {
             redoStates.add(this.undoManager.redo());
         }

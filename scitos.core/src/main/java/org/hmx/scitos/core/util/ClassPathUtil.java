@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -45,7 +45,7 @@ public final class ClassPathUtil {
      * @see Class#getResourceAsStream(String)
      */
     public static List<String> getFileResourcePaths(final Class<?> clazz, final String fileNameRegex) {
-        final List<String> paths = new LinkedList<>();
+        final List<String> paths = new ArrayList<>();
         // check if this is being executed from within a jar file
         final Pattern pattern = Pattern.compile(fileNameRegex);
         final File jarFile = new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath());

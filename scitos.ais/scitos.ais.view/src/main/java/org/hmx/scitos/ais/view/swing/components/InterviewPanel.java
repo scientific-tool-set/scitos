@@ -29,7 +29,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -227,7 +227,7 @@ public class InterviewPanel extends JScrollPane implements ModelChangeListener {
      * @return selected text token ui components
      */
     final List<TextTokenComponent> getSelection() {
-        final List<TextTokenComponent> selection = new LinkedList<>();
+        final List<TextTokenComponent> selection = new ArrayList<>();
         for (final Component singleParagraph : this.getViewPortView().getComponents()) {
             for (final Component singleToken : ((Container) singleParagraph).getComponents()) {
                 if (((TextTokenComponent) singleToken).isSelected()) {

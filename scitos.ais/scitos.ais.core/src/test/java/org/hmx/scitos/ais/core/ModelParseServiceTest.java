@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -67,7 +67,7 @@ public class ModelParseServiceTest {
         modelHandler.setInterviewText(modelHandler.createInterview("a"), "1 2 3\n4 5 6 7 8 9\n10");
         modelHandler.createInterview("b");
         // all interview views open, and a sub model group
-        final List<Object> openViewElements = new LinkedList<>(model.getInterviews());
+        final List<Object> openViewElements = new ArrayList<>(model.getInterviews());
         openViewElements.add("a");
         final Document xml = this.service.parseXmlFromModel(model, openViewElements);
         final Entry<AisProject, List<?>> parsed = this.service.parseModelFromXml(xml, new File("test.aisp"));

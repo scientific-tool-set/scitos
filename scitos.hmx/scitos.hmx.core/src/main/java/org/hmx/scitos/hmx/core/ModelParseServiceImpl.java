@@ -467,7 +467,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         newPericope.setComment(DomUtil.getNullableAttribute(pericopeNode, ModelParseServiceImpl.ATT_ROOT_COMMENT));
 
         // Creates an List of Propositions for the rootPropositions
-        final List<Proposition> text = new LinkedList<>();
+        final List<Proposition> text = new ArrayList<>();
         // all top level children, including the root Propositions
         for (final Element topLevelProposition : DomUtil.getChildElements(pericopeNode, ModelParseServiceImpl.TAG_PROPOSITION)) {
             text.add(this.parsePropositionFromXml(topLevelProposition, languageModel));
@@ -651,7 +651,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
      * @return successfully parsed functions
      */
     private List<AbstractSyntacticalFunctionElement> parseSyntacticalFunctionsFromXml(final Element parentNode) {
-        final LinkedList<AbstractSyntacticalFunctionElement> result = new LinkedList<>();
+        final ArrayList<AbstractSyntacticalFunctionElement> result = new ArrayList<>();
         for (final Element singleFunctionNode : DomUtil.getChildElements(parentNode, ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION,
                 ModelParseServiceImpl.TAG_LANGMODEL_FUNCTIONGROUP)) {
             if (ModelParseServiceImpl.TAG_LANGMODEL_FUNCTION.equals(singleFunctionNode.getTagName())) {
@@ -761,7 +761,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
     private RelationModel parseRelationModelFromXml(final Element semanticalModelNode) throws HmxException {
         final RelationModel model = new RelationModel();
         for (final Element singleGroupNode : DomUtil.getChildElements(semanticalModelNode, ModelParseServiceImpl.TAG_RELMODEL_GROUP)) {
-            final List<RelationTemplate> group = new LinkedList<>();
+            final List<RelationTemplate> group = new ArrayList<>();
             for (final Element singleTemplateNode : DomUtil.getChildElements(singleGroupNode, ModelParseServiceImpl.TAG_RELMODEL_RELATION)) {
                 final List<AssociateRole> roles = new ArrayList<>(3);
                 for (final Element singleRoleNode : DomUtil.getChildElements(singleTemplateNode, ModelParseServiceImpl.TAG_RELMODEL_ASSOCIATE)) {
@@ -816,7 +816,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
             throw new HmxException(Message.ERROR_FILE_INVALID);
         }
         // collect the contained ClauseItems
-        final List<ClauseItem> itemList = new LinkedList<>();
+        final List<ClauseItem> itemList = new ArrayList<>();
         for (final Element singleClauseItem : DomUtil.getChildElements(tempItemElement, ModelParseServiceImpl.TAG_CLAUSE_ITEM)) {
             itemList.add(this.parseClauseItemFromXml(singleClauseItem, languageModel));
         }
@@ -835,7 +835,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         // adds prior propositions to the Proposition according to the xml code
         final Element priorPropositionsElement = DomUtil.getChildElement(propositionNode, ModelParseServiceImpl.TAG_PRIOR_PROP_SUB_TREE);
         if (priorPropositionsElement != null) {
-            final List<Proposition> priorChildren = new LinkedList<>();
+            final List<Proposition> priorChildren = new ArrayList<>();
             // calls itself to add every prior Proposition contained in the Proposition
             for (final Element singlePriorChild : DomUtil.getChildElements(priorPropositionsElement, ModelParseServiceImpl.TAG_PROPOSITION)) {
                 priorChildren.add(this.parsePropositionFromXml(singlePriorChild, languageModel));
@@ -845,7 +845,7 @@ public class ModelParseServiceImpl implements IModelParseService<Pericope> {
         // adds later propositions to the proposition according to the xml code
         final Element laterPropositionsElement = DomUtil.getChildElement(propositionNode, ModelParseServiceImpl.TAG_LATER_PROP_SUB_TREE);
         if (laterPropositionsElement != null) {
-            final List<Proposition> laterChildren = new LinkedList<>();
+            final List<Proposition> laterChildren = new ArrayList<>();
             // calls itself to add every later Proposition contained in the Proposition
             for (final Element singleLaterChild : DomUtil.getChildElements(laterPropositionsElement, ModelParseServiceImpl.TAG_PROPOSITION)) {
                 laterChildren.add(this.parsePropositionFromXml(singleLaterChild, languageModel));

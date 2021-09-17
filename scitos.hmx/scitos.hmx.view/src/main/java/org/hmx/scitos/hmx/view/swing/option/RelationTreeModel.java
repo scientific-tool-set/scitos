@@ -22,7 +22,7 @@ package org.hmx.scitos.hmx.view.swing.option;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,7 +73,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
         super(new Object());
         // setup delegate structure (as the TreeModel cannot handle the mutable data objects as immediate nodes)
         for (final List<RelationTemplate> singleGroup : relationProvider.provideRelationTemplates()) {
-            final List<UUID> relationTemplatesInGroup = new LinkedList<>();
+            final List<UUID> relationTemplatesInGroup = new ArrayList<>();
             for (final RelationTemplate singleTemplate : singleGroup) {
                 // map each relation template to a random UUID
                 final UUID templateId = UUID.randomUUID();
@@ -282,7 +282,7 @@ final class RelationTreeModel extends AbstractTreeTableModel implements ISemanti
      */
     public TreePath addGroupEntry() {
         final UUID groupId = UUID.randomUUID();
-        this.relationGroups.put(groupId, new LinkedList<>());
+        this.relationGroups.put(groupId, new ArrayList<>());
         final TreePath rootPath = new TreePath(this.getRoot());
         this.modelSupport.fireChildAdded(rootPath, this.relationGroups.size() - 1, groupId);
         return rootPath.pathByAddingChild(groupId);

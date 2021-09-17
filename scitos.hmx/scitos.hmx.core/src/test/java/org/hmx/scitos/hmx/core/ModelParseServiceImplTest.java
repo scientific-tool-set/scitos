@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -386,7 +386,7 @@ public class ModelParseServiceImplTest {
         final AssociateRole nucleus = new AssociateRole("Nucleus", true);
         model.add(Arrays.asList(new RelationTemplate(sequentialNucleus, sequentialNucleus, sequentialNucleus, null), new RelationTemplate(
                 simultaneousNucleus, simultaneousNucleus, simultaneousNucleus, null), new RelationTemplate(nucleus, nucleus, nucleus, null)));
-        final List<RelationTemplate> secondGroup = new LinkedList<>();
+        final List<RelationTemplate> secondGroup = new ArrayList<>();
         secondGroup.add(new RelationTemplate(new AssociateRole("Orienter", false), null, new AssociateRole("Content", true), null));
         secondGroup.add(new RelationTemplate(new AssociateRole("Circumstance", false), null, nucleus, null));
         secondGroup.add(new RelationTemplate(new AssociateRole("Move", false), null, new AssociateRole("Goal", true), null));

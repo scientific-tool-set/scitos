@@ -21,7 +21,7 @@ package org.hmx.scitos.ais.domain.model;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.domain.IModel;
@@ -36,7 +36,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
     /** The index (i.e. number) of this interview in the project containing it. */
     private int index;
     /** The actual interview including assigned details (i.e. applied scoring). */
-    private final List<TextToken> text = new LinkedList<>();
+    private final List<TextToken> text = new ArrayList<>();
 
     /**
      * Main constructor.
@@ -127,7 +127,7 @@ public final class Interview implements IModel<Interview>, Comparable<Interview>
     public Interview reset(final Interview replacingState) {
         this.setParticipantId(replacingState.getParticipantId());
         this.setIndex(replacingState.getIndex());
-        final List<TextToken> copiedParagraphs = new LinkedList<>();
+        final List<TextToken> copiedParagraphs = new ArrayList<>();
         for (final TextToken singleParagraph : replacingState.getText()) {
             copiedParagraphs.add(singleParagraph.clone());
         }

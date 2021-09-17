@@ -20,7 +20,7 @@
 package org.hmx.scitos.core.util;
 
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -128,7 +128,7 @@ public final class DomUtil {
      * @return all child elements with the given name
      */
     public static List<Element> getChildElements(final Node parentNode, final String... childNodeNames) {
-        final List<Element> children = new LinkedList<>();
+        final List<Element> children = new ArrayList<>();
         final NodeList candidates = parentNode.getChildNodes();
         final int childCount = candidates.getLength();
         final List<String> targetNodeNames = Arrays.asList(childNodeNames);

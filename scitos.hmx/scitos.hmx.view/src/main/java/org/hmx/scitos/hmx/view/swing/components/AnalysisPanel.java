@@ -32,7 +32,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -532,7 +532,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
 
     @Override
     public List<Proposition> getSelectedPropositions(final Proposition defaultSelected) {
-        final List<Proposition> result = new LinkedList<>();
+        final List<Proposition> result = new ArrayList<>();
         for (ViewProposition singleProposition : this.propositionList) {
             if (singleProposition.isChecked() || singleProposition.getRepresented() == defaultSelected) {
                 result.add(singleProposition.getRepresented());
@@ -543,7 +543,7 @@ public final class AnalysisPanel extends JPanel implements IPericopeView, ModelC
 
     @Override
     public List<AbstractConnectable> getSelectedConnectables(final AbstractConnectable defaultSelected) {
-        final List<AbstractConnectable> list = new LinkedList<>();
+        final List<AbstractConnectable> list = new ArrayList<>();
         // REQUIREMENT: whole model is represented in the view
         AbstractConnectable nextToCheck = this.propositionList.get(0).getRepresented();
         while (nextToCheck != null) {

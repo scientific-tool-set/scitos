@@ -22,7 +22,7 @@ package org.hmx.scitos.view;
 import java.awt.Font;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.core.HmxException;
@@ -33,7 +33,7 @@ import org.hmx.scitos.core.HmxException;
 public class ContextMenuBuilder implements Iterable<ContextMenuBuilder.CMenuEntry> {
 
     /** The menu's entries - menu items, separators and/or submenus. */
-    private final List<CMenuEntry> entryList = new LinkedList<>();
+    private final List<CMenuEntry> entryList = new ArrayList<>();
     /** The menu's title/caption. */
     private final String caption;
 

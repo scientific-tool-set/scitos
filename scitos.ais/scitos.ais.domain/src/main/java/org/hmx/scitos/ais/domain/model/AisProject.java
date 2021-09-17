@@ -22,7 +22,6 @@ package org.hmx.scitos.ais.domain.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
     /** The detail categories that can be used for scoring tokens in interviews. */
     private final List<DetailCategory> categories;
     /** The contained interviews. */
-    private final List<Interview> interviews = new LinkedList<>();
+    private final List<Interview> interviews = new ArrayList<>();
 
     /**
      * Main constructor.
@@ -129,7 +128,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
             if (subModelMap.containsKey(groupKey)) {
                 groupedInterviews = subModelMap.get(groupKey);
             } else {
-                groupedInterviews = new LinkedList<>();
+                groupedInterviews = new ArrayList<>();
                 subModelMap.put(groupKey, groupedInterviews);
             }
             groupedInterviews.add(singleInterview);
@@ -144,7 +143,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     @Override
     public List<DetailCategory> provideSelectables() {
-        final List<DetailCategory> selectables = new LinkedList<>();
+        final List<DetailCategory> selectables = new ArrayList<>();
         for (final DetailCategory singleCategory : this.categories) {
             if (singleCategory.isSelectable()) {
                 selectables.add(singleCategory);
@@ -155,7 +154,7 @@ public final class AisProject implements IMultiObjectModel<AisProject, Interview
 
     @Override
     public AisProject clone() {
-        final List<Interview> clonedInterviews = new LinkedList<>();
+        final List<Interview> clonedInterviews = new ArrayList<>();
         for (final Interview singleInterview : this.getInterviews()) {
             clonedInterviews.add(singleInterview.clone());
         }

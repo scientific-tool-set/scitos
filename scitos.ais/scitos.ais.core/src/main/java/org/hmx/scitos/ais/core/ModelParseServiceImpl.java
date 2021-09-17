@@ -27,7 +27,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -188,7 +188,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
         // retrieve interviews from document
         final Element interviewRoot = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_INTERVIEW_ROOT);
         if (interviewRoot != null) {
-            final List<Interview> containedInterviews = new LinkedList<>();
+            final List<Interview> containedInterviews = new ArrayList<>();
             for (final Element singleInterview : DomUtil.getChildElements(interviewRoot, ModelParseServiceImpl.TAG_INTERVIEW)) {
                 containedInterviews.add(this.parseInterviewFromXml(singleInterview, categories));
             }
@@ -287,7 +287,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      */
     private List<DetailCategory> parseDetailCategoriesFromXmlRecursively(final List<Element> categories, final DetailCategory parentCategory)
             throws HmxException {
-        final List<DetailCategory> result = new LinkedList<>();
+        final List<DetailCategory> result = new ArrayList<>();
         for (final Element singleCategoryElement : categories) {
             // parse mandatory category attributes
             final String code = singleCategoryElement.getAttribute(ModelParseServiceImpl.ATTR_CATEGORY_CODE);
@@ -458,7 +458,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
             throw new HmxException(Message.ERROR_FILE_INVALID, new IllegalArgumentException("invalid " + ModelParseServiceImpl.TAG_INTERVIEW
                     + " definition"));
         }
-        final List<TextToken> text = new LinkedList<>();
+        final List<TextToken> text = new ArrayList<>();
         for (final Element singleParagraph : DomUtil.getChildElements(interviewElement, ModelParseServiceImpl.TAG_INTERVIEW_PARAGRAPH)) {
             text.add(this.parseTextParagraphFromXml(singleParagraph, categories));
         }
@@ -556,7 +556,7 @@ public class ModelParseServiceImpl implements IModelParseService<AisProject> {
      * @return successfully parsed list of model elements that were open in the view, when the document was created
      */
     private List<Object> parseOpenViewElementsFromXml(final Document doc, final AisProject parsedProject) {
-        final List<Object> openViewElements = new LinkedList<>();
+        final List<Object> openViewElements = new ArrayList<>();
         final Element viewsRoot = DomUtil.getChildElement(doc.getDocumentElement(), ModelParseServiceImpl.TAG_VIEWS);
         if (viewsRoot != null) {
             for (final Element singleView : DomUtil.getChildElements(viewsRoot)) {

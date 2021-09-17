@@ -29,7 +29,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -223,7 +223,7 @@ public final class ViewProposition extends AbstractCommentable<Proposition> impl
         this.functionLabel = this.initFunctionLabel();
         if (viewSettings.isShowingClauseItems()) {
             this.originText = null;
-            this.items = new LinkedList<>();
+            this.items = new ArrayList<>();
         } else {
             this.originText = new ScaledTextField();
             this.items = null;

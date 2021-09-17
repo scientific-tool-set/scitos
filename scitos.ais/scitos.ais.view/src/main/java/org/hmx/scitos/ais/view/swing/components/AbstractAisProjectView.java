@@ -21,7 +21,7 @@ package org.hmx.scitos.ais.view.swing.components;
 
 import java.awt.Component;
 import java.awt.LayoutManager;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -67,7 +67,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
 
     @Override
     public List<JMenuItem> createEditMenuItems() {
-        final List<JMenuItem> editMenuItems = new LinkedList<>();
+        final List<JMenuItem> editMenuItems = new ArrayList<>();
         final JMenuItem importInterviewsItem = new JMenuItem(AisMessage.PROJECT_IMPORT_INTERVIEWS.get(), ScitosIcon.FILE_ODS.create());
         importInterviewsItem.addActionListener(event -> this.getProject().importInterviewsFromOds());
         editMenuItems.add(importInterviewsItem);
@@ -83,7 +83,7 @@ abstract class AbstractAisProjectView<M> extends AbstractProjectView<AisViewProj
 
     @Override
     public List<Component> createToolBarItems() {
-        final List<Component> toolBarItems = new LinkedList<>();
+        final List<Component> toolBarItems = new ArrayList<>();
         final JButton addInterviewButton = new JButton(ScitosIcon.CLIPBOARD_ADD.create());
         addInterviewButton.setToolTipText(AisMessage.INTERVIEW_NEW.get());
         addInterviewButton.addActionListener(event -> this.createInterview());

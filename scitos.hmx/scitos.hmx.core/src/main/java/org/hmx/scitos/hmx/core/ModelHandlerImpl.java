@@ -22,7 +22,7 @@ package org.hmx.scitos.hmx.core;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.core.AbstractModelHandler;
@@ -537,7 +537,7 @@ public final class ModelHandlerImpl extends AbstractModelHandler<Pericope> imple
                 secondPart.setPriorChildren(firstLaterChildren);
             } else {
                 // make sure all enclosed children are in the same list to keep the ability to merge and indent of enclosed
-                final List<Proposition> combinedChildren = new LinkedList<>(firstLaterChildren);
+                final List<Proposition> combinedChildren = new ArrayList<>(firstLaterChildren);
                 combinedChildren.addAll(secondPriorChildren);
                 secondPart.setPriorChildren(combinedChildren);
             }

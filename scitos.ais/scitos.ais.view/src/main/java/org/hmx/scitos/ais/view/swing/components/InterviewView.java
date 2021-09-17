@@ -23,7 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -50,7 +50,7 @@ public final class InterviewView extends AbstractAisProjectView<Interview> {
      */
     private IUndoManagedView viewPanel;
     /** The main tool bar items that belong to this view – in order to enable/disable them according to the current selection. */
-    private final List<JButton> detailToolBarItems = new LinkedList<>();
+    private final List<JButton> detailToolBarItems = new ArrayList<>();
 
     /**
      * Main constructor.

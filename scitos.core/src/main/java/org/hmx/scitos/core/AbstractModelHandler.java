@@ -19,7 +19,7 @@
 
 package org.hmx.scitos.core;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hmx.scitos.domain.IModel;
@@ -48,7 +48,7 @@ public abstract class AbstractModelHandler<M extends IModel<M>> implements IMode
      */
     protected AbstractModelHandler(final M model) {
         this.model = model;
-        this.listeners = new LinkedList<>();
+        this.listeners = new ArrayList<>();
     }
 
     @Override

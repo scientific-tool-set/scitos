@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -86,7 +86,7 @@ public class MainView extends JPanel {
     /** The client instance containing this view. */
     final ScitosClient client;
     /** The currently open view projects. */
-    private final List<IViewProject<? extends IModel<?>>> openProjects = new LinkedList<>();
+    private final List<IViewProject<? extends IModel<?>>> openProjects = new ArrayList<>();
 
     /** The divided pane containing the project tree on the left and the tab stack on the right. */
     private final JSplitPane splitPane;
@@ -277,9 +277,9 @@ public class MainView extends JPanel {
      * Clear the tree structure and rebuild it with the currently open projects. This re-applies the single selected node.
      */
     public void resetTreeStructure() {
-        final List<IViewProject<?>> expandedProjectNodes = new LinkedList<>();
+        final List<IViewProject<?>> expandedProjectNodes = new ArrayList<>();
         final Map<IViewProject<?>, Set<String>> expandedModelGroupNodes = new HashMap<>();
-        final List<IModel<?>> expandedSubModelNodes = new LinkedList<>();
+        final List<IModel<?>> expandedSubModelNodes = new ArrayList<>();
         this.collectExpandedNodeObjects(expandedProjectNodes, expandedModelGroupNodes, expandedSubModelNodes);
         this.rootNode.removeAllChildren();
         // iterate all currently open projects
@@ -373,7 +373,7 @@ public class MainView extends JPanel {
      */
     private void expandObjectNodes(final List<IViewProject<?>> projects, final Map<IViewProject<?>, Set<String>> modelGroups,
             final List<IModel<?>> subModels) {
-        final List<ScitosTreeNode> nodes = new LinkedList<>();
+        final List<ScitosTreeNode> nodes = new ArrayList<>();
         for (final IViewProject<?> singleProject : projects) {
             nodes.add(this.getProjectNode(singleProject));
         }
@@ -417,9 +417,9 @@ public class MainView extends JPanel {
      *            tree node to refresh
      */
     void refreshElement(final ScitosTreeNode node) {
-        final List<IViewProject<?>> expandedProjectNodes = new LinkedList<>();
+        final List<IViewProject<?>> expandedProjectNodes = new ArrayList<>();
         final Map<IViewProject<?>, Set<String>> expandedModelGroupNodes = new HashMap<>();
-        final List<IModel<?>> expandedSubModelNodes = new LinkedList<>();
+        final List<IModel<?>> expandedSubModelNodes = new ArrayList<>();
         this.collectExpandedNodeObjects(expandedProjectNodes, expandedModelGroupNodes, expandedSubModelNodes);
         ((DefaultTreeModel) this.projectTree.getModel()).reload(node);
         this.expandObjectNodes(expandedProjectNodes, expandedModelGroupNodes, expandedSubModelNodes);
@@ -838,7 +838,7 @@ public class MainView extends JPanel {
         if (!CollectionUtil.containsInstance(this.openProjects, project)) {
             return Collections.emptyList();
         }
-        final List<AbstractProjectView<?, ?>> openTabs = new LinkedList<>();
+        final List<AbstractProjectView<?, ?>> openTabs = new ArrayList<>();
         for (final Component singleTab : this.tabStack.getComponents()) {
             if (singleTab instanceof AbstractProjectView<?, ?>) {
                 final AbstractProjectView<?, ?> associatedTab = (AbstractProjectView<?, ?>) singleTab;
@@ -859,7 +859,7 @@ public class MainView extends JPanel {
      */
     void updateOpenTabElementsForProject(final IViewProject<?> project) {
         if (project != null) {
-            final List<Object> tabElements = new LinkedList<>();
+            final List<Object> tabElements = new ArrayList<>();
             for (final AbstractProjectView<?, ?> singleTab : this.getOpenTabsForProject(project)) {
                 singleTab.submitChangesToModel();
                 tabElements.add(singleTab.getModel());

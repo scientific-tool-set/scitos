@@ -1,11 +1,16 @@
 #!/bin/sh
 #
 # Special script for creating a Mac .app Bundle.
-# This is not portable, needs to be triggered manually and the following parameters need to be adjusted accordingly.
+# This is not portable, needs to be triggered manually and the following parameter needs to be adjusted accordingly.
 #
 VERSION="2.4.3"
-JDK_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home
+
+JDK_HOME=$(/usr/libexec/java_home)
 JRE_MODULES="java.base,java.compiler,java.desktop,java.prefs,java.scripting,java.sql.rowset,jdk.unsupported"
+
+echo "including Java Version:\n"
+java --version
+echo "\nfound in" $JDK_HOME
 
 # collect dependencies to mention them in the classpath one-by-one
 LIBS=`ls -md target/lib/* | tr -d ','`

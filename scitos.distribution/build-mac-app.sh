@@ -3,7 +3,7 @@
 # Special script for creating a Mac .app Bundle.
 # This is not portable, needs to be triggered manually and the following parameter needs to be adjusted accordingly.
 #
-VERSION="2.4.3"
+VERSION="2.4.4"
 
 JDK_HOME=$(/usr/libexec/java_home)
 JRE_MODULES="java.base,java.compiler,java.desktop,java.prefs,java.scripting,java.sql.rowset,jdk.unsupported"

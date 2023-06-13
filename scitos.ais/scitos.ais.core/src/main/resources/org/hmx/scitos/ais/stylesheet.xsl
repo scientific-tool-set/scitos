@@ -197,7 +197,7 @@ span.detail-end { float: right; }
                                     </xsl:if>
                                 </td>
                                 <td class="number">
-                                    <xsl:value-of select="count(.//ais:Detail//ais:Token)" />
+                                    <xsl:value-of select="count(.//ais:Detail[@code]/ais:Token)" />
                                 </td>
                                 <xsl:variable name="interview" select="." />
                                 <xsl:for-each select="//ais:Categories/ais:Category">
@@ -241,7 +241,7 @@ span.detail-end { float: right; }
                             <xsl:value-of select="concat(' ',@code,' ')" />
                         </xsl:for-each>
                     </xsl:variable>
-                    <xsl:value-of select="count($interview//ais:Detail[contains($childCodes,concat(' ',@code,' '))])" />
+                    <xsl:value-of select="count($interview//ais:Detail[@code and contains($childCodes,concat(' ',@code,' '))])" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="count($interview//ais:Detail[@code=$category/@code])" />

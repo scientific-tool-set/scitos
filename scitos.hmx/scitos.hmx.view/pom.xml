@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.hmx</groupId>
 		<artifactId>scitos.hmx</artifactId>
-		<version>2.4.4-SNAPSHOT</version>
+		<version>2.4.4</version>
 	</parent>
 	<artifactId>scitos.hmx.view</artifactId>
 	<name>scitos.hmx.view</name>
